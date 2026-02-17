@@ -90,6 +90,7 @@
     border-right: none;
     display: flex;
     align-items: center;
+    align-content: center;
     justify-content: flex-start;
     color: #495057;
     font-size: 0.875rem;
@@ -112,6 +113,7 @@
     height: 100%;
     display: flex;
     align-items: center;
+    align-content: center;
   }
 
   // Remove any conflicting right-alignment
