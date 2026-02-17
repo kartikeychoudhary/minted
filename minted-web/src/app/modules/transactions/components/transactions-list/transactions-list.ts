@@ -114,8 +114,7 @@ export class TransactionsList implements OnInit {
         valueFormatter: (params) => {
           const date = new Date(params.value);
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        },
-        cellClass: 'text-sm text-slate-600'
+        }
       },
       {
         headerName: 'Category',
@@ -128,30 +127,26 @@ export class TransactionsList implements OnInit {
         headerName: 'Description',
         field: 'description',
         flex: 1,
-        minWidth: 250,
-        cellClass: 'text-sm text-slate-900 font-medium'
+        minWidth: 250
       },
       {
         headerName: 'Account',
         field: 'accountName',
-        width: 180,
-        cellClass: 'text-sm text-slate-500'
+        width: 180
       },
       {
         headerName: 'Amount',
         field: 'amount',
         width: 150,
         cellClass: (params) => {
-          const baseClass = 'text-right text-sm font-medium';
           return params.data.type === 'INCOME'
-            ? `${baseClass} text-success font-bold`
-            : `${baseClass} text-slate-900`;
+            ? 'text-success font-bold'
+            : 'text-slate-900';
         },
         valueFormatter: (params) => {
           const prefix = params.data.type === 'INCOME' ? '+' : '-';
           return `${prefix}$${Math.abs(params.value).toFixed(2)}`;
-        },
-        headerClass: 'ag-header-right'
+        }
       },
       {
         headerName: '',
