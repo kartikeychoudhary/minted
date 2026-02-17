@@ -12,6 +12,7 @@ import {
 import { CategoryResponse, TransactionType } from '../../../../core/models/category.model';
 import { AccountResponse } from '../../../../core/models/account.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
 
 @Component({
   selector: 'app-transactions-list',
@@ -31,6 +32,27 @@ export class TransactionsList implements OnInit {
   selectedTransaction?: TransactionResponse;
   searchTerm = '';
 
+  // AG Grid
+  private gridApi!: GridApi;
+  columnDefs: ColDef[] = [];
+  defaultColDef: ColDef = {
+    sortable: true,
+    filter: false,
+    resizable: true,
+  };
+  gridOptions: GridOptions = {
+    pagination: true,
+    paginationPageSize: 10,
+    paginationPageSizeSelector: [10, 25, 50],
+    domLayout: 'normal',
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
+    animateRows: true,
+    rowHeight: 60,
+    headerHeight: 48,
+  };
+  rowData: any[] = [];
+
   // Filter options
   selectedDateFilter: DateFilterOption = DateFilterOption.THIS_MONTH;
   selectedAccountId?: number;
@@ -38,11 +60,6 @@ export class TransactionsList implements OnInit {
   customStartDate?: Date;
   customEndDate?: Date;
   showCustomDatePickers = false;
-
-  // Pagination
-  first = 0;
-  rows = 10;
-  totalRecords = 0;
 
   // Transaction types for dropdown
   transactionTypes = [
@@ -67,11 +84,125 @@ export class TransactionsList implements OnInit {
     private confirmationService: ConfirmationService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) {
+    this.setupGridColumns();
+  }
 
   ngOnInit(): void {
     this.initForm();
     this.loadData();
+  }
+
+  setupGridColumns(): void {
+    this.columnDefs = [
+      {
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        width: 50,
+        maxWidth: 50,
+        sortable: false,
+        headerClass: 'ag-header-checkbox',
+        cellClass: 'ag-cell-checkbox'
+      },
+      {
+        headerName: 'Date',
+        field: 'transactionDate',
+        width: 130,
+        valueFormatter: (params) => {
+          const date = new Date(params.value);
+          return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        },
+        cellClass: 'text-sm text-slate-600'
+      },
+      {
+        headerName: 'Category',
+        field: 'categoryName',
+        width: 200,
+        cellRenderer: (params: any) => {
+          const categoryIcon = params.data.categoryIcon || 'receipt_long';
+          const categoryColor = this.getCategoryIconColor(params.data.categoryColor);
+          return `
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-8 w-8 rounded-full ${categoryColor} flex items-center justify-center">
+                <span class="material-icons-outlined text-sm">${categoryIcon}</span>
+              </div>
+              <div class="ml-3">
+                <div class="text-sm font-medium text-slate-900">${params.value}</div>
+              </div>
+            </div>
+          `;
+        },
+        sortable: false
+      },
+      {
+        headerName: 'Description',
+        field: 'description',
+        flex: 1,
+        minWidth: 250,
+        cellClass: 'text-sm text-slate-900 font-medium'
+      },
+      {
+        headerName: 'Account',
+        field: 'accountName',
+        width: 180,
+        cellClass: 'text-sm text-slate-500'
+      },
+      {
+        headerName: 'Amount',
+        field: 'amount',
+        width: 150,
+        cellClass: (params) => {
+          const baseClass = 'text-right text-sm font-medium';
+          return params.data.type === 'INCOME'
+            ? `${baseClass} text-success font-bold`
+            : `${baseClass} text-slate-900`;
+        },
+        valueFormatter: (params) => {
+          const prefix = params.data.type === 'INCOME' ? '+' : '-';
+          return `${prefix}$${Math.abs(params.value).toFixed(2)}`;
+        },
+        headerClass: 'ag-header-right'
+      },
+      {
+        headerName: '',
+        field: 'actions',
+        width: 80,
+        sortable: false,
+        cellRenderer: (params: any) => {
+          return `
+            <button class="edit-btn text-slate-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" data-action="edit">
+              <span class="material-icons-outlined text-lg">edit</span>
+            </button>
+          `;
+        },
+        cellClass: 'ag-cell-actions'
+      }
+    ];
+  }
+
+  onGridReady(params: GridReadyEvent): void {
+    this.gridApi = params.api;
+  }
+
+  onCellClicked(event: any): void {
+    if (event.event.target.dataset.action === 'edit') {
+      this.openEditDialog(event.data);
+    }
+  }
+
+  getCategoryIconColor(color: string): string {
+    const colorMap: Record<string, string> = {
+      'red': 'bg-red-100 text-red-600',
+      'blue': 'bg-blue-100 text-blue-600',
+      'green': 'bg-green-100 text-green-600',
+      'yellow': 'bg-yellow-100 text-yellow-600',
+      'purple': 'bg-purple-100 text-purple-600',
+      'orange': 'bg-orange-100 text-orange-600',
+      'pink': 'bg-pink-100 text-pink-600',
+      'cyan': 'bg-cyan-100 text-cyan-600',
+      'gray': 'bg-gray-100 text-gray-600'
+    };
+    return colorMap[color] || 'bg-gray-100 text-gray-600';
   }
 
   initForm(): void {
@@ -149,7 +280,7 @@ export class TransactionsList implements OnInit {
       this.transactionService.getByFilters(filters).subscribe({
         next: (data) => {
           this.transactions = data;
-          this.applySearchFilter();
+          this.applyFilters();
         },
         error: (error) => {
           this.messageService.add({
@@ -163,7 +294,7 @@ export class TransactionsList implements OnInit {
       this.transactionService.getByDateRange(dateRange.startDate, dateRange.endDate).subscribe({
         next: (data) => {
           this.transactions = data;
-          this.applySearchFilter();
+          this.applyFilters();
         },
         error: (error) => {
           this.messageService.add({
@@ -206,18 +337,21 @@ export class TransactionsList implements OnInit {
     };
   }
 
-  applySearchFilter(): void {
-    if (!this.searchTerm) {
-      this.filteredTransactions = [...this.transactions];
-    } else {
+  applyFilters(): void {
+    let filtered = [...this.transactions];
+
+    // Apply search filter
+    if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      this.filteredTransactions = this.transactions.filter(t =>
+      filtered = filtered.filter(t =>
         t.description.toLowerCase().includes(term) ||
         t.categoryName.toLowerCase().includes(term) ||
         t.accountName.toLowerCase().includes(term)
       );
     }
-    this.totalRecords = this.filteredTransactions.length;
+
+    this.filteredTransactions = filtered;
+    this.rowData = filtered;
   }
 
   onDateFilterChange(filter: DateFilterOption): void {
@@ -245,7 +379,7 @@ export class TransactionsList implements OnInit {
   }
 
   onSearchChange(): void {
-    this.applySearchFilter();
+    this.applyFilters();
   }
 
   openNewDialog(): void {
@@ -375,42 +509,10 @@ export class TransactionsList implements OnInit {
     });
   }
 
-  getCategoryColor(color: string): string {
-    const colorMap: Record<string, string> = {
-      'red': 'bg-red-100 text-red-600',
-      'blue': 'bg-blue-100 text-blue-600',
-      'green': 'bg-green-100 text-green-600',
-      'yellow': 'bg-yellow-100 text-yellow-600',
-      'purple': 'bg-purple-100 text-purple-600',
-      'orange': 'bg-orange-100 text-orange-600',
-      'pink': 'bg-pink-100 text-pink-600',
-      'cyan': 'bg-cyan-100 text-cyan-600',
-      'gray': 'bg-gray-100 text-gray-600'
-    };
-    return colorMap[color] || 'bg-gray-100 text-gray-600';
-  }
-
-  getAmountClass(amount: number, type: TransactionType): string {
-    if (type === TransactionType.INCOME) {
-      return 'text-green-600 font-bold';
-    }
-    return 'text-slate-900';
-  }
-
-  formatAmount(amount: number, type: TransactionType): string {
-    const prefix = type === TransactionType.INCOME ? '+' : '-';
-    return `${prefix}$${Math.abs(amount).toFixed(2)}`;
-  }
-
   formatDate(date: Date | string): string {
     if (typeof date === 'string') {
       return date;
     }
     return date.toISOString().split('T')[0];
-  }
-
-  onPageChange(event: any): void {
-    this.first = event.first;
-    this.rows = event.rows;
   }
 }

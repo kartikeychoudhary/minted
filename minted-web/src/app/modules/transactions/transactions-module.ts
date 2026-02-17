@@ -4,6 +4,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { SharedModule } from '../../shared/shared.module';
 import { TransactionsRoutingModule } from './transactions-routing-module';
 import { TransactionsList } from './components/transactions-list/transactions-list';
+import { AgGridModule } from 'ag-grid-angular';
 
 
 @NgModule({
@@ -13,6 +14,7 @@ import { TransactionsList } from './components/transactions-list/transactions-li
   imports: [
     CommonModule,
     SharedModule,
+    AgGridModule,
     TransactionsRoutingModule
   ],
   providers: [

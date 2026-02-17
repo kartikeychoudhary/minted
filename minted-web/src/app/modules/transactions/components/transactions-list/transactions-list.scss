@@ -1,3 +1,329 @@
+// AG Grid Custom Theme - Minted
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+.ag-theme-minted {
+  --ag-background-color: #ffffff;
+  --ag-foreground-color: #1e293b;
+  --ag-border-color: #e2e8f0;
+  --ag-header-background-color: #f8fafc;
+  --ag-header-foreground-color: #64748b;
+  --ag-odd-row-background-color: #ffffff;
+  --ag-row-hover-color: #f8fafc;
+  --ag-selected-row-background-color: #fef3c7;
+  --ag-range-selection-border-color: #c48821;
+  --ag-checkbox-checked-color: #c48821;
+  --ag-alpine-active-color: #c48821;
+  --ag-material-primary-color: #c48821;
+  --ag-material-accent-color: #c48821;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  // Header styles
+  .ag-header {
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+  }
+
+  .ag-header-cell {
+    padding: 0 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  .ag-header-cell-label {
+    justify-content: flex-start;
+  }
+
+  .ag-header-right .ag-header-cell-label {
+    justify-content: flex-end;
+  }
+
+  // Checkbox in header
+  .ag-header-checkbox {
+    padding-left: 1.5rem;
+    padding-right: 1rem;
+  }
+
+  // Cell styles
+  .ag-cell {
+    padding: 1rem 1.5rem;
+    line-height: 1.5;
+    border-right: none;
+    display: flex;
+    align-items: center;
+  }
+
+  .ag-cell-checkbox {
+    padding-left: 1.5rem;
+    padding-right: 1rem;
+  }
+
+  .ag-cell-actions {
+    justify-content: flex-end;
+    padding-right: 1.5rem;
+  }
+
+  // Row styles
+  .ag-row {
+    border-bottom: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f8fafc;
+
+      // Show edit button on hover
+      .edit-btn {
+        opacity: 1 !important;
+      }
+    }
+
+    &.ag-row-selected {
+      background-color: #fef3c7;
+    }
+  }
+
+  // Checkbox styles
+  .ag-checkbox-input-wrapper {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+
+    input[type="checkbox"]:checked ~ .ag-checkbox-input-wrapper {
+      border-color: #c48821;
+      background-color: #c48821;
+    }
+
+    &.ag-checked {
+      border-color: #c48821;
+      background-color: #c48821;
+
+      &::after {
+        color: white;
+      }
+    }
+  }
+
+  // Pagination styles
+  .ag-paging-panel {
+    border-top: 1px solid #e2e8f0;
+    padding: 0.75rem 1.5rem;
+    background-color: #ffffff;
+    font-size: 0.875rem;
+    color: #475569;
+    justify-content: space-between;
+  }
+
+  .ag-paging-row-summary-panel {
+    color: #475569;
+
+    .ag-paging-row-summary-panel-number {
+      font-weight: 500;
+      color: #1e293b;
+    }
+  }
+
+  .ag-paging-page-summary-panel {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .ag-paging-button {
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #64748b;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    min-width: 2rem;
+    height: 2rem;
+    margin: 0 0.125rem;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f8fafc;
+      border-color: #c48821;
+      color: #c48821;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    &.ag-paging-button-active {
+      background-color: rgba(196, 136, 33, 0.1);
+      border-color: rgba(196, 136, 33, 0.2);
+      color: #c48821;
+      font-weight: 500;
+    }
+  }
+
+  // Page size selector
+  .ag-paging-page-size {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #64748b;
+
+    select {
+      padding: 0.25rem 2rem 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 0.375rem;
+      background-color: #ffffff;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        border-color: #c48821;
+      }
+
+      &:focus {
+        outline: none;
+        ring: 2px;
+        ring-color: rgba(196, 136, 33, 0.2);
+        border-color: #c48821;
+      }
+    }
+  }
+
+  // Hide edit button by default, show on row hover
+  .edit-btn {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: #c48821;
+    }
+  }
+
+  // Loading overlay
+  .ag-overlay-loading-wrapper {
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+
+  .ag-overlay-loading-center {
+    font-size: 1rem;
+    color: #64748b;
+  }
+
+  // No rows overlay
+  .ag-overlay-no-rows-wrapper {
+    padding-top: 4rem;
+  }
+
+  .ag-overlay-no-rows-center {
+    color: #64748b;
+    font-size: 0.875rem;
+  }
+
+  // Sort icons
+  .ag-icon-asc,
+  .ag-icon-desc {
+    color: #c48821;
+  }
+
+  .ag-header-icon {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .ag-header-cell:hover .ag-header-icon {
+    opacity: 1;
+  }
+
+  .ag-header-cell-sorted-asc .ag-header-icon,
+  .ag-header-cell-sorted-desc .ag-header-icon {
+    opacity: 1;
+    color: #c48821;
+  }
+
+  // Custom scrollbar
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+  }
+}
+
+// Material Icons for AG Grid
+.ag-theme-minted {
+  .material-icons-outlined {
+    font-family: 'Material Icons Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'liga';
+  }
+}
+
+// Success color for income
+.text-success {
+  color: #16a34a;
+}
+
+// Primary color
+.text-primary {
+  color: #c48821;
+}
+
+.bg-primary\/10 {
+  background-color: rgba(196, 136, 33, 0.1);
+}
+
+.border-primary\/20 {
+  border-color: rgba(196, 136, 33, 0.2);
+}
+
+.hover\:text-primary:hover {
+  color: #c48821;
+}
+
+// PrimeNG Dialog and Dropdown fixes
 ::ng-deep {
   // Fix dialog content overflow for dropdowns
   .p-dialog .p-dialog-content {
@@ -14,11 +340,6 @@
     z-index: 1101 !important;
   }
 
-  // Custom styling for table
-  .p-datatable .p-datatable-tbody > tr > td {
-    vertical-align: middle;
-  }
-
   // Primary button color
   .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-danger) {
     background-color: #c48821;
@@ -28,43 +349,5 @@
       background-color: #a36e16;
       border-color: #a36e16;
     }
-  }
-
-  // Date filter button active state
-  .bg-primary-light {
-    background-color: rgba(196, 136, 33, 0.1);
-  }
-
-  // Table hover effect
-  .p-datatable .p-datatable-tbody > tr:hover {
-    background-color: #f8fafc;
-  }
-
-  // Pagination fix
-  .p-datatable .p-datatable-footer {
-    overflow: visible !important;
-  }
-
-  .p-datatable .p-paginator {
-    overflow: visible !important;
-  }
-
-  // Ensure paginator dropdowns appear above content
-  .p-paginator .p-select-overlay {
-    z-index: 1100 !important;
-  }
-
-  // Custom scrollbar
-  .p-datatable-wrapper::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .p-datatable-wrapper::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .p-datatable-wrapper::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 20px;
   }
 }
