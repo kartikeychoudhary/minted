@@ -111,6 +111,7 @@ export class TransactionsList implements OnInit {
         headerName: 'Date',
         field: 'transactionDate',
         width: 130,
+        cellClass: 'cell-v-center',
         valueFormatter: (params) => {
           const date = new Date(params.value);
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -120,6 +121,7 @@ export class TransactionsList implements OnInit {
         headerName: 'Category',
         field: 'categoryName',
         width: 220,
+        cellClass: 'cell-v-center',
         cellRenderer: CategoryCellRendererComponent,
         sortable: false
       },
@@ -127,21 +129,25 @@ export class TransactionsList implements OnInit {
         headerName: 'Description',
         field: 'description',
         flex: 1,
-        minWidth: 250
+        minWidth: 250,
+        cellClass: 'cell-v-center'
       },
       {
         headerName: 'Account',
         field: 'accountName',
-        width: 180
+        width: 180,
+        cellClass: 'cell-v-center'
       },
       {
         headerName: 'Amount',
         field: 'amount',
         width: 150,
         cellClass: (params) => {
-          return params.data.type === 'INCOME'
+          const baseClass = 'cell-v-center';
+          const colorClass = params.data.type === 'INCOME'
             ? 'text-success font-bold'
             : 'text-slate-900';
+          return `${baseClass} ${colorClass}`;
         },
         valueFormatter: (params) => {
           const prefix = params.data.type === 'INCOME' ? '+' : '-';
