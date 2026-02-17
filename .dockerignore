@@ -1,0 +1,51 @@
+# Frontend build artifacts
+minted-web/node_modules/
+minted-web/dist/
+minted-web/.angular/
+
+# Backend build artifacts
+minted-api/.gradle/
+minted-api/build/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Environment files
+.env
+.env.*
+.claude/
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files (don't need these in the image)
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Backend (included via backend Dockerfile)
+minted-api/
+
+# Gradle distribution
+gradle-*/

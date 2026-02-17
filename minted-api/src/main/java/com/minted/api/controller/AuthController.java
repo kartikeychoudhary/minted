@@ -52,4 +52,13 @@ public class AuthController {
                 "message", "Password changed successfully"
         ));
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        return ResponseEntity.ok(Map.of(
+                "status", "UP",
+                "service", "minted-api",
+                "timestamp", System.currentTimeMillis()
+        ));
+    }
 }

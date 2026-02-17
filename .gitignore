@@ -2,12 +2,14 @@
 # Minted Project - Root .gitignore
 # ========================================
 
-# Documentation files (except README.md)
+# Documentation files (except README.md and DOCKER_README.md)
 *.md
 !README.md
+!DOCKER_README.md
 
-# Always include .gitignore files in subdirectories
+# Always include .gitignore files and .dockerignore in subdirectories
 !minted-api/.gitignore
+!minted-api/.dockerignore
 !minted-web/.gitignore
 
 # Screenshots and images
@@ -19,6 +21,7 @@ gradle-*/
 # Sensitive configuration files
 service-account.json
 .env
+!.env.example
 .env.local
 .env.*.local
 
