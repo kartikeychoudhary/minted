@@ -13,6 +13,8 @@ import { CategoryResponse, TransactionType } from '../../../../core/models/categ
 import { AccountResponse } from '../../../../core/models/account.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
+import { CategoryCellRendererComponent } from '../cell-renderers/category-cell-renderer.component';
+import { ActionsCellRendererComponent } from '../cell-renderers/actions-cell-renderer.component';
 
 @Component({
   selector: 'app-transactions-list',
@@ -118,21 +120,8 @@ export class TransactionsList implements OnInit {
       {
         headerName: 'Category',
         field: 'categoryName',
-        width: 200,
-        cellRenderer: (params: any) => {
-          const categoryIcon = params.data.categoryIcon || 'receipt_long';
-          const categoryColor = this.getCategoryIconColor(params.data.categoryColor);
-          return `
-            <div class="flex items-center">
-              <div class="flex-shrink-0 h-8 w-8 rounded-full ${categoryColor} flex items-center justify-center">
-                <span class="material-icons-outlined text-sm">${categoryIcon}</span>
-              </div>
-              <div class="ml-3">
-                <div class="text-sm font-medium text-slate-900">${params.value}</div>
-              </div>
-            </div>
-          `;
-        },
+        width: 220,
+        cellRenderer: CategoryCellRendererComponent,
         sortable: false
       },
       {
@@ -167,14 +156,14 @@ export class TransactionsList implements OnInit {
       {
         headerName: '',
         field: 'actions',
-        width: 80,
+        width: 120,
         sortable: false,
-        cellRenderer: (params: any) => {
-          return `
-            <button class="edit-btn text-slate-400 hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity" data-action="edit">
-              <span class="material-icons-outlined text-lg">edit</span>
-            </button>
-          `;
+        cellRenderer: ActionsCellRendererComponent,
+        cellRendererParams: {
+          callbacks: {
+            onEdit: (data: any) => this.openEditDialog(data),
+            onDelete: (data: any) => this.deleteTransaction(data)
+          }
         },
         cellClass: 'ag-cell-actions'
       }
@@ -183,27 +172,6 @@ export class TransactionsList implements OnInit {
 
   onGridReady(params: GridReadyEvent): void {
     this.gridApi = params.api;
-  }
-
-  onCellClicked(event: any): void {
-    if (event.event.target.dataset.action === 'edit') {
-      this.openEditDialog(event.data);
-    }
-  }
-
-  getCategoryIconColor(color: string): string {
-    const colorMap: Record<string, string> = {
-      'red': 'bg-red-100 text-red-600',
-      'blue': 'bg-blue-100 text-blue-600',
-      'green': 'bg-green-100 text-green-600',
-      'yellow': 'bg-yellow-100 text-yellow-600',
-      'purple': 'bg-purple-100 text-purple-600',
-      'orange': 'bg-orange-100 text-orange-600',
-      'pink': 'bg-pink-100 text-pink-600',
-      'cyan': 'bg-cyan-100 text-cyan-600',
-      'gray': 'bg-gray-100 text-gray-600'
-    };
-    return colorMap[color] || 'bg-gray-100 text-gray-600';
   }
 
   initForm(): void {
