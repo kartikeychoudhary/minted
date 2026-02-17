@@ -15,6 +15,57 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "transactions")
+@NamedQueries({
+    @NamedQuery(
+        name = "Transaction.findByUserIdAndDateRangeOrderByDateDesc",
+        query = "SELECT t FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "ORDER BY t.transactionDate DESC, t.createdAt DESC"
+    ),
+    @NamedQuery(
+        name = "Transaction.sumAmountByUserIdAndTypeAndDateBetween",
+        query = "SELECT SUM(t.amount) FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate"
+    ),
+    @NamedQuery(
+        name = "Transaction.findByFilters",
+        query = "SELECT t FROM Transaction t WHERE t.user.id = :userId " +
+                "AND (:accountId IS NULL OR t.account.id = :accountId) " +
+                "AND (:categoryId IS NULL OR t.category.id = :categoryId) " +
+                "AND (:type IS NULL OR t.type = :type) " +
+                "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "ORDER BY t.transactionDate DESC"
+    ),
+    @NamedQuery(
+        name = "Transaction.countByUserIdAndDateBetween",
+        query = "SELECT COUNT(t) FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.transactionDate BETWEEN :startDate AND :endDate"
+    ),
+    @NamedQuery(
+        name = "Transaction.sumAmountGroupedByCategory",
+        query = "SELECT t.category.id, t.category.name, SUM(t.amount), COUNT(t), t.category.icon, t.category.color " +
+                "FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "GROUP BY t.category.id, t.category.name, t.category.icon, t.category.color " +
+                "ORDER BY SUM(t.amount) DESC"
+    ),
+    @NamedQuery(
+        name = "Transaction.sumAmountGroupedByMonth",
+        query = "SELECT YEAR(t.transactionDate), MONTH(t.transactionDate), SUM(t.amount) " +
+                "FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate) " +
+                "ORDER BY YEAR(t.transactionDate), MONTH(t.transactionDate)"
+    ),
+    @NamedQuery(
+        name = "Transaction.sumAmountGroupedByAccount",
+        query = "SELECT t.account.id, t.account.name, SUM(t.amount) " +
+                "FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "GROUP BY t.account.id, t.account.name " +
+                "ORDER BY SUM(t.amount) DESC"
+    )
+})
 @Getter
 @Setter
 @NoArgsConstructor

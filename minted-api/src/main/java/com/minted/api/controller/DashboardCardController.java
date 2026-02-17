@@ -1,18 +1,22 @@
 package com.minted.api.controller;
 
+import com.minted.api.dto.ChartDataResponse;
 import com.minted.api.dto.DashboardCardRequest;
 import com.minted.api.dto.DashboardCardResponse;
 import com.minted.api.entity.User;
 import com.minted.api.exception.ResourceNotFoundException;
 import com.minted.api.repository.UserRepository;
+import com.minted.api.service.AnalyticsService;
 import com.minted.api.service.DashboardCardService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +26,7 @@ import java.util.Map;
 public class DashboardCardController {
 
     private final DashboardCardService cardService;
+    private final AnalyticsService analyticsService;
     private final UserRepository userRepository;
 
     @GetMapping
@@ -54,6 +59,21 @@ public class DashboardCardController {
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", card
+        ));
+    }
+
+    @GetMapping("/{id}/data")
+    public ResponseEntity<Map<String, Object>> getCardData(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        ChartDataResponse data = analyticsService.getCardData(userId, id, startDate, endDate);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", data
         ));
     }
 
@@ -132,3 +152,4 @@ public class DashboardCardController {
         return user.getId();
     }
 }
+

@@ -26,6 +26,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
 import { TextareaModule } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ChartModule } from 'primeng/chart';
+import { SkeletonModule } from 'primeng/skeleton';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -50,7 +52,9 @@ const PRIMENG_MODULES = [
   ConfirmDialogModule,
   TooltipModule,
   TextareaModule,
-  ToggleSwitchModule
+  ToggleSwitchModule,
+  ChartModule,
+  SkeletonModule
 ];
 
 @NgModule({
