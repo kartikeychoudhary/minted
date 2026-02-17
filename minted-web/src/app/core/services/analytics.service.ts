@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { AnalyticsSummary, CategoryWise, TrendData } from '../models/dashboard.model';
+import { AnalyticsSummary, CategoryWise, TrendData, SpendingActivity, TotalBalance } from '../models/dashboard.model';
 
 @Injectable({
     providedIn: 'root'
@@ -36,6 +36,20 @@ export class AnalyticsService {
         const params = new HttpParams().set('months', months.toString());
 
         return this.http.get<{ success: boolean; data: TrendData[] }>(`${this.apiUrl}/trend`, { params })
+            .pipe(map(response => response.data));
+    }
+
+    getSpendingActivity(startDate: string, endDate: string): Observable<SpendingActivity[]> {
+        const params = new HttpParams()
+            .set('startDate', startDate)
+            .set('endDate', endDate);
+
+        return this.http.get<{ success: boolean; data: SpendingActivity[] }>(`${this.apiUrl}/spending-activity`, { params })
+            .pipe(map(response => response.data));
+    }
+
+    getTotalBalance(): Observable<TotalBalance> {
+        return this.http.get<{ success: boolean; data: TotalBalance }>(`${this.apiUrl}/total-balance`)
             .pipe(map(response => response.data));
     }
 }

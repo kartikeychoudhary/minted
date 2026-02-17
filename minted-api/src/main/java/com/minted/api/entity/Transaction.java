@@ -64,6 +64,15 @@ import java.time.LocalDateTime;
                 "AND t.transactionDate BETWEEN :startDate AND :endDate " +
                 "GROUP BY t.account.id, t.account.name " +
                 "ORDER BY SUM(t.amount) DESC"
+    ),
+    @NamedQuery(
+        name = "Transaction.sumExpenseGroupedByDate",
+        query = "SELECT t.transactionDate, SUM(t.amount) " +
+                "FROM Transaction t WHERE t.user.id = :userId " +
+                "AND t.type = com.minted.api.enums.TransactionType.EXPENSE " +
+                "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "GROUP BY t.transactionDate " +
+                "ORDER BY t.transactionDate ASC"
     )
 })
 @Getter

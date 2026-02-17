@@ -1,10 +1,12 @@
 package com.minted.api.service.impl;
 
 import com.minted.api.dto.*;
+import com.minted.api.entity.Account;
 import com.minted.api.entity.DashboardCard;
 import com.minted.api.entity.Transaction;
 import com.minted.api.enums.TransactionType;
 import com.minted.api.exception.ResourceNotFoundException;
+import com.minted.api.repository.AccountRepository;
 import com.minted.api.repository.DashboardCardRepository;
 import com.minted.api.repository.TransactionRepository;
 import com.minted.api.service.AnalyticsService;
@@ -17,6 +19,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     private final TransactionRepository transactionRepository;
     private final DashboardCardRepository dashboardCardRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -84,7 +88,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<Object[]> expenseResults = transactionRepository.sumAmountGroupedByMonth(
                 userId, TransactionType.EXPENSE, startDate, endDate);
 
-        // Build maps: "2026-02" -> BigDecimal
         Map<String, BigDecimal> incomeMap = new HashMap<>();
         for (Object[] r : incomeResults) {
             String monthKey = String.format("%d-%02d", ((Number) r[0]).intValue(), ((Number) r[1]).intValue());
@@ -97,7 +100,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             expenseMap.put(monthKey, (BigDecimal) r[2]);
         }
 
-        // Build response for each month in range
         List<TrendResponse> trend = new ArrayList<>();
         YearMonth current = YearMonth.from(startDate);
         YearMonth end = YearMonth.from(endDate);
@@ -123,13 +125,82 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         String xAxis = card.getXAxisMeasure();
         String yAxis = card.getYAxisMeasure();
 
-        // Route to appropriate data generation based on xAxis
         return switch (xAxis) {
             case "category" -> buildCategoryChartData(userId, startDate, endDate, yAxis);
             case "month" -> buildMonthlyChartData(userId, startDate, endDate, yAxis);
             case "account" -> buildAccountChartData(userId, startDate, endDate, yAxis);
             default -> buildMonthlyChartData(userId, startDate, endDate, yAxis);
         };
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SpendingActivityResponse> getSpendingActivity(Long userId, LocalDate startDate, LocalDate endDate) {
+        List<Object[]> results = transactionRepository.sumExpenseGroupedByDate(userId, startDate, endDate);
+
+        Map<LocalDate, BigDecimal> dailyMap = new LinkedHashMap<>();
+        for (Object[] r : results) {
+            LocalDate date = (LocalDate) r[0];
+            BigDecimal amount = (BigDecimal) r[1];
+            dailyMap.put(date, amount);
+        }
+
+        List<SpendingActivityResponse> activity = new ArrayList<>();
+        LocalDate current = startDate;
+        while (!current.isAfter(endDate)) {
+            String dayLabel = current.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            BigDecimal amount = dailyMap.getOrDefault(current, BigDecimal.ZERO);
+            activity.add(new SpendingActivityResponse(current.toString(), dayLabel, amount));
+            current = current.plusDays(1);
+        }
+
+        return activity;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TotalBalanceResponse getTotalBalance(Long userId) {
+        List<Account> activeAccounts = accountRepository.findByUserIdAndIsActiveTrue(userId);
+        BigDecimal totalBalance = activeAccounts.stream()
+                .map(Account::getBalance)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        LocalDate now = LocalDate.now();
+        LocalDate currentMonthStart = now.withDayOfMonth(1);
+        LocalDate currentMonthEnd = now;
+        LocalDate prevMonthStart = currentMonthStart.minusMonths(1);
+        LocalDate prevMonthEnd = currentMonthStart.minusDays(1);
+
+        BigDecimal currentIncome = Optional.ofNullable(
+                transactionRepository.sumAmountByUserIdAndTypeAndDateBetween(userId, TransactionType.INCOME, currentMonthStart, currentMonthEnd)
+        ).orElse(BigDecimal.ZERO);
+        BigDecimal prevIncome = Optional.ofNullable(
+                transactionRepository.sumAmountByUserIdAndTypeAndDateBetween(userId, TransactionType.INCOME, prevMonthStart, prevMonthEnd)
+        ).orElse(BigDecimal.ZERO);
+
+        BigDecimal currentExpense = Optional.ofNullable(
+                transactionRepository.sumAmountByUserIdAndTypeAndDateBetween(userId, TransactionType.EXPENSE, currentMonthStart, currentMonthEnd)
+        ).orElse(BigDecimal.ZERO);
+        BigDecimal prevExpense = Optional.ofNullable(
+                transactionRepository.sumAmountByUserIdAndTypeAndDateBetween(userId, TransactionType.EXPENSE, prevMonthStart, prevMonthEnd)
+        ).orElse(BigDecimal.ZERO);
+
+        BigDecimal previousMonthBalance = totalBalance;
+
+        BigDecimal incomeChangePercent = computeChangePercent(currentIncome, prevIncome);
+        BigDecimal expenseChangePercent = computeChangePercent(currentExpense, prevExpense);
+
+        return new TotalBalanceResponse(totalBalance, previousMonthBalance, incomeChangePercent, expenseChangePercent);
+    }
+
+    private BigDecimal computeChangePercent(BigDecimal current, BigDecimal previous) {
+        if (previous.compareTo(BigDecimal.ZERO) == 0) {
+            return current.compareTo(BigDecimal.ZERO) > 0 ? BigDecimal.valueOf(100) : BigDecimal.ZERO;
+        }
+        return current.subtract(previous)
+                .multiply(BigDecimal.valueOf(100))
+                .divide(previous, 1, RoundingMode.HALF_UP);
     }
 
     private ChartDataResponse buildCategoryChartData(Long userId, LocalDate startDate, LocalDate endDate, String yAxis) {
@@ -141,7 +212,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<String> colors = new ArrayList<>();
 
         for (Object[] r : results) {
-            labels.add((String) r[1]); // categoryName
+            labels.add((String) r[1]);
             BigDecimal amount = (BigDecimal) r[2];
             Long count = (Long) r[3];
             String color = (String) r[5];
@@ -161,7 +232,6 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         List<Object[]> expenseResults = transactionRepository.sumAmountGroupedByMonth(
                 userId, TransactionType.EXPENSE, startDate, endDate);
 
-        // Build month range
         List<String> labels = new ArrayList<>();
         Map<String, BigDecimal> incomeMap = new HashMap<>();
         Map<String, BigDecimal> expenseMap = new HashMap<>();
@@ -206,7 +276,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
         int i = 0;
         for (Object[] r : results) {
-            labels.add((String) r[1]); // accountName
+            labels.add((String) r[1]);
             data.add((BigDecimal) r[2]);
             colors.add(palette[i % palette.length]);
             i++;

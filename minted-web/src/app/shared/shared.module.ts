@@ -28,6 +28,10 @@ import { TextareaModule } from 'primeng/textarea';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ChartModule } from 'primeng/chart';
 import { SkeletonModule } from 'primeng/skeleton';
+import { AccordionModule } from 'primeng/accordion';
+import { BadgeModule } from 'primeng/badge';
+import { TagModule } from 'primeng/tag';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -54,7 +58,11 @@ const PRIMENG_MODULES = [
   TextareaModule,
   ToggleSwitchModule,
   ChartModule,
-  SkeletonModule
+  SkeletonModule,
+  AccordionModule,
+  BadgeModule,
+  TagModule,
+  ProgressBarModule
 ];
 
 @NgModule({

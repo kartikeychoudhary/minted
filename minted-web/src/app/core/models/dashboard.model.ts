@@ -55,3 +55,16 @@ export interface BudgetSummary {
   remainingAmount: number;
   utilizationPercent: number;
 }
+
+export interface SpendingActivity {
+  date: string;
+  dayLabel: string;
+  amount: number;
+}
+
+export interface TotalBalance {
+  totalBalance: number;
+  previousMonthBalance: number;
+  incomeChangePercent: number;
+  expenseChangePercent: number;
+}

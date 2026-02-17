@@ -24,6 +24,10 @@ const routes: Routes = [
       {
         path: 'recurring',
         loadChildren: () => import('./modules/recurring/recurring-module').then(m => m.RecurringModule)
+      },
+      {
+        path: 'analytics',
+        loadChildren: () => import('./modules/analytics/analytics-module').then(m => m.AnalyticsModule)
       }
     ]
   },

@@ -3,6 +3,8 @@ package com.minted.api.controller;
 import com.minted.api.dto.AnalyticsSummaryResponse;
 import com.minted.api.dto.CategoryWiseResponse;
 import com.minted.api.dto.ChartDataResponse;
+import com.minted.api.dto.SpendingActivityResponse;
+import com.minted.api.dto.TotalBalanceResponse;
 import com.minted.api.dto.TrendResponse;
 import com.minted.api.entity.User;
 import com.minted.api.enums.TransactionType;
@@ -64,6 +66,30 @@ public class AnalyticsController {
     ) {
         Long userId = getUserId(authentication);
         List<TrendResponse> data = analyticsService.getTrend(userId, months);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", data
+        ));
+    }
+
+    @GetMapping("/spending-activity")
+    public ResponseEntity<Map<String, Object>> getSpendingActivity(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        List<SpendingActivityResponse> data = analyticsService.getSpendingActivity(userId, startDate, endDate);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", data
+        ));
+    }
+
+    @GetMapping("/total-balance")
+    public ResponseEntity<Map<String, Object>> getTotalBalance(Authentication authentication) {
+        Long userId = getUserId(authentication);
+        TotalBalanceResponse data = analyticsService.getTotalBalance(userId);
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", data
