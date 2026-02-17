@@ -50,6 +50,7 @@ export class TransactionsList implements OnInit {
     animateRows: true,
     rowHeight: 60,
     headerHeight: 48,
+    overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No transactions found. Add a transaction to get started.</span>',
   };
   rowData: any[] = [];
 
@@ -357,6 +358,9 @@ export class TransactionsList implements OnInit {
   onDateFilterChange(filter: DateFilterOption): void {
     this.selectedDateFilter = filter;
     this.showCustomDatePickers = filter === DateFilterOption.CUSTOM;
+
+    // Trigger change detection to show/hide custom date pickers immediately
+    this.cdr.detectChanges();
 
     // Only load transactions if not custom range (wait for user to select dates)
     if (filter !== DateFilterOption.CUSTOM) {
