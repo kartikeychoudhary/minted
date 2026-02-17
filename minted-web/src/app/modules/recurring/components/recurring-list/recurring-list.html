@@ -1,0 +1,214 @@
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>
+
+<div class="recurring-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="header-left">
+            <h1 class="page-title">Recurring Transactions</h1>
+            <p class="page-subtitle">Automate your finances by scheduling recurring income and expenses.</p>
+        </div>
+    </div>
+
+    <!-- New Recurring Transaction Form -->
+    <section class="form-card">
+        <div class="form-card-header">
+            <h3 class="form-card-title">
+                <span class="material-icons form-icon">add_circle</span>
+                {{ editing ? 'Edit Recurring Transaction' : 'New Recurring Transaction' }}
+            </h3>
+            <span class="step-badge">{{ editing ? 'Editing' : 'Step 1: Basic Info' }}</span>
+        </div>
+        <div class="form-card-body">
+            <form class="form-grid" (ngSubmit)="onSubmit()">
+                <!-- Row 1: Name, Amount, Type -->
+                <div class="field col-2">
+                    <label class="field-label">Transaction Name</label>
+                    <input pInputText [(ngModel)]="formData.name" name="name"
+                        placeholder="e.g. Netflix Subscription, Apartment Rent" />
+                </div>
+                <div class="field col-1">
+                    <label class="field-label">Amount</label>
+                    <p-inputNumber [(ngModel)]="formData.amount" name="amount" mode="currency" currency="INR"
+                        locale="en-IN" [minFractionDigits]="2" placeholder="0.00">
+                    </p-inputNumber>
+                </div>
+                <div class="field col-1">
+                    <label class="field-label">Type</label>
+                    <div class="type-toggle">
+                        <button type="button" class="type-btn" [class.active-expense]="selectedType === 'EXPENSE'"
+                            (click)="selectType('EXPENSE')">EXPENSE</button>
+                        <button type="button" class="type-btn" [class.active-income]="selectedType === 'INCOME'"
+                            (click)="selectType('INCOME')">INCOME</button>
+                    </div>
+                </div>
+
+                <!-- Row 2: Category, Account, Frequency, Day -->
+                <div class="field col-1">
+                    <label class="field-label">Category</label>
+                    <p-select [options]="categories" [(ngModel)]="formData.categoryId" name="categoryId"
+                        optionLabel="name" optionValue="id" placeholder="Select Category" [filter]="true"
+                        filterBy="name" styleClass="w-full">
+                    </p-select>
+                </div>
+                <div class="field col-1">
+                    <label class="field-label">Account</label>
+                    <p-select [options]="accounts" [(ngModel)]="formData.accountId" name="accountId" optionLabel="name"
+                        optionValue="id" placeholder="Select Account" styleClass="w-full">
+                    </p-select>
+                </div>
+                <div class="field col-1">
+                    <label class="field-label">Frequency</label>
+                    <div class="frequency-display">Monthly</div>
+                </div>
+                <div class="field col-1">
+                    <label class="field-label">Day of Month</label>
+                    <p-inputNumber [(ngModel)]="formData.dayOfMonth" name="dayOfMonth" [min]="1" [max]="31"
+                        [showButtons]="true">
+                    </p-inputNumber>
+                </div>
+
+                <!-- Row 3: Start Date, End Date, Actions -->
+                <div class="field col-1">
+                    <label class="field-label">Start Date</label>
+                    <p-datePicker [(ngModel)]="formData.startDate" name="startDate" dateFormat="yy-mm-dd"
+                        [showIcon]="true" appendTo="body" styleClass="w-full">
+                    </p-datePicker>
+                </div>
+                <div class="field col-1">
+                    <label class="field-label">End Date (Optional)</label>
+                    <p-datePicker [(ngModel)]="formData.endDate" name="endDate" dateFormat="yy-mm-dd" [showIcon]="true"
+                        appendTo="body" styleClass="w-full">
+                    </p-datePicker>
+                </div>
+                <div class="field col-2 form-actions">
+                    <button *ngIf="editing" type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+                    <button type="submit" class="submit-btn" [disabled]="submitting">
+                        {{ editing ? 'Update Schedule' : 'Create Schedule' }}
+                        <span class="material-icons btn-icon">arrow_forward</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Active Schedules Table -->
+    <section class="table-card">
+        <div class="table-header">
+            <h3 class="table-title">Active Schedules</h3>
+            <div class="search-wrapper">
+                <span class="material-icons search-icon">search</span>
+                <input class="search-input" placeholder="Filter transactions..." [(ngModel)]="searchQuery"
+                    (input)="onSearch()" />
+            </div>
+        </div>
+
+        <div *ngIf="loading" class="loading-wrapper">
+            <p-skeleton *ngFor="let i of [1,2,3,4]" width="100%" height="56px" styleClass="mb-2"></p-skeleton>
+        </div>
+
+        <p-table *ngIf="!loading" [value]="filteredTransactions" [rows]="10" [paginator]="true"
+            [rowsPerPageOptions]="[5, 10, 20]" styleClass="p-datatable-sm" [showCurrentPageReport]="true"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} schedules">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Transaction Name</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th class="text-center">Next Date</th>
+                    <th class="text-right">Actions</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-tx>
+                <tr [class.paused-row]="tx.status === 'PAUSED'">
+                    <td>
+                        <div class="tx-name-cell">
+                            <div class="tx-icon" [style.background]="tx.type === 'INCOME' ? '#dcfce7' : '#fee2e2'">
+                                <span class="material-icons"
+                                    [style.color]="tx.type === 'INCOME' ? '#16a34a' : '#dc2626'">
+                                    {{ tx.type === 'INCOME' ? 'payments' : 'receipt_long' }}
+                                </span>
+                            </div>
+                            <div>
+                                <span class="tx-name">
+                                    {{ tx.name }}
+                                    <span *ngIf="tx.status === 'PAUSED'" class="paused-badge">PAUSED</span>
+                                </span>
+                                <span class="tx-account">{{ tx.accountName }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="category-badge">{{ tx.categoryName }}</span>
+                    </td>
+                    <td [class.amount-income]="tx.type === 'INCOME'" [class.amount-expense]="tx.type === 'EXPENSE'">
+                        <span class="amount-value">
+                            {{ tx.type === 'INCOME' ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <span class="next-date">{{ formatDate(tx.nextExecutionDate) }}</span>
+                        <span class="days-label" [class.paused-text]="tx.status === 'PAUSED'">
+                            {{ tx.status === 'PAUSED' ? 'Paused' : getDaysUntil(tx.nextExecutionDate) }}
+                        </span>
+                    </td>
+                    <td class="text-right">
+                        <div class="action-btns">
+                            <button class="action-btn edit-btn" (click)="editTransaction(tx)" pTooltip="Edit">
+                                <span class="material-icons">edit</span>
+                            </button>
+                            <button class="action-btn toggle-btn" (click)="toggleStatus(tx)"
+                                [pTooltip]="tx.status === 'ACTIVE' ? 'Pause' : 'Resume'">
+                                <span class="material-icons">{{ tx.status === 'ACTIVE' ? 'pause_circle' : 'play_circle'
+                                    }}</span>
+                            </button>
+                            <button class="action-btn delete-btn" (click)="confirmDelete(tx)" pTooltip="Delete">
+                                <span class="material-icons">delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+                <tr>
+                    <td colspan="5" class="empty-message">
+                        <span class="material-icons empty-icon">sync_disabled</span>
+                        <p>No recurring transactions found</p>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </section>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid" *ngIf="summary">
+        <div class="summary-card expense-card">
+            <div class="summary-icon-wrapper expense-icon-bg">
+                <span class="material-icons">trending_down</span>
+            </div>
+            <div>
+                <span class="summary-label">Est. Monthly Expenses</span>
+                <span class="summary-value">{{ formatCurrency(summary.estimatedMonthlyExpenses) }}</span>
+            </div>
+        </div>
+        <div class="summary-card income-card">
+            <div class="summary-icon-wrapper income-icon-bg">
+                <span class="material-icons">trending_up</span>
+            </div>
+            <div>
+                <span class="summary-label">Est. Monthly Income</span>
+                <span class="summary-value">{{ formatCurrency(summary.estimatedMonthlyIncome) }}</span>
+            </div>
+        </div>
+        <div class="summary-card flux-card">
+            <div class="summary-icon-wrapper flux-icon-bg">
+                <span class="material-icons">account_balance</span>
+            </div>
+            <div>
+                <span class="summary-label">Scheduled Net Flux</span>
+                <span class="summary-value">{{ summary.scheduledNetFlux >= 0 ? '+' : '' }}{{
+                    formatCurrency(summary.scheduledNetFlux) }}</span>
+            </div>
+        </div>
+    </div>
+</div>

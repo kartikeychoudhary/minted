@@ -20,6 +20,10 @@ const routes: Routes = [
       {
         path: 'transactions',
         loadChildren: () => import('./modules/transactions/transactions-module').then(m => m.TransactionsModule)
+      },
+      {
+        path: 'recurring',
+        loadChildren: () => import('./modules/recurring/recurring-module').then(m => m.RecurringModule)
       }
     ]
   },

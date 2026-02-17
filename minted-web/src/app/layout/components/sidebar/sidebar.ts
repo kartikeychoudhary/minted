@@ -25,6 +25,7 @@ export class Sidebar {
   navigationItems: NavigationItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/' },
     { label: 'Transactions', icon: 'receipt_long', route: '/transactions' },
+    { label: 'Recurring', icon: 'sync_alt', route: '/recurring' },
     { label: 'Analytics', icon: 'pie_chart', route: '/analytics' },
     { label: 'Settings', icon: 'settings', route: '/settings', section: 'Management' },
     { label: 'Help Center', icon: 'help', route: '/help' }
@@ -33,7 +34,7 @@ export class Sidebar {
   constructor(
     public router: Router,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUserInfo();

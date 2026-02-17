@@ -1,0 +1,25 @@
+-- Create recurring_transactions table
+CREATE TABLE recurring_transactions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    type ENUM('INCOME', 'EXPENSE') NOT NULL,
+    category_id BIGINT NOT NULL,
+    account_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    frequency ENUM('MONTHLY') NOT NULL DEFAULT 'MONTHLY',
+    day_of_month INT NOT NULL DEFAULT 1,
+    start_date DATE NOT NULL,
+    end_date DATE,
+    status ENUM('ACTIVE', 'PAUSED') NOT NULL DEFAULT 'ACTIVE',
+    next_execution_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES transaction_categories(id) ON DELETE RESTRICT,
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE RESTRICT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_recurring_user (user_id),
+    INDEX idx_recurring_status (status),
+    INDEX idx_recurring_next_exec (next_execution_date),
+    INDEX idx_recurring_user_status (user_id, status)
+);
