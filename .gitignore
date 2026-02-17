@@ -1,0 +1,60 @@
+# ========================================
+# Minted Project - Root .gitignore
+# ========================================
+
+# Documentation files (except README.md)
+*.md
+!README.md
+
+# Always include .gitignore files in subdirectories
+!minted-api/.gitignore
+!minted-web/.gitignore
+
+# Screenshots and images
+screen*.png
+
+# Gradle distribution folders
+gradle-*/
+
+# Sensitive configuration files
+service-account.json
+.env
+.env.local
+.env.*.local
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+
+# Claude Code project files
+.claude/
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.#*

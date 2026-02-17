@@ -1,0 +1,41 @@
+<div class="min-h-screen bg-gray-50">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center">
+        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
+             style="background-color: rgba(196, 136, 33, 0.1); color: #c48821;">
+          <i class="pi pi-dollar" style="font-size: 1.5rem;"></i>
+        </div>
+        <h1 class="text-2xl font-bold" style="color: #1e293b;">Minted</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="text-sm" style="color: #857f79;">Welcome, {{ currentUser?.displayName || currentUser?.username }}</span>
+        <p-button
+          label="Logout"
+          icon="pi pi-sign-out"
+          (onClick)="logout()"
+          styleClass="p-button-outlined"
+          size="small"
+        ></p-button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-lg shadow-sm border p-8 text-center">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6"
+           style="background-color: rgba(196, 136, 33, 0.1); color: #c48821;">
+        <i class="pi pi-chart-line" style="font-size: 3rem;"></i>
+      </div>
+      <h2 class="text-3xl font-bold mb-4" style="color: #1e293b;">Welcome to Minted</h2>
+      <p class="text-lg mb-6" style="color: #857f79;">
+        Your personal budget and expense management dashboard
+      </p>
+      <p class="text-sm" style="color: #857f79;">
+        Dashboard content coming soon...
+      </p>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,117 @@
+<!-- Background with decorative elements -->
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style="background-color: #f8f7f6;">
+  <!-- Decorative Background Blurs -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-3xl" style="background-color: rgba(196, 136, 33, 0.05);"></div>
+    <div class="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full blur-3xl" style="background-color: rgba(196, 136, 33, 0.05);"></div>
+  </div>
+
+  <!-- Main Login Card -->
+  <main class="relative z-10 w-full max-w-md bg-white shadow-lg border overflow-hidden login-card">
+    <!-- Header Section with Logo -->
+    <div class="pt-10 pb-6 px-8 text-center">
+      <!-- Gold Coin Icon -->
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 shadow-sm logo-icon">
+        <i class="pi pi-dollar" style="font-size: 1.875rem;"></i>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight" style="color: #1e293b;">Minted</h1>
+      <p class="mt-2 text-sm" style="color: #857f79;">Secure access to your wealth portfolio</p>
+    </div>
+
+    <!-- Form Section -->
+    <form *ngIf="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-8 pb-10 space-y-6">
+      <!-- Username Input with Icon -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-user" />
+          <input
+            pInputText
+            id="username"
+            type="text"
+            formControlName="username"
+            placeholder="Username or Email"
+            class="w-full"
+            [class.p-invalid]="f['username']?.invalid && f['username']?.touched"
+          />
+        </p-iconfield>
+        <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
+          Username is required
+        </small>
+      </div>
+
+      <!-- Password Input with Icon and Toggle -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-lock" />
+          <p-password
+            formControlName="password"
+            [toggleMask]="true"
+            [feedback]="false"
+            placeholder="Password"
+            inputStyleClass="w-full"
+            styleClass="w-full"
+          />
+        </p-iconfield>
+        <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
+          Password is required
+        </small>
+      </div>
+
+      <!-- Forgot Password Link -->
+      <div class="flex items-center justify-end">
+        <a href="#" class="text-sm font-medium forgot-link">
+          Forgot Password?
+        </a>
+      </div>
+
+      <!-- Submit Button -->
+      <p-button
+        type="submit"
+        label="Secure Login"
+        icon="pi pi-lock"
+        [loading]="loading"
+        [disabled]="!loginForm || loginForm.invalid || loading"
+        styleClass="w-full"
+      ></p-button>
+
+      <!-- Divider -->
+      <div class="relative flex py-2 items-center">
+        <div class="flex-grow border-t" style="border-color: #e5e7eb;"></div>
+        <span class="flex-shrink-0 mx-4 text-xs font-medium uppercase tracking-wider" style="color: #857f79;">Or continue with</span>
+        <div class="flex-grow border-t" style="border-color: #e5e7eb;"></div>
+      </div>
+
+      <!-- Social Login Buttons -->
+      <div class="grid grid-cols-2 gap-3">
+        <button type="button" class="social-button">
+          <i class="pi pi-google" style="font-size: 1.25rem; color: #757575;"></i>
+          <span class="ml-2 text-sm font-medium" style="color: #4b5563;">Google</span>
+        </button>
+        <button type="button" class="social-button">
+          <i class="pi pi-facebook" style="font-size: 1.25rem; color: #1877F2;"></i>
+          <span class="ml-2 text-sm font-medium" style="color: #4b5563;">Facebook</span>
+        </button>
+      </div>
+    </form>
+
+    <!-- Footer Area -->
+    <div class="py-4 px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;">
+      <p class="text-xs" style="color: #857f79;">
+        Don't have an account?
+        <a href="#" class="font-semibold ml-1 create-link">
+          Create Account
+        </a>
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer Copyright -->
+  <footer class="fixed bottom-4 text-center w-full pointer-events-none">
+    <p class="text-[10px]" style="color: rgba(133, 127, 121, 0.5);">
+      © 2026 Minted Financial Services. Protected by 256-bit encryption.
+    </p>
+  </footer>
+
+  <!-- Toast for error messages -->
+  <p-toast position="top-right"></p-toast>
+</div>

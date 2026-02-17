@@ -1,0 +1,41 @@
+::ng-deep {
+  // Fix dialog content overflow for dropdowns
+  .p-dialog .p-dialog-content {
+    overflow: visible !important;
+  }
+
+  // Ensure select dropdown appears above dialog
+  .p-select-overlay {
+    z-index: 1101 !important;
+  }
+
+  // Custom styling for icon display in table
+  .p-datatable .p-datatable-tbody > tr > td {
+    vertical-align: middle;
+  }
+
+  // Fix pagination dropdown positioning
+  .p-datatable .p-datatable-footer {
+    overflow: visible !important;
+  }
+
+  .p-datatable .p-paginator {
+    overflow: visible !important;
+  }
+
+  // Ensure paginator dropdowns appear above content
+  .p-paginator .p-select-overlay {
+    z-index: 1100 !important;
+  }
+
+  // Make table wrapper handle overflow properly
+  .p-datatable-wrapper {
+    overflow: visible !important;
+  }
+
+  // Override table container overflow
+  .p-datatable .p-datatable-table-container {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+}

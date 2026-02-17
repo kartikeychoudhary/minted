@@ -1,0 +1,229 @@
+<div class="space-y-6" style="overflow: visible;">
+  <!-- Section Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-lg font-medium leading-6" style="color: #1e293b;">Linked Financial Accounts</h2>
+      <p class="mt-1 text-sm" style="color: #64748b;">Manage and monitor your connected bank accounts and financial institutions.</p>
+    </div>
+    <button
+      pButton
+      type="button"
+      label="Add Account"
+      icon="pi pi-plus"
+      class="p-button-raised"
+      (click)="showAddDialog()"
+      style="background-color: #c48821; border-color: #c48821;">
+    </button>
+  </div>
+
+  <!-- Table Card -->
+  <div class="rounded-xl border shadow-sm" style="border-color: #e5e7eb; background-color: white; overflow: visible;">
+    <p-table
+      [value]="accounts"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} results"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      styleClass="p-datatable-sm"
+      [style]="{'overflow': 'visible'}">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Bank Name</th>
+          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Account Type</th>
+          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Balance</th>
+          <th style="width: 180px; text-align: right; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-account>
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td>
+            <div class="flex items-center gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
+                <i [class]="getIconClass(account.icon)" style="font-size: 1.25rem; color: #64748b;"></i>
+              </div>
+              <div class="text-sm font-medium" style="color: #1e293b;">{{ account.name }}</div>
+            </div>
+          </td>
+          <td>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="getAccountTypeColor(account.accountTypeName)">
+              {{ account.accountTypeName }}
+            </span>
+          </td>
+          <td>
+            <div class="text-sm font-semibold" [ngClass]="isNegativeBalance(account.balance) ? 'text-red-600' : ''" style="color: #1e293b;">
+              {{ formatCurrency(account.balance, account.currency) }}
+            </div>
+          </td>
+          <td style="text-align: right;">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              label="Edit"
+              class="p-button-text p-button-sm mr-2"
+              (click)="showEditDialog(account)"
+              pTooltip="Edit Account"
+              tooltipPosition="top"
+              style="color: #9ca3af;">
+            </button>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-link-slash"
+              label="Disconnect"
+              class="p-button-text p-button-sm p-button-danger"
+              (click)="confirmDelete(account)"
+              pTooltip="Disconnect Account"
+              tooltipPosition="top"
+              style="color: #9ca3af;">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center py-8" style="color: #64748b;">
+            No accounts found. Click "Add Account" to link one.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Info Card -->
+  <div class="border rounded-lg p-4 flex gap-3" style="background-color: #eff6ff; border-color: #bfdbfe;">
+    <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
+    <div>
+      <h4 class="text-sm font-medium" style="color: #1e3a8a;">Account Synchronization</h4>
+      <p class="text-sm mt-1" style="color: #1e40af;">Your accounts are updated every 6 hours automatically. To force a sync, you can click the refresh button in the dashboard view.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Dialog -->
+<p-dialog
+  [(visible)]="displayDialog"
+  [header]="isEditMode ? 'Edit Account' : 'Add Account'"
+  [modal]="true"
+  [style]="{width: '500px', 'max-height': '90vh'}"
+  [contentStyle]="{'overflow': 'visible'}"
+  [draggable]="false"
+  [resizable]="false">
+
+  <form *ngIf="accountForm" [formGroup]="accountForm" (ngSubmit)="saveAccount()">
+    <div class="space-y-4">
+      <!-- Name Field -->
+      <div>
+        <label for="name" class="block text-sm font-medium mb-2" style="color: #374151;">Account Name</label>
+        <input
+          pInputText
+          id="name"
+          formControlName="name"
+          placeholder="e.g., Chase Checking, Amex Credit Card"
+          class="w-full"
+          [class.p-invalid]="accountForm.get('name')?.invalid && accountForm.get('name')?.touched" />
+        <small class="p-error block mt-1" *ngIf="accountForm.get('name')?.invalid && accountForm.get('name')?.touched">
+          Account name is required
+        </small>
+      </div>
+
+      <!-- Account Type Field -->
+      <div>
+        <label for="accountType" class="block text-sm font-medium mb-2" style="color: #374151;">Account Type</label>
+        <p-select
+          formControlName="accountTypeId"
+          [options]="accountTypes"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Select an account type"
+          appendTo="body"
+          styleClass="w-full"
+          [class.p-invalid]="accountForm.get('accountTypeId')?.invalid && accountForm.get('accountTypeId')?.touched">
+        </p-select>
+        <small class="p-error block mt-1" *ngIf="accountForm.get('accountTypeId')?.invalid && accountForm.get('accountTypeId')?.touched">
+          Account type is required
+        </small>
+      </div>
+
+      <!-- Balance Field -->
+      <div>
+        <label for="balance" class="block text-sm font-medium mb-2" style="color: #374151;">Current Balance</label>
+        <p-inputnumber
+          id="balance"
+          formControlName="balance"
+          mode="currency"
+          currency="USD"
+          locale="en-US"
+          styleClass="w-full"
+          [class.p-invalid]="accountForm.get('balance')?.invalid && accountForm.get('balance')?.touched">
+        </p-inputnumber>
+        <small class="p-error block mt-1" *ngIf="accountForm.get('balance')?.invalid && accountForm.get('balance')?.touched">
+          Balance is required
+        </small>
+      </div>
+
+      <!-- Currency Field -->
+      <div>
+        <label for="currency" class="block text-sm font-medium mb-2" style="color: #374151;">Currency</label>
+        <input
+          pInputText
+          id="currency"
+          formControlName="currency"
+          placeholder="USD"
+          class="w-full"
+          maxlength="3"
+          [class.p-invalid]="accountForm.get('currency')?.invalid && accountForm.get('currency')?.touched" />
+      </div>
+
+      <!-- Icon Field -->
+      <div>
+        <label for="icon" class="block text-sm font-medium mb-2" style="color: #374151;">Icon (optional)</label>
+        <input
+          pInputText
+          id="icon"
+          formControlName="icon"
+          placeholder="e.g., bank, wallet, credit-card"
+          class="w-full"
+          maxlength="50" />
+        <small class="text-xs mt-1 block" style="color: #64748b;">Enter icon name like: bank, wallet, credit-card, dollar</small>
+      </div>
+
+      <!-- Color Field -->
+      <div>
+        <label for="color" class="block text-sm font-medium mb-2" style="color: #374151;">Color (optional)</label>
+        <input
+          pInputText
+          id="color"
+          formControlName="color"
+          placeholder="#c48821"
+          class="w-full"
+          maxlength="7" />
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-6">
+      <button
+        pButton
+        type="button"
+        label="Cancel"
+        class="p-button-text"
+        (click)="displayDialog = false">
+      </button>
+      <button
+        pButton
+        type="submit"
+        [label]="isEditMode ? 'Update' : 'Create'"
+        [disabled]="accountForm.invalid"
+        style="background-color: #c48821; border-color: #c48821;">
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

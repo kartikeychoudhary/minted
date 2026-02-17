@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS minted_db;
+CREATE DATABASE minted_db;

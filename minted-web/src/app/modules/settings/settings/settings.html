@@ -1,0 +1,71 @@
+<div class="min-h-screen" style="background-color: #f8f7f6;">
+  <!-- Header -->
+  <header class="bg-white shadow-sm border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center">
+        <button
+          (click)="goBack()"
+          class="mr-4 p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i class="pi pi-arrow-left" style="font-size: 1.25rem; color: #857f79;"></i>
+        </button>
+        <div class="flex items-center">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
+               style="background-color: rgba(196, 136, 33, 0.1); color: #c48821;">
+            <i class="pi pi-cog" style="font-size: 1.5rem;"></i>
+          </div>
+          <h1 class="text-2xl font-bold" style="color: #1e293b;">Settings</h1>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="overflow: visible;">
+    <div class="bg-white rounded-lg shadow-sm border" style="overflow: visible;">
+      <p-tabs value="0" [style]="{'overflow': 'visible'}">
+        <p-tablist [style]="{'overflow': 'visible'}">
+          <p-tab value="0">
+            <i class="pi pi-building mr-2"></i>
+            <span>Account Types</span>
+          </p-tab>
+          <p-tab value="1">
+            <i class="pi pi-wallet mr-2"></i>
+            <span>Accounts</span>
+          </p-tab>
+          <p-tab value="2">
+            <i class="pi pi-tags mr-2"></i>
+            <span>Categories</span>
+          </p-tab>
+          <p-tab value="3">
+            <i class="pi pi-chart-pie mr-2"></i>
+            <span>Budgets</span>
+          </p-tab>
+          <p-tab value="4">
+            <i class="pi pi-user mr-2"></i>
+            <span>Profile</span>
+          </p-tab>
+        </p-tablist>
+        <p-tabpanels [style]="{'overflow': 'visible'}">
+          <p-tabpanel value="0" [style]="{'overflow': 'visible'}">
+            <app-account-types></app-account-types>
+          </p-tabpanel>
+          <p-tabpanel value="1" [style]="{'overflow': 'visible'}">
+            <app-accounts></app-accounts>
+          </p-tabpanel>
+          <p-tabpanel value="2" [style]="{'overflow': 'visible'}">
+            <app-categories></app-categories>
+          </p-tabpanel>
+          <p-tabpanel value="3" [style]="{'overflow': 'visible'}">
+            <app-budgets></app-budgets>
+          </p-tabpanel>
+          <p-tabpanel value="4" [style]="{'overflow': 'visible'}">
+            <app-profile></app-profile>
+          </p-tabpanel>
+        </p-tabpanels>
+      </p-tabs>
+    </div>
+  </main>
+</div>
+
+<!-- Toast for notifications -->
+<p-toast position="top-right"></p-toast>

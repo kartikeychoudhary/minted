@@ -1,0 +1,70 @@
+::ng-deep {
+  // Fix dialog content overflow for dropdowns
+  .p-dialog .p-dialog-content {
+    overflow: visible !important;
+  }
+
+  // Ensure select dropdown appears above dialog
+  .p-select-overlay {
+    z-index: 1101 !important;
+  }
+
+  // Fix date picker overlay
+  .p-datepicker {
+    z-index: 1101 !important;
+  }
+
+  // Custom styling for table
+  .p-datatable .p-datatable-tbody > tr > td {
+    vertical-align: middle;
+  }
+
+  // Primary button color
+  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-danger) {
+    background-color: #c48821;
+    border-color: #c48821;
+
+    &:hover {
+      background-color: #a36e16;
+      border-color: #a36e16;
+    }
+  }
+
+  // Date filter button active state
+  .bg-primary-light {
+    background-color: rgba(196, 136, 33, 0.1);
+  }
+
+  // Table hover effect
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background-color: #f8fafc;
+  }
+
+  // Pagination fix
+  .p-datatable .p-datatable-footer {
+    overflow: visible !important;
+  }
+
+  .p-datatable .p-paginator {
+    overflow: visible !important;
+  }
+
+  // Ensure paginator dropdowns appear above content
+  .p-paginator .p-select-overlay {
+    z-index: 1100 !important;
+  }
+
+  // Custom scrollbar
+  .p-datatable-wrapper::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .p-datatable-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .p-datatable-wrapper::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+  }
+}

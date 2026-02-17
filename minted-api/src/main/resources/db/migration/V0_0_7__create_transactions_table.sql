@@ -1,0 +1,26 @@
+-- Create transactions table
+CREATE TABLE transactions (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    amount DECIMAL(15,2) NOT NULL,
+    type ENUM('INCOME', 'EXPENSE', 'TRANSFER') NOT NULL,
+    description VARCHAR(500),
+    notes TEXT,
+    transaction_date DATE NOT NULL,
+    account_id BIGINT NOT NULL,
+    to_account_id BIGINT,
+    category_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    is_recurring BOOLEAN DEFAULT FALSE,
+    tags VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE RESTRICT,
+    FOREIGN KEY (to_account_id) REFERENCES accounts(id) ON DELETE RESTRICT,
+    FOREIGN KEY (category_id) REFERENCES transaction_categories(id) ON DELETE RESTRICT,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_transaction_date (transaction_date),
+    INDEX idx_user_date (user_id, transaction_date),
+    INDEX idx_user_account (user_id, account_id),
+    INDEX idx_transaction_type (type),
+    INDEX idx_category_id (category_id)
+);

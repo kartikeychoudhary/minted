@@ -1,0 +1,29 @@
+<div class="h-screen flex overflow-hidden bg-background-light">
+  <!-- Sidebar -->
+  <app-sidebar (sidebarToggle)="onSidebarToggle($event)"></app-sidebar>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+    <!-- Top Header -->
+    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">{{ 'Minted' }}</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          type="button"
+          class="relative p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-full hover:bg-gray-100"
+          pTooltip="Notifications"
+          tooltipPosition="bottom">
+          <span class="material-icons">notifications</span>
+          <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <div class="flex-1 overflow-y-auto">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

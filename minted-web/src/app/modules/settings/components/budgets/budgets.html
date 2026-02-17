@@ -1,0 +1,233 @@
+<div class="space-y-6" style="overflow: visible;">
+  <!-- Section Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-lg font-medium leading-6" style="color: #1e293b;">Configure Budgets</h2>
+      <p class="mt-1 text-sm" style="color: #64748b;">Set spending targets and manage monthly budget allocations.</p>
+    </div>
+    <button
+      pButton
+      type="button"
+      label="Add Budget"
+      icon="pi pi-plus"
+      class="p-button-raised"
+      (click)="showAddDialog()"
+      style="background-color: #c48821; border-color: #c48821;">
+    </button>
+  </div>
+
+  <!-- Table Card -->
+  <div class="rounded-xl border shadow-sm" style="border-color: #e5e7eb; background-color: white; overflow: visible;">
+    <p-table
+      [value]="budgets"
+      [loading]="loading"
+      [paginator]="true"
+      [rows]="10"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} results"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      styleClass="p-datatable-sm"
+      [style]="{'overflow': 'visible'}">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width: 80px; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Category Icon</th>
+          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Budget Name</th>
+          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Description</th>
+          <th style="width: 150px; text-align: right; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-budget>
+        <tr class="hover:bg-gray-50 transition-colors">
+          <td>
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg" [ngClass]="getCategoryColor(budget.categoryName)">
+              <i [class]="getCategoryIcon(budget.categoryName)" style="font-size: 1.25rem;"></i>
+            </div>
+          </td>
+          <td>
+            <div class="text-sm font-medium" style="color: #1e293b;">{{ budget.name }}</div>
+            <div class="text-xs" style="color: #9ca3af;" *ngIf="budget.categoryName">{{ budget.categoryName }}</div>
+          </td>
+          <td>
+            <div class="text-sm" style="color: #64748b;">{{ getBudgetDescription(budget) }}</div>
+            <div class="text-xs" style="color: #9ca3af;">{{ getMonthName(budget.month) }} {{ budget.year }}</div>
+          </td>
+          <td style="text-align: right;">
+            <button
+              pButton
+              type="button"
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-text p-button-sm mr-2"
+              (click)="showEditDialog(budget)"
+              pTooltip="Edit"
+              tooltipPosition="top"
+              style="color: #9ca3af;">
+            </button>
+            <button
+              pButton
+              type="button"
+              icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-sm p-button-danger"
+              (click)="confirmDelete(budget)"
+              pTooltip="Delete"
+              tooltipPosition="top"
+              style="color: #9ca3af;">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center py-8" style="color: #64748b;">
+            No budgets found. Click "Add Budget" to create one.
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <!-- Info Card -->
+  <div class="border rounded-lg p-4 flex gap-3" style="background-color: #eff6ff; border-color: #bfdbfe;">
+    <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
+    <div>
+      <h4 class="text-sm font-medium" style="color: #1e3a8a;">Smart Budgeting Tips</h4>
+      <p class="text-sm mt-1" style="color: #1e40af;">Budget rollover is enabled by default. Any unspent funds at the end of the month will automatically carry over to the next period, helping you save for larger future purchases.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Dialog -->
+<p-dialog
+  [(visible)]="displayDialog"
+  [header]="isEditMode ? 'Edit Budget' : 'Add Budget'"
+  [modal]="true"
+  [style]="{width: '500px', 'max-height': '90vh'}"
+  [contentStyle]="{'overflow': 'visible'}"
+  [draggable]="false"
+  [resizable]="false">
+
+  <form *ngIf="budgetForm" [formGroup]="budgetForm" (ngSubmit)="saveBudget()">
+    <div class="space-y-4">
+      <!-- Name Field -->
+      <div>
+        <label for="name" class="block text-sm font-medium mb-2" style="color: #374151;">Budget Name</label>
+        <input
+          pInputText
+          id="name"
+          formControlName="name"
+          placeholder="e.g., Monthly Groceries, Entertainment"
+          class="w-full"
+          [class.p-invalid]="budgetForm.get('name')?.invalid && budgetForm.get('name')?.touched" />
+        <small class="p-error block mt-1" *ngIf="budgetForm.get('name')?.invalid && budgetForm.get('name')?.touched">
+          Budget name is required
+        </small>
+      </div>
+
+      <!-- Amount Field -->
+      <div>
+        <label for="amount" class="block text-sm font-medium mb-2" style="color: #374151;">Budget Amount</label>
+        <p-inputnumber
+          id="amount"
+          formControlName="amount"
+          mode="currency"
+          currency="USD"
+          locale="en-US"
+          styleClass="w-full"
+          [class.p-invalid]="budgetForm.get('amount')?.invalid && budgetForm.get('amount')?.touched">
+        </p-inputnumber>
+        <small class="p-error block mt-1" *ngIf="budgetForm.get('amount')?.invalid && budgetForm.get('amount')?.touched">
+          Amount must be greater than 0
+        </small>
+      </div>
+
+      <!-- Month and Year Row -->
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Month Field -->
+        <div>
+          <label for="month" class="block text-sm font-medium mb-2" style="color: #374151;">Month</label>
+          <p-select
+            formControlName="month"
+            [options]="monthOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select month"
+            appendTo="body"
+            styleClass="w-full"
+            [class.p-invalid]="budgetForm.get('month')?.invalid && budgetForm.get('month')?.touched">
+          </p-select>
+          <small class="p-error block mt-1" *ngIf="budgetForm.get('month')?.invalid && budgetForm.get('month')?.touched">
+            Month is required
+          </small>
+        </div>
+
+        <!-- Year Field -->
+        <div>
+          <label for="year" class="block text-sm font-medium mb-2" style="color: #374151;">Year</label>
+          <p-select
+            formControlName="year"
+            [options]="yearOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select year"
+            appendTo="body"
+            styleClass="w-full"
+            [class.p-invalid]="budgetForm.get('year')?.invalid && budgetForm.get('year')?.touched">
+          </p-select>
+          <small class="p-error block mt-1" *ngIf="budgetForm.get('year')?.invalid && budgetForm.get('year')?.touched">
+            Year is required
+          </small>
+        </div>
+      </div>
+
+      <!-- Category Field -->
+      <div>
+        <label for="category" class="block text-sm font-medium mb-2" style="color: #374151;">Category (Optional)</label>
+        <p-select
+          formControlName="categoryId"
+          [options]="categories"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Select a category"
+          appendTo="body"
+          styleClass="w-full"
+          [showClear]="true">
+          <ng-template let-option pTemplate="item">
+            <div class="flex items-center gap-2">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                    [ngClass]="{
+                      'bg-green-100 text-green-800': option.type === 'INCOME',
+                      'bg-red-100 text-red-800': option.type === 'EXPENSE',
+                      'bg-blue-100 text-blue-800': option.type === 'TRANSFER'
+                    }">
+                {{ option.name }}
+              </span>
+            </div>
+          </ng-template>
+        </p-select>
+        <small class="text-xs mt-1 block" style="color: #64748b;">Link this budget to a specific category for better tracking</small>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-2 mt-6">
+      <button
+        pButton
+        type="button"
+        label="Cancel"
+        class="p-button-text"
+        (click)="displayDialog = false">
+      </button>
+      <button
+        pButton
+        type="submit"
+        [label]="isEditMode ? 'Update' : 'Create'"
+        [disabled]="budgetForm.invalid"
+        style="background-color: #c48821; border-color: #c48821;">
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- Confirmation Dialog -->
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

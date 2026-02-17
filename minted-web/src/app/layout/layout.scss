@@ -1,0 +1,21 @@
+// Layout component styles
+
+// Custom scrollbar for main content
+main {
+  > div::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  > div::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  > div::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 20px;
+  }
+
+  > div::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
+  }
+}

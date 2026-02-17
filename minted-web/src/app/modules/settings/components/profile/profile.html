@@ -1,0 +1,239 @@
+<div class="space-y-10">
+  <!-- Personal Information Section -->
+  <section>
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold" style="color: #1e293b;">Personal Information</h2>
+      <p class="text-sm" style="color: #64748b;">Update your basic profile information and how we contact you.</p>
+    </div>
+
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: #e5e7eb;">
+      <form *ngIf="profileForm" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+        <div class="p-6 space-y-6">
+          <!-- Profile Photo -->
+          <div class="flex items-center gap-6">
+            <div class="relative">
+              <div class="w-20 h-20 rounded-full border-4 flex items-center justify-center" style="border-color: #f3f4f6; background-color: #c48821;">
+                <i class="pi pi-user" style="font-size: 2rem; color: white;"></i>
+              </div>
+              <button type="button" class="absolute bottom-0 right-0 p-1.5 rounded-full shadow-lg transition-colors" style="background-color: #c48821; color: white;" pTooltip="Upload Photo" tooltipPosition="top">
+                <i class="pi pi-camera" style="font-size: 0.875rem;"></i>
+              </button>
+            </div>
+            <div class="flex-1">
+              <h3 class="font-medium" style="color: #1e293b;">Profile Photo</h3>
+              <p class="text-xs mt-1" style="color: #64748b;">PNG, JPG or GIF. Max 2MB.</p>
+            </div>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Display Name -->
+            <div>
+              <label for="displayName" class="block text-sm font-medium mb-2" style="color: #374151;">Display Name</label>
+              <input
+                pInputText
+                id="displayName"
+                formControlName="displayName"
+                placeholder="Enter your name"
+                class="w-full"
+                [class.p-invalid]="profileForm.get('displayName')?.invalid && profileForm.get('displayName')?.touched" />
+              <small class="p-error block mt-1" *ngIf="profileForm.get('displayName')?.invalid && profileForm.get('displayName')?.touched">
+                Display name is required
+              </small>
+            </div>
+
+            <!-- Email -->
+            <div>
+              <label for="email" class="block text-sm font-medium mb-2" style="color: #374151;">Email Address</label>
+              <input
+                pInputText
+                id="email"
+                formControlName="email"
+                type="email"
+                placeholder="your.email@example.com"
+                class="w-full"
+                [class.p-invalid]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched" />
+              <small class="p-error block mt-1" *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+                Valid email is required
+              </small>
+            </div>
+
+            <!-- Username (Read-only) -->
+            <div>
+              <label for="username" class="block text-sm font-medium mb-2" style="color: #374151;">Username</label>
+              <input
+                pInputText
+                id="username"
+                formControlName="username"
+                class="w-full"
+                style="background-color: #f9fafb;" />
+              <small class="text-xs mt-1 block" style="color: #64748b;">Username cannot be changed</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t flex justify-end" style="background-color: #f9fafb; border-color: #e5e7eb;">
+          <button
+            pButton
+            type="submit"
+            label="Save Changes"
+            [disabled]="profileForm.invalid"
+            style="background-color: #c48821; border-color: #c48821;">
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Security Settings Section -->
+  <section>
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold" style="color: #1e293b;">Security Settings</h2>
+      <p class="text-sm" style="color: #64748b;">Manage your password and security preferences.</p>
+    </div>
+
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: #e5e7eb;">
+      <form *ngIf="passwordForm" [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
+        <div class="p-6 space-y-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Current Password -->
+            <div class="md:col-span-2">
+              <label for="currentPassword" class="block text-sm font-medium mb-2" style="color: #374151;">Current Password</label>
+              <p-password
+                id="currentPassword"
+                formControlName="currentPassword"
+                placeholder="Enter current password"
+                [toggleMask]="true"
+                [feedback]="false"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+                [class.p-invalid]="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+              </p-password>
+              <small class="p-error block mt-1" *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+                Current password is required
+              </small>
+            </div>
+
+            <!-- New Password -->
+            <div>
+              <label for="newPassword" class="block text-sm font-medium mb-2" style="color: #374151;">New Password</label>
+              <p-password
+                id="newPassword"
+                formControlName="newPassword"
+                placeholder="Min. 8 characters"
+                [toggleMask]="true"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+                [class.p-invalid]="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+              </p-password>
+              <small class="p-error block mt-1" *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                Password must be at least 8 characters
+              </small>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+              <label for="confirmPassword" class="block text-sm font-medium mb-2" style="color: #374151;">Confirm New Password</label>
+              <p-password
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                placeholder="Re-type new password"
+                [toggleMask]="true"
+                [feedback]="false"
+                styleClass="w-full"
+                inputStyleClass="w-full"
+                [class.p-invalid]="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+              </p-password>
+              <small class="p-error block mt-1" *ngIf="passwordForm.get('confirmPassword')?.errors?.['passwordMismatch'] && passwordForm.get('confirmPassword')?.touched">
+                Passwords do not match
+              </small>
+            </div>
+          </div>
+
+          <!-- Two-Factor Authentication -->
+          <div class="pt-2 border-t" style="border-color: #f3f4f6;">
+            <div class="flex items-center justify-between">
+              <div class="flex flex-col">
+                <span class="text-sm font-medium" style="color: #1e293b;">Two-Factor Authentication</span>
+                <span class="text-xs" style="color: #64748b;">Secure your account with an extra layer of protection.</span>
+              </div>
+              <p-toggleswitch [(ngModel)]="twoFactorEnabled" [ngModelOptions]="{standalone: true}" (onChange)="onTwoFactorChange($event)"></p-toggleswitch>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t flex justify-end" style="background-color: #f9fafb; border-color: #e5e7eb;">
+          <button
+            pButton
+            type="submit"
+            label="Update Password"
+            [disabled]="passwordForm.invalid"
+            style="background-color: #c48821; border-color: #c48821;">
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Notification Preferences Section -->
+  <section>
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold" style="color: #1e293b;">Notification Preferences</h2>
+      <p class="text-sm" style="color: #64748b;">Control how and when you receive alerts from Minted.</p>
+    </div>
+
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: #e5e7eb;">
+      <!-- Transaction Alerts -->
+      <div class="p-6 flex items-center justify-between border-b" style="border-color: #f3f4f6;">
+        <div class="flex items-start gap-4">
+          <div class="p-2 rounded-lg" style="background-color: #eff6ff; color: #2563eb;">
+            <i class="pi pi-receipt" style="font-size: 1.25rem;"></i>
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color: #1e293b;">Transaction Alerts</p>
+            <p class="text-xs" style="color: #64748b;">Receive notifications for large transactions over $500.</p>
+          </div>
+        </div>
+        <p-toggleswitch [(ngModel)]="transactionAlertsEnabled" (onChange)="onTransactionAlertsChange($event)"></p-toggleswitch>
+      </div>
+
+      <!-- Budget Overrun -->
+      <div class="p-6 flex items-center justify-between border-b" style="border-color: #f3f4f6;">
+        <div class="flex items-start gap-4">
+          <div class="p-2 rounded-lg" style="background-color: #faf5ff; color: #9333ea;">
+            <i class="pi pi-exclamation-triangle" style="font-size: 1.25rem;"></i>
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color: #1e293b;">Budget Overrun</p>
+            <p class="text-xs" style="color: #64748b;">Get notified when you've reached 80% of any monthly budget.</p>
+          </div>
+        </div>
+        <p-toggleswitch [(ngModel)]="budgetOverrunEnabled" (onChange)="onBudgetOverrunChange($event)"></p-toggleswitch>
+      </div>
+
+      <!-- Weekly Summary -->
+      <div class="p-6 flex items-center justify-between">
+        <div class="flex items-start gap-4">
+          <div class="p-2 rounded-lg" style="background-color: #f0fdf4; color: #16a34a;">
+            <i class="pi pi-chart-bar" style="font-size: 1.25rem;"></i>
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color: #1e293b;">Weekly Summary</p>
+            <p class="text-xs" style="color: #64748b;">A weekly email with insights on your spending habits.</p>
+          </div>
+        </div>
+        <p-toggleswitch [(ngModel)]="weeklySummaryEnabled" (onChange)="onWeeklySummaryChange($event)"></p-toggleswitch>
+      </div>
+
+      <div class="px-6 py-4 border-t flex justify-end" style="background-color: #f9fafb; border-color: #e5e7eb;">
+        <button
+          pButton
+          type="button"
+          label="Save Preferences"
+          (click)="saveNotificationPreferences()"
+          style="background-color: #c48821; border-color: #c48821;">
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
