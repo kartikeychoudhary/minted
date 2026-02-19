@@ -8,6 +8,7 @@ import { CategoryService } from '../../../../core/services/category.service';
 import { RecurringTransaction, RecurringTransactionRequest, RecurringSummary } from '../../../../core/models/recurring.model';
 import { AccountResponse } from '../../../../core/models/account.model';
 import { CategoryResponse } from '../../../../core/models/category.model';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
     selector: 'app-recurring-list',
@@ -42,7 +43,8 @@ export class RecurringList implements OnInit, OnDestroy {
         private categoryService: CategoryService,
         private messageService: MessageService,
         private confirmationService: ConfirmationService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        public currencyService: CurrencyService
     ) { }
 
     ngOnInit(): void {
@@ -195,8 +197,7 @@ export class RecurringList implements OnInit, OnDestroy {
     }
 
     formatCurrency(value: number): string {
-        if (value === null || value === undefined) return '₹0';
-        return '₹' + value.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+        return this.currencyService.format(value);
     }
 
     getDaysUntil(dateStr: string): string {

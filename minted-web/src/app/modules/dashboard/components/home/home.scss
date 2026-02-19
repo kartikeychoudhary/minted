@@ -221,6 +221,36 @@
   width: 100%;
 }
 
+/* Dark mode overrides */
+:host-context(.dark-mode) {
+  .page-title,
+  .kpi-value { color: var(--minted-text-primary); }
+
+  .page-subtitle,
+  .kpi-label { color: var(--minted-text-secondary); }
+
+  .kpi-card {
+    background: var(--minted-bg-card);
+    border-color: var(--minted-border);
+  }
+
+  .chart-card {
+    background: var(--minted-bg-card);
+    border-color: var(--minted-border);
+  }
+
+  .chart-title { color: var(--minted-text-primary); }
+
+  .chart-badge {
+    background: var(--minted-bg-surface);
+    border-color: var(--minted-border);
+    color: var(--minted-text-secondary);
+  }
+
+  .empty-icon { color: var(--minted-border); }
+  .empty-text { color: var(--minted-text-secondary); }
+}
+
 /* Responsive */
 @media (max-width: 1280px) {
   .kpi-grid {

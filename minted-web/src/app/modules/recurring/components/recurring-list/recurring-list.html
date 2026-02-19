@@ -29,8 +29,9 @@
                 </div>
                 <div class="field col-1">
                     <label class="field-label">Amount</label>
-                    <p-inputNumber [(ngModel)]="formData.amount" name="amount" mode="currency" currency="INR"
-                        locale="en-IN" [minFractionDigits]="2" placeholder="0.00">
+                    <p-inputNumber [(ngModel)]="formData.amount" name="amount" mode="currency"
+                        [currency]="currencyService.currentCurrency" [locale]="currencyService.currentLocale"
+                        [minFractionDigits]="2" placeholder="0.00">
                     </p-inputNumber>
                 </div>
                 <div class="field col-1">

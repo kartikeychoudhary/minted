@@ -1,9 +1,9 @@
-<div class="space-y-6" style="overflow: visible;">
+﻿<div class="space-y-6" style="overflow: visible;">
   <!-- Section Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-lg font-medium leading-6" style="color: #1e293b;">Configure Account Types</h2>
-      <p class="mt-1 text-sm" style="color: #64748b;">Manage the types of financial accounts available in your dashboard.</p>
+      <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Configure Account Types</h2>
+      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage the types of financial accounts available in your dashboard.</p>
     </div>
     <button
       pButton
@@ -12,12 +12,12 @@
       icon="pi pi-plus"
       class="p-button-raised"
       (click)="showAddDialog()"
-      style="background-color: #c48821; border-color: #c48821;">
+      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm" style="border-color: #e5e7eb; background-color: white; overflow: visible;">
+  <div class="rounded-xl border shadow-sm" style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
     <p-table
       [value]="accountTypes"
       [loading]="loading"
@@ -31,10 +31,10 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 80px; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Icon</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Description</th>
-          <th style="width: 120px; text-align: right; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+          <th style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Icon</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Description</th>
+          <th style="width: 120px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
         </tr>
       </ng-template>
 
@@ -46,10 +46,10 @@
             </div>
           </td>
           <td>
-            <div class="text-sm font-medium" style="color: #1e293b;">{{ accountType.name }}</div>
+            <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ accountType.name }}</div>
           </td>
           <td>
-            <div class="text-sm" style="color: #64748b;">{{ accountType.description }}</div>
+            <div class="text-sm" style="color: var(--minted-text-secondary);">{{ accountType.description }}</div>
           </td>
           <td style="text-align: right;">
             <button
@@ -60,7 +60,7 @@
               (click)="showEditDialog(accountType)"
               pTooltip="Edit"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
             <button
               pButton
@@ -70,7 +70,7 @@
               (click)="confirmDelete(accountType)"
               pTooltip="Delete"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
@@ -78,7 +78,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="4" class="text-center py-8" style="color: #64748b;">
+          <td colspan="4" class="text-center py-8" style="color: var(--minted-text-secondary);">
             No account types found. Click "Add Type" to create one.
           </td>
         </tr>
@@ -110,7 +110,7 @@
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: #374151;">Name</label>
+        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Name</label>
         <input
           pInputText
           id="name"
@@ -125,7 +125,7 @@
 
       <!-- Description Field -->
       <div>
-        <label for="description" class="block text-sm font-medium mb-2" style="color: #374151;">Description</label>
+        <label for="description" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Description</label>
         <textarea
           id="description"
           formControlName="description"
@@ -143,7 +143,7 @@
 
       <!-- Icon Field -->
       <div>
-        <label for="icon" class="block text-sm font-medium mb-2" style="color: #374151;">Icon</label>
+        <label for="icon" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Icon</label>
         <p-select
           formControlName="icon"
           [options]="iconOptions"
@@ -156,15 +156,15 @@
           [class.p-invalid]="accountTypeForm.get('icon')?.invalid && accountTypeForm.get('icon')?.touched">
           <ng-template let-option pTemplate="item">
             <div class="flex items-center gap-2">
-              <i [class]="option.icon" style="font-size: 1.25rem; color: #c48821;"></i>
+              <i [class]="option.icon" style="font-size: 1.25rem; color: var(--minted-accent);"></i>
               <span>{{ option.label }}</span>
             </div>
           </ng-template>
         </p-select>
         <div class="mt-2 flex items-center gap-2" *ngIf="selectedIcon">
-          <span class="text-sm" style="color: #64748b;">Selected:</span>
-          <i [class]="selectedIcon.icon" style="font-size: 1.25rem; color: #c48821;"></i>
-          <span class="text-sm" style="color: #374151;">{{ selectedIcon.label }}</span>
+          <span class="text-sm" style="color: var(--minted-text-secondary);">Selected:</span>
+          <i [class]="selectedIcon.icon" style="font-size: 1.25rem; color: var(--minted-accent);"></i>
+          <span class="text-sm" style="color: var(--minted-text-secondary);">{{ selectedIcon.label }}</span>
         </div>
       </div>
     </div>
@@ -182,7 +182,7 @@
         type="submit"
         [label]="isEditMode ? 'Update' : 'Create'"
         [disabled]="accountTypeForm.invalid"
-        style="background-color: #c48821; border-color: #c48821;">
+        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </form>

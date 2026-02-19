@@ -1,9 +1,9 @@
-<div class="space-y-6" style="overflow: visible;">
+﻿<div class="space-y-6" style="overflow: visible;">
   <!-- Section Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-lg font-medium leading-6" style="color: #1e293b;">Linked Financial Accounts</h2>
-      <p class="mt-1 text-sm" style="color: #64748b;">Manage and monitor your connected bank accounts and financial institutions.</p>
+      <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Linked Financial Accounts</h2>
+      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage and monitor your connected bank accounts and financial institutions.</p>
     </div>
     <button
       pButton
@@ -12,12 +12,12 @@
       icon="pi pi-plus"
       class="p-button-raised"
       (click)="showAddDialog()"
-      style="background-color: #c48821; border-color: #c48821;">
+      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm" style="border-color: #e5e7eb; background-color: white; overflow: visible;">
+  <div class="rounded-xl border shadow-sm" style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
     <p-table
       [value]="accounts"
       [loading]="loading"
@@ -31,10 +31,10 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Bank Name</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Account Type</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Balance</th>
-          <th style="width: 180px; text-align: right; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Bank Name</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Account Type</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Balance</th>
+          <th style="width: 180px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
         </tr>
       </ng-template>
 
@@ -43,9 +43,9 @@
           <td>
             <div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100">
-                <i [class]="getIconClass(account.icon)" style="font-size: 1.25rem; color: #64748b;"></i>
+                <i [class]="getIconClass(account.icon)" style="font-size: 1.25rem; color: var(--minted-text-secondary);"></i>
               </div>
-              <div class="text-sm font-medium" style="color: #1e293b;">{{ account.name }}</div>
+              <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ account.name }}</div>
             </div>
           </td>
           <td>
@@ -54,7 +54,7 @@
             </span>
           </td>
           <td>
-            <div class="text-sm font-semibold" [ngClass]="isNegativeBalance(account.balance) ? 'text-red-600' : ''" style="color: #1e293b;">
+            <div class="text-sm font-semibold" [ngClass]="isNegativeBalance(account.balance) ? 'text-red-600' : ''" style="color: var(--minted-text-primary);">
               {{ formatCurrency(account.balance, account.currency) }}
             </div>
           </td>
@@ -68,7 +68,7 @@
               (click)="showEditDialog(account)"
               pTooltip="Edit Account"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
             <button
               pButton
@@ -79,7 +79,7 @@
               (click)="confirmDelete(account)"
               pTooltip="Disconnect Account"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
@@ -87,7 +87,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="4" class="text-center py-8" style="color: #64748b;">
+          <td colspan="4" class="text-center py-8" style="color: var(--minted-text-secondary);">
             No accounts found. Click "Add Account" to link one.
           </td>
         </tr>
@@ -119,7 +119,7 @@
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: #374151;">Account Name</label>
+        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Account Name</label>
         <input
           pInputText
           id="name"
@@ -134,7 +134,7 @@
 
       <!-- Account Type Field -->
       <div>
-        <label for="accountType" class="block text-sm font-medium mb-2" style="color: #374151;">Account Type</label>
+        <label for="accountType" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Account Type</label>
         <p-select
           formControlName="accountTypeId"
           [options]="accountTypes"
@@ -152,7 +152,7 @@
 
       <!-- Balance Field -->
       <div>
-        <label for="balance" class="block text-sm font-medium mb-2" style="color: #374151;">Current Balance</label>
+        <label for="balance" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Current Balance</label>
         <p-inputnumber
           id="balance"
           formControlName="balance"
@@ -169,7 +169,7 @@
 
       <!-- Currency Field -->
       <div>
-        <label for="currency" class="block text-sm font-medium mb-2" style="color: #374151;">Currency</label>
+        <label for="currency" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Currency</label>
         <input
           pInputText
           id="currency"
@@ -182,7 +182,7 @@
 
       <!-- Icon Field -->
       <div>
-        <label for="icon" class="block text-sm font-medium mb-2" style="color: #374151;">Icon (optional)</label>
+        <label for="icon" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Icon (optional)</label>
         <input
           pInputText
           id="icon"
@@ -190,17 +190,17 @@
           placeholder="e.g., bank, wallet, credit-card"
           class="w-full"
           maxlength="50" />
-        <small class="text-xs mt-1 block" style="color: #64748b;">Enter icon name like: bank, wallet, credit-card, dollar</small>
+        <small class="text-xs mt-1 block" style="color: var(--minted-text-secondary);">Enter icon name like: bank, wallet, credit-card, dollar</small>
       </div>
 
       <!-- Color Field -->
       <div>
-        <label for="color" class="block text-sm font-medium mb-2" style="color: #374151;">Color (optional)</label>
+        <label for="color" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Color (optional)</label>
         <input
           pInputText
           id="color"
           formControlName="color"
-          placeholder="#c48821"
+          placeholder="var(--minted-accent)"
           class="w-full"
           maxlength="7" />
       </div>
@@ -219,7 +219,7 @@
         type="submit"
         [label]="isEditMode ? 'Update' : 'Create'"
         [disabled]="accountForm.invalid"
-        style="background-color: #c48821; border-color: #c48821;">
+        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </form>

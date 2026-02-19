@@ -1,9 +1,9 @@
-<div class="space-y-6" style="overflow: visible;">
+﻿<div class="space-y-6" style="overflow: visible;">
   <!-- Section Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-lg font-medium leading-6" style="color: #1e293b;">Configure Budgets</h2>
-      <p class="mt-1 text-sm" style="color: #64748b;">Set spending targets and manage monthly budget allocations.</p>
+      <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Configure Budgets</h2>
+      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Set spending targets and manage monthly budget allocations.</p>
     </div>
     <button
       pButton
@@ -12,12 +12,12 @@
       icon="pi pi-plus"
       class="p-button-raised"
       (click)="showAddDialog()"
-      style="background-color: #c48821; border-color: #c48821;">
+      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm" style="border-color: #e5e7eb; background-color: white; overflow: visible;">
+  <div class="rounded-xl border shadow-sm" style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
     <p-table
       [value]="budgets"
       [loading]="loading"
@@ -31,10 +31,10 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 80px; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Category Icon</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Budget Name</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Description</th>
-          <th style="width: 150px; text-align: right; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+          <th style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Category Icon</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Budget Name</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Description</th>
+          <th style="width: 150px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
         </tr>
       </ng-template>
 
@@ -46,12 +46,12 @@
             </div>
           </td>
           <td>
-            <div class="text-sm font-medium" style="color: #1e293b;">{{ budget.name }}</div>
-            <div class="text-xs" style="color: #9ca3af;" *ngIf="budget.categoryName">{{ budget.categoryName }}</div>
+            <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ budget.name }}</div>
+            <div class="text-xs" style="color: var(--minted-text-secondary);" *ngIf="budget.categoryName">{{ budget.categoryName }}</div>
           </td>
           <td>
-            <div class="text-sm" style="color: #64748b;">{{ getBudgetDescription(budget) }}</div>
-            <div class="text-xs" style="color: #9ca3af;">{{ getMonthName(budget.month) }} {{ budget.year }}</div>
+            <div class="text-sm" style="color: var(--minted-text-secondary);">{{ getBudgetDescription(budget) }}</div>
+            <div class="text-xs" style="color: var(--minted-text-secondary);">{{ getMonthName(budget.month) }} {{ budget.year }}</div>
           </td>
           <td style="text-align: right;">
             <button
@@ -62,7 +62,7 @@
               (click)="showEditDialog(budget)"
               pTooltip="Edit"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
             <button
               pButton
@@ -72,7 +72,7 @@
               (click)="confirmDelete(budget)"
               pTooltip="Delete"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
@@ -80,7 +80,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="4" class="text-center py-8" style="color: #64748b;">
+          <td colspan="4" class="text-center py-8" style="color: var(--minted-text-secondary);">
             No budgets found. Click "Add Budget" to create one.
           </td>
         </tr>
@@ -112,7 +112,7 @@
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: #374151;">Budget Name</label>
+        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Budget Name</label>
         <input
           pInputText
           id="name"
@@ -127,13 +127,13 @@
 
       <!-- Amount Field -->
       <div>
-        <label for="amount" class="block text-sm font-medium mb-2" style="color: #374151;">Budget Amount</label>
+        <label for="amount" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Budget Amount</label>
         <p-inputnumber
           id="amount"
           formControlName="amount"
           mode="currency"
-          currency="USD"
-          locale="en-US"
+          [currency]="currencyService.currentCurrency"
+          [locale]="currencyService.currentLocale"
           styleClass="w-full"
           [class.p-invalid]="budgetForm.get('amount')?.invalid && budgetForm.get('amount')?.touched">
         </p-inputnumber>
@@ -146,7 +146,7 @@
       <div class="grid grid-cols-2 gap-4">
         <!-- Month Field -->
         <div>
-          <label for="month" class="block text-sm font-medium mb-2" style="color: #374151;">Month</label>
+          <label for="month" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Month</label>
           <p-select
             formControlName="month"
             [options]="monthOptions"
@@ -164,7 +164,7 @@
 
         <!-- Year Field -->
         <div>
-          <label for="year" class="block text-sm font-medium mb-2" style="color: #374151;">Year</label>
+          <label for="year" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Year</label>
           <p-select
             formControlName="year"
             [options]="yearOptions"
@@ -183,7 +183,7 @@
 
       <!-- Category Field -->
       <div>
-        <label for="category" class="block text-sm font-medium mb-2" style="color: #374151;">Category (Optional)</label>
+        <label for="category" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category (Optional)</label>
         <p-select
           formControlName="categoryId"
           [options]="categories"
@@ -206,7 +206,7 @@
             </div>
           </ng-template>
         </p-select>
-        <small class="text-xs mt-1 block" style="color: #64748b;">Link this budget to a specific category for better tracking</small>
+        <small class="text-xs mt-1 block" style="color: var(--minted-text-secondary);">Link this budget to a specific category for better tracking</small>
       </div>
     </div>
 
@@ -223,7 +223,7 @@
         type="submit"
         [label]="isEditMode ? 'Update' : 'Create'"
         [disabled]="budgetForm.invalid"
-        style="background-color: #c48821; border-color: #c48821;">
+        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </form>

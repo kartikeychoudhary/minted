@@ -501,6 +501,98 @@
     background: #fafafa;
 }
 
+/* Dark mode overrides */
+:host-context(.dark-mode) {
+  .page-title,
+  .table-title,
+  .form-card-title,
+  .tx-name,
+  .next-date,
+  .summary-value { color: var(--minted-text-primary); }
+
+  .page-subtitle,
+  .step-badge,
+  .field-label,
+  .tx-account,
+  .days-label,
+  .summary-label,
+  .search-icon { color: var(--minted-text-secondary); }
+
+  .form-card,
+  .table-card,
+  .summary-card {
+    background: var(--minted-bg-card);
+    border-color: var(--minted-border);
+  }
+
+  .form-card-header {
+    background: var(--minted-bg-surface);
+    border-bottom-color: var(--minted-border);
+  }
+
+  .table-header { border-bottom-color: var(--minted-border); }
+
+  .type-toggle { background: var(--minted-bg-surface); }
+
+  .type-btn.active-expense,
+  .type-btn.active-income { background: var(--minted-bg-card); }
+
+  .frequency-display {
+    border-color: var(--minted-border);
+    background: var(--minted-bg-surface);
+    color: var(--minted-text-secondary);
+  }
+
+  .cancel-btn {
+    color: var(--minted-text-secondary);
+    border-color: var(--minted-border);
+  }
+
+  .search-input {
+    background: var(--minted-bg-surface);
+    color: var(--minted-text-primary);
+  }
+
+  .category-badge {
+    background: var(--minted-bg-surface);
+    color: var(--minted-text-secondary);
+  }
+
+  .paused-badge {
+    background: var(--minted-bg-surface);
+    color: var(--minted-text-secondary);
+  }
+
+  .empty-icon { color: var(--minted-border); }
+  .empty-message { color: var(--minted-text-secondary); }
+
+  // PrimeNG table overrides in dark mode
+  ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+    color: var(--minted-text-secondary);
+    background: var(--minted-bg-surface);
+    border-bottom-color: var(--minted-border);
+  }
+
+  ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+    border-bottom-color: var(--minted-border);
+    color: var(--minted-text-primary);
+  }
+
+  ::ng-deep .p-datatable .p-datatable-tbody > tr {
+    background: var(--minted-bg-card);
+  }
+
+  ::ng-deep .p-datatable .p-datatable-tbody > tr:hover {
+    background: var(--minted-bg-surface) !important;
+  }
+
+  ::ng-deep .p-paginator {
+    border-top-color: var(--minted-border);
+    background: var(--minted-bg-surface);
+    color: var(--minted-text-secondary);
+  }
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
     .form-grid {

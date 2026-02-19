@@ -15,6 +15,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { CategoryCellRendererComponent } from '../cell-renderers/category-cell-renderer.component';
 import { ActionsCellRendererComponent } from '../cell-renderers/actions-cell-renderer.component';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-transactions-list',
@@ -86,7 +87,8 @@ export class TransactionsList implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public currencyService: CurrencyService
   ) {
     this.setupGridColumns();
   }
@@ -151,7 +153,7 @@ export class TransactionsList implements OnInit {
         },
         valueFormatter: (params) => {
           const prefix = params.data.type === 'INCOME' ? '+' : '-';
-          return `${prefix}$${Math.abs(params.value).toFixed(2)}`;
+          return `${prefix}${this.currencyService.format(Math.abs(params.value))}`;
         }
       },
       {

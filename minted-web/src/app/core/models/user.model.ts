@@ -4,6 +4,7 @@ export interface User {
   displayName: string;
   email: string | null;
   forcePasswordChange: boolean;
+  currency: string;
 }
 
 export interface LoginRequest {

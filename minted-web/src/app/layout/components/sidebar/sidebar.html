@@ -1,11 +1,12 @@
 <aside
   [class]="isOpen ? 'w-64' : 'w-20'"
-  class="h-screen flex-shrink-0 text-white flex flex-col transition-all duration-300 bg-[#166534] relative">
+  class="h-screen flex-shrink-0 text-white flex flex-col transition-all duration-300 relative"
+  [style.background-color]="'var(--minted-sidebar-bg)'">
 
   <!-- Logo Area -->
   <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="isOpen" [class.justify-center]="!isOpen" [class.px-4]="!isOpen">
     <div class="flex items-center gap-2" [class.justify-center]="!isOpen">
-      <span class="material-icons text-primary text-3xl">account_balance_wallet</span>
+      <span class="material-icons text-3xl" [style.color]="'var(--minted-accent)'">account_balance_wallet</span>
       <span *ngIf="isOpen" class="text-xl font-bold tracking-tight">Minted</span>
     </div>
   </div>
@@ -70,12 +71,12 @@
 
       <!-- Avatar -->
       <div
-        class="rounded-full border-2 border-[#166534]/50 flex items-center justify-center font-semibold text-white"
+        class="rounded-full border-2 border-white/20 flex items-center justify-center font-semibold text-white"
         [class.w-9]="isOpen"
         [class.h-9]="isOpen"
         [class.w-10]="!isOpen"
         [class.h-10]="!isOpen"
-        [style.background-color]="'#c48821'">
+        [style.background-color]="'var(--minted-accent)'">
         {{ getInitials(currentUser?.displayName || 'U') }}
       </div>
 
@@ -92,18 +93,22 @@
     <!-- User Menu Dropdown -->
     <div
       *ngIf="showUserMenu && isOpen"
-      class="absolute bottom-full left-4 right-4 mb-2 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden">
+      class="absolute bottom-full left-4 right-4 mb-2 rounded-lg shadow-lg border overflow-hidden"
+      [style.background-color]="'var(--minted-bg-card)'"
+      [style.border-color]="'var(--minted-border)'">
       <button
         type="button"
         (click)="navigateToProfile()"
-        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
-        <span class="material-icons text-gray-500 text-lg">person</span>
+        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
+        [style.color]="'var(--minted-text-primary)'">
+        <span class="material-icons text-lg" [style.color]="'var(--minted-text-secondary)'">person</span>
         <span>Profile Settings</span>
       </button>
       <button
         type="button"
         (click)="logout()"
-        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t border-gray-100">
+        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t"
+        [style.border-color]="'var(--minted-border)'">
         <span class="material-icons text-red-600 text-lg">logout</span>
         <span>Logout</span>
       </button>

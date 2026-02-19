@@ -5,6 +5,7 @@ import { AccountService } from '../../../../core/services/account.service';
 import { AccountTypeService } from '../../../../core/services/account-type.service';
 import { AccountResponse, AccountRequest } from '../../../../core/models/account.model';
 import { AccountTypeResponse } from '../../../../core/models/account-type.model';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-accounts',
@@ -27,7 +28,8 @@ export class Accounts implements OnInit {
     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private currencyService: CurrencyService
   ) {}
 
   ngOnInit(): void {
@@ -43,7 +45,7 @@ export class Accounts implements OnInit {
       name: ['', [Validators.required, Validators.maxLength(100)]],
       accountTypeId: [null, Validators.required],
       balance: [0, [Validators.required]],
-      currency: ['USD', [Validators.maxLength(3)]],
+      currency: [this.currencyService.currentCurrency, [Validators.maxLength(3)]],
       color: ['#c48821'],
       icon: ['']
     });
@@ -91,7 +93,7 @@ export class Accounts implements OnInit {
     this.selectedAccountId = undefined;
     this.accountForm?.reset({
       balance: 0,
-      currency: 'USD',
+      currency: this.currencyService.currentCurrency,
       color: '#c48821',
       icon: ''
     });
@@ -203,11 +205,8 @@ export class Accounts implements OnInit {
     return colorMap[accountTypeName] || 'bg-gray-100 text-gray-800';
   }
 
-  formatCurrency(balance: number, currency: string): string {
-    if (balance < 0) {
-      return `-$${Math.abs(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    }
-    return `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  formatCurrency(balance: number, currency?: string): string {
+    return this.currencyService.format(balance);
   }
 
   isNegativeBalance(balance: number): boolean {

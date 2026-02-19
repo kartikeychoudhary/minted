@@ -40,6 +40,9 @@ public class User {
     @Column(name = "force_password_change")
     private Boolean forcePasswordChange = true;
 
+    @Column(length = 3)
+    private String currency = "INR";
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

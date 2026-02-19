@@ -1,4 +1,4 @@
-<div class="p-8">
+﻿<div class="p-8">
   <!-- Header & Main Actions -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
     <div>
@@ -21,7 +21,7 @@
         label="Add Transaction"
         icon="pi pi-plus"
         (click)="openNewDialog()"
-        style="background-color: #c48821; border-color: #c48821;">
+        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </div>
@@ -117,7 +117,7 @@
       <!-- Custom Date Range Pickers (shown when Custom Range is selected) -->
       <div *ngIf="showCustomDatePickers" class="flex flex-col sm:flex-row gap-4 items-end pt-2 border-t border-slate-200">
         <div class="flex-1">
-          <label for="startDate" class="block text-sm font-medium mb-2 text-slate-700">Start Date</label>
+          <label for="startDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Start Date</label>
           <p-datepicker
             id="startDate"
             [(ngModel)]="customStartDate"
@@ -130,7 +130,7 @@
           </p-datepicker>
         </div>
         <div class="flex-1">
-          <label for="endDate" class="block text-sm font-medium mb-2 text-slate-700">End Date</label>
+          <label for="endDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">End Date</label>
           <p-datepicker
             id="endDate"
             [(ngModel)]="customEndDate"
@@ -176,13 +176,13 @@
       <!-- Amount and Type Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="amount" class="block text-sm font-medium mb-2 text-slate-700">Amount</label>
+          <label for="amount" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Amount</label>
           <p-inputNumber
             id="amount"
             formControlName="amount"
             mode="currency"
-            currency="USD"
-            locale="en-US"
+            [currency]="currencyService.currentCurrency"
+            [locale]="currencyService.currentLocale"
             [minFractionDigits]="2"
             styleClass="w-full"
             inputStyleClass="w-full"
@@ -194,7 +194,7 @@
         </div>
 
         <div>
-          <label for="type" class="block text-sm font-medium mb-2 text-slate-700">Type</label>
+          <label for="type" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Type</label>
           <p-select
             id="type"
             formControlName="type"
@@ -211,7 +211,7 @@
 
       <!-- Description -->
       <div>
-        <label for="description" class="block text-sm font-medium mb-2 text-slate-700">Description</label>
+        <label for="description" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Description</label>
         <input
           pInputText
           id="description"
@@ -227,7 +227,7 @@
       <!-- Date and Category Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="transactionDate" class="block text-sm font-medium mb-2 text-slate-700">Date</label>
+          <label for="transactionDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Date</label>
           <p-datepicker
             id="transactionDate"
             formControlName="transactionDate"
@@ -243,7 +243,7 @@
         </div>
 
         <div>
-          <label for="categoryId" class="block text-sm font-medium mb-2 text-slate-700">Category</label>
+          <label for="categoryId" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category</label>
           <p-select
             id="categoryId"
             formControlName="categoryId"
@@ -263,7 +263,7 @@
       <!-- Account and To Account Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="accountId" class="block text-sm font-medium mb-2 text-slate-700">Account</label>
+          <label for="accountId" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Account</label>
           <p-select
             id="accountId"
             formControlName="accountId"
@@ -280,7 +280,7 @@
         </div>
 
         <div>
-          <label for="toAccountId" class="block text-sm font-medium mb-2 text-slate-700">To Account (Transfer)</label>
+          <label for="toAccountId" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">To Account (Transfer)</label>
           <p-select
             id="toAccountId"
             formControlName="toAccountId"
@@ -293,7 +293,7 @@
 
       <!-- Notes -->
       <div>
-        <label for="notes" class="block text-sm font-medium mb-2 text-slate-700">Notes</label>
+        <label for="notes" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Notes</label>
         <textarea
           pInputTextarea
           id="notes"
@@ -307,7 +307,7 @@
       <!-- Tags and Recurring Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="tags" class="block text-sm font-medium mb-2 text-slate-700">Tags</label>
+          <label for="tags" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Tags</label>
           <input
             pInputText
             id="tags"
@@ -352,7 +352,7 @@
         type="submit"
         [label]="isEditMode ? 'Update' : 'Create'"
         [disabled]="transactionForm.invalid"
-        style="background-color: #c48821; border-color: #c48821;">
+        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </form>

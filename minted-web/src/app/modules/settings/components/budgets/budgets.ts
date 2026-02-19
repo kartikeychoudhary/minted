@@ -5,6 +5,7 @@ import { BudgetService } from '../../../../core/services/budget.service';
 import { CategoryService } from '../../../../core/services/category.service';
 import { BudgetResponse, BudgetRequest } from '../../../../core/models/budget.model';
 import { CategoryResponse } from '../../../../core/models/category.model';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 @Component({
   selector: 'app-budgets',
@@ -46,7 +47,8 @@ export class Budgets implements OnInit {
     private formBuilder: FormBuilder,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public currencyService: CurrencyService
   ) {
     // Generate year options
     const currentYear = new Date().getFullYear();

@@ -19,6 +19,59 @@
   --ag-font-size: 14px;
 }
 
+// CSS Custom Properties — light mode defaults
+:root {
+  --minted-accent: #c48821;
+  --minted-bg-page: #f8fafc;
+  --minted-bg-card: #ffffff;
+  --minted-bg-surface: #f9fafb;
+  --minted-text-primary: #1e293b;
+  --minted-text-secondary: #64748b;
+  --minted-border: #e5e7eb;
+  --minted-sidebar-bg: #166534;
+}
+
+// Dark mode overrides
+.dark-mode {
+  --minted-bg-page: #0f172a;
+  --minted-bg-card: #1e293b;
+  --minted-bg-surface: #162032;
+  --minted-text-primary: #f1f5f9;
+  --minted-text-secondary: #94a3b8;
+  --minted-border: #334155;
+  --minted-sidebar-bg: #052e16;
+
+  // Background classes
+  .bg-white { background-color: var(--minted-bg-card) !important; }
+  .bg-gray-50, .bg-slate-50 { background-color: var(--minted-bg-surface) !important; }
+  .bg-gray-100, .bg-slate-100 { background-color: var(--minted-bg-surface) !important; }
+
+  // Border classes
+  .border-gray-200, .border-slate-200 { border-color: var(--minted-border) !important; }
+  .border-gray-100, .border-slate-100 { border-color: var(--minted-border) !important; }
+  .border-b { border-color: var(--minted-border) !important; }
+
+  // Text classes
+  .text-gray-900, .text-slate-900 { color: var(--minted-text-primary) !important; }
+  .text-gray-800, .text-slate-800 { color: var(--minted-text-primary) !important; }
+  .text-gray-700, .text-slate-700 { color: var(--minted-text-secondary) !important; }
+  .text-gray-600, .text-slate-600 { color: var(--minted-text-secondary) !important; }
+  .text-gray-500, .text-slate-500 { color: var(--minted-text-secondary) !important; }
+  .text-gray-400, .text-slate-400 { color: var(--minted-text-secondary) !important; }
+
+  // Hover background overrides
+  .hover\:bg-gray-50:hover,
+  .hover\:bg-slate-50:hover { background-color: var(--minted-bg-surface) !important; }
+  .hover\:bg-gray-100:hover,
+  .hover\:bg-slate-100:hover { background-color: var(--minted-bg-surface) !important; }
+
+  // Header and nav elements
+  header.bg-white {
+    background-color: var(--minted-bg-card) !important;
+    border-color: var(--minted-border) !important;
+  }
+}
+
 // Global Styles
 * {
   margin: 0;
@@ -28,8 +81,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f8fafc;
-  color: #1e293b;
+  background-color: var(--minted-bg-page);
+  color: var(--minted-text-primary);
 }
 
 // Utility classes

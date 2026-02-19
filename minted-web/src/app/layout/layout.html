@@ -10,6 +10,16 @@
         <h1 class="text-xl font-bold text-gray-900">{{ 'Minted' }}</h1>
       </div>
       <div class="flex items-center gap-4">
+        <!-- Theme Toggle -->
+        <button
+          type="button"
+          (click)="themeService.toggleDarkMode()"
+          class="relative p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-full hover:bg-gray-100"
+          pTooltip="Toggle theme"
+          tooltipPosition="bottom">
+          <span class="material-icons">{{ (themeService.isDarkMode$ | async) ? 'light_mode' : 'dark_mode' }}</span>
+        </button>
+        <!-- Notifications -->
         <button
           type="button"
           class="relative p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-full hover:bg-gray-100"

@@ -6,6 +6,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { DashboardService } from '../../../../core/services/dashboard.service';
 import { AnalyticsSummary, CategoryWise, TrendData, DashboardCard } from '../../../../core/models/dashboard.model';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 interface PeriodOption {
   label: string;
@@ -51,7 +52,8 @@ export class Home implements OnInit, OnDestroy {
     private analyticsService: AnalyticsService,
     private dashboardService: DashboardService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private currencyService: CurrencyService
   ) { }
 
   ngOnInit(): void {
@@ -254,7 +256,7 @@ export class Home implements OnInit, OnDestroy {
           padding: 12,
           cornerRadius: 8,
           callbacks: {
-            label: (ctx: any) => `₹${ctx.parsed.y?.toLocaleString('en-IN') || 0}`
+            label: (ctx: any) => this.currencyService.format(ctx.parsed.y || 0)
           }
         }
       },
@@ -268,7 +270,7 @@ export class Home implements OnInit, OnDestroy {
           ticks: {
             font: { ...baseFont, size: 11 },
             color: '#94a3b8',
-            callback: (val: number) => `₹${(val / 1000).toFixed(0)}k`
+            callback: (val: number) => this.currencyService.format(val)
           }
         }
       }
@@ -296,7 +298,7 @@ export class Home implements OnInit, OnDestroy {
           padding: 12,
           cornerRadius: 8,
           callbacks: {
-            label: (ctx: any) => ` ₹${ctx.parsed?.toLocaleString('en-IN') || 0}`
+            label: (ctx: any) => ` ${this.currencyService.format(ctx.parsed || 0)}`
           }
         }
       }
@@ -325,7 +327,7 @@ export class Home implements OnInit, OnDestroy {
           padding: 12,
           cornerRadius: 8,
           callbacks: {
-            label: (ctx: any) => ` ${ctx.dataset.label}: ₹${ctx.parsed.y?.toLocaleString('en-IN') || 0}`
+            label: (ctx: any) => ` ${ctx.dataset.label}: ${this.currencyService.format(ctx.parsed.y || 0)}`
           }
         }
       },
@@ -339,7 +341,7 @@ export class Home implements OnInit, OnDestroy {
           ticks: {
             font: { ...baseFont, size: 11 },
             color: '#94a3b8',
-            callback: (val: number) => `₹${(val / 1000).toFixed(0)}k`
+            callback: (val: number) => this.currencyService.format(val)
           }
         }
       }
@@ -347,8 +349,7 @@ export class Home implements OnInit, OnDestroy {
   }
 
   formatCurrency(value: number): string {
-    if (value === null || value === undefined) return '₹0';
-    return '₹' + value.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    return this.currencyService.format(value);
   }
 
   getGreeting(): string {

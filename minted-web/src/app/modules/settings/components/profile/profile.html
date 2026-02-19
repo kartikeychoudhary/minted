@@ -1,27 +1,27 @@
-<div class="space-y-10">
+﻿<div class="space-y-10">
   <!-- Personal Information Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: #1e293b;">Personal Information</h2>
-      <p class="text-sm" style="color: #64748b;">Update your basic profile information and how we contact you.</p>
+      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Personal Information</h2>
+      <p class="text-sm" style="color: var(--minted-text-secondary);">Update your basic profile information and how we contact you.</p>
     </div>
 
-    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: #e5e7eb;">
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: var(--minted-border);">
       <form *ngIf="profileForm" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
         <div class="p-6 space-y-6">
           <!-- Profile Photo -->
           <div class="flex items-center gap-6">
             <div class="relative">
-              <div class="w-20 h-20 rounded-full border-4 flex items-center justify-center" style="border-color: #f3f4f6; background-color: #c48821;">
+              <div class="w-20 h-20 rounded-full border-4 flex items-center justify-center" style="border-color: var(--minted-border); background-color: var(--minted-accent);">
                 <i class="pi pi-user" style="font-size: 2rem; color: white;"></i>
               </div>
-              <button type="button" class="absolute bottom-0 right-0 p-1.5 rounded-full shadow-lg transition-colors" style="background-color: #c48821; color: white;" pTooltip="Upload Photo" tooltipPosition="top">
+              <button type="button" class="absolute bottom-0 right-0 p-1.5 rounded-full shadow-lg transition-colors" style="background-color: var(--minted-accent); color: white;" pTooltip="Upload Photo" tooltipPosition="top">
                 <i class="pi pi-camera" style="font-size: 0.875rem;"></i>
               </button>
             </div>
             <div class="flex-1">
-              <h3 class="font-medium" style="color: #1e293b;">Profile Photo</h3>
-              <p class="text-xs mt-1" style="color: #64748b;">PNG, JPG or GIF. Max 2MB.</p>
+              <h3 class="font-medium" style="color: var(--minted-text-primary);">Profile Photo</h3>
+              <p class="text-xs mt-1" style="color: var(--minted-text-secondary);">PNG, JPG or GIF. Max 2MB.</p>
             </div>
           </div>
 
@@ -29,7 +29,7 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Display Name -->
             <div>
-              <label for="displayName" class="block text-sm font-medium mb-2" style="color: #374151;">Display Name</label>
+              <label for="displayName" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Display Name</label>
               <input
                 pInputText
                 id="displayName"
@@ -44,7 +44,7 @@
 
             <!-- Email -->
             <div>
-              <label for="email" class="block text-sm font-medium mb-2" style="color: #374151;">Email Address</label>
+              <label for="email" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Email Address</label>
               <input
                 pInputText
                 id="email"
@@ -60,25 +60,25 @@
 
             <!-- Username (Read-only) -->
             <div>
-              <label for="username" class="block text-sm font-medium mb-2" style="color: #374151;">Username</label>
+              <label for="username" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Username</label>
               <input
                 pInputText
                 id="username"
                 formControlName="username"
                 class="w-full"
-                style="background-color: #f9fafb;" />
-              <small class="text-xs mt-1 block" style="color: #64748b;">Username cannot be changed</small>
+                style="background-color: var(--minted-bg-surface);" />
+              <small class="text-xs mt-1 block" style="color: var(--minted-text-secondary);">Username cannot be changed</small>
             </div>
           </div>
         </div>
 
-        <div class="px-6 py-4 border-t flex justify-end" style="background-color: #f9fafb; border-color: #e5e7eb;">
+        <div class="px-6 py-4 border-t flex justify-end" style="background-color: var(--minted-bg-surface); border-color: var(--minted-border);">
           <button
             pButton
             type="submit"
             label="Save Changes"
             [disabled]="profileForm.invalid"
-            style="background-color: #c48821; border-color: #c48821;">
+            style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
           </button>
         </div>
       </form>
@@ -88,17 +88,17 @@
   <!-- Security Settings Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: #1e293b;">Security Settings</h2>
-      <p class="text-sm" style="color: #64748b;">Manage your password and security preferences.</p>
+      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Security Settings</h2>
+      <p class="text-sm" style="color: var(--minted-text-secondary);">Manage your password and security preferences.</p>
     </div>
 
-    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: #e5e7eb;">
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: var(--minted-border);">
       <form *ngIf="passwordForm" [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
         <div class="p-6 space-y-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Current Password -->
             <div class="md:col-span-2">
-              <label for="currentPassword" class="block text-sm font-medium mb-2" style="color: #374151;">Current Password</label>
+              <label for="currentPassword" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Current Password</label>
               <p-password
                 id="currentPassword"
                 formControlName="currentPassword"
@@ -116,7 +116,7 @@
 
             <!-- New Password -->
             <div>
-              <label for="newPassword" class="block text-sm font-medium mb-2" style="color: #374151;">New Password</label>
+              <label for="newPassword" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">New Password</label>
               <p-password
                 id="newPassword"
                 formControlName="newPassword"
@@ -133,7 +133,7 @@
 
             <!-- Confirm Password -->
             <div>
-              <label for="confirmPassword" class="block text-sm font-medium mb-2" style="color: #374151;">Confirm New Password</label>
+              <label for="confirmPassword" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Confirm New Password</label>
               <p-password
                 id="confirmPassword"
                 formControlName="confirmPassword"
@@ -151,61 +151,140 @@
           </div>
 
           <!-- Two-Factor Authentication -->
-          <div class="pt-2 border-t" style="border-color: #f3f4f6;">
+          <div class="pt-2 border-t" style="border-color: var(--minted-border);">
             <div class="flex items-center justify-between">
               <div class="flex flex-col">
-                <span class="text-sm font-medium" style="color: #1e293b;">Two-Factor Authentication</span>
-                <span class="text-xs" style="color: #64748b;">Secure your account with an extra layer of protection.</span>
+                <span class="text-sm font-medium" style="color: var(--minted-text-primary);">Two-Factor Authentication</span>
+                <span class="text-xs" style="color: var(--minted-text-secondary);">Secure your account with an extra layer of protection.</span>
               </div>
               <p-toggleswitch [(ngModel)]="twoFactorEnabled" [ngModelOptions]="{standalone: true}" (onChange)="onTwoFactorChange($event)"></p-toggleswitch>
             </div>
           </div>
         </div>
 
-        <div class="px-6 py-4 border-t flex justify-end" style="background-color: #f9fafb; border-color: #e5e7eb;">
+        <div class="px-6 py-4 border-t flex justify-end" style="background-color: var(--minted-bg-surface); border-color: var(--minted-border);">
           <button
             pButton
             type="submit"
             label="Update Password"
             [disabled]="passwordForm.invalid"
-            style="background-color: #c48821; border-color: #c48821;">
+            style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
           </button>
         </div>
       </form>
     </div>
   </section>
 
+  <!-- Appearance Section -->
+  <section>
+    <div class="mb-6">
+      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Appearance</h2>
+      <p class="text-sm" style="color: var(--minted-text-secondary);">Customize the look and feel of Minted.</p>
+    </div>
+
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: var(--minted-border);">
+      <!-- Dark / Light Mode Toggle -->
+      <div class="p-6 flex items-center justify-between border-b" style="border-color: var(--minted-border);">
+        <div class="flex items-start gap-4">
+          <div class="p-2 rounded-lg" style="background-color: #fef9ee; color: var(--minted-accent);">
+            <span class="material-icons" style="font-size: 1.25rem;">
+              {{ (isDarkMode$ | async) ? 'dark_mode' : 'light_mode' }}
+            </span>
+          </div>
+          <div>
+            <p class="text-sm font-medium" style="color: var(--minted-text-primary);">Dark Mode</p>
+            <p class="text-xs" style="color: var(--minted-text-secondary);">Switch between light and dark interface.</p>
+          </div>
+        </div>
+        <p-toggleswitch
+          [ngModel]="isDarkMode$ | async"
+          [ngModelOptions]="{standalone: true}"
+          (onChange)="onDarkModeChange($event)">
+        </p-toggleswitch>
+      </div>
+
+      <!-- Accent Color Picker -->
+      <div class="p-6 border-b" style="border-color: var(--minted-border);">
+        <p class="text-sm font-medium mb-4" style="color: var(--minted-text-primary);">Accent Color</p>
+        <div class="flex items-center gap-3 flex-wrap">
+          <button
+            *ngFor="let preset of accentPresets"
+            type="button"
+            (click)="onAccentSelect(preset.color)"
+            class="w-9 h-9 rounded-full flex items-center justify-center transition-transform hover:scale-110 focus:outline-none"
+            [style.background-color]="preset.color"
+            [pTooltip]="preset.label"
+            tooltipPosition="top"
+            [attr.aria-label]="preset.label + ' accent color'">
+            <span
+              *ngIf="(accentColor$ | async) === preset.color"
+              class="material-icons text-white"
+              style="font-size: 1rem;">
+              check
+            </span>
+          </button>
+        </div>
+        <p class="text-xs mt-3" style="color: var(--minted-text-secondary);">
+          Changes are applied immediately and saved automatically.
+        </p>
+      </div>
+
+      <!-- Currency Picker -->
+      <div class="p-6">
+        <div class="flex items-start gap-4">
+          <div class="p-2 rounded-lg" style="background-color: #f0fdf4; color: #16a34a;">
+            <i class="pi pi-money-bill" style="font-size: 1.25rem;"></i>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-medium mb-1" style="color: var(--minted-text-primary);">Default Currency</p>
+            <p class="text-xs mb-3" style="color: var(--minted-text-secondary);">Used everywhere in the app — transactions, budgets, analytics.</p>
+            <p-select
+              [(ngModel)]="selectedCurrency"
+              [ngModelOptions]="{standalone: true}"
+              [options]="currencies"
+              optionLabel="label"
+              optionValue="code"
+              (onChange)="onCurrencyChange($event.value)"
+              styleClass="w-full md:w-64"
+              appendTo="body">
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Notification Preferences Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: #1e293b;">Notification Preferences</h2>
-      <p class="text-sm" style="color: #64748b;">Control how and when you receive alerts from Minted.</p>
+      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Notification Preferences</h2>
+      <p class="text-sm" style="color: var(--minted-text-secondary);">Control how and when you receive alerts from Minted.</p>
     </div>
 
-    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: #e5e7eb;">
+    <div class="bg-white rounded-xl border shadow-sm overflow-hidden" style="border-color: var(--minted-border);">
       <!-- Transaction Alerts -->
-      <div class="p-6 flex items-center justify-between border-b" style="border-color: #f3f4f6;">
+      <div class="p-6 flex items-center justify-between border-b" style="border-color: var(--minted-border);">
         <div class="flex items-start gap-4">
-          <div class="p-2 rounded-lg" style="background-color: #eff6ff; color: #2563eb;">
+          <div class="p-2 rounded-lg" style="background-color: var(--minted-bg-surface); color: #2563eb;">
             <i class="pi pi-receipt" style="font-size: 1.25rem;"></i>
           </div>
           <div>
-            <p class="text-sm font-medium" style="color: #1e293b;">Transaction Alerts</p>
-            <p class="text-xs" style="color: #64748b;">Receive notifications for large transactions over $500.</p>
+            <p class="text-sm font-medium" style="color: var(--minted-text-primary);">Transaction Alerts</p>
+            <p class="text-xs" style="color: var(--minted-text-secondary);">Receive notifications for large transactions over $500.</p>
           </div>
         </div>
         <p-toggleswitch [(ngModel)]="transactionAlertsEnabled" (onChange)="onTransactionAlertsChange($event)"></p-toggleswitch>
       </div>
 
       <!-- Budget Overrun -->
-      <div class="p-6 flex items-center justify-between border-b" style="border-color: #f3f4f6;">
+      <div class="p-6 flex items-center justify-between border-b" style="border-color: var(--minted-border);">
         <div class="flex items-start gap-4">
           <div class="p-2 rounded-lg" style="background-color: #faf5ff; color: #9333ea;">
             <i class="pi pi-exclamation-triangle" style="font-size: 1.25rem;"></i>
           </div>
           <div>
-            <p class="text-sm font-medium" style="color: #1e293b;">Budget Overrun</p>
-            <p class="text-xs" style="color: #64748b;">Get notified when you've reached 80% of any monthly budget.</p>
+            <p class="text-sm font-medium" style="color: var(--minted-text-primary);">Budget Overrun</p>
+            <p class="text-xs" style="color: var(--minted-text-secondary);">Get notified when you've reached 80% of any monthly budget.</p>
           </div>
         </div>
         <p-toggleswitch [(ngModel)]="budgetOverrunEnabled" (onChange)="onBudgetOverrunChange($event)"></p-toggleswitch>
@@ -218,20 +297,20 @@
             <i class="pi pi-chart-bar" style="font-size: 1.25rem;"></i>
           </div>
           <div>
-            <p class="text-sm font-medium" style="color: #1e293b;">Weekly Summary</p>
-            <p class="text-xs" style="color: #64748b;">A weekly email with insights on your spending habits.</p>
+            <p class="text-sm font-medium" style="color: var(--minted-text-primary);">Weekly Summary</p>
+            <p class="text-xs" style="color: var(--minted-text-secondary);">A weekly email with insights on your spending habits.</p>
           </div>
         </div>
         <p-toggleswitch [(ngModel)]="weeklySummaryEnabled" (onChange)="onWeeklySummaryChange($event)"></p-toggleswitch>
       </div>
 
-      <div class="px-6 py-4 border-t flex justify-end" style="background-color: #f9fafb; border-color: #e5e7eb;">
+      <div class="px-6 py-4 border-t flex justify-end" style="background-color: var(--minted-bg-surface); border-color: var(--minted-border);">
         <button
           pButton
           type="button"
           label="Save Preferences"
           (click)="saveNotificationPreferences()"
-          style="background-color: #c48821; border-color: #c48821;">
+          style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
         </button>
       </div>
     </div>

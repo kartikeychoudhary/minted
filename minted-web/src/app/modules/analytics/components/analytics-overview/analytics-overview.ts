@@ -9,6 +9,7 @@ import { AnalyticsSummary, SpendingActivity, TotalBalance } from '../../../../co
 import { TransactionResponse } from '../../../../core/models/transaction.model';
 import { RecurringTransaction, RecurringSummary } from '../../../../core/models/recurring.model';
 import { User } from '../../../../core/models/user.model';
+import { CurrencyService } from '../../../../core/services/currency.service';
 
 interface RecurringGroup {
     category: string;
@@ -69,7 +70,8 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         private transactionService: TransactionService,
         private recurringService: RecurringTransactionService,
         private authService: AuthService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        public currencyService: CurrencyService
     ) {}
 
     ngOnInit(): void {
@@ -269,11 +271,7 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
     }
 
     formatCurrency(amount: number): string {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2
-        }).format(amount);
+        return this.currencyService.format(amount);
     }
 
     formatDate(date: Date): string {

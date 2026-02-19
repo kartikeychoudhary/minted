@@ -107,6 +107,29 @@
     }
 }
 
+// Dark mode overrides
+:host-context(.dark-mode) {
+  ::ng-deep {
+    .p-accordion {
+      .p-accordion-header-link {
+        background: var(--minted-bg-surface);
+        border-color: var(--minted-border);
+        &:hover { background: var(--minted-bg-card); }
+      }
+      .p-accordion-tab-active .p-accordion-header-link {
+        background: var(--minted-bg-surface);
+        border-color: var(--minted-border);
+      }
+    }
+    .p-progressbar { background: var(--minted-border); }
+    .p-skeleton { background-color: var(--minted-border); }
+    .p-select:hover { border-color: var(--minted-accent); }
+    .p-button-sm.p-button-text:hover {
+      background: var(--minted-bg-surface);
+    }
+  }
+}
+
 // Custom scrollbar for recurring payments section
 .p-accordion {
     max-height: 600px;

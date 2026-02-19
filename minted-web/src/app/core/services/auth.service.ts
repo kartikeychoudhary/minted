@@ -5,6 +5,7 @@ import { map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { User, LoginRequest, LoginResponse, ChangePasswordRequest, ApiResponse } from '../models/user.model';
 import { environment } from '../../../environments/environment';
+import { CurrencyService } from './currency.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,8 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private currencyService: CurrencyService
   ) {
     const storedUser = localStorage.getItem(this.USER_KEY);
     this.currentUserSubject = new BehaviorSubject<User | null>(
@@ -47,6 +49,11 @@ export class AuthService {
             localStorage.setItem(this.TOKEN_KEY, response.data.token);
             localStorage.setItem(this.REFRESH_TOKEN_KEY, response.data.refreshToken);
             localStorage.setItem(this.USER_KEY, JSON.stringify(response.data.user));
+
+            // Sync currency preference from server
+            if (response.data.user.currency) {
+              this.currencyService.setCurrency(response.data.user.currency);
+            }
 
             // Update current user
             this.currentUserSubject.next(response.data.user);
@@ -95,6 +102,9 @@ export class AuthService {
             localStorage.setItem(this.TOKEN_KEY, response.data.token);
             localStorage.setItem(this.REFRESH_TOKEN_KEY, response.data.refreshToken);
             localStorage.setItem(this.USER_KEY, JSON.stringify(response.data.user));
+            if (response.data.user.currency) {
+              this.currencyService.setCurrency(response.data.user.currency);
+            }
             this.currentUserSubject.next(response.data.user);
           }
         })

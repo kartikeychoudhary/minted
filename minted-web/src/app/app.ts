@@ -1,4 +1,5 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +7,12 @@ import { Component, signal } from '@angular/core';
   standalone: false,
   styleUrl: './app.scss'
 })
-export class App {
+export class App implements OnInit {
   protected readonly title = signal('Minted');
+
+  constructor(private themeService: ThemeService) {}
+
+  ngOnInit(): void {
+    this.themeService.init();
+  }
 }

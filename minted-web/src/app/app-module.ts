@@ -26,7 +26,7 @@ import { LayoutModule } from './layout/layout-module';
       theme: {
         preset: Aura,
         options: {
-          darkModeSelector: false
+          darkModeSelector: '.dark-mode'
         }
       }
     })

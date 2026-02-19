@@ -1,19 +1,20 @@
-<div class="min-h-screen" style="background-color: #f8f7f6;">
+<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
   <!-- Header -->
-  <header class="bg-white shadow-sm border-b">
+  <header class="shadow-sm border-b" style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
       <div class="flex items-center">
         <button
           (click)="goBack()"
-          class="mr-4 p-2 hover:bg-gray-100 rounded-lg transition-colors">
-          <i class="pi pi-arrow-left" style="font-size: 1.25rem; color: #857f79;"></i>
+          class="mr-4 p-2 rounded-lg transition-colors"
+          style="color: var(--minted-text-secondary);">
+          <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
         </button>
         <div class="flex items-center">
           <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
-               style="background-color: rgba(196, 136, 33, 0.1); color: #c48821;">
+               style="background-color: rgba(196, 136, 33, 0.1); color: var(--minted-accent);">
             <i class="pi pi-cog" style="font-size: 1.5rem;"></i>
           </div>
-          <h1 class="text-2xl font-bold" style="color: #1e293b;">Settings</h1>
+          <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Settings</h1>
         </div>
       </div>
     </div>
@@ -21,7 +22,7 @@
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="overflow: visible;">
-    <div class="bg-white rounded-lg shadow-sm border" style="overflow: visible;">
+    <div class="rounded-lg shadow-sm border" style="background-color: var(--minted-bg-card); border-color: var(--minted-border); overflow: visible;">
       <p-tabs value="0" [style]="{'overflow': 'visible'}">
         <p-tablist [style]="{'overflow': 'visible'}">
           <p-tab value="0">

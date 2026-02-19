@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 interface NavigationItem {
   label: string;
@@ -33,7 +34,8 @@ export class Sidebar {
 
   constructor(
     public router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public themeService: ThemeService
   ) { }
 
   ngOnInit(): void {

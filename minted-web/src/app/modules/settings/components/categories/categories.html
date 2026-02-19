@@ -1,9 +1,9 @@
-<div class="space-y-6" style="overflow: visible;">
+﻿<div class="space-y-6" style="overflow: visible;">
   <!-- Section Header -->
   <div class="flex items-center justify-between">
     <div>
-      <h2 class="text-lg font-medium leading-6" style="color: #1e293b;">Spending Categories</h2>
-      <p class="mt-1 text-sm" style="color: #64748b;">Manage and organize your custom transaction categories.</p>
+      <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Spending Categories</h2>
+      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage and organize your custom transaction categories.</p>
     </div>
     <button
       pButton
@@ -12,12 +12,12 @@
       icon="pi pi-plus"
       class="p-button-raised"
       (click)="showAddDialog()"
-      style="background-color: #c48821; border-color: #c48821;">
+      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm" style="border-color: #e5e7eb; background-color: white; overflow: visible;">
+  <div class="rounded-xl border shadow-sm" style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
     <p-table
       [value]="categories"
       [loading]="loading"
@@ -31,10 +31,10 @@
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 80px; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Icon</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
-          <th style="color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Type</th>
-          <th style="width: 150px; text-align: right; color: #64748b; font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+          <th style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Icon</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
+          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Type</th>
+          <th style="width: 150px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
         </tr>
       </ng-template>
 
@@ -46,7 +46,7 @@
             </div>
           </td>
           <td>
-            <div class="text-sm font-medium" style="color: #1e293b;">{{ category.name }}</div>
+            <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ category.name }}</div>
           </td>
           <td>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -67,7 +67,7 @@
               (click)="showEditDialog(category)"
               pTooltip="Edit"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
             <button
               pButton
@@ -77,7 +77,7 @@
               (click)="confirmDelete(category)"
               pTooltip="Delete"
               tooltipPosition="top"
-              style="color: #9ca3af;">
+              style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
@@ -85,7 +85,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="4" class="text-center py-8" style="color: #64748b;">
+          <td colspan="4" class="text-center py-8" style="color: var(--minted-text-secondary);">
             No categories found. Click "Add Category" to create one.
           </td>
         </tr>
@@ -117,7 +117,7 @@
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: #374151;">Category Name</label>
+        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category Name</label>
         <input
           pInputText
           id="name"
@@ -132,7 +132,7 @@
 
       <!-- Transaction Type Field -->
       <div>
-        <label for="type" class="block text-sm font-medium mb-2" style="color: #374151;">Transaction Type</label>
+        <label for="type" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Transaction Type</label>
         <p-select
           formControlName="type"
           [options]="transactionTypes"
@@ -162,7 +162,7 @@
 
       <!-- Icon Field -->
       <div>
-        <label for="icon" class="block text-sm font-medium mb-2" style="color: #374151;">Icon</label>
+        <label for="icon" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Icon</label>
         <p-select
           formControlName="icon"
           [options]="iconOptions"
@@ -182,17 +182,17 @@
           </ng-template>
         </p-select>
         <div class="mt-2 flex items-center gap-2" *ngIf="selectedIcon">
-          <span class="text-sm" style="color: #64748b;">Selected:</span>
+          <span class="text-sm" style="color: var(--minted-text-secondary);">Selected:</span>
           <div class="flex h-8 w-8 items-center justify-center rounded-lg" [ngClass]="getIconBackgroundClass(selectedIcon.color)">
             <i [class]="selectedIcon.icon" style="font-size: 1rem;"></i>
           </div>
-          <span class="text-sm" style="color: #374151;">{{ selectedIcon.label }}</span>
+          <span class="text-sm" style="color: var(--minted-text-secondary);">{{ selectedIcon.label }}</span>
         </div>
       </div>
 
       <!-- Color Field -->
       <div>
-        <label for="color" class="block text-sm font-medium mb-2" style="color: #374151;">Color</label>
+        <label for="color" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Color</label>
         <p-select
           formControlName="color"
           [options]="colorOptions"
@@ -224,7 +224,7 @@
         type="submit"
         [label]="isEditMode ? 'Update' : 'Create'"
         [disabled]="categoryForm.invalid"
-        style="background-color: #c48821; border-color: #c48821;">
+        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </form>

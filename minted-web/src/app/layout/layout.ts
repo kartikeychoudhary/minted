@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ThemeService } from '../core/services/theme.service';
 
 @Component({
   selector: 'app-layout',
@@ -8,6 +9,8 @@ import { Component } from '@angular/core';
 })
 export class Layout {
   isSidebarOpen = true;
+
+  constructor(public themeService: ThemeService) {}
 
   onSidebarToggle(isOpen: boolean): void {
     this.isSidebarOpen = isOpen;

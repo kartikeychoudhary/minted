@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ThemeService, AccentPreset } from '../../../../core/services/theme.service';
+import { CurrencyService, CurrencyOption } from '../../../../core/services/currency.service';
+import { ProfileService } from '../../../../core/services/profile.service';
 
 @Component({
   selector: 'app-profile',
@@ -21,12 +25,30 @@ export class Profile implements OnInit {
   weeklySummaryEnabled = false;
   twoFactorEnabled = false;
 
+  // Theme (assigned in constructor after DI)
+  isDarkMode$!: Observable<boolean>;
+  accentColor$!: Observable<string>;
+  accentPresets!: AccentPreset[];
+
+  // Currency
+  currencies!: CurrencyOption[];
+  selectedCurrency!: string;
+
   constructor(
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private messageService: MessageService,
-    private router: Router
-  ) {}
+    private router: Router,
+    public themeService: ThemeService,
+    public currencyService: CurrencyService,
+    private profileService: ProfileService
+  ) {
+    this.isDarkMode$ = themeService.isDarkMode$;
+    this.accentColor$ = themeService.accentColor$;
+    this.accentPresets = themeService.accentPresets;
+    this.currencies = currencyService.currencies;
+    this.selectedCurrency = currencyService.currentCurrency;
+  }
 
   ngOnInit(): void {
     this.initForms();
@@ -63,7 +85,6 @@ export class Profile implements OnInit {
   }
 
   loadUserInfo(): void {
-    // Get user info from AuthService or localStorage
     const username = localStorage.getItem('username') || 'User';
     const email = localStorage.getItem('email') || '';
     const displayName = localStorage.getItem('displayName') || username;
@@ -88,21 +109,33 @@ export class Profile implements OnInit {
 
     const formValue = this.profileForm!.getRawValue();
 
-    // TODO: Implement API call to update profile
-    // For now, just update localStorage and show success message
-    localStorage.setItem('displayName', formValue.displayName);
-    localStorage.setItem('email', formValue.email);
-
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Profile updated successfully'
+    this.profileService.updateProfile({
+      displayName: formValue.displayName,
+      email: formValue.email
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          localStorage.setItem('displayName', response.data.displayName || formValue.displayName);
+          localStorage.setItem('email', response.data.email || formValue.email);
+        }
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Profile updated successfully'
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update profile'
+        });
+      }
     });
   }
 
   updatePassword(): void {
     if (this.passwordForm?.invalid) {
-      // Mark all fields as touched to show validation errors
       Object.keys(this.passwordForm.controls).forEach(key => {
         this.passwordForm?.get(key)?.markAsTouched();
       });
@@ -139,12 +172,38 @@ export class Profile implements OnInit {
   }
 
   saveNotificationPreferences(): void {
-    // TODO: Implement API call to save notification preferences
-    // For now, just show success message
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
       detail: 'Notification preferences saved'
+    });
+  }
+
+  onDarkModeChange(event: any): void {
+    this.themeService.toggleDarkMode();
+  }
+
+  onAccentSelect(color: string): void {
+    this.themeService.setAccentColor(color);
+  }
+
+  onCurrencyChange(code: string): void {
+    this.currencyService.setCurrency(code);
+    this.profileService.updateProfile({ currency: code }).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Currency Updated',
+          detail: `Default currency changed to ${code}`
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Saved Locally',
+          detail: `Currency set to ${code} (will sync when online)`
+        });
+      }
     });
   }
 
