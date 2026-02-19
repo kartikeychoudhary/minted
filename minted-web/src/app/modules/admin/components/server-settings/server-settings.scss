@@ -1,0 +1,19 @@
+.btn-toggle-active {
+    color: var(--minted-danger);
+    border-color: var(--minted-danger-subtle);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--minted-danger-subtle);
+    }
+}
+
+.btn-toggle-inactive {
+    color: var(--minted-success);
+    border-color: var(--minted-success-subtle);
+    background-color: transparent;
+
+    &:hover {
+        background-color: var(--minted-success-subtle);
+    }
+}

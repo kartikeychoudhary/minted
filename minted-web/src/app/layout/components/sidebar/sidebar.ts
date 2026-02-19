@@ -23,13 +23,20 @@ export class Sidebar {
   currentUser: any = null;
   showUserMenu = false;
 
-  navigationItems: NavigationItem[] = [
+  navigationItems: NavigationItem[] = [];
+
+  private baseNavigationItems: NavigationItem[] = [
     { label: 'Dashboard', icon: 'dashboard', route: '/' },
     { label: 'Transactions', icon: 'receipt_long', route: '/transactions' },
     { label: 'Recurring', icon: 'sync_alt', route: '/recurring' },
     { label: 'Analytics', icon: 'pie_chart', route: '/analytics' },
     { label: 'Settings', icon: 'settings', route: '/settings', section: 'Management' },
     { label: 'Help Center', icon: 'help', route: '/help' }
+  ];
+
+  private adminNavigationItems: NavigationItem[] = [
+    { label: 'Server Jobs', icon: 'schedule', route: '/admin/jobs', section: 'Admin' },
+    { label: 'Server Settings', icon: 'dns', route: '/admin/settings' }
   ];
 
   constructor(
@@ -39,20 +46,24 @@ export class Sidebar {
   ) { }
 
   ngOnInit(): void {
-    this.loadUserInfo();
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.currentUser = {
+          displayName: user.displayName || user.username,
+          email: user.email,
+          avatar: null,
+          role: user.role
+        };
+        this.buildNavigation(user.role);
+      }
+    });
   }
 
-  loadUserInfo(): void {
-    const username = localStorage.getItem('username') || 'User';
-    const email = localStorage.getItem('email') || 'user@example.com';
-    const displayName = localStorage.getItem('displayName') || username;
-
-    this.currentUser = {
-      username,
-      email,
-      displayName,
-      avatar: null
-    };
+  buildNavigation(role?: string): void {
+    this.navigationItems = [...this.baseNavigationItems];
+    if (role === 'ADMIN') {
+      this.navigationItems = [...this.navigationItems, ...this.adminNavigationItems];
+    }
   }
 
   toggleSidebar(): void {

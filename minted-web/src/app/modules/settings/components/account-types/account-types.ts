@@ -18,6 +18,7 @@ export class AccountTypes implements OnInit {
   selectedAccountTypeId?: number;
   loading = false;
   selectedIcon: any = null;
+  duplicateError = '';
 
   // Available icons with PrimeIcons
   iconOptions = [
@@ -37,7 +38,7 @@ export class AccountTypes implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -87,6 +88,7 @@ export class AccountTypes implements OnInit {
     this.selectedAccountTypeId = undefined;
     this.selectedIcon = this.iconOptions[0]; // Set default icon
     this.accountTypeForm?.reset({ icon: 'bank' });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -99,6 +101,7 @@ export class AccountTypes implements OnInit {
       description: accountType.description,
       icon: accountType.icon
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -107,6 +110,7 @@ export class AccountTypes implements OnInit {
       return;
     }
 
+    this.duplicateError = '';
     const request: AccountTypeRequest = this.accountTypeForm!.value;
 
     if (this.isEditMode && this.selectedAccountTypeId) {
@@ -120,12 +124,16 @@ export class AccountTypes implements OnInit {
           this.loadAccountTypes();
           this.displayDialog = false;
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to update account type'
-          });
+        error: (error) => {
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'An account type with this name already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || 'Failed to update account type'
+            });
+          }
         }
       });
     } else {
@@ -139,12 +147,16 @@ export class AccountTypes implements OnInit {
           this.loadAccountTypes();
           this.displayDialog = false;
         },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to create account type'
-          });
+        error: (error) => {
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'An account type with this name already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || 'Failed to create account type'
+            });
+          }
         }
       });
     }

@@ -3,10 +3,12 @@ package com.minted.api.service.impl;
 import com.minted.api.dto.AccountTypeRequest;
 import com.minted.api.dto.AccountTypeResponse;
 import com.minted.api.entity.AccountType;
+import com.minted.api.entity.DefaultAccountType;
 import com.minted.api.entity.User;
 import com.minted.api.exception.BadRequestException;
 import com.minted.api.exception.ResourceNotFoundException;
 import com.minted.api.repository.AccountTypeRepository;
+import com.minted.api.repository.DefaultAccountTypeRepository;
 import com.minted.api.repository.UserRepository;
 import com.minted.api.service.AccountTypeService;
 import lombok.RequiredArgsConstructor;
@@ -22,21 +24,34 @@ public class AccountTypeServiceImpl implements AccountTypeService {
 
     private final AccountTypeRepository accountTypeRepository;
     private final UserRepository userRepository;
+    private final DefaultAccountTypeRepository defaultAccountTypeRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<AccountTypeResponse> getAllByUserId(Long userId) {
-        return accountTypeRepository.findByUserId(userId).stream()
+        List<AccountTypeResponse> userTypes = accountTypeRepository.findByUserId(userId).stream()
                 .map(AccountTypeResponse::from)
                 .collect(Collectors.toList());
+                
+        List<AccountTypeResponse> defaultTypes = defaultAccountTypeRepository.findAll().stream()
+                .map(this::mapDefaultToResponse)
+                .collect(Collectors.toList());
+
+        return mergeAccountTypes(userTypes, defaultTypes);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<AccountTypeResponse> getAllActiveByUserId(Long userId) {
-        return accountTypeRepository.findByUserIdAndIsActiveTrue(userId).stream()
+        List<AccountTypeResponse> userTypes = accountTypeRepository.findByUserIdAndIsActiveTrue(userId).stream()
                 .map(AccountTypeResponse::from)
                 .collect(Collectors.toList());
+                
+        List<AccountTypeResponse> defaultTypes = defaultAccountTypeRepository.findAll().stream()
+                .map(this::mapDefaultToResponse)
+                .collect(Collectors.toList());
+
+        return mergeAccountTypes(userTypes, defaultTypes);
     }
 
     @Override
@@ -51,7 +66,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     public AccountTypeResponse create(AccountTypeRequest request, Long userId) {
         // Check if account type with same name already exists for user
         if (accountTypeRepository.existsByNameAndUserId(request.name(), userId)) {
-            throw new BadRequestException("Account type with name '" + request.name() + "' already exists");
+            throw new com.minted.api.exception.DuplicateResourceException("Account type with name '" + request.name() + "' already exists");
         }
 
         User user = findUserById(userId);
@@ -75,7 +90,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
         // Check if name is changing and if new name already exists
         if (!accountType.getName().equals(request.name()) &&
                 accountTypeRepository.existsByNameAndUserId(request.name(), userId)) {
-            throw new BadRequestException("Account type with name '" + request.name() + "' already exists");
+            throw new com.minted.api.exception.DuplicateResourceException("Account type with name '" + request.name() + "' already exists");
         }
 
         accountType.setName(request.name());
@@ -109,5 +124,40 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    }
+
+    private AccountTypeResponse mapDefaultToResponse(DefaultAccountType type) {
+        return new AccountTypeResponse(
+                null, // id is null for defaults to indicate they are read-only defaults
+                type.getName(),
+                type.getName() + " Account",
+                getDefaultIconForAccountType(type.getName()),
+                true, // isActive
+                null,
+                null
+        );
+    }
+
+    private List<AccountTypeResponse> mergeAccountTypes(List<AccountTypeResponse> userTypes, List<AccountTypeResponse> defaultTypes) {
+        List<String> existingNames = userTypes.stream()
+                .map(t -> t.name().toLowerCase())
+                .collect(Collectors.toList());
+
+        List<AccountTypeResponse> merged = new java.util.ArrayList<>(userTypes);
+        for (AccountTypeResponse defType : defaultTypes) {
+            if (!existingNames.contains(defType.name().toLowerCase())) {
+                merged.add(defType);
+            }
+        }
+        return merged;
+    }
+
+    private String getDefaultIconForAccountType(String name) {
+        String lowerName = name.toLowerCase();
+        if (lowerName.contains("bank")) return "bank";
+        if (lowerName.contains("card")) return "credit-card";
+        if (lowerName.contains("wallet")) return "wallet";
+        if (lowerName.contains("invest")) return "chart";
+        return "bank"; // fallback
     }
 }

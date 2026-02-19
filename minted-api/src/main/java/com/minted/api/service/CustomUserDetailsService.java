@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
@@ -25,10 +26,13 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User is not active: " + username);
         }
 
+        List<org.springframework.security.core.GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole()));
+
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                new ArrayList<>() // No roles/authorities for now
+                authorities
         );
     }
 

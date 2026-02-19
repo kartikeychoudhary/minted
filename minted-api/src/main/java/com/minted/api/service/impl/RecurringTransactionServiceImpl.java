@@ -153,7 +153,7 @@ public class RecurringTransactionServiceImpl implements RecurringTransactionServ
                 .collect(Collectors.toList());
     }
 
-    private LocalDate calculateNextExecutionDate(LocalDate startDate, int dayOfMonth) {
+    public LocalDate calculateNextExecutionDate(LocalDate startDate, int dayOfMonth) {
         LocalDate today = LocalDate.now();
         LocalDate candidate;
 

@@ -21,6 +21,7 @@ export class Budgets implements OnInit {
   isEditMode = false;
   selectedBudgetId?: number;
   loading = false;
+  duplicateError = '';
 
   // Month options
   monthOptions = [
@@ -124,6 +125,7 @@ export class Budgets implements OnInit {
       year: currentDate.getFullYear(),
       categoryId: null
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -137,6 +139,7 @@ export class Budgets implements OnInit {
       year: budget.year,
       categoryId: budget.categoryId
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -145,6 +148,7 @@ export class Budgets implements OnInit {
       return;
     }
 
+    this.duplicateError = '';
     const request: BudgetRequest = this.budgetForm!.value;
 
     if (this.isEditMode && this.selectedBudgetId) {
@@ -159,11 +163,15 @@ export class Budgets implements OnInit {
           this.displayDialog = false;
         },
         error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error?.message || 'Failed to update budget'
-          });
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'A budget for this category and period already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || error?.message || 'Failed to update budget'
+            });
+          }
         }
       });
     } else {
@@ -178,11 +186,15 @@ export class Budgets implements OnInit {
           this.displayDialog = false;
         },
         error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error?.message || 'Failed to create budget'
-          });
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'A budget for this category and period already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || error?.message || 'Failed to create budget'
+            });
+          }
         }
       });
     }

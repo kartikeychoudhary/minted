@@ -63,7 +63,7 @@ public class BudgetServiceImpl implements BudgetService {
         // Check if budget already exists for this month/year/category combination
         if (budgetRepository.existsByUserIdAndMonthAndYearAndCategoryId(
                 userId, request.month(), request.year(), request.categoryId())) {
-            throw new BadRequestException("Budget already exists for this month, year, and category");
+            throw new com.minted.api.exception.DuplicateResourceException("Budget already exists for this month, year, and category");
         }
 
         User user = findUserById(userId);
@@ -97,7 +97,7 @@ public class BudgetServiceImpl implements BudgetService {
 
         if (isChanging && budgetRepository.existsByUserIdAndMonthAndYearAndCategoryId(
                 userId, request.month(), request.year(), request.categoryId())) {
-            throw new BadRequestException("Budget already exists for this month, year, and category");
+            throw new com.minted.api.exception.DuplicateResourceException("Budget already exists for this month, year, and category");
         }
 
         TransactionCategory category = null;

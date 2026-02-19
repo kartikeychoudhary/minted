@@ -56,7 +56,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getDisplayName(),
                 user.getEmail(),
                 user.getForcePasswordChange(),
-                user.getCurrency() != null ? user.getCurrency() : "INR"
+                user.getCurrency(),
+                user.getRole()
         );
 
         return new LoginResponse(
@@ -93,7 +94,8 @@ public class AuthServiceImpl implements AuthService {
                     user.getDisplayName(),
                     user.getEmail(),
                     user.getForcePasswordChange(),
-                    user.getCurrency() != null ? user.getCurrency() : "USD"
+                    user.getCurrency() != null ? user.getCurrency() : "USD",
+                    user.getRole()
             );
 
             return new LoginResponse(

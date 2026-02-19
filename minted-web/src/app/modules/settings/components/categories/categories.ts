@@ -18,6 +18,7 @@ export class Categories implements OnInit {
   selectedCategoryId?: number;
   loading = false;
   selectedIcon: any = null;
+  duplicateError = '';
 
   // Transaction type options
   transactionTypes = [
@@ -61,7 +62,7 @@ export class Categories implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -112,6 +113,7 @@ export class Categories implements OnInit {
       icon: 'restaurant',
       color: 'red'
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -125,6 +127,7 @@ export class Categories implements OnInit {
       icon: category.icon,
       color: category.color
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -133,6 +136,7 @@ export class Categories implements OnInit {
       return;
     }
 
+    this.duplicateError = '';
     const request: CategoryRequest = this.categoryForm!.value;
 
     if (this.isEditMode && this.selectedCategoryId) {
@@ -147,11 +151,15 @@ export class Categories implements OnInit {
           this.displayDialog = false;
         },
         error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error?.message || 'Failed to update category'
-          });
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'A category with this name already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || error?.message || 'Failed to update category'
+            });
+          }
         }
       });
     } else {
@@ -166,11 +174,15 @@ export class Categories implements OnInit {
           this.displayDialog = false;
         },
         error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error?.message || 'Failed to create category'
-          });
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'A category with this name already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || error?.message || 'Failed to create category'
+            });
+          }
         }
       });
     }

@@ -50,7 +50,8 @@ public class UserProfileServiceImpl implements UserProfileService {
                 user.getDisplayName(),
                 user.getEmail(),
                 user.getForcePasswordChange(),
-                user.getCurrency() != null ? user.getCurrency() : "USD"
+                user.getCurrency(),
+                user.getRole()
         );
     }
 }

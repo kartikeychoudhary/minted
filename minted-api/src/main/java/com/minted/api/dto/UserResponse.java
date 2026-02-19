@@ -6,6 +6,7 @@ public record UserResponse(
         String displayName,
         String email,
         Boolean forcePasswordChange,
-        String currency
+        String currency,
+        String role
 ) {
 }

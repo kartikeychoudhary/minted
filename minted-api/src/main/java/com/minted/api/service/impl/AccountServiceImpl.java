@@ -55,7 +55,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountResponse create(AccountRequest request, Long userId) {
         // Check if account with same name already exists for user
         if (accountRepository.existsByNameAndUserId(request.name(), userId)) {
-            throw new BadRequestException("Account with name '" + request.name() + "' already exists");
+            throw new com.minted.api.exception.DuplicateResourceException("Account with name '" + request.name() + "' already exists");
         }
 
         User user = findUserById(userId);
@@ -83,7 +83,7 @@ public class AccountServiceImpl implements AccountService {
         // Check if name is changing and if new name already exists
         if (!account.getName().equals(request.name()) &&
                 accountRepository.existsByNameAndUserId(request.name(), userId)) {
-            throw new BadRequestException("Account with name '" + request.name() + "' already exists");
+            throw new com.minted.api.exception.DuplicateResourceException("Account with name '" + request.name() + "' already exists");
         }
 
         AccountType accountType = findAccountTypeByIdAndUserId(request.accountTypeId(), userId);

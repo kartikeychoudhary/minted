@@ -21,6 +21,7 @@ export class Accounts implements OnInit {
   isEditMode = false;
   selectedAccountId?: number;
   loading = false;
+  duplicateError = '';
 
   constructor(
     private accountService: AccountService,
@@ -30,7 +31,7 @@ export class Accounts implements OnInit {
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef,
     private currencyService: CurrencyService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -97,6 +98,7 @@ export class Accounts implements OnInit {
       color: '#c48821',
       icon: ''
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -111,6 +113,7 @@ export class Accounts implements OnInit {
       color: account.color,
       icon: account.icon
     });
+    this.duplicateError = '';
     this.displayDialog = true;
   }
 
@@ -119,6 +122,7 @@ export class Accounts implements OnInit {
       return;
     }
 
+    this.duplicateError = '';
     const request: AccountRequest = this.accountForm!.value;
 
     if (this.isEditMode && this.selectedAccountId) {
@@ -133,11 +137,15 @@ export class Accounts implements OnInit {
           this.displayDialog = false;
         },
         error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error?.message || 'Failed to update account'
-          });
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'An account with this name already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || error?.message || 'Failed to update account'
+            });
+          }
         }
       });
     } else {
@@ -152,11 +160,15 @@ export class Accounts implements OnInit {
           this.displayDialog = false;
         },
         error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error?.message || 'Failed to create account'
-          });
+          if (error?.status === 409) {
+            this.duplicateError = error.error?.message || 'An account with this name already exists.';
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error?.error?.message || error?.message || 'Failed to create account'
+            });
+          }
         }
       });
     }

@@ -43,6 +43,9 @@ public class User {
     @Column(length = 3)
     private String currency = "INR";
 
+    @Column(length = 20, nullable = false)
+    private String role = "USER";
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

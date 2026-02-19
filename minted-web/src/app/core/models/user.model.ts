@@ -5,6 +5,7 @@ export interface User {
   email: string | null;
   forcePasswordChange: boolean;
   currency: string;
+  role?: string;
 }
 
 export interface LoginRequest {

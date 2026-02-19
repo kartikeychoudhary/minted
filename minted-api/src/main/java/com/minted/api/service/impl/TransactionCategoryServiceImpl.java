@@ -2,11 +2,13 @@ package com.minted.api.service.impl;
 
 import com.minted.api.dto.TransactionCategoryRequest;
 import com.minted.api.dto.TransactionCategoryResponse;
+import com.minted.api.entity.DefaultCategory;
 import com.minted.api.entity.TransactionCategory;
 import com.minted.api.entity.User;
 import com.minted.api.enums.TransactionType;
 import com.minted.api.exception.BadRequestException;
 import com.minted.api.exception.ResourceNotFoundException;
+import com.minted.api.repository.DefaultCategoryRepository;
 import com.minted.api.repository.TransactionCategoryRepository;
 import com.minted.api.repository.UserRepository;
 import com.minted.api.service.TransactionCategoryService;
@@ -23,29 +25,49 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
 
     private final TransactionCategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final DefaultCategoryRepository defaultCategoryRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<TransactionCategoryResponse> getAllByUserId(Long userId) {
-        return categoryRepository.findByUserId(userId).stream()
+        List<TransactionCategoryResponse> userCats = categoryRepository.findByUserId(userId).stream()
                 .map(TransactionCategoryResponse::from)
                 .collect(Collectors.toList());
+
+        List<TransactionCategoryResponse> defaultCats = defaultCategoryRepository.findAll().stream()
+                .map(this::mapDefaultToResponse)
+                .collect(Collectors.toList());
+
+        return mergeCategories(userCats, defaultCats);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TransactionCategoryResponse> getAllActiveByUserId(Long userId) {
-        return categoryRepository.findByUserIdAndIsActiveTrue(userId).stream()
+        List<TransactionCategoryResponse> userCats = categoryRepository.findByUserIdAndIsActiveTrue(userId).stream()
                 .map(TransactionCategoryResponse::from)
                 .collect(Collectors.toList());
+
+        List<TransactionCategoryResponse> defaultCats = defaultCategoryRepository.findAll().stream()
+                .map(this::mapDefaultToResponse)
+                .collect(Collectors.toList());
+
+        return mergeCategories(userCats, defaultCats);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TransactionCategoryResponse> getAllByUserIdAndType(Long userId, TransactionType type) {
-        return categoryRepository.findByUserIdAndTypeAndIsActiveTrue(userId, type).stream()
+        List<TransactionCategoryResponse> userCats = categoryRepository.findByUserIdAndTypeAndIsActiveTrue(userId, type).stream()
                 .map(TransactionCategoryResponse::from)
                 .collect(Collectors.toList());
+
+        List<TransactionCategoryResponse> defaultCats = defaultCategoryRepository.findAll().stream()
+                .filter(c -> TransactionType.valueOf(c.getType().toUpperCase()) == type)
+                .map(this::mapDefaultToResponse)
+                .collect(Collectors.toList());
+
+        return mergeCategories(userCats, defaultCats);
     }
 
     @Override
@@ -60,7 +82,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
     public TransactionCategoryResponse create(TransactionCategoryRequest request, Long userId) {
         // Check if category with same name and type already exists for user
         if (categoryRepository.existsByNameAndTypeAndUserId(request.name(), request.type(), userId)) {
-            throw new BadRequestException("Category with name '" + request.name() +
+            throw new com.minted.api.exception.DuplicateResourceException("Category with name '" + request.name() +
                     "' and type '" + request.type() + "' already exists");
         }
 
@@ -91,7 +113,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
         // Check if name/type is changing and if new combination already exists
         if ((!category.getName().equals(request.name()) || !category.getType().equals(request.type())) &&
                 categoryRepository.existsByNameAndTypeAndUserId(request.name(), request.type(), userId)) {
-            throw new BadRequestException("Category with name '" + request.name() +
+            throw new com.minted.api.exception.DuplicateResourceException("Category with name '" + request.name() +
                     "' and type '" + request.type() + "' already exists");
         }
 
@@ -137,5 +159,56 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
     private User findUserById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    }
+
+    private TransactionCategoryResponse mapDefaultToResponse(DefaultCategory category) {
+        return new TransactionCategoryResponse(
+                null,
+                category.getName(),
+                TransactionType.valueOf(category.getType().toUpperCase()),
+                category.getIcon(),
+                getDefaultColorForCategory(category.getName()),
+                null,
+                null,
+                true,
+                null,
+                null
+        );
+    }
+
+    private List<TransactionCategoryResponse> mergeCategories(List<TransactionCategoryResponse> userCats, List<TransactionCategoryResponse> defaultCats) {
+        // create unqiue set based on name AND type
+        List<String> existingKeys = userCats.stream()
+                .map(c -> c.name().toLowerCase() + "-" + c.type().name().toLowerCase())
+                .collect(Collectors.toList());
+
+        List<TransactionCategoryResponse> merged = new java.util.ArrayList<>(userCats);
+        for (TransactionCategoryResponse defCat : defaultCats) {
+            String key = defCat.name().toLowerCase() + "-" + defCat.type().name().toLowerCase();
+            if (!existingKeys.contains(key)) {
+                merged.add(defCat);
+            }
+        }
+        return merged;
+    }
+
+    private String getDefaultColorForCategory(String name) {
+        return switch (name) {
+            case "Salary" -> "#4CAF50";
+            case "Freelance" -> "#8BC34A";
+            case "Interest" -> "#CDDC39";
+            case "Food & Dining" -> "#FF5722";
+            case "Groceries" -> "#FF9800";
+            case "Transport" -> "#2196F3";
+            case "Utilities" -> "#FFC107";
+            case "Entertainment" -> "#9C27B0";
+            case "Shopping" -> "#E91E63";
+            case "Health" -> "#00BCD4";
+            case "Education" -> "#3F51B5";
+            case "Rent" -> "#795548";
+            case "EMI" -> "#607D8B";
+            case "Transfer" -> "#9E9E9E";
+            default -> "#607D8B";
+        };
     }
 }

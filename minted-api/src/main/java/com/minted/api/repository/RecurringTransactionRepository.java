@@ -46,6 +46,11 @@ public interface RecurringTransactionRepository extends JpaRepository<RecurringT
             @Param("search") String search
     );
 
+    List<RecurringTransaction> findByStatusAndNextExecutionDateLessThanEqual(
+            RecurringStatus status,
+            java.time.LocalDate date
+    );
+
     // Spring Data derived query for pagination
     Page<RecurringTransaction> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
 }

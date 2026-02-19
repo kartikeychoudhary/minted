@@ -1,0 +1,138 @@
+<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full overflow-y-auto">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize">Server Settings</h1>
+            <p class="text-sm text-minted-text-secondary mt-1">Manage scheduled background jobs and global default
+                reference data</p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Scheduled Jobs -->
+        <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
+            <div class="p-5 border-b border-minted-border bg-minted-surface flex items-center gap-3">
+                <span class="material-icons text-minted-text-secondary">restore</span>
+                <h2 class="font-bold">Automated Jobs</h2>
+            </div>
+            <div class="p-5">
+                <div *ngIf="loadingSchedules" class="py-4 text-center"><i
+                        class="pi pi-spin pi-spinner text-minted-primary text-xl"></i></div>
+                <div *ngIf="!loadingSchedules && schedules.length === 0"
+                    class="text-sm text-minted-text-secondary py-4 italic">No schedules found.</div>
+
+                <div *ngFor="let schedule of schedules"
+                    class="p-4 border border-minted-border rounded-lg bg-minted-surface flex flex-col md:flex-row justify-between md:items-center gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="font-bold text-minted-text-primary">{{ schedule.jobName }}</span>
+                            <span class="px-2 py-0.5 text-[0.6rem] font-bold rounded uppercase tracking-wider"
+                                [style.backgroundColor]="schedule.enabled ? 'var(--minted-success-subtle)' : 'var(--minted-bg-surface)'"
+                                [style.color]="schedule.enabled ? 'var(--minted-success)' : 'var(--minted-text-secondary)'">
+                                {{ schedule.enabled ? 'Active' : 'Disabled' }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-minted-text-secondary mb-2">{{ schedule.description || 'No description
+                            provided' }}</p>
+                        <div class="flex items-center gap-4 text-xs font-mono text-minted-text-muted">
+                            <span><i class="pi pi-clock mr-1"></i>{{ schedule.cronExpression }}</span>
+                            <span><i class="pi pi-history mr-1"></i>Last: {{ schedule.lastRunAt ? (schedule.lastRunAt |
+                                date:'short') : 'Never' }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors border outline-none"
+                            [ngClass]="schedule.enabled ? 'btn-toggle-active' : 'btn-toggle-inactive'"
+                            (click)="toggleSchedule(schedule)">
+                            {{ schedule.enabled ? 'Disable' : 'Enable' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+            <!-- Default Categories -->
+            <div class="glass-card rounded-xl border border-minted-border overflow-hidden flex flex-col">
+                <div class="p-4 border-b border-minted-border bg-minted-surface flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-minted-text-secondary">category</span>
+                        <h2 class="font-bold text-sm">Default Categories</h2>
+                    </div>
+                    <p-button icon="pi pi-plus" label="New" (onClick)="showCategoryDialog = true"
+                        styleClass="p-button-sm p-button-outlined"></p-button>
+                </div>
+                <div class="relative bg-white dark:bg-[#121212]">
+                    <ag-grid-angular class="w-full" [theme]="mintedTheme" [rowData]="categories"
+                        [columnDefs]="categoryColDefs" [gridOptions]="categoryGridOptions">
+                    </ag-grid-angular>
+                </div>
+            </div>
+
+            <!-- Default Account Types -->
+            <div class="glass-card rounded-xl border border-minted-border overflow-hidden flex flex-col">
+                <div class="p-4 border-b border-minted-border bg-minted-surface flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-minted-text-secondary">account_balance</span>
+                        <h2 class="font-bold text-sm">Default Account Types</h2>
+                    </div>
+                    <p-button icon="pi pi-plus" label="New" (onClick)="showAccountTypeDialog = true"
+                        styleClass="p-button-sm p-button-outlined"></p-button>
+                </div>
+                <div class="relative bg-white dark:bg-[#121212]">
+                    <ag-grid-angular class="w-full" [theme]="mintedTheme" [rowData]="accountTypes"
+                        [columnDefs]="accountTypeColDefs" [gridOptions]="accountTypeGridOptions">
+                    </ag-grid-angular>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<p-dialog header="New Default Category" [(visible)]="showCategoryDialog" [modal]="true" [style]="{width: '400px'}"
+    [draggable]="false" [resizable]="false">
+    <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="pt-4 space-y-4">
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
+            <input type="text" pInputText formControlName="name"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Type</label>
+            <select formControlName="type"
+                class="w-full p-2.5 bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary outline-none focus:border-minted-primary border">
+                <option value="EXPENSE">Expense</option>
+                <option value="INCOME">Income</option>
+            </select>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Icon Class</label>
+            <input type="text" pInputText formControlName="icon"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <p-button label="Cancel" (onClick)="showCategoryDialog = false"
+                styleClass="p-button-text p-button-secondary"></p-button>
+            <p-button type="submit" label="Save Category" [disabled]="categoryForm.invalid"
+                styleClass="p-button-primary"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-dialog header="New Default Account Type" [(visible)]="showAccountTypeDialog" [modal]="true"
+    [style]="{width: '400px'}" [draggable]="false" [resizable]="false">
+    <form [formGroup]="accountTypeForm" (ngSubmit)="saveAccountType()" class="pt-4 space-y-4">
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
+            <input type="text" pInputText formControlName="name"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <p-button label="Cancel" (onClick)="showAccountTypeDialog = false"
+                styleClass="p-button-text p-button-secondary"></p-button>
+            <p-button type="submit" label="Save Type" [disabled]="accountTypeForm.invalid"
+                styleClass="p-button-primary"></p-button>
+        </div>
+    </form>
+</p-dialog>

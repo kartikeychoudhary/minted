@@ -1,0 +1,1 @@
+ALTER TABLE users ADD COLUMN currency varchar(3) NOT NULL DEFAULT 'INR';

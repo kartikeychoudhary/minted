@@ -1,0 +1,130 @@
+<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in max-w-5xl mx-auto w-full">
+
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+        <button (click)="goBack()"
+            class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors group flex items-center justify-center">
+            <span
+                class="material-icons text-minted-text-secondary group-hover:text-minted-primary transition-colors">arrow_back</span>
+        </button>
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize flex items-center gap-3">
+                Job Execution #{{ job?.id }}
+                <span *ngIf="job" class="px-2.5 py-1 text-xs font-semibold rounded-full"
+                    [ngStyle]="getStatusStyle(job.status)">
+                    {{ job.status }}
+                </span>
+            </h1>
+            <p class="text-sm text-minted-text-secondary mt-1">
+                {{ job?.jobName || 'Loading details...' }}
+                <span *ngIf="job" class="ml-2 px-2 py-0.5 text-[0.65rem] font-bold tracking-wider rounded uppercase"
+                    [ngStyle]="getTriggerStyle(job.triggerType)">
+                    {{ job.triggerType }}
+                </span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading"
+        class="flex-1 rounded-xl glass-card flex items-center justify-center p-8 border border-minted-border shadow-sm">
+        <div class="text-center">
+            <i class="pi pi-spin pi-spinner text-4xl text-minted-primary mb-4"></i>
+            <p class="text-minted-text-secondary">Loading execution details...</p>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error" class="p-4 rounded-xl border flex items-center gap-3"
+        style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
+        <span class="material-icons" style="color: var(--minted-danger);">error_outline</span>
+        <p class="font-medium">{{ error }}</p>
+    </div>
+
+    <ng-container *ngIf="!loading && job">
+        <!-- Execution Meta Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="glass-card rounded-xl border border-minted-border p-4 shadow-sm">
+                <p class="text-xs text-minted-text-muted uppercase tracking-wider font-semibold mb-1">Started</p>
+                <p class="text-minted-text-primary font-medium">{{ job.startTime | date:'medium' }}</p>
+            </div>
+            <div class="glass-card rounded-xl border border-minted-border p-4 shadow-sm">
+                <p class="text-xs text-minted-text-muted uppercase tracking-wider font-semibold mb-1">Ended</p>
+                <p class="text-minted-text-primary font-medium">{{ job.endTime ? (job.endTime | date:'medium') : '-' }}
+                </p>
+            </div>
+            <div class="glass-card rounded-xl border border-minted-border p-4 shadow-sm">
+                <p class="text-xs text-minted-text-muted uppercase tracking-wider font-semibold mb-1">Duration</p>
+                <p class="text-minted-text-primary font-medium">{{ formatDuration(job.startTime, job.endTime) }}</p>
+            </div>
+            <div class="glass-card rounded-xl border border-minted-border p-4 shadow-sm">
+                <p class="text-xs text-minted-text-muted uppercase tracking-wider font-semibold mb-1">Steps Passed</p>
+                <p class="text-minted-text-primary font-medium">{{ job.completedSteps }} / {{ job.totalSteps }}</p>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div *ngIf="job.errorMessage" class="p-4 rounded-xl border shadow-sm mt-2"
+            style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
+            <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color: var(--minted-danger);">Execution
+                Error
+            </p>
+            <p class="text-sm font-mono whitespace-pre-wrap break-all">{{ job.errorMessage }}</p>
+        </div>
+
+        <!-- Steps Timeline -->
+        <div class="mt-6 flex flex-col gap-4">
+            <h2 class="text-lg font-bold text-minted-text-primary">Execution Steps</h2>
+
+            <div *ngIf="(!job.steps || job.steps.length === 0)" class="text-minted-text-secondary text-sm italic py-4">
+                No step executions recorded for this run.
+            </div>
+
+            <div *ngFor="let step of job.steps"
+                class="glass-card rounded-xl border border-minted-border overflow-hidden shadow-sm flex flex-col relative transition-all duration-200">
+                <!-- Colored Activity bar at top -->
+                <div class="h-1 w-full" [style.backgroundColor]="getStepStatusColor(step.status)">
+                </div>
+
+                <div class="p-5 flex flex-col gap-4">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-3">
+                            <span
+                                class="w-8 h-8 rounded-full bg-minted-surface text-minted-text-primary border border-minted-border border-b-2 flex items-center justify-center font-bold text-sm">
+                                {{ step.stepOrder }}
+                            </span>
+                            <div>
+                                <h3 class="font-bold text-minted-text-primary">{{ step.stepName }}</h3>
+                                <p class="text-xs text-minted-text-muted">
+                                    {{ formatDuration(step.startTime, step.endTime) }}
+                                    <span class="px-2 font-mono">•</span>
+                                    {{ step.startTime | date:'HH:mm:ss.SSS' }}
+                                </p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 text-[10px] font-bold tracking-wider rounded-full uppercase"
+                            [ngStyle]="getStatusStyle(step.status)">
+                            {{ step.status }}
+                        </span>
+                    </div>
+
+                    <!-- Step Context -->
+                    <div *ngIf="step.contextJson"
+                        class="bg-black/5 dark:bg-black/20 rounded-lg p-3 border border-black/5 dark:border-white/5">
+                        <p class="text-[10px] font-bold text-minted-text-muted uppercase tracking-wider mb-2">Result
+                            Context</p>
+                        <pre
+                            class="text-xs font-mono text-minted-text-secondary overflow-x-auto m-0 p-0 leading-relaxed">{{ formatJSON(step.contextJson) }}</pre>
+                    </div>
+
+                    <!-- Step Error -->
+                    <div *ngIf="step.errorMessage" class="p-3 rounded-lg border text-sm"
+                        style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
+                        <span class="font-bold block mb-1" style="color: var(--minted-danger);">Error at step</span>
+                        <span class="font-mono text-xs break-all">{{ step.errorMessage }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
