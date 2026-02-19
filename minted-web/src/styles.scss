@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-// PrimeNG Theme
+// PrimeNG Icons
 @import 'primeicons/primeicons.css';
 
 // Font Awesome
@@ -13,87 +13,425 @@
 @import 'ag-grid-community/styles/ag-grid.css';
 @import 'ag-grid-community/styles/ag-theme-alpine.css';
 
-// AG Grid theme customization to match PrimeNG
-.ag-theme-alpine {
-  --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --ag-font-size: 14px;
-}
+// ============================================================
+//  MINTED DESIGN TOKENS — Single source of truth
+// ============================================================
 
-// CSS Custom Properties — light mode defaults
 :root {
-  --minted-accent: #c48821;
+  // --- Page & Surface ---
   --minted-bg-page: #f8fafc;
   --minted-bg-card: #ffffff;
-  --minted-bg-surface: #f9fafb;
-  --minted-text-primary: #1e293b;
-  --minted-text-secondary: #64748b;
-  --minted-border: #e5e7eb;
+  --minted-bg-surface: #f1f5f9;
+  --minted-bg-hover: #f8fafc;
+  --minted-bg-input: #ffffff;
+
+  // --- Text ---
+  --minted-text-primary: #0f172a;
+  --minted-text-secondary: #475569;
+  --minted-text-muted: #94a3b8;
+
+  // --- Borders ---
+  --minted-border: #e2e8f0;
+  --minted-border-light: #f1f5f9;
+
+  // --- Accent (default amber — switchable via ThemeService) ---
+  --minted-accent: #c48821;
+  --minted-accent-hover: #a87315;
+  --minted-accent-subtle: rgba(196, 136, 33, 0.10);
+
+  // --- Semantic colors ---
+  --minted-success: #16a34a;
+  --minted-success-subtle: rgba(22, 163, 74, 0.10);
+  --minted-danger: #dc2626;
+  --minted-danger-subtle: rgba(220, 38, 38, 0.10);
+  --minted-info: #3b82f6;
+  --minted-info-subtle: rgba(59, 130, 246, 0.10);
+
+  // --- Sidebar (brand green) ---
   --minted-sidebar-bg: #166534;
+
+  // --- Radius ---
+  --minted-radius-sm: 6px;
+  --minted-radius-md: 10px;
+  --minted-radius-lg: 14px;
+
+  // --- Shadows ---
+  --minted-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --minted-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  // --- Scrollbar ---
+  --minted-scrollbar-thumb: #cbd5e1;
+  --minted-scrollbar-hover: #94a3b8;
+  --minted-scrollbar-track: transparent;
 }
 
-// Dark mode overrides
+// ============================================================
+//  DARK MODE — Modern elevated palette (not pure black)
+// ============================================================
+
 .dark-mode {
   --minted-bg-page: #0f172a;
   --minted-bg-card: #1e293b;
   --minted-bg-surface: #162032;
+  --minted-bg-hover: #253348;
+  --minted-bg-input: #1e293b;
+
   --minted-text-primary: #f1f5f9;
   --minted-text-secondary: #94a3b8;
+  --minted-text-muted: #64748b;
+
   --minted-border: #334155;
+  --minted-border-light: #1e293b;
+
   --minted-sidebar-bg: #052e16;
 
-  // Background classes
-  .bg-white { background-color: var(--minted-bg-card) !important; }
-  .bg-gray-50, .bg-slate-50 { background-color: var(--minted-bg-surface) !important; }
-  .bg-gray-100, .bg-slate-100 { background-color: var(--minted-bg-surface) !important; }
+  --minted-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --minted-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
 
-  // Border classes
-  .border-gray-200, .border-slate-200 { border-color: var(--minted-border) !important; }
-  .border-gray-100, .border-slate-100 { border-color: var(--minted-border) !important; }
-  .border-b { border-color: var(--minted-border) !important; }
-
-  // Text classes
-  .text-gray-900, .text-slate-900 { color: var(--minted-text-primary) !important; }
-  .text-gray-800, .text-slate-800 { color: var(--minted-text-primary) !important; }
-  .text-gray-700, .text-slate-700 { color: var(--minted-text-secondary) !important; }
-  .text-gray-600, .text-slate-600 { color: var(--minted-text-secondary) !important; }
-  .text-gray-500, .text-slate-500 { color: var(--minted-text-secondary) !important; }
-  .text-gray-400, .text-slate-400 { color: var(--minted-text-secondary) !important; }
-
-  // Hover background overrides
-  .hover\:bg-gray-50:hover,
-  .hover\:bg-slate-50:hover { background-color: var(--minted-bg-surface) !important; }
-  .hover\:bg-gray-100:hover,
-  .hover\:bg-slate-100:hover { background-color: var(--minted-bg-surface) !important; }
-
-  // Header and nav elements
-  header.bg-white {
-    background-color: var(--minted-bg-card) !important;
-    border-color: var(--minted-border) !important;
-  }
+  --minted-scrollbar-thumb: #475569;
+  --minted-scrollbar-hover: #64748b;
+  --minted-scrollbar-track: transparent;
 }
 
-// Global Styles
+// ============================================================
+//  GLOBAL BASE STYLES
+// ============================================================
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+html,
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--minted-bg-page);
   color: var(--minted-text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-// Utility classes
+// ============================================================
+//  SEMANTIC UTILITY CLASSES
+// ============================================================
+
 .text-income {
-  color: #22c55e !important;
+  color: var(--minted-success) !important;
 }
 
 .text-expense {
-  color: #ef4444 !important;
+  color: var(--minted-danger) !important;
 }
 
 .text-transfer {
-  color: #3b82f6 !important;
+  color: var(--minted-info) !important;
+}
+
+// ============================================================
+//  GLOBAL PRIMENG OVERRIDES — Theme-aware via CSS vars
+// ============================================================
+
+// --- Buttons ---
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-danger):not(.p-button-success):not(.p-button-info):not(.p-button-secondary) {
+  background-color: var(--minted-accent) !important;
+  border-color: var(--minted-accent) !important;
+
+  &:enabled:hover {
+    background-color: var(--minted-accent-hover) !important;
+    border-color: var(--minted-accent-hover) !important;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle) !important;
+  }
+}
+
+// --- Cards ---
+.p-card {
+  background: var(--minted-bg-card) !important;
+  color: var(--minted-text-primary) !important;
+  border: 1px solid var(--minted-border) !important;
+  box-shadow: var(--minted-shadow-sm) !important;
+  border-radius: var(--minted-radius-md) !important;
+}
+
+.p-card .p-card-title {
+  color: var(--minted-text-primary) !important;
+}
+
+.p-card .p-card-subtitle {
+  color: var(--minted-text-secondary) !important;
+}
+
+// --- Inputs ---
+.p-inputtext,
+.p-select,
+.p-datepicker,
+.p-inputnumber .p-inputtext,
+.p-textarea {
+  background: var(--minted-bg-input) !important;
+  color: var(--minted-text-primary) !important;
+  border-color: var(--minted-border) !important;
+
+  &:hover {
+    border-color: var(--minted-accent) !important;
+  }
+
+  &:focus,
+  &.p-focus {
+    border-color: var(--minted-accent) !important;
+    box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle) !important;
+  }
+}
+
+.p-select-label {
+  color: var(--minted-text-primary) !important;
+}
+
+// --- Select dropdown overlay ---
+.p-select-overlay,
+.p-select-panel {
+  background: var(--minted-bg-card) !important;
+  border-color: var(--minted-border) !important;
+  z-index: 1101 !important;
+}
+
+.p-select-option {
+  color: var(--minted-text-primary) !important;
+
+  &:hover,
+  &.p-highlight {
+    background: var(--minted-accent-subtle) !important;
+    color: var(--minted-accent) !important;
+  }
+}
+
+// --- Dialogs ---
+.p-dialog {
+  background: var(--minted-bg-card) !important;
+  border: 1px solid var(--minted-border) !important;
+  box-shadow: var(--minted-shadow-md) !important;
+
+  .p-dialog-header {
+    background: var(--minted-bg-card) !important;
+    color: var(--minted-text-primary) !important;
+    border-bottom: 1px solid var(--minted-border) !important;
+  }
+
+  .p-dialog-content {
+    background: var(--minted-bg-card) !important;
+    color: var(--minted-text-primary) !important;
+    overflow: visible !important;
+  }
+
+  .p-dialog-footer {
+    background: var(--minted-bg-card) !important;
+    border-top: 1px solid var(--minted-border) !important;
+  }
+}
+
+// Fix dialog field labels
+.p-dialog label {
+  color: var(--minted-text-secondary) !important;
+}
+
+// --- Tables (PrimeNG p-table) ---
+.p-datatable .p-datatable-thead>tr>th {
+  background: var(--minted-bg-surface) !important;
+  color: var(--minted-text-muted) !important;
+  border-color: var(--minted-border) !important;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.p-datatable .p-datatable-tbody>tr {
+  background: var(--minted-bg-card) !important;
+  color: var(--minted-text-primary) !important;
+
+  >td {
+    border-color: var(--minted-border-light) !important;
+  }
+
+  &:hover {
+    background: var(--minted-bg-hover) !important;
+  }
+}
+
+.p-paginator {
+  background: var(--minted-bg-surface) !important;
+  color: var(--minted-text-secondary) !important;
+  border-color: var(--minted-border) !important;
+}
+
+// --- Tabs ---
+.p-tabs {
+  background: var(--minted-bg-card) !important;
+  color: var(--minted-text-primary) !important;
+}
+
+.p-tablist {
+  background: var(--minted-bg-card) !important;
+  border-color: var(--minted-border) !important;
+}
+
+.p-tab {
+  color: var(--minted-text-secondary) !important;
+  background: transparent !important;
+
+  &:hover {
+    color: var(--minted-text-primary) !important;
+  }
+
+  &[data-p-active="true"],
+  &.p-tab-active {
+    color: var(--minted-accent) !important;
+    border-color: var(--minted-accent) !important;
+  }
+}
+
+.p-tabpanel,
+.p-tabpanels {
+  background: var(--minted-bg-card) !important;
+  color: var(--minted-text-primary) !important;
+}
+
+
+// --- Accordion ---
+.p-accordion-header-link,
+.p-accordion-header a {
+  background: var(--minted-bg-surface) !important;
+  color: var(--minted-text-primary) !important;
+  border-color: var(--minted-border) !important;
+
+  &:hover {
+    background: var(--minted-bg-hover) !important;
+  }
+}
+
+.p-accordion-content {
+  background: var(--minted-bg-card) !important;
+  color: var(--minted-text-primary) !important;
+  border-color: var(--minted-border) !important;
+}
+
+// --- Progress Bar ---
+.p-progressbar {
+  background: var(--minted-border) !important;
+
+  .p-progressbar-value {
+    background: var(--minted-accent) !important;
+  }
+}
+
+// --- Skeleton ---
+.p-skeleton {
+  background-color: var(--minted-border) !important;
+}
+
+// --- Tooltip ---
+.p-tooltip .p-tooltip-text {
+  background: var(--minted-bg-card) !important;
+  color: var(--minted-text-primary) !important;
+  border: 1px solid var(--minted-border) !important;
+  box-shadow: var(--minted-shadow-md) !important;
+}
+
+// --- Toast ---
+.p-toast .p-toast-message {
+  background: var(--minted-bg-card) !important;
+  border: 1px solid var(--minted-border) !important;
+  color: var(--minted-text-primary) !important;
+}
+
+// --- Confirm Dialog ---
+.p-confirmdialog {
+  .p-dialog-header {
+    background: var(--minted-bg-card) !important;
+  }
+
+  .p-dialog-content {
+    background: var(--minted-bg-card) !important;
+  }
+
+  .p-dialog-footer {
+    background: var(--minted-bg-card) !important;
+  }
+}
+
+// --- DatePicker overlay ---
+.p-datepicker-panel,
+.p-datepicker {
+  z-index: 1101 !important;
+}
+
+.p-datepicker-panel {
+  background: var(--minted-bg-card) !important;
+  border-color: var(--minted-border) !important;
+  color: var(--minted-text-primary) !important;
+}
+
+// --- Toggle Switch ---
+.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
+  background: var(--minted-accent) !important;
+}
+
+// --- Tag ---
+.p-tag {
+  &.p-tag-success {
+    background: var(--minted-success-subtle) !important;
+    color: var(--minted-success) !important;
+  }
+
+  &.p-tag-danger {
+    background: var(--minted-danger-subtle) !important;
+    color: var(--minted-danger) !important;
+  }
+
+  &.p-tag-info {
+    background: var(--minted-info-subtle) !important;
+    color: var(--minted-info) !important;
+  }
+}
+
+// ============================================================
+//  AG GRID — Theme token bridge
+// ============================================================
+
+.ag-theme-alpine {
+  --ag-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ag-font-size: 14px;
+  --ag-background-color: var(--minted-bg-card);
+  --ag-foreground-color: var(--minted-text-primary);
+  --ag-border-color: var(--minted-border);
+  --ag-header-background-color: var(--minted-bg-surface);
+  --ag-header-foreground-color: var(--minted-text-secondary);
+  --ag-odd-row-background-color: var(--minted-bg-card);
+  --ag-row-hover-color: var(--minted-bg-hover);
+  --ag-selected-row-background-color: var(--minted-accent-subtle);
+  --ag-checkbox-checked-color: var(--minted-accent);
+  --ag-alpine-active-color: var(--minted-accent);
+}
+
+// ============================================================
+//  GLOBAL SCROLLBAR
+// ============================================================
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--minted-scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--minted-scrollbar-thumb);
+  border-radius: 20px;
+
+  &:hover {
+    background-color: var(--minted-scrollbar-hover);
+  }
 }

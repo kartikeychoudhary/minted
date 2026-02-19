@@ -2,82 +2,62 @@
   <!-- Header & Main Actions -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
     <div>
-      <h1 class="text-2xl font-bold text-slate-900">Transactions</h1>
-      <p class="text-sm text-slate-500 mt-1">Manage and categorize your financial activity.</p>
+      <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Transactions</h1>
+      <p class="text-sm mt-1" style="color: var(--minted-text-muted);">Manage and categorize your financial activity.
+      </p>
     </div>
     <div class="flex gap-3">
-      <button
-        pButton
-        type="button"
-        label="Export"
-        icon="pi pi-download"
-        class="p-button-outlined"
-        (click)="exportTransactions()"
-        [disabled]="filteredTransactions.length === 0">
+      <button pButton type="button" label="Export" icon="pi pi-download" class="p-button-outlined"
+        (click)="exportTransactions()" [disabled]="filteredTransactions.length === 0">
       </button>
-      <button
-        pButton
-        type="button"
-        label="Add Transaction"
-        icon="pi pi-plus"
-        (click)="openNewDialog()"
+      <button pButton type="button" label="Add Transaction" icon="pi pi-plus" (click)="openNewDialog()"
         style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
   </div>
 
   <!-- Filters & Controls Bar -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+  <div class="rounded-xl shadow-sm border p-4 mb-6"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
     <div class="flex flex-col gap-4">
       <!-- Date Filters Row -->
       <div class="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
         <!-- Quick Date Filters -->
         <div class="flex flex-wrap gap-2">
-          <button
-            type="button"
-            class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary/10]="selectedDateFilter === DateFilterOption.THIS_MONTH"
+          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
+            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.THIS_MONTH"
             [class.text-primary]="selectedDateFilter === DateFilterOption.THIS_MONTH"
             [class.border]="selectedDateFilter === DateFilterOption.THIS_MONTH"
-            [class.border-primary/20]="selectedDateFilter === DateFilterOption.THIS_MONTH"
-            [class.text-slate-600]="selectedDateFilter !== DateFilterOption.THIS_MONTH"
-            [class.hover:bg-slate-100]="selectedDateFilter !== DateFilterOption.THIS_MONTH"
+            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.THIS_MONTH"
+            [style.color]="selectedDateFilter !== DateFilterOption.THIS_MONTH ? 'var(--minted-text-secondary)' : null"
             (click)="onDateFilterChange(DateFilterOption.THIS_MONTH)">
             This Month
           </button>
-          <button
-            type="button"
-            class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary/10]="selectedDateFilter === DateFilterOption.LAST_MONTH"
+          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
+            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_MONTH"
             [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_MONTH"
             [class.border]="selectedDateFilter === DateFilterOption.LAST_MONTH"
-            [class.border-primary/20]="selectedDateFilter === DateFilterOption.LAST_MONTH"
-            [class.text-slate-600]="selectedDateFilter !== DateFilterOption.LAST_MONTH"
-            [class.hover:bg-slate-100]="selectedDateFilter !== DateFilterOption.LAST_MONTH"
+            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_MONTH"
+            [style.color]="selectedDateFilter !== DateFilterOption.LAST_MONTH ? 'var(--minted-text-secondary)' : null"
             (click)="onDateFilterChange(DateFilterOption.LAST_MONTH)">
             Last Month
           </button>
-          <button
-            type="button"
-            class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary/10]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
+          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
+            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
             [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
             [class.border]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
-            [class.border-primary/20]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
-            [class.text-slate-600]="selectedDateFilter !== DateFilterOption.LAST_3_MONTHS"
-            [class.hover:bg-slate-100]="selectedDateFilter !== DateFilterOption.LAST_3_MONTHS"
+            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
+            [style.color]="selectedDateFilter !== DateFilterOption.LAST_3_MONTHS ? 'var(--minted-text-secondary)' : null"
             (click)="onDateFilterChange(DateFilterOption.LAST_3_MONTHS)">
             Last 3 Months
           </button>
-          <button
-            type="button"
+          <button type="button"
             class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors flex items-center gap-1"
-            [class.bg-primary/10]="selectedDateFilter === DateFilterOption.CUSTOM"
+            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.CUSTOM"
             [class.text-primary]="selectedDateFilter === DateFilterOption.CUSTOM"
             [class.border]="selectedDateFilter === DateFilterOption.CUSTOM"
-            [class.border-primary/20]="selectedDateFilter === DateFilterOption.CUSTOM"
-            [class.text-slate-600]="selectedDateFilter !== DateFilterOption.CUSTOM"
-            [class.hover:bg-slate-100]="selectedDateFilter !== DateFilterOption.CUSTOM"
+            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.CUSTOM"
+            [style.color]="selectedDateFilter !== DateFilterOption.CUSTOM ? 'var(--minted-text-secondary)' : null"
             (click)="onDateFilterChange(DateFilterOption.CUSTOM)">
             Custom Range <i class="pi pi-calendar text-sm"></i>
           </button>
@@ -85,60 +65,38 @@
 
         <!-- Dropdowns & Search -->
         <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-start">
-          <p-select
-            [(ngModel)]="selectedAccountId"
-            [options]="accountOptions"
-            placeholder="All Accounts"
-            (onChange)="onAccountFilterChange()"
-            styleClass="w-full sm:w-48">
+          <p-select [(ngModel)]="selectedAccountId" [options]="accountOptions" placeholder="All Accounts"
+            (onChange)="onAccountFilterChange()" styleClass="w-full sm:w-48">
           </p-select>
 
-          <p-select
-            [(ngModel)]="selectedCategoryId"
-            [options]="categoryOptions"
-            placeholder="All Categories"
-            (onChange)="onCategoryFilterChange()"
-            styleClass="w-full sm:w-48">
+          <p-select [(ngModel)]="selectedCategoryId" [options]="categoryOptions" placeholder="All Categories"
+            (onChange)="onCategoryFilterChange()" styleClass="w-full sm:w-48">
           </p-select>
 
           <p-iconfield iconPosition="left" class="w-full sm:w-64">
             <p-inputicon styleClass="pi pi-search" />
-            <input
-              pInputText
-              type="text"
-              [(ngModel)]="searchTerm"
-              (ngModelChange)="onSearchChange()"
-              placeholder="Search transactions..."
-              class="w-full" />
+            <input pInputText type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+              placeholder="Search transactions..." class="w-full" />
           </p-iconfield>
         </div>
       </div>
 
       <!-- Custom Date Range Pickers (shown when Custom Range is selected) -->
-      <div *ngIf="showCustomDatePickers" class="flex flex-col sm:flex-row gap-4 items-end pt-2 border-t border-slate-200">
+      <div *ngIf="showCustomDatePickers" class="flex flex-col sm:flex-row gap-4 items-end pt-2 border-t"
+        style="border-color: var(--minted-border);">
         <div class="flex-1">
-          <label for="startDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Start Date</label>
-          <p-datepicker
-            id="startDate"
-            [(ngModel)]="customStartDate"
-            (ngModelChange)="onCustomDateChange()"
-            dateFormat="mm/dd/yy"
-            [showIcon]="true"
-            placeholder="Select start date"
-            styleClass="w-full"
+          <label for="startDate" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Start Date</label>
+          <p-datepicker id="startDate" [(ngModel)]="customStartDate" (ngModelChange)="onCustomDateChange()"
+            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select start date" styleClass="w-full"
             inputStyleClass="w-full">
           </p-datepicker>
         </div>
         <div class="flex-1">
-          <label for="endDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">End Date</label>
-          <p-datepicker
-            id="endDate"
-            [(ngModel)]="customEndDate"
-            (ngModelChange)="onCustomDateChange()"
-            dateFormat="mm/dd/yy"
-            [showIcon]="true"
-            placeholder="Select end date"
-            styleClass="w-full"
+          <label for="endDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">End
+            Date</label>
+          <p-datepicker id="endDate" [(ngModel)]="customEndDate" (ngModelChange)="onCustomDateChange()"
+            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select end date" styleClass="w-full"
             inputStyleClass="w-full">
           </p-datepicker>
         </div>
@@ -148,62 +106,44 @@
 
   <!-- AG Grid Table -->
   <div class="shadow-sm">
-    <ag-grid-angular
-      class="ag-theme-minted"
-      style="width: 100%; height: 600px;"
-      [rowData]="rowData"
-      [columnDefs]="columnDefs"
-      [defaultColDef]="defaultColDef"
-      [gridOptions]="gridOptions"
-      [loading]="loading"
-      (gridReady)="onGridReady($event)"
-      >
+    <ag-grid-angular class="ag-theme-minted" style="width: 100%; height: 600px;" [rowData]="rowData"
+      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [loading]="loading"
+      (gridReady)="onGridReady($event)">
     </ag-grid-angular>
   </div>
 </div>
 
 <!-- Transaction Dialog -->
-<p-dialog
-  [(visible)]="showDialog"
-  [header]="isEditMode ? 'Edit Transaction' : 'Add Transaction'"
-  [modal]="true"
-  [style]="{width: '600px'}"
-  [draggable]="false"
-  [resizable]="false">
+<p-dialog [(visible)]="showDialog" [header]="isEditMode ? 'Edit Transaction' : 'Add Transaction'" [modal]="true"
+  [style]="{width: '600px'}" [draggable]="false" [resizable]="false">
 
   <form *ngIf="transactionForm" [formGroup]="transactionForm" (ngSubmit)="saveTransaction()">
     <div class="space-y-4">
       <!-- Amount and Type Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="amount" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Amount</label>
-          <p-inputNumber
-            id="amount"
-            formControlName="amount"
-            mode="currency"
-            [currency]="currencyService.currentCurrency"
-            [locale]="currencyService.currentLocale"
-            [minFractionDigits]="2"
-            styleClass="w-full"
-            inputStyleClass="w-full"
+          <label for="amount" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Amount</label>
+          <p-inputNumber id="amount" formControlName="amount" mode="currency"
+            [currency]="currencyService.currentCurrency" [locale]="currencyService.currentLocale"
+            [minFractionDigits]="2" styleClass="w-full" inputStyleClass="w-full"
             [class.p-invalid]="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched">
           </p-inputNumber>
-          <small class="p-error block mt-1" *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched">
+          <small class="p-error block mt-1"
+            *ngIf="transactionForm.get('amount')?.invalid && transactionForm.get('amount')?.touched">
             Amount is required and must be greater than 0
           </small>
         </div>
 
         <div>
-          <label for="type" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Type</label>
-          <p-select
-            id="type"
-            formControlName="type"
-            [options]="transactionTypes"
-            placeholder="Select type"
+          <label for="type" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Type</label>
+          <p-select id="type" formControlName="type" [options]="transactionTypes" placeholder="Select type"
             styleClass="w-full"
             [class.p-invalid]="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
           </p-select>
-          <small class="p-error block mt-1" *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
+          <small class="p-error block mt-1"
+            *ngIf="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
             Type is required
           </small>
         </div>
@@ -211,15 +151,12 @@
 
       <!-- Description -->
       <div>
-        <label for="description" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Description</label>
-        <input
-          pInputText
-          id="description"
-          formControlName="description"
-          placeholder="Enter description"
-          class="w-full"
+        <label for="description" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Description</label>
+        <input pInputText id="description" formControlName="description" placeholder="Enter description" class="w-full"
           [class.p-invalid]="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched" />
-        <small class="p-error block mt-1" *ngIf="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched">
+        <small class="p-error block mt-1"
+          *ngIf="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched">
           Description is required (max 500 characters)
         </small>
       </div>
@@ -227,34 +164,27 @@
       <!-- Date and Category Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="transactionDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Date</label>
-          <p-datepicker
-            id="transactionDate"
-            formControlName="transactionDate"
-            dateFormat="mm/dd/yy"
-            [showIcon]="true"
-            styleClass="w-full"
-            inputStyleClass="w-full"
+          <label for="transactionDate" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Date</label>
+          <p-datepicker id="transactionDate" formControlName="transactionDate" dateFormat="mm/dd/yy" [showIcon]="true"
+            styleClass="w-full" inputStyleClass="w-full"
             [class.p-invalid]="transactionForm.get('transactionDate')?.invalid && transactionForm.get('transactionDate')?.touched">
           </p-datepicker>
-          <small class="p-error block mt-1" *ngIf="transactionForm.get('transactionDate')?.invalid && transactionForm.get('transactionDate')?.touched">
+          <small class="p-error block mt-1"
+            *ngIf="transactionForm.get('transactionDate')?.invalid && transactionForm.get('transactionDate')?.touched">
             Date is required
           </small>
         </div>
 
         <div>
-          <label for="categoryId" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category</label>
-          <p-select
-            id="categoryId"
-            formControlName="categoryId"
-            [options]="categories"
-            optionLabel="name"
-            optionValue="id"
-            placeholder="Select category"
-            styleClass="w-full"
+          <label for="categoryId" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Category</label>
+          <p-select id="categoryId" formControlName="categoryId" [options]="categories" optionLabel="name"
+            optionValue="id" placeholder="Select category" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched">
           </p-select>
-          <small class="p-error block mt-1" *ngIf="transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched">
+          <small class="p-error block mt-1"
+            *ngIf="transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched">
             Category is required
           </small>
         </div>
@@ -263,43 +193,32 @@
       <!-- Account and To Account Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="accountId" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Account</label>
-          <p-select
-            id="accountId"
-            formControlName="accountId"
-            [options]="accounts"
-            optionLabel="name"
-            optionValue="id"
-            placeholder="Select account"
-            styleClass="w-full"
+          <label for="accountId" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Account</label>
+          <p-select id="accountId" formControlName="accountId" [options]="accounts" optionLabel="name" optionValue="id"
+            placeholder="Select account" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('accountId')?.invalid && transactionForm.get('accountId')?.touched">
           </p-select>
-          <small class="p-error block mt-1" *ngIf="transactionForm.get('accountId')?.invalid && transactionForm.get('accountId')?.touched">
+          <small class="p-error block mt-1"
+            *ngIf="transactionForm.get('accountId')?.invalid && transactionForm.get('accountId')?.touched">
             Account is required
           </small>
         </div>
 
         <div>
-          <label for="toAccountId" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">To Account (Transfer)</label>
-          <p-select
-            id="toAccountId"
-            formControlName="toAccountId"
-            [options]="toAccountOptions"
-            placeholder="Select account"
-            styleClass="w-full">
+          <label for="toAccountId" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">To Account (Transfer)</label>
+          <p-select id="toAccountId" formControlName="toAccountId" [options]="toAccountOptions"
+            placeholder="Select account" styleClass="w-full">
           </p-select>
         </div>
       </div>
 
       <!-- Notes -->
       <div>
-        <label for="notes" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Notes</label>
-        <textarea
-          pInputTextarea
-          id="notes"
-          formControlName="notes"
-          rows="3"
-          placeholder="Add notes (optional)"
+        <label for="notes" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Notes</label>
+        <textarea pInputTextarea id="notes" formControlName="notes" rows="3" placeholder="Add notes (optional)"
           class="w-full">
         </textarea>
       </div>
@@ -307,23 +226,18 @@
       <!-- Tags and Recurring Row -->
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label for="tags" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Tags</label>
-          <input
-            pInputText
-            id="tags"
-            formControlName="tags"
-            placeholder="Enter tags (comma separated)"
+          <label for="tags" class="block text-sm font-medium mb-2"
+            style="color: var(--minted-text-secondary);">Tags</label>
+          <input pInputText id="tags" formControlName="tags" placeholder="Enter tags (comma separated)"
             class="w-full" />
         </div>
 
         <div class="flex items-end pb-2">
           <div class="flex items-center gap-2">
-            <p-checkbox
-              formControlName="isRecurring"
-              [binary]="true"
-              inputId="isRecurring">
+            <p-checkbox formControlName="isRecurring" [binary]="true" inputId="isRecurring">
             </p-checkbox>
-            <label for="isRecurring" class="text-sm font-medium text-slate-700 cursor-pointer">
+            <label for="isRecurring" class="text-sm font-medium cursor-pointer"
+              style="color: var(--minted-text-secondary);">
               Recurring Transaction
             </label>
           </div>
@@ -331,27 +245,13 @@
       </div>
     </div>
 
-    <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-200">
-      <button
-        pButton
-        type="button"
-        label="Cancel"
-        class="p-button-text"
-        (click)="showDialog = false">
+    <div class="flex justify-end gap-3 mt-6 pt-4 border-t" style="border-color: var(--minted-border);">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="showDialog = false">
       </button>
-      <button
-        pButton
-        type="button"
-        label="Delete"
-        class="p-button-danger p-button-outlined"
-        *ngIf="isEditMode && selectedTransaction"
-        (click)="deleteTransaction(selectedTransaction)">
+      <button pButton type="button" label="Delete" class="p-button-danger p-button-outlined"
+        *ngIf="isEditMode && selectedTransaction" (click)="deleteTransaction(selectedTransaction)">
       </button>
-      <button
-        pButton
-        type="submit"
-        [label]="isEditMode ? 'Update' : 'Create'"
-        [disabled]="transactionForm.invalid"
+      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="transactionForm.invalid"
         style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>

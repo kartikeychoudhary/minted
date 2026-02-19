@@ -1,13 +1,17 @@
 <!-- Background with decorative elements -->
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style="background-color: #f8f7f6;">
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+  style="background-color: #f8f7f6;">
   <!-- Decorative Background Blurs -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-3xl" style="background-color: rgba(196, 136, 33, 0.05);"></div>
-    <div class="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full blur-3xl" style="background-color: rgba(196, 136, 33, 0.05);"></div>
+    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-3xl"
+      style="background-color: rgba(196, 136, 33, 0.05);"></div>
+    <div class="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full blur-3xl"
+      style="background-color: rgba(196, 136, 33, 0.05);"></div>
   </div>
 
   <!-- Main Login Card -->
-  <main class="relative z-10 w-full max-w-md bg-white shadow-lg border overflow-hidden login-card">
+  <main class="relative z-10 w-full max-w-md shadow-lg border overflow-hidden login-card"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
     <!-- Header Section with Logo -->
     <div class="pt-10 pb-6 px-8 text-center">
       <!-- Gold Coin Icon -->
@@ -24,15 +28,8 @@
       <div>
         <p-iconfield styleClass="w-full">
           <p-inputicon styleClass="pi pi-user" />
-          <input
-            pInputText
-            id="username"
-            type="text"
-            formControlName="username"
-            placeholder="Username or Email"
-            class="w-full"
-            [class.p-invalid]="f['username']?.invalid && f['username']?.touched"
-          />
+          <input pInputText id="username" type="text" formControlName="username" placeholder="Username or Email"
+            class="w-full" [class.p-invalid]="f['username']?.invalid && f['username']?.touched" />
         </p-iconfield>
         <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
           Username is required
@@ -43,14 +40,8 @@
       <div>
         <p-iconfield styleClass="w-full">
           <p-inputicon styleClass="pi pi-lock" />
-          <p-password
-            formControlName="password"
-            [toggleMask]="true"
-            [feedback]="false"
-            placeholder="Password"
-            inputStyleClass="w-full"
-            styleClass="w-full"
-          />
+          <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Password"
+            inputStyleClass="w-full" styleClass="w-full" />
         </p-iconfield>
         <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
           Password is required
@@ -65,19 +56,14 @@
       </div>
 
       <!-- Submit Button -->
-      <p-button
-        type="submit"
-        label="Secure Login"
-        icon="pi pi-lock"
-        [loading]="loading"
-        [disabled]="!loginForm || loginForm.invalid || loading"
-        styleClass="w-full"
-      ></p-button>
+      <p-button type="submit" label="Secure Login" icon="pi pi-lock" [loading]="loading"
+        [disabled]="!loginForm || loginForm.invalid || loading" styleClass="w-full"></p-button>
 
       <!-- Divider -->
       <div class="relative flex py-2 items-center">
         <div class="flex-grow border-t" style="border-color: #e5e7eb;"></div>
-        <span class="flex-shrink-0 mx-4 text-xs font-medium uppercase tracking-wider" style="color: #857f79;">Or continue with</span>
+        <span class="flex-shrink-0 mx-4 text-xs font-medium uppercase tracking-wider" style="color: #857f79;">Or
+          continue with</span>
         <div class="flex-grow border-t" style="border-color: #e5e7eb;"></div>
       </div>
 

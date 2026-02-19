@@ -1,18 +1,18 @@
-// AG Grid Custom Theme - Minted (PrimeNG-inspired)
+// AG Grid Custom Theme - Minted (driven by CSS variables)
 @import 'ag-grid-community/styles/ag-grid.css';
 @import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 .ag-theme-minted {
-  // Core AG Grid CSS Variables (PrimeNG-inspired palette)
-  --ag-background-color: #ffffff;
-  --ag-foreground-color: #495057;
-  --ag-border-color: #dee2e6;
-  --ag-header-background-color: #ffffff;
-  --ag-header-foreground-color: #495057;
-  --ag-header-column-separator-color: #dee2e6;
-  --ag-odd-row-background-color: #ffffff;
-  --ag-row-hover-color: #f8f9fa;
-  --ag-selected-row-background-color: #e3f2fd;
+  // Core AG Grid CSS Variables — all driven by minted tokens
+  --ag-background-color: var(--minted-bg-card);
+  --ag-foreground-color: var(--minted-text-primary);
+  --ag-border-color: var(--minted-border);
+  --ag-header-background-color: var(--minted-bg-surface);
+  --ag-header-foreground-color: var(--minted-text-secondary);
+  --ag-header-column-separator-color: var(--minted-border);
+  --ag-odd-row-background-color: var(--minted-bg-card);
+  --ag-row-hover-color: var(--minted-bg-hover);
+  --ag-selected-row-background-color: var(--minted-accent-subtle);
   --ag-range-selection-border-color: var(--minted-accent);
   --ag-checkbox-checked-color: var(--minted-accent);
   --ag-alpine-active-color: var(--minted-accent);
@@ -20,10 +20,9 @@
   --ag-row-height: 56px;
   --ag-header-height: 48px;
 
-  // PrimeNG-like spacing
   --ag-cell-horizontal-padding: 0.75rem;
   --ag-grid-size: 6px;
-  --ag-border-radius: 6px;
+  --ag-border-radius: var(--minted-radius-sm);
 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   border-radius: var(--ag-border-radius);
@@ -31,32 +30,32 @@
 
   // Root container
   .ag-root-wrapper {
-    border: 1px solid #dee2e6;
+    border: 1px solid var(--minted-border);
     border-radius: var(--ag-border-radius);
   }
 
-  // Header styles (PrimeNG-like)
+  // Header styles
   .ag-header {
-    border-bottom: 1px solid #dee2e6;
-    background-color: #ffffff;
+    border-bottom: 1px solid var(--minted-border);
+    background-color: var(--minted-bg-surface);
     font-weight: 600;
   }
 
   .ag-header-row {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--minted-border);
   }
 
   .ag-header-cell {
     padding: 0.75rem;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #495057;
+    color: var(--minted-text-secondary);
     border-right: none;
     display: flex;
     align-items: center;
 
     &:hover {
-      background-color: #f8f9fa;
+      background-color: var(--minted-bg-hover);
     }
   }
 
@@ -72,18 +71,16 @@
     align-items: center;
   }
 
-  // Remove header cell separators for cleaner look
   .ag-header-cell::after {
     display: none;
   }
 
-  // Checkbox column specific padding
   .ag-header-cell.ag-header-checkbox {
     padding-left: 1rem;
     padding-right: 0.5rem;
   }
 
-  // Cell styles (PrimeNG-like padding)
+  // Cell styles
   .ag-cell {
     padding: 0.75rem;
     line-height: 1.5;
@@ -91,7 +88,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    color: #495057;
+    color: var(--minted-text-primary);
     font-size: 0.875rem;
     height: 100%;
   }
@@ -106,12 +103,10 @@
     justify-content: flex-end;
   }
 
-  // Custom class for vertical centering with align-content
   .cell-v-center {
     align-content: center !important;
   }
 
-  // Ensure all cell content is vertically centered
   .ag-cell-wrapper,
   .ag-cell-value {
     height: 100%;
@@ -119,19 +114,19 @@
     align-items: center;
   }
 
-  // Remove any conflicting right-alignment
   .ag-cell-value {
     justify-content: flex-start;
     width: 100%;
   }
 
-  // Row styles (PrimeNG-like hover and transitions)
+  // Row styles
   .ag-row {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid var(--minted-border);
+    background-color: var(--minted-bg-card);
     transition: background-color 0.2s ease;
 
     &:hover {
-      background-color: #f8f9fa;
+      background-color: var(--minted-bg-hover);
     }
 
     &:last-child {
@@ -139,14 +134,13 @@
     }
 
     &.ag-row-selected {
-      background-color: #e3f2fd;
+      background-color: var(--minted-accent-subtle);
 
       &:hover {
-        background-color: #bbdefb;
+        background-color: var(--minted-bg-hover);
       }
     }
 
-    // Remove row focus outline for cleaner look
     &.ag-row-focus {
       &::before {
         display: none;
@@ -154,7 +148,7 @@
     }
   }
 
-  // Checkbox styles (PrimeNG-like)
+  // Checkbox styles
   .ag-checkbox {
     padding: 0;
   }
@@ -163,8 +157,8 @@
     width: 1.125rem;
     height: 1.125rem;
     border-radius: 4px;
-    border: 2px solid #ced4da;
-    background-color: #ffffff;
+    border: 2px solid var(--minted-border);
+    background-color: var(--minted-bg-card);
     transition: all 0.2s ease;
     position: relative;
     display: flex;
@@ -202,12 +196,12 @@
     position: absolute;
   }
 
-  .ag-checkbox-input:focus + .ag-checkbox-input-wrapper {
+  .ag-checkbox-input:focus+.ag-checkbox-input-wrapper {
     outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(196, 136, 33, 0.2);
+    box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle);
   }
 
-  .ag-checkbox-input:indeterminate + .ag-checkbox-input-wrapper {
+  .ag-checkbox-input:indeterminate+.ag-checkbox-input-wrapper {
     border-color: var(--minted-accent);
     background-color: var(--minted-accent);
 
@@ -223,13 +217,13 @@
     }
   }
 
-  // Pagination styles (PrimeNG-like)
+  // Pagination styles
   .ag-paging-panel {
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid var(--minted-border);
     padding: 1rem 1.5rem;
-    background-color: #ffffff;
+    background-color: var(--minted-bg-surface);
     font-size: 0.875rem;
-    color: #6c757d;
+    color: var(--minted-text-secondary);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -237,13 +231,13 @@
   }
 
   .ag-paging-row-summary-panel {
-    color: #6c757d;
+    color: var(--minted-text-secondary);
     padding: 0.5rem 0;
     font-size: 0.875rem;
 
     .ag-paging-row-summary-panel-number {
       font-weight: 600;
-      color: #495057;
+      color: var(--minted-text-primary);
       padding: 0 0.25rem;
     }
   }
@@ -255,12 +249,12 @@
     padding: 0.5rem 0;
   }
 
-  // Pagination buttons (PrimeNG-like)
+  // Pagination buttons
   .ag-paging-button {
-    border: 1px solid #dee2e6;
-    background-color: #ffffff;
-    color: #6c757d;
-    border-radius: 6px;
+    border: 1px solid var(--minted-border);
+    background-color: var(--minted-bg-card);
+    color: var(--minted-text-secondary);
+    border-radius: var(--minted-radius-sm);
     width: 2.5rem;
     height: 2.5rem;
     min-width: 2.5rem;
@@ -274,7 +268,7 @@
     font-weight: 500;
 
     &:hover:not(:disabled) {
-      background-color: #f8f9fa;
+      background-color: var(--minted-bg-hover);
       border-color: var(--minted-accent);
       color: var(--minted-accent);
     }
@@ -282,8 +276,8 @@
     &:disabled {
       opacity: 0.4;
       cursor: not-allowed;
-      background-color: #f8f9fa;
-      border-color: #dee2e6;
+      background-color: var(--minted-bg-surface);
+      border-color: var(--minted-border);
     }
 
     &.ag-paging-button-active {
@@ -293,37 +287,36 @@
       font-weight: 600;
     }
 
-    // First and last page buttons
     &:first-child,
     &:last-child {
       margin: 0 0.5rem;
     }
   }
 
-  // Page size selector (PrimeNG-like)
+  // Page size selector
   .ag-paging-page-size {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     font-size: 0.875rem;
-    color: #6c757d;
+    color: var(--minted-text-secondary);
     padding: 0.5rem 0;
 
     select {
       padding: 0.5rem 2rem 0.5rem 0.75rem;
       font-size: 0.875rem;
-      border: 1px solid #ced4da;
-      border-radius: 6px;
-      background-color: #ffffff;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 0.5rem center;
-      background-size: 12px 12px;
-      color: #495057;
+      border: 1px solid var(--minted-border);
+      border-radius: var(--minted-radius-sm);
+      background-color: var(--minted-bg-card);
+      color: var(--minted-text-primary);
       cursor: pointer;
       transition: all 0.2s ease;
       appearance: none;
       min-width: 80px;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.5rem center;
+      background-size: 12px 12px;
 
       &:hover {
         border-color: var(--minted-accent);
@@ -332,16 +325,15 @@
       &:focus {
         outline: none;
         border-color: var(--minted-accent);
-        box-shadow: 0 0 0 0.2rem rgba(196, 136, 33, 0.15);
+        box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle);
       }
     }
   }
 
-  // Pagination description text styling
   .ag-paging-description {
     padding: 0.5rem 0;
     font-size: 0.875rem;
-    color: #6c757d;
+    color: var(--minted-text-secondary);
   }
 
   // PrimeNG Button overrides for cell renderers
@@ -353,45 +345,46 @@
     }
 
     ::ng-deep .p-button.p-button-text {
-      color: #6c757d;
+      color: var(--minted-text-secondary);
       background: transparent;
 
       &:enabled:hover {
-        background-color: #f8f9fa;
+        background-color: var(--minted-bg-hover);
         color: var(--minted-accent);
       }
 
       &.p-button-danger:enabled:hover {
-        background-color: rgba(220, 53, 69, 0.1);
-        color: #dc3545;
+        background-color: var(--minted-danger-subtle);
+        color: var(--minted-danger);
       }
     }
   }
 
-  // Loading overlay (PrimeNG-like)
+  // Loading overlay
   .ag-overlay-loading-wrapper {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: var(--minted-bg-card);
+    opacity: 0.9;
   }
 
   .ag-overlay-loading-center {
     font-size: 1rem;
-    color: #6c757d;
+    color: var(--minted-text-secondary);
     padding: 2rem;
   }
 
-  // No rows overlay (PrimeNG-like)
+  // No rows overlay
   .ag-overlay-no-rows-wrapper {
     padding-top: 3rem;
   }
 
   .ag-overlay-no-rows-center {
-    color: #6c757d;
+    color: var(--minted-text-secondary);
     font-size: 0.875rem;
     padding: 2rem;
     text-align: center;
   }
 
-  // Sort icons (PrimeNG-like)
+  // Sort icons
   .ag-sort-indicator-container {
     margin-left: 0.5rem;
   }
@@ -402,13 +395,13 @@
   }
 
   .ag-header-icon {
-    color: #adb5bd;
+    color: var(--minted-text-muted);
     font-size: 0.75rem;
     transition: opacity 0.2s ease;
   }
 
   .ag-header-cell:hover .ag-header-icon {
-    color: #6c757d;
+    color: var(--minted-text-secondary);
   }
 
   .ag-header-cell-sorted-asc .ag-header-icon,
@@ -417,7 +410,7 @@
     opacity: 1;
   }
 
-  // Custom scrollbar (PrimeNG-like)
+  // Custom scrollbar
   .ag-body-horizontal-scroll-viewport,
   .ag-body-viewport {
     &::-webkit-scrollbar {
@@ -426,68 +419,28 @@
     }
 
     &::-webkit-scrollbar-track {
-      background: #f1f3f5;
+      background: var(--minted-bg-surface);
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: #ced4da;
+      background-color: var(--minted-scrollbar-thumb);
       border-radius: 4px;
 
       &:hover {
-        background-color: #adb5bd;
+        background-color: var(--minted-scrollbar-hover);
       }
     }
   }
 
-  // Remove cell focus outline for cleaner look
+  // Remove cell focus outline
   .ag-cell-focus,
   .ag-cell-no-focus {
     border: none !important;
   }
 
-  // Selection column styling
   .ag-selection-checkbox {
     margin-right: 0;
   }
-}
-
-// Dark mode for AG Grid
-.dark-mode .ag-theme-minted {
-  --ag-background-color: var(--minted-bg-card);
-  --ag-foreground-color: var(--minted-text-primary);
-  --ag-border-color: var(--minted-border);
-  --ag-header-background-color: var(--minted-bg-surface);
-  --ag-header-foreground-color: var(--minted-text-secondary);
-  --ag-header-column-separator-color: var(--minted-border);
-  --ag-odd-row-background-color: var(--minted-bg-card);
-  --ag-row-hover-color: var(--minted-bg-surface);
-  --ag-selected-row-background-color: rgba(59, 130, 246, 0.15);
-
-  .ag-root-wrapper { border-color: var(--minted-border); }
-  .ag-header { border-bottom-color: var(--minted-border); }
-  .ag-header-row { border-bottom-color: var(--minted-border); }
-  .ag-header-cell { color: var(--minted-text-secondary); }
-  .ag-header-cell:hover { background-color: var(--minted-bg-card); }
-  .ag-cell { color: var(--minted-text-primary); }
-  .ag-row { border-bottom-color: var(--minted-border); background-color: var(--minted-bg-card); }
-  .ag-row:hover { background-color: var(--minted-bg-surface); }
-  .ag-checkbox-input-wrapper {
-    border-color: var(--minted-border);
-    background-color: var(--minted-bg-card);
-  }
-  .ag-paging-panel {
-    border-top-color: var(--minted-border);
-    background-color: var(--minted-bg-surface);
-    color: var(--minted-text-secondary);
-  }
-  .ag-paging-button {
-    border-color: var(--minted-border);
-    background-color: var(--minted-bg-card);
-    color: var(--minted-text-secondary);
-    &:disabled { background-color: var(--minted-bg-surface); border-color: var(--minted-border); }
-  }
-  .ag-paging-row-summary-panel-number { color: var(--minted-text-primary); }
-  .ag-overlay-loading-wrapper { background-color: rgba(15, 23, 42, 0.8); }
 }
 
 // Material Icons for AG Grid
@@ -511,53 +464,23 @@
   }
 }
 
-// Success color for income
+// Semantic utility classes
 .text-success {
-  color: #16a34a;
+  color: var(--minted-success);
 }
 
-// Primary color
 .text-primary {
   color: var(--minted-accent);
 }
 
 .bg-primary\/10 {
-  background-color: rgba(196, 136, 33, 0.1);
+  background-color: var(--minted-accent-subtle);
 }
 
 .border-primary\/20 {
-  border-color: rgba(196, 136, 33, 0.2);
+  border-color: var(--minted-accent-subtle);
 }
 
 .hover\:text-primary:hover {
   color: var(--minted-accent);
-}
-
-// PrimeNG Dialog and Dropdown fixes
-::ng-deep {
-  // Fix dialog content overflow for dropdowns
-  .p-dialog .p-dialog-content {
-    overflow: visible !important;
-  }
-
-  // Ensure select dropdown appears above dialog
-  .p-select-overlay {
-    z-index: 1101 !important;
-  }
-
-  // Fix date picker overlay
-  .p-datepicker {
-    z-index: 1101 !important;
-  }
-
-  // Primary button color
-  .p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-danger) {
-    background-color: var(--minted-accent);
-    border-color: var(--minted-accent);
-
-    &:hover {
-      background-color: #a36e16;
-      border-color: #a36e16;
-    }
-  }
 }

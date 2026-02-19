@@ -2,11 +2,12 @@
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <!-- Total Balance Card -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-amber-600 hover:shadow-md transition-shadow">
+        <div class="rounded-xl shadow-sm border p-6 border-l-4 border-l-amber-600 hover:shadow-md transition-shadow"
+            style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <p class="text-sm font-medium text-slate-600">Total Balance</p>
-                    <h3 class="text-3xl font-bold text-slate-900 mt-2">
+                    <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Total Balance</p>
+                    <h3 class="text-3xl font-bold mt-2" style="color: var(--minted-text-primary);">
                         <ng-container *ngIf="!loading.summary && totalBalance">
                             {{ formatCurrency(totalBalance.totalBalance) }}
                         </ng-container>
@@ -19,20 +20,22 @@
             </div>
             <div class="flex items-center text-sm" *ngIf="!loading.summary && totalBalance">
                 <span class="px-2 py-1 rounded text-xs font-medium"
-                      [ngClass]="totalBalance.incomeChangePercent >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                    [ngClass]="totalBalance.incomeChangePercent >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
                     <i [class]="'pi pi-arrow-' + (totalBalance.incomeChangePercent >= 0 ? 'up' : 'down') + ' mr-1'"></i>
-                    {{ (totalBalance.incomeChangePercent >= 0 ? '+' : '') + totalBalance.incomeChangePercent.toFixed(1) }}%
+                    {{ (totalBalance.incomeChangePercent >= 0 ? '+' : '') + totalBalance.incomeChangePercent.toFixed(1)
+                    }}%
                 </span>
-                <span class="text-slate-500 ml-2">vs last month</span>
+                <span class="ml-2" style="color: var(--minted-text-muted);">vs last month</span>
             </div>
         </div>
 
         <!-- Monthly Income Card -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-green-600 hover:shadow-md transition-shadow">
+        <div class="rounded-xl shadow-sm border p-6 border-l-4 border-l-green-600 hover:shadow-md transition-shadow"
+            style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <p class="text-sm font-medium text-slate-600">Monthly Income</p>
-                    <h3 class="text-3xl font-bold text-slate-900 mt-2">
+                    <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Monthly Income</p>
+                    <h3 class="text-3xl font-bold mt-2" style="color: var(--minted-text-primary);">
                         <ng-container *ngIf="!loading.summary && summary">
                             {{ formatCurrency(summary.totalIncome) }}
                         </ng-container>
@@ -45,20 +48,22 @@
             </div>
             <div class="flex items-center text-sm" *ngIf="!loading.summary && totalBalance">
                 <span class="px-2 py-1 rounded text-xs font-medium"
-                      [ngClass]="totalBalance.incomeChangePercent >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                    [ngClass]="totalBalance.incomeChangePercent >= 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
                     <i [class]="'pi pi-arrow-' + (totalBalance.incomeChangePercent >= 0 ? 'up' : 'down') + ' mr-1'"></i>
-                    {{ (totalBalance.incomeChangePercent >= 0 ? '+' : '') + totalBalance.incomeChangePercent.toFixed(1) }}%
+                    {{ (totalBalance.incomeChangePercent >= 0 ? '+' : '') + totalBalance.incomeChangePercent.toFixed(1)
+                    }}%
                 </span>
-                <span class="text-slate-500 ml-2">vs last month</span>
+                <span class="ml-2" style="color: var(--minted-text-muted);">vs last month</span>
             </div>
         </div>
 
         <!-- Monthly Expenses Card -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 border-l-4 border-l-red-600 hover:shadow-md transition-shadow">
+        <div class="rounded-xl shadow-sm border p-6 border-l-4 border-l-red-600 hover:shadow-md transition-shadow"
+            style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
             <div class="flex justify-between items-start mb-4">
                 <div>
-                    <p class="text-sm font-medium text-slate-600">Monthly Expenses</p>
-                    <h3 class="text-3xl font-bold text-slate-900 mt-2">
+                    <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Monthly Expenses</p>
+                    <h3 class="text-3xl font-bold mt-2" style="color: var(--minted-text-primary);">
                         <ng-container *ngIf="!loading.summary && summary">
                             {{ formatCurrency(summary.totalExpense) }}
                         </ng-container>
@@ -71,11 +76,13 @@
             </div>
             <div class="flex items-center text-sm" *ngIf="!loading.summary && totalBalance">
                 <span class="px-2 py-1 rounded text-xs font-medium"
-                      [ngClass]="totalBalance.expenseChangePercent < 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                    <i [class]="'pi pi-arrow-' + (totalBalance.expenseChangePercent >= 0 ? 'up' : 'down') + ' mr-1'"></i>
-                    {{ (totalBalance.expenseChangePercent >= 0 ? '+' : '') + totalBalance.expenseChangePercent.toFixed(1) }}%
+                    [ngClass]="totalBalance.expenseChangePercent < 0 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                    <i
+                        [class]="'pi pi-arrow-' + (totalBalance.expenseChangePercent >= 0 ? 'up' : 'down') + ' mr-1'"></i>
+                    {{ (totalBalance.expenseChangePercent >= 0 ? '+' : '') +
+                    totalBalance.expenseChangePercent.toFixed(1) }}%
                 </span>
-                <span class="text-slate-500 ml-2">vs last month</span>
+                <span class="ml-2" style="color: var(--minted-text-muted);">vs last month</span>
             </div>
         </div>
     </div>
@@ -85,15 +92,12 @@
         <!-- Left Column (2/3 width) -->
         <div class="lg:col-span-2 space-y-6">
             <!-- Spending Activity Chart -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="flex justify-between items-center p-6 border-b border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900">Spending Activity</h2>
-                    <p-select
-                        [(ngModel)]="selectedPeriod"
-                        [options]="spendingPeriods"
-                        optionLabel="label"
-                        (onChange)="onPeriodChange()"
-                        styleClass="w-40">
+            <div class="rounded-xl shadow-sm border overflow-hidden"
+                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
+                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Spending Activity</h2>
+                    <p-select [(ngModel)]="selectedPeriod" [options]="spendingPeriods" optionLabel="label"
+                        (onChange)="onPeriodChange()" styleClass="w-40">
                     </p-select>
                 </div>
                 <div class="p-6">
@@ -103,25 +107,27 @@
 
                     <div *ngIf="!loading.spending" class="h-64 flex items-end justify-between gap-2 sm:gap-4 w-full">
                         <div *ngFor="let activity of spendingActivity"
-                             class="flex flex-col items-center flex-1 group cursor-pointer"
-                             [pTooltip]="formatCurrency(activity.amount)"
-                             tooltipPosition="top">
-                            <div class="w-full max-w-[40px] bg-amber-100 rounded-t-lg relative h-full flex items-end overflow-hidden group-hover:bg-amber-200 transition-colors">
+                            class="flex flex-col items-center flex-1 group cursor-pointer"
+                            [pTooltip]="formatCurrency(activity.amount)" tooltipPosition="top">
+                            <div
+                                class="w-full max-w-[40px] bg-amber-100 rounded-t-lg relative h-full flex items-end overflow-hidden group-hover:bg-amber-200 transition-colors">
                                 <div class="w-full bg-amber-600 rounded-t-lg transition-all"
-                                     [style.height.%]="getBarHeight(activity.amount)">
+                                    [style.height.%]="getBarHeight(activity.amount)">
                                 </div>
                             </div>
-                            <span class="text-xs text-slate-500 mt-3 font-medium">{{ activity.dayLabel }}</span>
+                            <span class="text-xs mt-3 font-medium" style="color: var(--minted-text-muted);">{{
+                                activity.dayLabel }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Transactions -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="flex justify-between items-center p-6 border-b border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900">Recent Transactions</h2>
-                    <a routerLink="/transactions" class="text-amber-700 text-sm font-medium hover:text-amber-800">
+            <div class="rounded-xl shadow-sm border overflow-hidden"
+                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
+                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recent Transactions</h2>
+                    <a routerLink="/transactions" class="text-sm font-medium" style="color: var(--minted-accent);">
                         View All
                     </a>
                 </div>
@@ -137,32 +143,41 @@
                         </div>
                     </div>
 
-                    <div *ngIf="!loading.transactions && recentTransactions.length === 0" class="text-center py-8 text-slate-500">
+                    <div *ngIf="!loading.transactions && recentTransactions.length === 0" class="text-center py-8"
+                        style="color: var(--minted-text-muted);">
                         <i class="pi pi-inbox text-4xl mb-2"></i>
                         <p>No recent transactions</p>
                     </div>
 
                     <div *ngIf="!loading.transactions" class="space-y-2">
                         <div *ngFor="let transaction of recentTransactions"
-                             class="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer">
+                            class="flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer"
+                            style="--hover-bg: var(--minted-bg-hover);"
+                            onmouseover="this.style.backgroundColor=getComputedStyle(this).getPropertyValue('--hover-bg')"
+                            onmouseout="this.style.backgroundColor=''">
                             <div class="flex items-center gap-4">
                                 <div class="w-10 h-10 rounded-full flex items-center justify-center"
-                                     [ngClass]="transaction.type === 'INCOME' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                                    <i [class]="'pi pi-' + getTransactionIcon(transaction.categoryIcon) + ' text-lg'"></i>
+                                    [ngClass]="transaction.type === 'INCOME' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                                    <i
+                                        [class]="'pi pi-' + getTransactionIcon(transaction.categoryIcon) + ' text-lg'"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold text-slate-900">{{ transaction.description }}</h4>
-                                    <p class="text-xs text-slate-500">
-                                        {{ transaction.categoryName }} • {{ formatTransactionDate(transaction.transactionDate) }}
+                                    <h4 class="font-semibold" style="color: var(--minted-text-primary);">{{
+                                        transaction.description }}</h4>
+                                    <p class="text-xs" style="color: var(--minted-text-muted);">
+                                        {{ transaction.categoryName }} • {{
+                                        formatTransactionDate(transaction.transactionDate) }}
                                     </p>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="font-bold"
-                                   [ngClass]="transaction.type === 'INCOME' ? 'text-green-700' : 'text-slate-900'">
-                                    {{ transaction.type === 'INCOME' ? '+' : '-' }}{{ formatCurrency(transaction.amount) }}
+                                <p class="font-bold" [ngClass]="transaction.type === 'INCOME' ? 'text-green-700' : ''"
+                                    [style.color]="transaction.type !== 'INCOME' ? 'var(--minted-text-primary)' : null">
+                                    {{ transaction.type === 'INCOME' ? '+' : '-' }}{{ formatCurrency(transaction.amount)
+                                    }}
                                 </p>
-                                <p class="text-xs text-slate-500">{{ transaction.accountName }}</p>
+                                <p class="text-xs" style="color: var(--minted-text-muted);">{{ transaction.accountName
+                                    }}</p>
                             </div>
                         </div>
                     </div>
@@ -173,15 +188,12 @@
         <!-- Right Column (1/3 width) -->
         <div class="lg:col-span-1 space-y-6">
             <!-- Recurring Payments -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="flex justify-between items-center p-6 border-b border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-900">Recurring Payments</h2>
-                    <button pButton
-                            icon="pi pi-plus"
-                            class="p-button-rounded p-button-text p-button-sm"
-                            (click)="addRecurring()"
-                            pTooltip="Add Recurring Payment"
-                            style="color: var(--minted-accent);">
+            <div class="rounded-xl shadow-sm border overflow-hidden"
+                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
+                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recurring Payments</h2>
+                    <button pButton icon="pi pi-plus" class="p-button-rounded p-button-text p-button-sm"
+                        (click)="addRecurring()" pTooltip="Add Recurring Payment" style="color: var(--minted-accent);">
                     </button>
                 </div>
                 <div class="p-6">
@@ -189,60 +201,67 @@
                         <p-skeleton width="100%" height="3rem" *ngFor="let i of [1,2,3]"></p-skeleton>
                     </div>
 
-                    <div *ngIf="!loading.recurring && recurringGroups.length === 0" class="text-center py-8 text-slate-500">
+                    <div *ngIf="!loading.recurring && recurringGroups.length === 0" class="text-center py-8"
+                        style="color: var(--minted-text-muted);">
                         <i class="pi pi-calendar text-4xl mb-2"></i>
                         <p>No recurring payments</p>
                     </div>
 
-                    <p-accordion *ngIf="!loading.recurring && recurringGroups.length > 0"
-                                 [multiple]="true"
-                                 [value]="['0']">
-                        <p-accordion-panel *ngFor="let group of recurringGroups; let i = index"
-                                           [value]="i.toString()">
+                    <p-accordion *ngIf="!loading.recurring && recurringGroups.length > 0" [multiple]="true"
+                        [value]="['0']">
+                        <p-accordion-panel *ngFor="let group of recurringGroups; let i = index" [value]="i.toString()">
                             <p-accordion-header>
                                 <div class="flex items-center justify-between w-full pr-4">
-                                    <span class="font-semibold text-sm text-slate-900">{{ group.category }}</span>
-                                    <span class="text-sm font-bold text-slate-900">
+                                    <span class="font-semibold text-sm" style="color: var(--minted-text-primary);">{{
+                                        group.category }}</span>
+                                    <span class="text-sm font-bold" style="color: var(--minted-text-primary);">
                                         {{ formatCurrency(group.total) }}
-                                        <span class="text-[10px] text-slate-500 ml-1 font-normal">/mo</span>
+                                        <span class="text-[10px] ml-1 font-normal"
+                                            style="color: var(--minted-text-muted);">/mo</span>
                                     </span>
                                 </div>
                             </p-accordion-header>
                             <p-accordion-content>
                                 <div class="space-y-2">
-                                    <div *ngFor="let item of group.items"
-                                         class="p-3 border border-slate-200 rounded-lg bg-white hover:shadow-sm transition-all">
+                                    <div *ngFor="let item of group.items" class="p-3 border rounded-lg transition-all"
+                                        style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
                                         <div class="flex justify-between items-start mb-2">
                                             <div class="flex items-center gap-3 flex-1">
-                                                <div class="w-8 h-8 rounded bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-600">
+                                                <div class="w-8 h-8 rounded flex items-center justify-center text-xs font-bold"
+                                                    style="background-color: var(--minted-bg-surface); color: var(--minted-text-secondary);">
                                                     {{ item.name.substring(0, 2).toUpperCase() }}
                                                 </div>
                                                 <div class="flex-1 min-w-0">
-                                                    <p class="text-sm font-medium text-slate-900 truncate">{{ item.name }}</p>
-                                                    <p class="text-[10px] text-slate-500 italic">
+                                                    <p class="text-sm font-medium truncate"
+                                                        style="color: var(--minted-text-primary);">{{ item.name }}</p>
+                                                    <p class="text-[10px] italic"
+                                                        style="color: var(--minted-text-muted);">
                                                         Next: {{ formatTransactionDate(item.nextExecutionDate) }}
                                                     </p>
                                                 </div>
                                             </div>
                                             <div class="text-right ml-2">
-                                                <p class="text-sm font-bold text-slate-900 whitespace-nowrap">{{ formatCurrency(item.amount) }}</p>
-                                                <span [class]="'px-2 py-0.5 rounded text-[10px] font-medium ' + (item.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700')">
+                                                <p class="text-sm font-bold whitespace-nowrap"
+                                                    style="color: var(--minted-text-primary);">{{
+                                                    formatCurrency(item.amount) }}</p>
+                                                <span
+                                                    [class]="'px-2 py-0.5 rounded text-[10px] font-medium ' + (item.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700')">
                                                     {{ item.status }}
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-2 pt-2 border-t border-slate-100">
-                                            <button pButton
-                                                    [label]="item.status === 'ACTIVE' ? 'Pause' : 'Resume'"
-                                                    [icon]="'pi pi-' + (item.status === 'ACTIVE' ? 'pause' : 'play')"
-                                                    class="p-button-sm p-button-text flex-1 text-slate-600"
-                                                    (click)="pauseRecurring(item)">
+                                        <div class="flex items-center gap-2 pt-2 border-t"
+                                            style="border-color: var(--minted-border-light);">
+                                            <button pButton [label]="item.status === 'ACTIVE' ? 'Pause' : 'Resume'"
+                                                [icon]="'pi pi-' + (item.status === 'ACTIVE' ? 'pause' : 'play')"
+                                                class="p-button-sm p-button-text flex-1"
+                                                style="color: var(--minted-text-secondary);"
+                                                (click)="pauseRecurring(item)">
                                             </button>
-                                            <button pButton
-                                                    label="Edit"
-                                                    icon="pi pi-pencil"
-                                                    class="p-button-sm p-button-text flex-1 text-slate-600"
-                                                    (click)="editRecurring(item)">
+                                            <button pButton label="Edit" icon="pi pi-pencil"
+                                                class="p-button-sm p-button-text flex-1"
+                                                style="color: var(--minted-text-secondary);"
+                                                (click)="editRecurring(item)">
                                             </button>
                                         </div>
                                     </div>
@@ -254,23 +273,23 @@
                     <!-- Total Monthly Forecast -->
                     <div *ngIf="recurringSummary" class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
                         <div class="flex justify-between items-center mb-1">
-                            <p class="text-xs font-medium text-slate-700">Total Monthly Forecast</p>
+                            <p class="text-xs font-medium" style="color: var(--minted-text-secondary);">Total Monthly
+                                Forecast</p>
                             <i class="pi pi-chart-line text-amber-700 text-sm"></i>
                         </div>
-                        <p class="text-2xl font-bold text-slate-900 mb-3">
+                        <p class="text-2xl font-bold mb-3" style="color: var(--minted-text-primary);">
                             {{ formatCurrency(recurringSummary.estimatedMonthlyExpenses) }}
                         </p>
                         <div class="space-y-2">
                             <div class="flex justify-between text-xs">
-                                <span class="text-slate-600">Active: {{ recurringSummary.activeCount }}</span>
-                                <span class="text-slate-600">Paused: {{ recurringSummary.pausedCount }}</span>
+                                <span style="color: var(--minted-text-secondary);">Active: {{
+                                    recurringSummary.activeCount }}</span>
+                                <span style="color: var(--minted-text-secondary);">Paused: {{
+                                    recurringSummary.pausedCount }}</span>
                             </div>
-                            <p-progressBar
-                                [value]="48"
-                                [showValue]="false"
-                                styleClass="h-1.5">
+                            <p-progressBar [value]="48" [showValue]="false" styleClass="h-1.5">
                             </p-progressBar>
-                            <p class="text-[10px] text-slate-500">
+                            <p class="text-[10px]" style="color: var(--minted-text-muted);">
                                 48% of your average monthly income
                             </p>
                         </div>
@@ -279,16 +298,16 @@
             </div>
 
             <!-- Smart Savings Card -->
-            <div class="bg-gradient-to-br from-green-600 to-green-700 p-6 rounded-xl text-white shadow-lg relative overflow-hidden hover:scale-[1.01] transition-transform cursor-pointer">
+            <div
+                class="bg-gradient-to-br from-green-600 to-green-700 p-6 rounded-xl text-white shadow-lg relative overflow-hidden hover:scale-[1.01] transition-transform cursor-pointer">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                 <div class="relative z-10">
                     <h4 class="font-bold text-lg mb-2">Smart Savings</h4>
                     <p class="text-xs text-green-100 mb-4 opacity-90 leading-relaxed">
                         Want to optimize your recurring payments? Let's review them together.
                     </p>
-                    <button pButton
-                            label="Review Subscriptions"
-                            class="p-button-sm bg-white text-green-600 border-0 hover:bg-green-50">
+                    <button pButton label="Review Subscriptions"
+                        class="p-button-sm bg-white text-green-600 border-0 hover:bg-green-50">
                     </button>
                 </div>
             </div>

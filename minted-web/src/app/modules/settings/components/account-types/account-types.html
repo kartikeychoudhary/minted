@@ -3,45 +3,43 @@
   <div class="flex items-center justify-between">
     <div>
       <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Configure Account Types</h2>
-      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage the types of financial accounts available in your dashboard.</p>
+      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage the types of financial accounts
+        available in your dashboard.</p>
     </div>
-    <button
-      pButton
-      type="button"
-      label="Add Type"
-      icon="pi pi-plus"
-      class="p-button-raised"
-      (click)="showAddDialog()"
+    <button pButton type="button" label="Add Type" icon="pi pi-plus" class="p-button-raised" (click)="showAddDialog()"
       style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm" style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
-    <p-table
-      [value]="accountTypes"
-      [loading]="loading"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
+  <div class="rounded-xl border shadow-sm"
+    style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
+    <p-table [value]="accountTypes" [loading]="loading" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} results"
-      [rowsPerPageOptions]="[5, 10, 25, 50]"
-      styleClass="p-datatable-sm"
-      [style]="{'overflow': 'visible'}">
+      [rowsPerPageOptions]="[5, 10, 25, 50]" styleClass="p-datatable-sm" [style]="{'overflow': 'visible'}">
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Icon</th>
-          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
-          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Description</th>
-          <th style="width: 120px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+          <th
+            style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Icon</th>
+          <th
+            style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Name</th>
+          <th
+            style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Description</th>
+          <th
+            style="width: 120px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Actions</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-accountType>
-        <tr class="hover:bg-gray-50 transition-colors">
+        <tr class="transition-colors" style="--hover-bg: var(--minted-bg-hover);">
           <td>
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg" [ngClass]="getIconBackgroundClass(accountType.icon)">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg"
+              [ngClass]="getIconBackgroundClass(accountType.icon)">
               <i [class]="getIconClass(accountType.icon)" style="font-size: 1.25rem;"></i>
             </div>
           </td>
@@ -52,25 +50,13 @@
             <div class="text-sm" style="color: var(--minted-text-secondary);">{{ accountType.description }}</div>
           </td>
           <td style="text-align: right;">
-            <button
-              pButton
-              type="button"
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="showEditDialog(accountType)"
-              pTooltip="Edit"
-              tooltipPosition="top"
+            <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
+              (click)="showEditDialog(accountType)" pTooltip="Edit" tooltipPosition="top"
               style="color: var(--minted-text-secondary);">
             </button>
-            <button
-              pButton
-              type="button"
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-text p-button-sm p-button-danger"
-              (click)="confirmDelete(accountType)"
-              pTooltip="Delete"
-              tooltipPosition="top"
-              style="color: var(--minted-text-secondary);">
+            <button pButton type="button" icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="confirmDelete(accountType)"
+              pTooltip="Delete" tooltipPosition="top" style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
@@ -91,68 +77,53 @@
     <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
     <div>
       <h4 class="text-sm font-medium" style="color: #1e3a8a;">Default Account Types</h4>
-      <p class="text-sm mt-1" style="color: #1e40af;">Some account types like 'Cash' are system protected and cannot be deleted, but you can edit their display names.</p>
+      <p class="text-sm mt-1" style="color: #1e40af;">Some account types like 'Cash' are system protected and cannot be
+        deleted, but you can edit their display names.</p>
     </div>
   </div>
 </div>
 
 <!-- Add/Edit Dialog -->
-<p-dialog
-  [(visible)]="displayDialog"
-  [header]="isEditMode ? 'Edit Account Type' : 'Add Account Type'"
-  [modal]="true"
-  [style]="{width: '450px', 'max-height': '90vh'}"
-  [contentStyle]="{'overflow': 'visible'}"
-  [draggable]="false"
+<p-dialog [(visible)]="displayDialog" [header]="isEditMode ? 'Edit Account Type' : 'Add Account Type'" [modal]="true"
+  [style]="{width: '450px', 'max-height': '90vh'}" [contentStyle]="{'overflow': 'visible'}" [draggable]="false"
   [resizable]="false">
 
   <form *ngIf="accountTypeForm" [formGroup]="accountTypeForm" (ngSubmit)="saveAccountType()">
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Name</label>
-        <input
-          pInputText
-          id="name"
-          formControlName="name"
-          placeholder="e.g., Checking, Savings"
-          class="w-full"
+        <label for="name" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Name</label>
+        <input pInputText id="name" formControlName="name" placeholder="e.g., Checking, Savings" class="w-full"
           [class.p-invalid]="accountTypeForm.get('name')?.invalid && accountTypeForm.get('name')?.touched" />
-        <small class="p-error block mt-1" *ngIf="accountTypeForm.get('name')?.invalid && accountTypeForm.get('name')?.touched">
+        <small class="p-error block mt-1"
+          *ngIf="accountTypeForm.get('name')?.invalid && accountTypeForm.get('name')?.touched">
           Name is required
         </small>
       </div>
 
       <!-- Description Field -->
       <div>
-        <label for="description" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Description</label>
-        <textarea
-          id="description"
-          formControlName="description"
-          placeholder="Brief description of this account type"
-          rows="3"
-          class="w-full"
+        <label for="description" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Description</label>
+        <textarea id="description" formControlName="description" placeholder="Brief description of this account type"
+          rows="3" class="w-full"
           style="border: 1px solid #d1d5db; border-radius: 0.375rem; padding: 0.5rem; font-family: inherit;"
           [style.border-color]="accountTypeForm.get('description')?.invalid && accountTypeForm.get('description')?.touched ? '#ef4444' : '#d1d5db'"
           [class.p-invalid]="accountTypeForm.get('description')?.invalid && accountTypeForm.get('description')?.touched">
         </textarea>
-        <small class="p-error block mt-1" *ngIf="accountTypeForm.get('description')?.invalid && accountTypeForm.get('description')?.touched">
+        <small class="p-error block mt-1"
+          *ngIf="accountTypeForm.get('description')?.invalid && accountTypeForm.get('description')?.touched">
           Description is required
         </small>
       </div>
 
       <!-- Icon Field -->
       <div>
-        <label for="icon" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Icon</label>
-        <p-select
-          formControlName="icon"
-          [options]="iconOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select an icon"
-          appendTo="body"
-          styleClass="w-full"
-          (onChange)="onIconChange($event)"
+        <label for="icon" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Icon</label>
+        <p-select formControlName="icon" [options]="iconOptions" optionLabel="label" optionValue="value"
+          placeholder="Select an icon" appendTo="body" styleClass="w-full" (onChange)="onIconChange($event)"
           [class.p-invalid]="accountTypeForm.get('icon')?.invalid && accountTypeForm.get('icon')?.touched">
           <ng-template let-option pTemplate="item">
             <div class="flex items-center gap-2">
@@ -170,18 +141,9 @@
     </div>
 
     <div class="flex justify-end gap-2 mt-6">
-      <button
-        pButton
-        type="button"
-        label="Cancel"
-        class="p-button-text"
-        (click)="displayDialog = false">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="displayDialog = false">
       </button>
-      <button
-        pButton
-        type="submit"
-        [label]="isEditMode ? 'Update' : 'Create'"
-        [disabled]="accountTypeForm.invalid"
+      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="accountTypeForm.invalid"
         style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>

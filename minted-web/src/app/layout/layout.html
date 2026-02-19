@@ -1,20 +1,24 @@
-<div class="h-screen flex overflow-hidden bg-background-light">
+<div class="h-screen flex overflow-hidden" [style.background-color]="'var(--minted-bg-page)'">
   <!-- Sidebar -->
   <app-sidebar (sidebarToggle)="onSidebarToggle($event)"></app-sidebar>
 
   <!-- Main Content Area -->
   <main class="flex-1 flex flex-col h-full overflow-hidden relative">
     <!-- Top Header -->
-    <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0">
+    <header
+      class="h-16 flex items-center justify-between px-8 flex-shrink-0 border-b"
+      [style.background-color]="'var(--minted-bg-card)'"
+      [style.border-color]="'var(--minted-border)'">
       <div>
-        <h1 class="text-xl font-bold text-gray-900">{{ 'Minted' }}</h1>
+        <h1 class="text-xl font-bold" [style.color]="'var(--minted-text-primary)'">{{ 'Minted' }}</h1>
       </div>
       <div class="flex items-center gap-4">
         <!-- Theme Toggle -->
         <button
           type="button"
           (click)="themeService.toggleDarkMode()"
-          class="relative p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-full hover:bg-gray-100"
+          class="relative p-2 rounded-full transition-colors"
+          [style.color]="'var(--minted-text-muted)'"
           pTooltip="Toggle theme"
           tooltipPosition="bottom">
           <span class="material-icons">{{ (themeService.isDarkMode$ | async) ? 'light_mode' : 'dark_mode' }}</span>
@@ -22,11 +26,14 @@
         <!-- Notifications -->
         <button
           type="button"
-          class="relative p-2 text-gray-400 hover:text-gray-500 transition-colors rounded-full hover:bg-gray-100"
+          class="relative p-2 rounded-full transition-colors"
+          [style.color]="'var(--minted-text-muted)'"
           pTooltip="Notifications"
           tooltipPosition="bottom">
           <span class="material-icons">notifications</span>
-          <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+          <span class="absolute top-2 right-2 w-2 h-2 rounded-full border-2"
+            [style.background-color]="'var(--minted-danger)'"
+            [style.border-color]="'var(--minted-bg-card)'"></span>
         </button>
       </div>
     </header>

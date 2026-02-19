@@ -3,45 +3,43 @@
   <div class="flex items-center justify-between">
     <div>
       <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Spending Categories</h2>
-      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage and organize your custom transaction categories.</p>
+      <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage and organize your custom transaction
+        categories.</p>
     </div>
-    <button
-      pButton
-      type="button"
-      label="Add Category"
-      icon="pi pi-plus"
-      class="p-button-raised"
-      (click)="showAddDialog()"
-      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+    <button pButton type="button" label="Add Category" icon="pi pi-plus" class="p-button-raised"
+      (click)="showAddDialog()" style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm" style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
-    <p-table
-      [value]="categories"
-      [loading]="loading"
-      [paginator]="true"
-      [rows]="10"
-      [showCurrentPageReport]="true"
+  <div class="rounded-xl border shadow-sm"
+    style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
+    <p-table [value]="categories" [loading]="loading" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} results"
-      [rowsPerPageOptions]="[5, 10, 25, 50]"
-      styleClass="p-datatable-sm"
-      [style]="{'overflow': 'visible'}">
+      [rowsPerPageOptions]="[5, 10, 25, 50]" styleClass="p-datatable-sm" [style]="{'overflow': 'visible'}">
 
       <ng-template pTemplate="header">
         <tr>
-          <th style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Icon</th>
-          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Name</th>
-          <th style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Type</th>
-          <th style="width: 150px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Actions</th>
+          <th
+            style="width: 80px; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Icon</th>
+          <th
+            style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Name</th>
+          <th
+            style="color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Type</th>
+          <th
+            style="width: 150px; text-align: right; color: var(--minted-text-secondary); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
+            Actions</th>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="body" let-category>
-        <tr class="hover:bg-gray-50 transition-colors">
+        <tr class="transition-colors" style="--hover-bg: var(--minted-bg-hover);">
           <td>
-            <div class="flex h-10 w-10 items-center justify-center rounded-lg" [ngClass]="getIconBackgroundClass(category.color)">
+            <div class="flex h-10 w-10 items-center justify-center rounded-lg"
+              [ngClass]="getIconBackgroundClass(category.color)">
               <i [class]="getIconClass(category.icon)" style="font-size: 1.25rem;"></i>
             </div>
           </td>
@@ -49,8 +47,7 @@
             <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ category.name }}</div>
           </td>
           <td>
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                  [ngClass]="{
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
                     'bg-green-100 text-green-800': category.type === 'INCOME',
                     'bg-red-100 text-red-800': category.type === 'EXPENSE',
                     'bg-blue-100 text-blue-800': category.type === 'TRANSFER'
@@ -59,25 +56,13 @@
             </span>
           </td>
           <td style="text-align: right;">
-            <button
-              pButton
-              type="button"
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="showEditDialog(category)"
-              pTooltip="Edit"
-              tooltipPosition="top"
+            <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
+              (click)="showEditDialog(category)" pTooltip="Edit" tooltipPosition="top"
               style="color: var(--minted-text-secondary);">
             </button>
-            <button
-              pButton
-              type="button"
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-text p-button-sm p-button-danger"
-              (click)="confirmDelete(category)"
-              pTooltip="Delete"
-              tooltipPosition="top"
-              style="color: var(--minted-text-secondary);">
+            <button pButton type="button" icon="pi pi-trash"
+              class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="confirmDelete(category)"
+              pTooltip="Delete" tooltipPosition="top" style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
@@ -98,54 +83,41 @@
     <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
     <div>
       <h4 class="text-sm font-medium" style="color: #1e3a8a;">Custom Categories</h4>
-      <p class="text-sm mt-1" style="color: #1e40af;">You can create up to 50 custom categories to better track your spending. Sub-categories can be managed within each main category's edit view.</p>
+      <p class="text-sm mt-1" style="color: #1e40af;">You can create up to 50 custom categories to better track your
+        spending. Sub-categories can be managed within each main category's edit view.</p>
     </div>
   </div>
 </div>
 
 <!-- Add/Edit Dialog -->
-<p-dialog
-  [(visible)]="displayDialog"
-  [header]="isEditMode ? 'Edit Category' : 'Add Category'"
-  [modal]="true"
-  [style]="{width: '500px', 'max-height': '90vh'}"
-  [contentStyle]="{'overflow': 'visible'}"
-  [draggable]="false"
+<p-dialog [(visible)]="displayDialog" [header]="isEditMode ? 'Edit Category' : 'Add Category'" [modal]="true"
+  [style]="{width: '500px', 'max-height': '90vh'}" [contentStyle]="{'overflow': 'visible'}" [draggable]="false"
   [resizable]="false">
 
   <form *ngIf="categoryForm" [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category Name</label>
-        <input
-          pInputText
-          id="name"
-          formControlName="name"
-          placeholder="e.g., Dining, Shopping, Transportation"
-          class="w-full"
-          [class.p-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched" />
-        <small class="p-error block mt-1" *ngIf="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
+        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category
+          Name</label>
+        <input pInputText id="name" formControlName="name" placeholder="e.g., Dining, Shopping, Transportation"
+          class="w-full" [class.p-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched" />
+        <small class="p-error block mt-1"
+          *ngIf="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched">
           Category name is required
         </small>
       </div>
 
       <!-- Transaction Type Field -->
       <div>
-        <label for="type" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Transaction Type</label>
-        <p-select
-          formControlName="type"
-          [options]="transactionTypes"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select transaction type"
-          appendTo="body"
-          styleClass="w-full"
+        <label for="type" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Transaction Type</label>
+        <p-select formControlName="type" [options]="transactionTypes" optionLabel="label" optionValue="value"
+          placeholder="Select transaction type" appendTo="body" styleClass="w-full"
           [class.p-invalid]="categoryForm.get('type')?.invalid && categoryForm.get('type')?.touched">
           <ng-template let-option pTemplate="item">
             <div class="flex items-center gap-2">
-              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                    [ngClass]="{
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
                       'bg-green-100 text-green-800': option.value === 'INCOME',
                       'bg-red-100 text-red-800': option.value === 'EXPENSE',
                       'bg-blue-100 text-blue-800': option.value === 'TRANSFER'
@@ -155,26 +127,22 @@
             </div>
           </ng-template>
         </p-select>
-        <small class="p-error block mt-1" *ngIf="categoryForm.get('type')?.invalid && categoryForm.get('type')?.touched">
+        <small class="p-error block mt-1"
+          *ngIf="categoryForm.get('type')?.invalid && categoryForm.get('type')?.touched">
           Transaction type is required
         </small>
       </div>
 
       <!-- Icon Field -->
       <div>
-        <label for="icon" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Icon</label>
-        <p-select
-          formControlName="icon"
-          [options]="iconOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select an icon"
-          appendTo="body"
-          styleClass="w-full"
-          (onChange)="onIconChange($event)">
+        <label for="icon" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Icon</label>
+        <p-select formControlName="icon" [options]="iconOptions" optionLabel="label" optionValue="value"
+          placeholder="Select an icon" appendTo="body" styleClass="w-full" (onChange)="onIconChange($event)">
           <ng-template let-option pTemplate="item">
             <div class="flex items-center gap-2">
-              <div class="flex h-8 w-8 items-center justify-center rounded-lg" [ngClass]="getIconBackgroundClass(option.color)">
+              <div class="flex h-8 w-8 items-center justify-center rounded-lg"
+                [ngClass]="getIconBackgroundClass(option.color)">
                 <i [class]="option.icon" style="font-size: 1rem;"></i>
               </div>
               <span>{{ option.label }}</span>
@@ -183,7 +151,8 @@
         </p-select>
         <div class="mt-2 flex items-center gap-2" *ngIf="selectedIcon">
           <span class="text-sm" style="color: var(--minted-text-secondary);">Selected:</span>
-          <div class="flex h-8 w-8 items-center justify-center rounded-lg" [ngClass]="getIconBackgroundClass(selectedIcon.color)">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg"
+            [ngClass]="getIconBackgroundClass(selectedIcon.color)">
             <i [class]="selectedIcon.icon" style="font-size: 1rem;"></i>
           </div>
           <span class="text-sm" style="color: var(--minted-text-secondary);">{{ selectedIcon.label }}</span>
@@ -192,15 +161,10 @@
 
       <!-- Color Field -->
       <div>
-        <label for="color" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Color</label>
-        <p-select
-          formControlName="color"
-          [options]="colorOptions"
-          optionLabel="label"
-          optionValue="value"
-          placeholder="Select a color"
-          appendTo="body"
-          styleClass="w-full">
+        <label for="color" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Color</label>
+        <p-select formControlName="color" [options]="colorOptions" optionLabel="label" optionValue="value"
+          placeholder="Select a color" appendTo="body" styleClass="w-full">
           <ng-template let-option pTemplate="item">
             <div class="flex items-center gap-2">
               <div class="flex h-6 w-6 rounded-full" [ngClass]="option.class"></div>
@@ -212,18 +176,9 @@
     </div>
 
     <div class="flex justify-end gap-2 mt-6">
-      <button
-        pButton
-        type="button"
-        label="Cancel"
-        class="p-button-text"
-        (click)="displayDialog = false">
+      <button pButton type="button" label="Cancel" class="p-button-text" (click)="displayDialog = false">
       </button>
-      <button
-        pButton
-        type="submit"
-        [label]="isEditMode ? 'Update' : 'Create'"
-        [disabled]="categoryForm.invalid"
+      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="categoryForm.invalid"
         style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
       </button>
     </div>
