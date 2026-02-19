@@ -106,8 +106,8 @@
 
   <!-- AG Grid Table -->
   <div class="shadow-sm">
-    <ag-grid-angular class="ag-theme-minted" style="width: 100%; height: 600px;" [rowData]="rowData"
-      [columnDefs]="columnDefs" [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [loading]="loading"
+    <ag-grid-angular style="width: 100%; height: 600px;" [rowData]="rowData" [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [loading]="loading" [theme]="mintedTheme"
       (gridReady)="onGridReady($event)">
     </ag-grid-angular>
   </div>

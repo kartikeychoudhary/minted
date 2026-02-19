@@ -1,416 +1,102 @@
-// AG Grid Custom Theme - Minted (driven by CSS variables)
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-alpine.css';
+// AG Grid Minted Theme - Custom CSS overrides
+// All base theming is handled by the v35 Theming API (themeQuartz.withParams)
+// These are fine-grained overrides for styling the API doesn't expose
 
-.ag-theme-minted {
-  // Core AG Grid CSS Variables — all driven by minted tokens
-  --ag-background-color: var(--minted-bg-card);
-  --ag-foreground-color: var(--minted-text-primary);
-  --ag-border-color: var(--minted-border);
-  --ag-header-background-color: var(--minted-bg-surface);
-  --ag-header-foreground-color: var(--minted-text-secondary);
-  --ag-header-column-separator-color: var(--minted-border);
-  --ag-odd-row-background-color: var(--minted-bg-card);
-  --ag-row-hover-color: var(--minted-bg-hover);
-  --ag-selected-row-background-color: var(--minted-accent-subtle);
-  --ag-range-selection-border-color: var(--minted-accent);
-  --ag-checkbox-checked-color: var(--minted-accent);
-  --ag-alpine-active-color: var(--minted-accent);
-  --ag-font-size: 14px;
-  --ag-row-height: 56px;
-  --ag-header-height: 48px;
+// Use ::ng-deep to pierce Angular's view encapsulation for AG Grid DOM
+:host ::ng-deep {
 
-  --ag-cell-horizontal-padding: 0.75rem;
-  --ag-grid-size: 6px;
-  --ag-border-radius: var(--minted-radius-sm);
-
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  border-radius: var(--ag-border-radius);
-  overflow: hidden;
-
-  // Root container
-  .ag-root-wrapper {
-    border: 1px solid var(--minted-border);
-    border-radius: var(--ag-border-radius);
-  }
-
-  // Header styles
-  .ag-header {
-    border-bottom: 1px solid var(--minted-border);
-    background-color: var(--minted-bg-surface);
-    font-weight: 600;
-  }
-
-  .ag-header-row {
-    border-bottom: 1px solid var(--minted-border);
-  }
-
-  .ag-header-cell {
-    padding: 0.75rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--minted-text-secondary);
-    border-right: none;
-    display: flex;
-    align-items: center;
-
-    &:hover {
-      background-color: var(--minted-bg-hover);
-    }
-  }
-
-  .ag-header-cell-label {
-    justify-content: flex-start;
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-
+  // Header text styling
   .ag-header-cell-text {
-    display: flex;
-    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
   }
 
+  // Header hover
+  .ag-header-cell:hover {
+    background-color: var(--minted-bg-hover);
+  }
+
+  // Remove column separator & resize handle visibility
   .ag-header-cell::after {
     display: none;
   }
 
-  .ag-header-cell.ag-header-checkbox {
-    padding-left: 1rem;
-    padding-right: 0.5rem;
+  // Row transitions
+  .ag-row {
+    transition: background-color 0.15s ease;
+
+    &.ag-row-focus::before {
+      display: none;
+    }
   }
 
-  // Cell styles
-  .ag-cell {
-    padding: 0.75rem;
-    line-height: 1.5;
-    border-right: none;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    color: var(--minted-text-primary);
-    font-size: 0.875rem;
-    height: 100%;
+  // Remove cell focus outline
+  .ag-cell-focus,
+  .ag-cell-no-focus {
+    border: none !important;
   }
 
-  .ag-cell.ag-cell-checkbox {
-    padding-left: 1rem;
-    padding-right: 0.5rem;
-    justify-content: flex-start;
-  }
-
+  // Actions cell alignment
   .ag-cell-actions {
     justify-content: flex-end;
   }
 
+  // Vertical center helper
   .cell-v-center {
     align-content: center !important;
   }
 
-  .ag-cell-wrapper,
-  .ag-cell-value {
-    height: 100%;
-    display: flex;
-    align-items: center;
-  }
-
-  .ag-cell-value {
-    justify-content: flex-start;
-    width: 100%;
-  }
-
-  // Row styles
-  .ag-row {
-    border-bottom: 1px solid var(--minted-border);
-    background-color: var(--minted-bg-card);
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background-color: var(--minted-bg-hover);
-    }
-
-    &:last-child {
-      border-bottom: none;
-    }
-
-    &.ag-row-selected {
-      background-color: var(--minted-accent-subtle);
-
-      &:hover {
-        background-color: var(--minted-bg-hover);
-      }
-    }
-
-    &.ag-row-focus {
-      &::before {
-        display: none;
-      }
-    }
-  }
-
-  // Checkbox styles
-  .ag-checkbox {
-    padding: 0;
-  }
-
-  .ag-checkbox-input-wrapper {
-    width: 1.125rem;
-    height: 1.125rem;
-    border-radius: 4px;
-    border: 2px solid var(--minted-border);
-    background-color: var(--minted-bg-card);
-    transition: all 0.2s ease;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &::after {
-      content: '';
-      position: absolute;
-      display: none;
-      width: 6px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-      top: 1px;
-    }
-
-    &.ag-checked {
-      border-color: var(--minted-accent);
-      background-color: var(--minted-accent);
-
-      &::after {
-        display: block;
-      }
-    }
-
-    &:hover {
-      border-color: var(--minted-accent);
-    }
-  }
-
-  .ag-checkbox-input {
-    opacity: 0;
-    position: absolute;
-  }
-
-  .ag-checkbox-input:focus+.ag-checkbox-input-wrapper {
-    outline: none;
-    box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle);
-  }
-
-  .ag-checkbox-input:indeterminate+.ag-checkbox-input-wrapper {
-    border-color: var(--minted-accent);
-    background-color: var(--minted-accent);
-
-    &::after {
-      display: block;
-      border: none;
-      width: 8px;
-      height: 2px;
-      background: white;
-      transform: none;
-      top: 50%;
-      margin-top: -1px;
-    }
-  }
-
-  // Pagination styles
+  // Pagination panel
   .ag-paging-panel {
-    border-top: 1px solid var(--minted-border);
-    padding: 1rem 1.5rem;
-    background-color: var(--minted-bg-surface);
-    font-size: 0.875rem;
-    color: var(--minted-text-secondary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 60px;
+    border-top: 1px solid var(--minted-border-light);
+    padding: 0.75rem 1.25rem;
+    font-size: 0.8125rem;
+    min-height: 48px;
   }
 
   .ag-paging-row-summary-panel {
-    color: var(--minted-text-secondary);
-    padding: 0.5rem 0;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
 
     .ag-paging-row-summary-panel-number {
       font-weight: 600;
       color: var(--minted-text-primary);
-      padding: 0 0.25rem;
     }
   }
 
   .ag-paging-page-summary-panel {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.5rem 0;
+    gap: 0.25rem;
   }
 
   // Pagination buttons
   .ag-paging-button {
-    border: 1px solid var(--minted-border);
-    background-color: var(--minted-bg-card);
-    color: var(--minted-text-secondary);
     border-radius: var(--minted-radius-sm);
-    width: 2.5rem;
-    height: 2.5rem;
-    min-width: 2.5rem;
-    padding: 0;
-    margin: 0 0.25rem;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.875rem;
-    font-weight: 500;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    transition: all 0.15s ease;
 
     &:hover:not(:disabled) {
-      background-color: var(--minted-bg-hover);
-      border-color: var(--minted-accent);
       color: var(--minted-accent);
     }
 
     &:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      background-color: var(--minted-bg-surface);
-      border-color: var(--minted-border);
-    }
-
-    &.ag-paging-button-active {
-      background-color: var(--minted-accent);
-      border-color: var(--minted-accent);
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    &:first-child,
-    &:last-child {
-      margin: 0 0.5rem;
+      opacity: 0.3;
     }
   }
 
-  // Page size selector
-  .ag-paging-page-size {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.875rem;
-    color: var(--minted-text-secondary);
-    padding: 0.5rem 0;
-
-    select {
-      padding: 0.5rem 2rem 0.5rem 0.75rem;
-      font-size: 0.875rem;
-      border: 1px solid var(--minted-border);
-      border-radius: var(--minted-radius-sm);
-      background-color: var(--minted-bg-card);
-      color: var(--minted-text-primary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      appearance: none;
-      min-width: 80px;
-      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 0.5rem center;
-      background-size: 12px 12px;
-
-      &:hover {
-        border-color: var(--minted-accent);
-      }
-
-      &:focus {
-        outline: none;
-        border-color: var(--minted-accent);
-        box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle);
-      }
-    }
-  }
-
+  // Page description
   .ag-paging-description {
-    padding: 0.5rem 0;
-    font-size: 0.875rem;
-    color: var(--minted-text-secondary);
+    font-size: 0.8125rem;
   }
 
-  // PrimeNG Button overrides for cell renderers
-  .ag-cell {
-    ::ng-deep .p-button.p-button-sm {
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-    }
-
-    ::ng-deep .p-button.p-button-text {
-      color: var(--minted-text-secondary);
-      background: transparent;
-
-      &:enabled:hover {
-        background-color: var(--minted-bg-hover);
-        color: var(--minted-accent);
-      }
-
-      &.p-button-danger:enabled:hover {
-        background-color: var(--minted-danger-subtle);
-        color: var(--minted-danger);
-      }
-    }
+  // Page size dropdown
+  .ag-paging-page-size {
+    font-size: 0.8125rem;
+    gap: 0.5rem;
   }
 
-  // Loading overlay
-  .ag-overlay-loading-wrapper {
-    background-color: var(--minted-bg-card);
-    opacity: 0.9;
-  }
-
-  .ag-overlay-loading-center {
-    font-size: 1rem;
-    color: var(--minted-text-secondary);
-    padding: 2rem;
-  }
-
-  // No rows overlay
-  .ag-overlay-no-rows-wrapper {
-    padding-top: 3rem;
-  }
-
-  .ag-overlay-no-rows-center {
-    color: var(--minted-text-secondary);
-    font-size: 0.875rem;
-    padding: 2rem;
-    text-align: center;
-  }
-
-  // Sort icons
-  .ag-sort-indicator-container {
-    margin-left: 0.5rem;
-  }
-
-  .ag-icon-asc,
-  .ag-icon-desc {
-    color: var(--minted-accent);
-  }
-
-  .ag-header-icon {
-    color: var(--minted-text-muted);
-    font-size: 0.75rem;
-    transition: opacity 0.2s ease;
-  }
-
-  .ag-header-cell:hover .ag-header-icon {
-    color: var(--minted-text-secondary);
-  }
-
-  .ag-header-cell-sorted-asc .ag-header-icon,
-  .ag-header-cell-sorted-desc .ag-header-icon {
-    color: var(--minted-accent);
-    opacity: 1;
-  }
-
-  // Custom scrollbar
+  // Scrollbar
   .ag-body-horizontal-scroll-viewport,
   .ag-body-viewport {
     &::-webkit-scrollbar {
@@ -432,19 +118,61 @@
     }
   }
 
-  // Remove cell focus outline
-  .ag-cell-focus,
-  .ag-cell-no-focus {
-    border: none !important;
+  // Sort icons
+  .ag-icon-asc,
+  .ag-icon-desc {
+    color: var(--minted-accent);
   }
 
+  .ag-header-icon {
+    color: var(--minted-text-muted);
+    font-size: 0.75rem;
+  }
+
+  .ag-header-cell:hover .ag-header-icon {
+    color: var(--minted-text-secondary);
+  }
+
+  // Loading & No Rows overlays
+  .ag-overlay-loading-wrapper {
+    background-color: var(--minted-bg-card);
+    opacity: 0.9;
+  }
+
+  .ag-overlay-no-rows-center {
+    color: var(--minted-text-secondary);
+    font-size: 0.875rem;
+    padding: 2rem;
+  }
+
+  // Selection checkbox margin
   .ag-selection-checkbox {
     margin-right: 0;
   }
-}
 
-// Material Icons for AG Grid
-.ag-theme-minted {
+  // PrimeNG button overrides within cells
+  .p-button.p-button-sm {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
+
+  .p-button.p-button-text {
+    color: var(--minted-text-secondary);
+    background: transparent;
+
+    &:enabled:hover {
+      background-color: var(--minted-bg-hover);
+      color: var(--minted-accent);
+    }
+
+    &.p-button-danger:enabled:hover {
+      background-color: var(--minted-danger-subtle);
+      color: var(--minted-danger);
+    }
+  }
+
+  // Material Icons within grid
   .material-icons-outlined {
     font-family: 'Material Icons Outlined';
     font-weight: normal;
@@ -464,7 +192,7 @@
   }
 }
 
-// Semantic utility classes
+// Semantic utility classes (used via cellClass)
 .text-success {
   color: var(--minted-success);
 }

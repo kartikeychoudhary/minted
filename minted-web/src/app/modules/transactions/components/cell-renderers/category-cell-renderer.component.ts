@@ -13,7 +13,7 @@ import { ICellRendererParams } from 'ag-grid-community';
         <span class="material-icons-outlined text-base">{{ params.data.categoryIcon || 'receipt_long' }}</span>
       </div>
       <div>
-        <div class="text-sm font-medium text-slate-900">{{ params.data.categoryName }}</div>
+      <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ params.data.categoryName }}</div>
       </div>
     </div>
   `,

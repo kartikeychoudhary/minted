@@ -41,23 +41,33 @@ export interface ActionsCallbacks {
     }
 
     ::ng-deep .p-button-sm {
-      width: 2rem;
-      height: 2rem;
+      width: 2.25rem;
+      height: 2.25rem;
       padding: 0;
+      border-radius: 50% !important;
     }
 
     ::ng-deep .p-button-text {
-      color: #6c757d;
+      color: var(--minted-text-secondary);
+      background: var(--minted-bg-surface) !important;
+      border: 1px solid var(--minted-border-light) !important;
     }
 
     ::ng-deep .p-button-text:hover {
-      background-color: #f8f9fa;
-      color: #c48821;
+      background-color: var(--minted-bg-hover) !important;
+      border-color: var(--minted-accent) !important;
+      color: var(--minted-accent);
+    }
+
+    ::ng-deep .p-button-text.p-button-danger {
+      background: var(--minted-bg-surface) !important;
+      border: 1px solid var(--minted-border-light) !important;
     }
 
     ::ng-deep .p-button-text.p-button-danger:hover {
-      background-color: #fee;
-      color: #dc3545;
+      background-color: var(--minted-danger-subtle) !important;
+      border-color: var(--minted-danger) !important;
+      color: var(--minted-danger);
     }
   `]
 })

@@ -12,7 +12,7 @@ import {
 import { CategoryResponse, TransactionType } from '../../../../core/models/category.model';
 import { AccountResponse } from '../../../../core/models/account.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, GridOptions, themeQuartz } from 'ag-grid-community';
 import { CategoryCellRendererComponent } from '../cell-renderers/category-cell-renderer.component';
 import { ActionsCellRendererComponent } from '../cell-renderers/actions-cell-renderer.component';
 import { CurrencyService } from '../../../../core/services/currency.service';
@@ -35,7 +35,37 @@ export class TransactionsList implements OnInit {
   selectedTransaction?: TransactionResponse;
   searchTerm = '';
 
-  // AG Grid
+  // AG Grid v35 Theming API
+  mintedTheme = themeQuartz.withParams({
+    backgroundColor: 'var(--minted-bg-card)',
+    foregroundColor: 'var(--minted-text-primary)',
+    borderColor: 'var(--minted-border)',
+    browserColorScheme: 'inherit',
+    headerBackgroundColor: 'var(--minted-bg-card)',
+    headerFontSize: 12,
+    headerFontWeight: 600,
+    headerTextColor: 'var(--minted-text-muted)',
+    oddRowBackgroundColor: 'var(--minted-bg-card)',
+    rowHoverColor: 'var(--minted-bg-hover)',
+    selectedRowBackgroundColor: 'var(--minted-accent-subtle)',
+    accentColor: 'var(--minted-accent)',
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    fontSize: 14,
+    rowHeight: 60,
+    headerHeight: 48,
+    spacing: 6,
+    wrapperBorderRadius: 8,
+    cellHorizontalPadding: 16,
+    headerColumnBorder: false,
+    headerColumnResizeHandleColor: 'transparent',
+    columnBorder: false,
+    rowBorder: { color: 'var(--minted-border-light)', width: 1, style: 'solid' },
+    checkboxCheckedBackgroundColor: 'var(--minted-accent)',
+    checkboxCheckedBorderColor: 'var(--minted-accent)',
+    checkboxUncheckedBackgroundColor: 'transparent',
+    checkboxUncheckedBorderColor: 'var(--minted-border)',
+  });
+
   private gridApi!: GridApi;
   columnDefs: ColDef[] = [];
   defaultColDef: ColDef = {
@@ -43,6 +73,7 @@ export class TransactionsList implements OnInit {
     filter: false,
     resizable: true,
   };
+
   gridOptions: GridOptions = {
     pagination: true,
     paginationPageSize: 10,
@@ -51,8 +82,6 @@ export class TransactionsList implements OnInit {
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
     animateRows: true,
-    rowHeight: 60,
-    headerHeight: 48,
     overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No transactions found. Add a transaction to get started.</span>',
   };
   rowData: any[] = [];
@@ -148,7 +177,7 @@ export class TransactionsList implements OnInit {
           const baseClass = 'cell-v-center';
           const colorClass = params.data.type === 'INCOME'
             ? 'text-success font-bold'
-            : 'text-slate-900';
+            : 'font-bold';
           return `${baseClass} ${colorClass}`;
         },
         valueFormatter: (params) => {

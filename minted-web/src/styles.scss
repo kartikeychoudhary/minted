@@ -9,9 +9,7 @@
 // Font Awesome
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 
-// AG Grid
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-alpine.css';
+// AG Grid — v35 Theming API injects CSS automatically; no manual imports needed
 
 // ============================================================
 //  MINTED DESIGN TOKENS — Single source of truth
@@ -396,23 +394,9 @@ body {
 }
 
 // ============================================================
-//  AG GRID — Theme token bridge
+//  AG GRID — v35 Theming API uses themeQuartz.withParams() in TS
+//  CSS variable overrides here allow dynamic dark/light switching
 // ============================================================
-
-.ag-theme-alpine {
-  --ag-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --ag-font-size: 14px;
-  --ag-background-color: var(--minted-bg-card);
-  --ag-foreground-color: var(--minted-text-primary);
-  --ag-border-color: var(--minted-border);
-  --ag-header-background-color: var(--minted-bg-surface);
-  --ag-header-foreground-color: var(--minted-text-secondary);
-  --ag-odd-row-background-color: var(--minted-bg-card);
-  --ag-row-hover-color: var(--minted-bg-hover);
-  --ag-selected-row-background-color: var(--minted-accent-subtle);
-  --ag-checkbox-checked-color: var(--minted-accent);
-  --ag-alpine-active-color: var(--minted-accent);
-}
 
 // ============================================================
 //  GLOBAL SCROLLBAR
