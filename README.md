@@ -177,6 +177,16 @@ docker compose down
 docker compose down -v
 ```
 
+#### Troubleshooting
+
+**Permission denied on `./gradlew` (Linux/macOS)**
+If you are running Docker on a Linux/macOS machine after cloning or copying the project from Windows, you might encounter a `Permission denied` error for the Gradle wrapper during the backend build. To fix this, grant execute permissions to the wrapper file:
+
+```bash
+chmod +x minted-api/gradlew
+docker compose up --build -d
+```
+
 ---
 
 ## 📖 Documentation
