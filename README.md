@@ -1,178 +1,210 @@
-# Minted - Personal Budget & Expense Management
+# 💰 Minted — Personal Budget & Expense Management
 
-> **Status:** Phase 1 Complete - Projects Scaffolded
-> **Current Phase:** Phase 2 - Authentication Backend
+A modern, full-stack personal finance application built with **Angular 21** and **Spring Boot 3**. Track income, expenses, and transfers across multiple accounts with a beautiful dark/light themed UI.
 
-## Overview
+---
 
-Minted is a full-stack personal finance management application that helps users:
-- Track income, expenses, and transfers across multiple accounts
-- Categorize transactions with custom categories and icons
-- Set and monitor budgets by category and time period
-- Visualize spending patterns with configurable dashboard charts
-- Manage accounts, account types, categories, and budgets
+## ✨ Features
 
-## Tech Stack
+- **Transaction Management** — Add, edit, and delete income, expenses, and transfers
+- **Multi-Account Support** — Track balances across bank accounts, wallets, and credit cards
+- **Custom Categories** — Organize transactions with custom categories and icons
+- **Dashboard Analytics** — Visualize spending patterns with interactive charts
+- **Dark / Light Theme** — System-aware dark mode with customizable accent colors
+- **JWT Authentication** — Secure login with token-based auth and auto-refresh
+- **AG Grid Data Tables** — Powerful, sortable, filterable transaction grids
+- **Responsive Design** — Works on desktop and tablet viewports
+- **Docker Ready** — One-command deployment with Docker Compose
 
-### Backend
-- **Language:** Java 17
-- **Framework:** Spring Boot 3.2.x
-- **Build Tool:** Gradle 8.5
-- **Database:** MySQL 8.x
-- **Migrations:** Flyway (versioned SQL)
-- **Authentication:** JWT (jjwt 0.12.x)
-- **Encryption:** Jasypt Spring Boot 3.x
-- **API Docs:** SpringDoc OpenAPI (Swagger UI)
+---
 
-### Frontend
-- **Framework:** Angular 21 (non-standalone components)
-- **UI Library:** PrimeNG
-- **Data Grid:** AG Grid Community
-- **CSS Framework:** Tailwind CSS 3.x
-- **Icons:** Font Awesome
-- **Charts:** Chart.js (via PrimeNG Charts)
+## 🖥 Screenshots
 
-## Project Structure
+> _Coming soon_
+
+---
+
+## 🏗 Tech Stack
+
+| Layer       | Technology                                         |
+| ----------- | -------------------------------------------------- |
+| **Frontend** | Angular 21, PrimeNG, AG Grid, Tailwind CSS, Chart.js |
+| **Backend**  | Java 17, Spring Boot 3.2, Spring Security, Flyway   |
+| **Database** | MySQL 8.0                                           |
+| **Auth**     | JWT (jjwt), Jasypt encryption                       |
+| **DevOps**   | Docker, Docker Compose, Nginx                       |
+
+---
+
+## 📁 Project Structure
 
 ```
 minted/
-├── minted-api/              # Spring Boot backend (port 5500)
-│   ├── src/main/java/com/minted/api/
-│   └── src/main/resources/
-│       └── db/migration/    # Flyway SQL migrations
-│
-├── minted-web/              # Angular frontend (port 4200)
-│   └── src/app/
-│       ├── core/            # Services, guards, interceptors
-│       ├── shared/          # Shared components
-│       ├── modules/         # Feature modules
-│       └── layout/          # App layout
-│
-└── Documentation/
-    ├── CLAUDE.md            # Master instructions for Claude
-    ├── DEVELOPMENT_PROCESS.md
-    ├── MISTAKES.md          # Error log & prevention
-    ├── QUICKSTART.md        # Implementation phases
-    ├── BACKEND_SPEC.md
-    ├── FRONTEND_SPEC.md
-    ├── UI_UX_SPEC.md
-    ├── API_SPEC.md
-    └── STITCH_UI_REFERENCE.md
+├── minted-api/          # Spring Boot backend → see minted-api/README.md
+├── minted-web/          # Angular frontend   → see minted-web/README.md
+├── docker-compose.yml   # Full-stack Docker orchestration
+├── Dockerfile           # Frontend multi-stage build (Node → Nginx)
+├── nginx.conf           # Nginx reverse proxy config
+└── Documentation/       # Specs, phases, and design references
 ```
 
-## Quick Start
+---
 
-### Backend
+## 🚀 Getting Started
+
+### Prerequisites
+
+| Tool           | Version | Notes                          |
+| -------------- | ------- | ------------------------------ |
+| Node.js        | 20+     | For frontend                   |
+| Java           | 17      | For backend                    |
+| MySQL          | 8.x     | Or use Docker                  |
+| Angular CLI    | 21      | `npm i -g @angular/cli`        |
+| Docker         | 24+     | _Optional — for Docker setup_  |
+
+---
+
+### Option A: Run Locally
+
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/kartikeychoudhary/minted.git
+cd minted
+```
+
+#### 2. Start MySQL
+
+Make sure MySQL 8 is running locally. Create the database:
+
+```sql
+CREATE DATABASE minted_db;
+```
+
+#### 3. Start the Backend
+
 ```bash
 cd minted-api
 
-# Set environment variables (see minted-api/README.md)
+# Set environment variables
 export MINTED_DB_HOST=localhost
 export MINTED_DB_PORT=3306
 export MINTED_DB_NAME=minted_db
 export MINTED_DB_USER=root
 export MINTED_DB_PASSWORD=your_password
-export MINTED_JWT_SECRET=your-256-bit-secret
+export MINTED_JWT_SECRET=your-256-bit-secret-key-here
 export MINTED_JASYPT_PASSWORD=your-jasypt-password
 
-# Create database
-mysql -u root -p -e "CREATE DATABASE minted_db;"
-
-# Run migrations (Phase 2+)
+# Run database migrations
 ./gradlew flywayMigrate
 
-# Start server
+# Start the server (port 5500)
 ./gradlew bootRun
 ```
 
-Access Swagger UI at: `http://localhost:5500/swagger-ui`
+> **Windows PowerShell:** Use `$env:MINTED_DB_HOST = "localhost"` instead of `export`.
 
-### Frontend
+Swagger UI: [http://localhost:5500/swagger-ui](http://localhost:5500/swagger-ui)
+
+#### 4. Start the Frontend
+
 ```bash
 cd minted-web
 
 # Install dependencies
 npm install
 
-# Start dev server
+# Start dev server (port 4200)
 npm start
-# OR
-ng serve
 ```
 
-Access app at: `http://localhost:4200`
+App: [http://localhost:4200](http://localhost:4200)
 
-## Implementation Status
+#### 5. Default Credentials
 
-### ✅ Phase 1: Project Scaffolding (COMPLETE)
-- [x] Backend: Spring Boot project with Gradle
-- [x] Frontend: Angular project with all dependencies
-- [x] Both projects compile and run
+| Username | Password |
+| -------- | -------- |
+| `admin`  | `admin`  |
 
-### ✅ Phase 2: Authentication Backend (COMPLETE ✅)
-- [x] Flyway migration for users table (V0_0_1, V0_0_2)
-- [x] User entity, repository, service
-- [x] JWT utilities (jjwt 0.12.6) and filters
-- [x] Security configuration (Spring Security + BCrypt)
-- [x] Auth controller (/login, /refresh, /change-password)
-- [x] DTOs and custom exceptions
-- [x] Global exception handler
-- [x] Build successful and tested ✅
-- [x] Login endpoint verified with admin/admin credentials
+---
 
-### ✅ Phase 3: Authentication (Frontend) COMPLETE ✅
-- [x] Core module (services, guards, interceptors)
-  - [x] AuthService with login, logout, token management
-  - [x] AuthGuard for route protection
-  - [x] JwtInterceptor for attaching tokens
-  - [x] ErrorInterceptor for handling 401/403
-- [x] Auth module (login component with PrimeNG)
-- [x] Routing with lazy loading
-- [x] Build successful and dev server running
-- [ ] Layout module (sidebar, header) - Deferred to Phase 5
+### Option B: Run with Docker
 
-### ⏳ Phase 4-8: Core Features (Pending)
-See `QUICKSTART.md` for detailed phase breakdown.
+The entire stack (MySQL + Backend + Frontend) can be launched with a single command.
 
-## Reference Repositories
+#### 1. Create a `.env` file in the project root
 
-- **Backend Reference:** [wheremybuckgoes](https://github.com/kartikeychoudhary/wheremybuckgoes)
-- **Frontend Reference:** [expense_track](https://github.com/kartikeychoudhary/expense_track)
+```env
+# Required
+MINTED_JWT_SECRET=your-256-bit-secret-key-here
 
-## UI/UX Design Reference
+# Optional (shown with defaults)
+MINTED_DB_ROOT_PASSWORD=rootroot
+MINTED_DB_NAME=minted_db
+MINTED_DB_USER=minted_user
+MINTED_DB_PASSWORD=minted_pass
+MINTED_JASYPT_PASSWORD=default-jasypt-password
+BACKEND_PORT=5500
+FRONTEND_PORT=80
+```
 
-- **Stitch Project:** https://stitch.withgoogle.com/projects/13720741124727703321
-- **Theme:** Light mode, Inter font, #c48821 accent, 8px roundness
-- **Screens:** 6 desktop screens (1280x1024)
+#### 2. Build and start all services
 
-## Development Guidelines
+```bash
+docker compose up --build -d
+```
 
-### Before Starting ANY Task
-1. Read `MISTAKES.md` in full
-2. Read relevant spec file (`BACKEND_SPEC.md`, `FRONTEND_SPEC.md`, etc.)
-3. Ensure project builds cleanly
+This will:
+- Start **MySQL 8** with a health check
+- Build and start the **Spring Boot API** (waits for MySQL)
+- Build and start the **Angular app** served via **Nginx** (waits for API)
 
-### Critical Rules
-1. **NEVER** generate standalone Angular components (use `--standalone=false`)
-2. **NEVER** add libraries outside approved tech stack
-3. **NEVER** use Hibernate auto-DDL (always use Flyway with `validate`)
-4. **NEVER** expose JPA entities in REST responses (always use DTOs)
-5. **NEVER** hardcode secrets (always use environment variables)
+#### 3. Access the app
 
-### Development Process
-1. **Backend First:** Database → Entity → Repository → DTO → Service → Controller
-2. **Frontend:** Model → API Service → Module → Component → Template
-3. **Integration:** Test full flow, check responsive design, verify error handling
+| Service    | URL                                            |
+| ---------- | ---------------------------------------------- |
+| Frontend   | [http://localhost](http://localhost)             |
+| Backend    | [http://localhost:5500](http://localhost:5500)   |
+| Swagger UI | [http://localhost:5500/swagger-ui](http://localhost:5500/swagger-ui) |
 
-## Contributing
+#### 4. Stop the stack
 
-This project follows a strict specification-driven development process. All code must:
-- Follow the tech stack exactly (no substitutions)
-- Use non-standalone Angular components
-- Pass both backend and frontend builds
-- Be responsive across all breakpoints
-- Handle errors gracefully
+```bash
+# Stop containers (data is preserved)
+docker compose down
 
-## License
+# Stop AND delete database volume
+docker compose down -v
+```
 
-Proprietary - Kartikey Choudhary © 2026
+---
+
+## 📖 Documentation
+
+| Document                                                | Description                              |
+| ------------------------------------------------------- | ---------------------------------------- |
+| [minted-web/README.md](./minted-web/README.md)         | Frontend setup, architecture, theming    |
+| [minted-api/README.md](./minted-api/README.md)         | Backend setup, API structure, migrations |
+| [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md)  | Phase-by-phase progress tracker          |
+| [Documentation/QUICKSTART.md](./Documentation/QUICKSTART.md) | Detailed implementation phases      |
+| [Documentation/API_SPEC.md](./Documentation/API_SPEC.md) | REST API specification                 |
+| [Documentation/BACKEND_SPEC.md](./Documentation/BACKEND_SPEC.md) | Backend architecture spec        |
+| [Documentation/FRONTEND_SPEC.md](./Documentation/FRONTEND_SPEC.md) | Frontend architecture spec      |
+| [Documentation/UI_UX_SPEC.md](./Documentation/UI_UX_SPEC.md) | UI/UX design reference              |
+
+---
+
+## 🎨 Theming
+
+Minted uses a **CSS custom property** design system (`--minted-*` tokens) with:
+
+- **Light mode** — Clean white surfaces with subtle borders
+- **Dark mode** — Elevated slate palette (not pure black)
+- **Accent colors** — 6 switchable presets (Amber, Emerald, Blue, Violet, Rose, Teal)
+- **AG Grid v35 Theming API** — Data grid inherits all theme tokens automatically
+
+---
+
+## 📄 License
+
+Proprietary — Kartikey Choudhary © 2026

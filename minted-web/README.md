@@ -1,59 +1,108 @@
-# MintedWeb
+# Minted Web — Angular Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.0.
+The frontend of Minted, built with **Angular 21** using module-based (non-standalone) components, **PrimeNG** for UI primitives, and **AG Grid** for data tables.
 
-## Development server
+---
 
-To start a local development server, run:
-
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## 🚀 Quick Start
 
 ```bash
-ng generate component component-name
+# Install dependencies
+npm install
+
+# Start dev server (http://localhost:4200)
+npm start
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
+## 🏗 Architecture
+
+```
+src/app/
+├── core/                  # Singleton services, guards, interceptors
+│   ├── services/          # AuthService, ThemeService, TransactionService, etc.
+│   ├── guards/            # AuthGuard (route protection)
+│   └── interceptors/      # JwtInterceptor, ErrorInterceptor
+│
+├── shared/                # Shared module (re-exported pipes, components)
+│
+├── layout/                # App shell — sidebar, header, footer
+│   ├── sidebar/           # Brand logo, navigation links
+│   └── header/            # Search, notifications, profile, theme toggle
+│
+└── modules/               # Feature modules (lazy-loaded)
+    ├── auth/              # Login page
+    ├── dashboard/         # Overview cards, charts, recent transactions
+    ├── transactions/      # AG Grid transaction list, add/edit dialog
+    ├── analytics/         # Spending analytics charts
+    ├── recurring/         # Recurring transaction management
+    └── settings/          # Accounts, categories, preferences, profile
 ```
 
-## Building
+---
 
-To build the project run:
+## 🎨 Theming
 
-```bash
-ng build
-```
+The app uses a **CSS custom property** design system defined in `src/styles.scss`:
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+| Token prefix        | Example                     | Purpose                   |
+| ------------------- | --------------------------- | ------------------------- |
+| `--minted-bg-*`     | `--minted-bg-card`          | Background colors         |
+| `--minted-text-*`   | `--minted-text-primary`     | Text colors               |
+| `--minted-border*`  | `--minted-border`           | Border colors             |
+| `--minted-accent*`  | `--minted-accent`           | Accent / brand color      |
+| `--minted-radius-*` | `--minted-radius-sm`        | Border radius             |
+| `--minted-shadow-*` | `--minted-shadow-md`        | Box shadows               |
 
-## Running unit tests
+### Dark mode
+Toggled via `ThemeService` which adds/removes `.dark-mode` on `<html>`. All `--minted-*` tokens have light and dark variants.
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Accent colors
+Six presets: Amber (default), Emerald, Blue, Violet, Rose, Teal. Managed by `ThemeService.setAccentColor()`.
 
-```bash
-ng test
-```
+### AG Grid theming
+AG Grid v35 uses the **Theming API** (`themeQuartz.withParams()`). All grid colors reference `var(--minted-*)` tokens so they switch automatically with dark mode.
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 📦 Key Dependencies
 
-```bash
-ng e2e
-```
+| Package             | Version | Purpose                      |
+| ------------------- | ------- | ---------------------------- |
+| `@angular/core`     | 21.x    | Framework                    |
+| `primeng`           | 19.x    | UI component library         |
+| `ag-grid-community` | 35.x    | Data grid                    |
+| `ag-grid-angular`   | 35.x    | Angular AG Grid integration  |
+| `tailwindcss`       | 3.x     | Utility CSS classes          |
+| `chart.js`          | 4.x     | Charts (via PrimeNG Charts)  |
+| `primeicons`        | 7.x     | Icon set                     |
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 🛠 Scripts
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+| Command         | Description                     |
+| --------------- | ------------------------------- |
+| `npm start`     | Dev server on port 4200         |
+| `npm run build` | Production build → `dist/`      |
+| `npm test`      | Run unit tests (Karma)          |
+| `npx ng build`  | Alternative build command       |
+
+---
+
+## 🐳 Docker
+
+The frontend is containerized as a multi-stage build:
+
+1. **Stage 1 (Node 20):** `npm ci` + `npm run build` → production bundle
+2. **Stage 2 (Nginx 1.27):** Serves static files, proxies `/api/*` to the backend
+
+See the root [docker-compose.yml](../docker-compose.yml) for full orchestration.
+
+---
+
+## 📖 More Info
+
+- [Root README](../README.md) — Full project overview and setup
+- [API README](../minted-api/README.md) — Backend documentation
