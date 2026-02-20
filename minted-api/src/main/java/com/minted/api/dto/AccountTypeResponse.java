@@ -10,6 +10,7 @@ public record AccountTypeResponse(
         String description,
         String icon,
         Boolean isActive,
+        Boolean isDefault,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -20,6 +21,7 @@ public record AccountTypeResponse(
                 accountType.getDescription(),
                 accountType.getIcon(),
                 accountType.getIsActive(),
+                accountType.getIsDefault(),
                 accountType.getCreatedAt(),
                 accountType.getUpdatedAt()
         );

@@ -27,31 +27,31 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     private final DefaultAccountTypeRepository defaultAccountTypeRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<AccountTypeResponse> getAllByUserId(Long userId) {
         List<AccountTypeResponse> userTypes = accountTypeRepository.findByUserId(userId).stream()
                 .map(AccountTypeResponse::from)
                 .collect(Collectors.toList());
-                
+
         List<AccountTypeResponse> defaultTypes = defaultAccountTypeRepository.findAll().stream()
                 .map(this::mapDefaultToResponse)
                 .collect(Collectors.toList());
 
-        return mergeAccountTypes(userTypes, defaultTypes);
+        return mergeAccountTypes(userTypes, defaultTypes, userId);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<AccountTypeResponse> getAllActiveByUserId(Long userId) {
         List<AccountTypeResponse> userTypes = accountTypeRepository.findByUserIdAndIsActiveTrue(userId).stream()
                 .map(AccountTypeResponse::from)
                 .collect(Collectors.toList());
-                
+
         List<AccountTypeResponse> defaultTypes = defaultAccountTypeRepository.findAll().stream()
                 .map(this::mapDefaultToResponse)
                 .collect(Collectors.toList());
 
-        return mergeAccountTypes(userTypes, defaultTypes);
+        return mergeAccountTypes(userTypes, defaultTypes, userId);
     }
 
     @Override
@@ -87,6 +87,10 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     public AccountTypeResponse update(Long id, AccountTypeRequest request, Long userId) {
         AccountType accountType = findAccountTypeByIdAndUserId(id, userId);
 
+        if (Boolean.TRUE.equals(accountType.getIsDefault())) {
+            throw new BadRequestException("Default account types cannot be modified");
+        }
+
         // Check if name is changing and if new name already exists
         if (!accountType.getName().equals(request.name()) &&
                 accountTypeRepository.existsByNameAndUserId(request.name(), userId)) {
@@ -105,6 +109,11 @@ public class AccountTypeServiceImpl implements AccountTypeService {
     @Transactional
     public void delete(Long id, Long userId) {
         AccountType accountType = findAccountTypeByIdAndUserId(id, userId);
+
+        if (Boolean.TRUE.equals(accountType.getIsDefault())) {
+            throw new BadRequestException("Default account types cannot be deleted");
+        }
+
         accountTypeRepository.delete(accountType);
     }
 
@@ -133,20 +142,31 @@ public class AccountTypeServiceImpl implements AccountTypeService {
                 type.getName() + " Account",
                 getDefaultIconForAccountType(type.getName()),
                 true, // isActive
+                true, // isDefault
                 null,
                 null
         );
     }
 
-    private List<AccountTypeResponse> mergeAccountTypes(List<AccountTypeResponse> userTypes, List<AccountTypeResponse> defaultTypes) {
+    private List<AccountTypeResponse> mergeAccountTypes(List<AccountTypeResponse> userTypes, List<AccountTypeResponse> defaultTypes, Long userId) {
         List<String> existingNames = userTypes.stream()
                 .map(t -> t.name().toLowerCase())
                 .collect(Collectors.toList());
 
+        User user = findUserById(userId);
         List<AccountTypeResponse> merged = new java.util.ArrayList<>(userTypes);
         for (AccountTypeResponse defType : defaultTypes) {
             if (!existingNames.contains(defType.name().toLowerCase())) {
-                merged.add(defType);
+                // Auto-create the default account type as a real user account type
+                AccountType accountType = new AccountType();
+                accountType.setName(defType.name());
+                accountType.setDescription(defType.description());
+                accountType.setIcon(defType.icon());
+                accountType.setUser(user);
+                accountType.setIsActive(true);
+                accountType.setIsDefault(true);
+                AccountType saved = accountTypeRepository.save(accountType);
+                merged.add(AccountTypeResponse.from(saved));
             }
         }
         return merged;

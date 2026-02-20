@@ -28,7 +28,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
     private final DefaultCategoryRepository defaultCategoryRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<TransactionCategoryResponse> getAllByUserId(Long userId) {
         List<TransactionCategoryResponse> userCats = categoryRepository.findByUserId(userId).stream()
                 .map(TransactionCategoryResponse::from)
@@ -38,11 +38,11 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
                 .map(this::mapDefaultToResponse)
                 .collect(Collectors.toList());
 
-        return mergeCategories(userCats, defaultCats);
+        return mergeCategories(userCats, defaultCats, userId);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<TransactionCategoryResponse> getAllActiveByUserId(Long userId) {
         List<TransactionCategoryResponse> userCats = categoryRepository.findByUserIdAndIsActiveTrue(userId).stream()
                 .map(TransactionCategoryResponse::from)
@@ -52,11 +52,11 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
                 .map(this::mapDefaultToResponse)
                 .collect(Collectors.toList());
 
-        return mergeCategories(userCats, defaultCats);
+        return mergeCategories(userCats, defaultCats, userId);
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public List<TransactionCategoryResponse> getAllByUserIdAndType(Long userId, TransactionType type) {
         List<TransactionCategoryResponse> userCats = categoryRepository.findByUserIdAndTypeAndIsActiveTrue(userId, type).stream()
                 .map(TransactionCategoryResponse::from)
@@ -67,7 +67,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
                 .map(this::mapDefaultToResponse)
                 .collect(Collectors.toList());
 
-        return mergeCategories(userCats, defaultCats);
+        return mergeCategories(userCats, defaultCats, userId);
     }
 
     @Override
@@ -110,6 +110,10 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
     public TransactionCategoryResponse update(Long id, TransactionCategoryRequest request, Long userId) {
         TransactionCategory category = findCategoryByIdAndUserId(id, userId);
 
+        if (Boolean.TRUE.equals(category.getIsDefault())) {
+            throw new BadRequestException("Default categories cannot be modified");
+        }
+
         // Check if name/type is changing and if new combination already exists
         if ((!category.getName().equals(request.name()) || !category.getType().equals(request.type())) &&
                 categoryRepository.existsByNameAndTypeAndUserId(request.name(), request.type(), userId)) {
@@ -140,6 +144,11 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
     @Transactional
     public void delete(Long id, Long userId) {
         TransactionCategory category = findCategoryByIdAndUserId(id, userId);
+
+        if (Boolean.TRUE.equals(category.getIsDefault())) {
+            throw new BadRequestException("Default categories cannot be deleted");
+        }
+
         categoryRepository.delete(category);
     }
 
@@ -171,22 +180,34 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
                 null,
                 null,
                 true,
+                true,
                 null,
                 null
         );
     }
 
-    private List<TransactionCategoryResponse> mergeCategories(List<TransactionCategoryResponse> userCats, List<TransactionCategoryResponse> defaultCats) {
-        // create unqiue set based on name AND type
+    private List<TransactionCategoryResponse> mergeCategories(List<TransactionCategoryResponse> userCats, List<TransactionCategoryResponse> defaultCats, Long userId) {
+        // create unique set based on name AND type
         List<String> existingKeys = userCats.stream()
                 .map(c -> c.name().toLowerCase() + "-" + c.type().name().toLowerCase())
                 .collect(Collectors.toList());
 
+        User user = findUserById(userId);
         List<TransactionCategoryResponse> merged = new java.util.ArrayList<>(userCats);
         for (TransactionCategoryResponse defCat : defaultCats) {
             String key = defCat.name().toLowerCase() + "-" + defCat.type().name().toLowerCase();
             if (!existingKeys.contains(key)) {
-                merged.add(defCat);
+                // Auto-create the default category as a real user category
+                TransactionCategory category = new TransactionCategory();
+                category.setName(defCat.name());
+                category.setType(defCat.type());
+                category.setIcon(defCat.icon());
+                category.setColor(defCat.color());
+                category.setUser(user);
+                category.setIsActive(true);
+                category.setIsDefault(true);
+                TransactionCategory saved = categoryRepository.save(category);
+                merged.add(TransactionCategoryResponse.from(saved));
             }
         }
         return merged;

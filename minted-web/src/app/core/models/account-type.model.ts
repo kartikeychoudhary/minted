@@ -3,6 +3,7 @@ export interface AccountType {
   name: string;
   description: string;
   icon: string;
+  isDefault?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -18,6 +19,7 @@ export interface AccountTypeResponse {
   name: string;
   description: string;
   icon: string;
+  isDefault: boolean;
   createdAt: string;
   updatedAt: string;
 }

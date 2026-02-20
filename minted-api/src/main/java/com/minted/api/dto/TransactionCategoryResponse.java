@@ -14,6 +14,7 @@ public record TransactionCategoryResponse(
         Long parentId,
         String parentName,
         Boolean isActive,
+        Boolean isDefault,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -27,6 +28,7 @@ public record TransactionCategoryResponse(
                 category.getParent() != null ? category.getParent().getId() : null,
                 category.getParent() != null ? category.getParent().getName() : null,
                 category.getIsActive(),
+                category.getIsDefault(),
                 category.getCreatedAt(),
                 category.getUpdatedAt()
         );

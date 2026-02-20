@@ -44,6 +44,9 @@ public class TransactionCategory {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Column(name = "is_default")
+    private Boolean isDefault = false;
+
     @Column(name = "is_active")
     private Boolean isActive = true;
 

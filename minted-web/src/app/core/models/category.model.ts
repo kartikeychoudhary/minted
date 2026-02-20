@@ -13,6 +13,7 @@ export interface Category {
   parentId?: number;
   parentName?: string;
   isActive?: boolean;
+  isDefault?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -34,6 +35,7 @@ export interface CategoryResponse {
   parentId: number | null;
   parentName: string | null;
   isActive: boolean;
+  isDefault: boolean;
   createdAt: string;
   updatedAt: string;
 }

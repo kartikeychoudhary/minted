@@ -91,6 +91,7 @@ public class DataInitializer implements ApplicationRunner {
                 accountType.setIcon(getDefaultIconForAccountType(type.getName()));
                 accountType.setUser(admin);
                 accountType.setIsActive(true);
+                accountType.setIsDefault(true);
                 accountTypeRepository.save(accountType);
             }
         }
@@ -108,6 +109,7 @@ public class DataInitializer implements ApplicationRunner {
                 category.setColor(getDefaultColorForCategory(defCat.getName()));
                 category.setUser(admin);
                 category.setIsActive(true);
+                category.setIsDefault(true);
                 transactionCategoryRepository.save(category);
             }
         }

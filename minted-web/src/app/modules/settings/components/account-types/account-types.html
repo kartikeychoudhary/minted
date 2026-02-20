@@ -44,19 +44,30 @@
             </div>
           </td>
           <td>
-            <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ accountType.name }}</div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ accountType.name }}</span>
+              <span *ngIf="accountType.isDefault"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                style="background-color: var(--minted-accent); color: white;">
+                <i class="pi pi-lock" style="font-size: 0.625rem;"></i>
+                Default
+              </span>
+            </div>
           </td>
           <td>
             <div class="text-sm" style="color: var(--minted-text-secondary);">{{ accountType.description }}</div>
           </td>
           <td style="text-align: right;">
             <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="showEditDialog(accountType)" pTooltip="Edit" tooltipPosition="top"
+              (click)="showEditDialog(accountType)" [pTooltip]="accountType.isDefault ? 'Default types cannot be edited' : 'Edit'" tooltipPosition="top"
+              [disabled]="accountType.isDefault"
               style="color: var(--minted-text-secondary);">
             </button>
             <button pButton type="button" icon="pi pi-trash"
               class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="confirmDelete(accountType)"
-              pTooltip="Delete" tooltipPosition="top" style="color: var(--minted-text-secondary);">
+              [pTooltip]="accountType.isDefault ? 'Default types cannot be deleted' : 'Delete'" tooltipPosition="top"
+              [disabled]="accountType.isDefault"
+              style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>

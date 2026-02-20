@@ -44,7 +44,15 @@
             </div>
           </td>
           <td>
-            <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ category.name }}</div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ category.name }}</span>
+              <span *ngIf="category.isDefault"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                style="background-color: var(--minted-accent); color: white;">
+                <i class="pi pi-lock" style="font-size: 0.625rem;"></i>
+                Default
+              </span>
+            </div>
           </td>
           <td>
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" [ngClass]="{
@@ -57,12 +65,15 @@
           </td>
           <td style="text-align: right;">
             <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="showEditDialog(category)" pTooltip="Edit" tooltipPosition="top"
+              (click)="showEditDialog(category)" [pTooltip]="category.isDefault ? 'Default categories cannot be edited' : 'Edit'" tooltipPosition="top"
+              [disabled]="category.isDefault"
               style="color: var(--minted-text-secondary);">
             </button>
             <button pButton type="button" icon="pi pi-trash"
               class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="confirmDelete(category)"
-              pTooltip="Delete" tooltipPosition="top" style="color: var(--minted-text-secondary);">
+              [pTooltip]="category.isDefault ? 'Default categories cannot be deleted' : 'Delete'" tooltipPosition="top"
+              [disabled]="category.isDefault"
+              style="color: var(--minted-text-secondary);">
             </button>
           </td>
         </tr>
