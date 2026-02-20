@@ -270,42 +270,19 @@ export class TransactionsList implements OnInit {
   loadTransactions(): void {
     const dateRange = this.getDateRange();
 
-    if (this.selectedAccountId || this.selectedCategoryId) {
-      const filters: TransactionFilters = {
-        startDate: dateRange.startDate,
-        endDate: dateRange.endDate,
-        accountId: this.selectedAccountId,
-        categoryId: this.selectedCategoryId
-      };
-
-      this.transactionService.getByFilters(filters).subscribe({
-        next: (data) => {
-          this.transactions = data;
-          this.applyFilters();
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to load transactions'
-          });
-        }
-      });
-    } else {
-      this.transactionService.getByDateRange(dateRange.startDate, dateRange.endDate).subscribe({
-        next: (data) => {
-          this.transactions = data;
-          this.applyFilters();
-        },
-        error: (error) => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to load transactions'
-          });
-        }
-      });
-    }
+    this.transactionService.getByDateRange(dateRange.startDate, dateRange.endDate).subscribe({
+      next: (data) => {
+        this.transactions = data;
+        this.applyFilters();
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load transactions'
+        });
+      }
+    });
   }
 
   getDateRange(): { startDate: string; endDate: string } {
@@ -341,6 +318,16 @@ export class TransactionsList implements OnInit {
   applyFilters(): void {
     let filtered = [...this.transactions];
 
+    // Apply account filter
+    if (this.selectedAccountId) {
+      filtered = filtered.filter(t => t.accountId === this.selectedAccountId);
+    }
+
+    // Apply category filter
+    if (this.selectedCategoryId) {
+      filtered = filtered.filter(t => t.categoryId === this.selectedCategoryId);
+    }
+
     // Apply search filter
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
@@ -353,6 +340,7 @@ export class TransactionsList implements OnInit {
 
     this.filteredTransactions = filtered;
     this.rowData = filtered;
+    this.cdr.detectChanges();
   }
 
   onDateFilterChange(filter: DateFilterOption): void {
@@ -375,11 +363,11 @@ export class TransactionsList implements OnInit {
   }
 
   onAccountFilterChange(): void {
-    this.loadTransactions();
+    this.applyFilters();
   }
 
   onCategoryFilterChange(): void {
-    this.loadTransactions();
+    this.applyFilters();
   }
 
   onSearchChange(): void {

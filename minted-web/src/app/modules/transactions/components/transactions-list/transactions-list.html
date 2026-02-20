@@ -65,12 +65,12 @@
 
         <!-- Dropdowns & Search -->
         <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-start">
-          <p-select [(ngModel)]="selectedAccountId" [options]="accountOptions" placeholder="All Accounts"
-            (onChange)="onAccountFilterChange()" styleClass="w-full sm:w-48">
+          <p-select [(ngModel)]="selectedAccountId" [options]="accountOptions" optionLabel="label" optionValue="value"
+            placeholder="All Accounts" (onChange)="onAccountFilterChange()" appendTo="body" styleClass="w-full sm:w-48">
           </p-select>
 
-          <p-select [(ngModel)]="selectedCategoryId" [options]="categoryOptions" placeholder="All Categories"
-            (onChange)="onCategoryFilterChange()" styleClass="w-full sm:w-48">
+          <p-select [(ngModel)]="selectedCategoryId" [options]="categoryOptions" optionLabel="label" optionValue="value"
+            placeholder="All Categories" (onChange)="onCategoryFilterChange()" appendTo="body" styleClass="w-full sm:w-48">
           </p-select>
 
           <p-iconfield iconPosition="left" class="w-full sm:w-64">
@@ -88,16 +88,16 @@
           <label for="startDate" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Start Date</label>
           <p-datepicker id="startDate" [(ngModel)]="customStartDate" (ngModelChange)="onCustomDateChange()"
-            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select start date" styleClass="w-full"
-            inputStyleClass="w-full">
+            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select start date" appendTo="body"
+            styleClass="w-full" inputStyleClass="w-full">
           </p-datepicker>
         </div>
         <div class="flex-1">
           <label for="endDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">End
             Date</label>
           <p-datepicker id="endDate" [(ngModel)]="customEndDate" (ngModelChange)="onCustomDateChange()"
-            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select end date" styleClass="w-full"
-            inputStyleClass="w-full">
+            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select end date" appendTo="body"
+            styleClass="w-full" inputStyleClass="w-full">
           </p-datepicker>
         </div>
       </div>
@@ -138,8 +138,8 @@
         <div>
           <label for="type" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Type</label>
-          <p-select id="type" formControlName="type" [options]="transactionTypes" placeholder="Select type"
-            styleClass="w-full"
+          <p-select id="type" formControlName="type" [options]="transactionTypes" optionLabel="label" optionValue="value"
+            placeholder="Select type" appendTo="body" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
           </p-select>
           <small class="p-error block mt-1"
@@ -180,7 +180,7 @@
           <label for="categoryId" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Category</label>
           <p-select id="categoryId" formControlName="categoryId" [options]="categories" optionLabel="name"
-            optionValue="id" placeholder="Select category" styleClass="w-full"
+            optionValue="id" placeholder="Select category" appendTo="body" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched">
           </p-select>
           <small class="p-error block mt-1"
@@ -196,7 +196,7 @@
           <label for="accountId" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Account</label>
           <p-select id="accountId" formControlName="accountId" [options]="accounts" optionLabel="name" optionValue="id"
-            placeholder="Select account" styleClass="w-full"
+            placeholder="Select account" appendTo="body" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('accountId')?.invalid && transactionForm.get('accountId')?.touched">
           </p-select>
           <small class="p-error block mt-1"
@@ -208,8 +208,8 @@
         <div>
           <label for="toAccountId" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">To Account (Transfer)</label>
-          <p-select id="toAccountId" formControlName="toAccountId" [options]="toAccountOptions"
-            placeholder="Select account" styleClass="w-full">
+          <p-select id="toAccountId" formControlName="toAccountId" [options]="toAccountOptions" optionLabel="label"
+            optionValue="value" placeholder="Select account" appendTo="body" styleClass="w-full">
           </p-select>
         </div>
       </div>

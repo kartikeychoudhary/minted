@@ -31,7 +31,6 @@ export class Sidebar {
     { label: 'Recurring', icon: 'sync_alt', route: '/recurring' },
     { label: 'Analytics', icon: 'pie_chart', route: '/analytics' },
     { label: 'Settings', icon: 'settings', route: '/settings', section: 'Management' },
-    { label: 'Help Center', icon: 'help', route: '/help' }
   ];
 
   private adminNavigationItems: NavigationItem[] = [
