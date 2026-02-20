@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -15,13 +15,15 @@ export class Login implements OnInit {
   loginForm?: FormGroup;
   loading = false;
   returnUrl: string = '/';
+  signupEnabled = false;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -39,6 +41,12 @@ export class Login implements OnInit {
 
     // Get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    // Check if signup is enabled
+    this.authService.isSignupEnabled().subscribe({
+      next: (enabled) => { this.signupEnabled = enabled; this.cdr.detectChanges(); },
+      error: () => { this.signupEnabled = false; }
+    });
   }
 
   onSubmit(): void {

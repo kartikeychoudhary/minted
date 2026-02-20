@@ -58,33 +58,14 @@
       <!-- Submit Button -->
       <p-button type="submit" label="Secure Login" icon="pi pi-lock" [loading]="loading"
         [disabled]="!loginForm || loginForm.invalid || loading" styleClass="w-full"></p-button>
-
-      <!-- Divider -->
-      <div class="relative flex py-2 items-center">
-        <div class="flex-grow border-t" style="border-color: #e5e7eb;"></div>
-        <span class="flex-shrink-0 mx-4 text-xs font-medium uppercase tracking-wider" style="color: #857f79;">Or
-          continue with</span>
-        <div class="flex-grow border-t" style="border-color: #e5e7eb;"></div>
-      </div>
-
-      <!-- Social Login Buttons -->
-      <div class="grid grid-cols-2 gap-3">
-        <button type="button" class="social-button">
-          <i class="pi pi-google" style="font-size: 1.25rem; color: #757575;"></i>
-          <span class="ml-2 text-sm font-medium" style="color: #4b5563;">Google</span>
-        </button>
-        <button type="button" class="social-button">
-          <i class="pi pi-facebook" style="font-size: 1.25rem; color: #1877F2;"></i>
-          <span class="ml-2 text-sm font-medium" style="color: #4b5563;">Facebook</span>
-        </button>
-      </div>
     </form>
 
     <!-- Footer Area -->
-    <div class="py-4 px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;">
+    <div class="py-4 px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;"
+      *ngIf="signupEnabled">
       <p class="text-xs" style="color: #857f79;">
         Don't have an account?
-        <a href="#" class="font-semibold ml-1 create-link">
+        <a routerLink="/signup" class="font-semibold ml-1 create-link">
           Create Account
         </a>
       </p>

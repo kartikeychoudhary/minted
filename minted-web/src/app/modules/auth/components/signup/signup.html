@@ -1,0 +1,121 @@
+<!-- Background with decorative elements -->
+<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+  style="background-color: #f8f7f6;">
+  <!-- Decorative Background Blurs -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-3xl"
+      style="background-color: rgba(196, 136, 33, 0.05);"></div>
+    <div class="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full blur-3xl"
+      style="background-color: rgba(196, 136, 33, 0.05);"></div>
+  </div>
+
+  <!-- Main Signup Card -->
+  <main class="relative z-10 w-full max-w-md shadow-lg border overflow-hidden signup-card"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <!-- Header Section with Logo -->
+    <div class="pt-10 pb-6 px-8 text-center">
+      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 shadow-sm logo-icon">
+        <i class="pi pi-dollar" style="font-size: 1.875rem;"></i>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight" style="color: #1e293b;">Minted</h1>
+      <p class="mt-2 text-sm" style="color: #857f79;">Create your free account</p>
+    </div>
+
+    <!-- Disabled Warning -->
+    <div *ngIf="!checkingSignup && !signupEnabled" class="mx-8 mb-4 p-3 rounded-lg border"
+      style="background-color: var(--minted-warning-subtle, #fef3c7); border-color: var(--minted-warning, #d97706); color: var(--minted-warning, #d97706);">
+      <div class="flex items-center gap-2 text-sm font-semibold">
+        <i class="pi pi-exclamation-triangle"></i>
+        Registration is currently disabled
+      </div>
+      <p class="text-xs mt-1 opacity-80">Contact your administrator for access.</p>
+    </div>
+
+    <!-- Form Section -->
+    <form *ngIf="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="px-8 pb-10 space-y-5">
+      <!-- Display Name -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-user" />
+          <input pInputText type="text" formControlName="displayName" placeholder="Display Name (optional)"
+            class="w-full" />
+        </p-iconfield>
+      </div>
+
+      <!-- Email -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-envelope" />
+          <input pInputText type="email" formControlName="email" placeholder="Email (optional)"
+            class="w-full" [class.p-invalid]="f['email']?.invalid && f['email']?.touched" />
+        </p-iconfield>
+        <small class="p-error block mt-1" *ngIf="f['email']?.errors?.['email'] && f['email']?.touched">
+          Invalid email format
+        </small>
+      </div>
+
+      <!-- Username -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-at" />
+          <input pInputText type="text" formControlName="username" placeholder="Username"
+            class="w-full" [class.p-invalid]="f['username']?.invalid && f['username']?.touched" />
+        </p-iconfield>
+        <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
+          Username is required (3-50 characters)
+        </small>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-lock" />
+          <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Password"
+            inputStyleClass="w-full" styleClass="w-full" />
+        </p-iconfield>
+        <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
+          Min 8 characters, 1 uppercase, 1 number
+        </small>
+      </div>
+
+      <!-- Confirm Password -->
+      <div>
+        <p-iconfield styleClass="w-full">
+          <p-inputicon styleClass="pi pi-lock" />
+          <p-password formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
+            placeholder="Confirm Password" inputStyleClass="w-full" styleClass="w-full" />
+        </p-iconfield>
+        <small class="p-error block mt-1"
+          *ngIf="f['confirmPassword']?.errors?.['passwordMismatch'] && f['confirmPassword']?.touched">
+          Passwords do not match
+        </small>
+      </div>
+
+      <!-- Submit Button -->
+      <p-button type="submit" label="Create Account" icon="pi pi-user-plus" [loading]="loading"
+        [disabled]="!signupForm || signupForm.invalid || loading || !signupEnabled"
+        [pTooltip]="!signupEnabled ? 'Registration is disabled' : ''"
+        styleClass="w-full"></p-button>
+    </form>
+
+    <!-- Footer Area -->
+    <div class="py-4 px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;">
+      <p class="text-xs" style="color: #857f79;">
+        Already have an account?
+        <a routerLink="/login" class="font-semibold ml-1 signin-link">
+          Sign In
+        </a>
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer Copyright -->
+  <footer class="fixed bottom-4 text-center w-full pointer-events-none">
+    <p class="text-[10px]" style="color: rgba(133, 127, 121, 0.5);">
+      &copy; 2026 Minted Financial Services. Protected by 256-bit encryption.
+    </p>
+  </footer>
+
+  <!-- Toast for error messages -->
+  <p-toast position="top-right"></p-toast>
+</div>

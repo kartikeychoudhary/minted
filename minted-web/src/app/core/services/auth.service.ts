@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { User, LoginRequest, LoginResponse, ChangePasswordRequest, ApiResponse } from '../models/user.model';
+import { User, LoginRequest, LoginResponse, ChangePasswordRequest, ApiResponse, SignupRequest } from '../models/user.model';
 import { environment } from '../../../environments/environment';
 import { CurrencyService } from './currency.service';
 
@@ -117,5 +117,27 @@ export class AuthService {
 
   getRefreshToken(): string | null {
     return localStorage.getItem(this.REFRESH_TOKEN_KEY);
+  }
+
+  signup(request: SignupRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/signup`, request)
+      .pipe(
+        tap(response => {
+          if (response.success && response.data) {
+            localStorage.setItem(this.TOKEN_KEY, response.data.token);
+            localStorage.setItem(this.REFRESH_TOKEN_KEY, response.data.refreshToken);
+            localStorage.setItem(this.USER_KEY, JSON.stringify(response.data.user));
+            if (response.data.user.currency) {
+              this.currencyService.setCurrency(response.data.user.currency);
+            }
+            this.currentUserSubject.next(response.data.user);
+          }
+        })
+      );
+  }
+
+  isSignupEnabled(): Observable<boolean> {
+    return this.http.get<ApiResponse<boolean>>(`${environment.apiUrl}/auth/signup-enabled`)
+      .pipe(map(r => r.data!));
   }
 }

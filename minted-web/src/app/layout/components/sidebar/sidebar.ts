@@ -35,7 +35,8 @@ export class Sidebar {
   ];
 
   private adminNavigationItems: NavigationItem[] = [
-    { label: 'Server Jobs', icon: 'schedule', route: '/admin/jobs', section: 'Admin' },
+    { label: 'Users', icon: 'group', route: '/admin/users', section: 'Admin' },
+    { label: 'Server Jobs', icon: 'schedule', route: '/admin/jobs' },
     { label: 'Server Settings', icon: 'dns', route: '/admin/settings' }
   ];
 

@@ -4,6 +4,7 @@ import com.minted.api.dto.ChangePasswordRequest;
 import com.minted.api.dto.LoginRequest;
 import com.minted.api.dto.LoginResponse;
 import com.minted.api.dto.RefreshTokenRequest;
+import com.minted.api.dto.SignupRequest;
 import com.minted.api.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,24 @@ public class AuthController {
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Password changed successfully"
+        ));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<Map<String, Object>> signup(@Valid @RequestBody SignupRequest request) {
+        LoginResponse response = authService.signup(request);
+        return ResponseEntity.status(201).body(Map.of(
+                "success", true,
+                "data", response,
+                "message", "Account created successfully"
+        ));
+    }
+
+    @GetMapping("/signup-enabled")
+    public ResponseEntity<Map<String, Object>> isSignupEnabled() {
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", authService.isSignupEnabled()
         ));
     }
 

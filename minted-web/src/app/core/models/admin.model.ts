@@ -42,3 +42,10 @@ export interface DefaultAccountType {
   id?: number;
   name: string;
 }
+
+export interface SystemSettingResponse {
+  id: number;
+  settingKey: string;
+  settingValue: string;
+  description: string;
+}

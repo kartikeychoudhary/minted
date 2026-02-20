@@ -9,12 +9,14 @@ import { ServerSettings } from './components/server-settings/server-settings';
 import { SharedModule } from '../../shared/shared.module';
 import { AgGridModule } from 'ag-grid-angular';
 import { MessageService, ConfirmationService } from 'primeng/api';
+import { UserManagement } from './components/user-management/user-management';
 
 @NgModule({
   declarations: [
     JobsList,
     JobDetail,
-    ServerSettings
+    ServerSettings,
+    UserManagement
   ],
   imports: [
     CommonModule,

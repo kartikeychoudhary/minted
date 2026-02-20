@@ -1,0 +1,136 @@
+<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full overflow-y-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary">User Management</h1>
+            <p class="text-sm text-minted-text-secondary mt-1">Manage users, roles, and registration settings</p>
+        </div>
+    </div>
+
+    <!-- Signup Settings Card -->
+    <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
+        <div class="p-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="material-icons text-minted-text-secondary">public</span>
+                <div>
+                    <h2 class="font-bold text-minted-text-primary">Public Registration</h2>
+                    <p class="text-xs text-minted-text-secondary mt-0.5">Allow new users to register via the signup page</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-semibold"
+                    [style.color]="signupEnabled ? 'var(--minted-success)' : 'var(--minted-text-muted)'">
+                    {{ signupEnabled ? 'Enabled' : 'Disabled' }}
+                </span>
+                <p-toggleswitch [(ngModel)]="signupEnabled" (onChange)="toggleSignup()"></p-toggleswitch>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Card -->
+    <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
+        <div class="p-5 border-b border-minted-border bg-minted-surface flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="material-icons text-minted-text-secondary">group</span>
+                <h2 class="font-bold">Users <span class="text-minted-text-muted font-normal text-sm">({{ users.length }})</span></h2>
+            </div>
+            <p-button label="New User" icon="pi pi-plus" size="small" (onClick)="openCreateDialog()"></p-button>
+        </div>
+
+        <div class="relative">
+            <div *ngIf="loading" class="py-8 text-center">
+                <i class="pi pi-spin pi-spinner text-xl" style="color: var(--minted-accent)"></i>
+            </div>
+            <div *ngIf="!loading">
+                <ag-grid-angular class="w-full" [theme]="mintedTheme" [rowData]="users"
+                    [columnDefs]="colDefs" [gridOptions]="gridOptions">
+                </ag-grid-angular>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create User Dialog -->
+<p-dialog header="Create New User" [(visible)]="showCreateDialog" [modal]="true" [style]="{width: '450px'}"
+    [draggable]="false" [resizable]="false">
+    <form [formGroup]="createForm" (ngSubmit)="createUser()" class="pt-4 space-y-4">
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Username *</label>
+            <input type="text" pInputText formControlName="username" placeholder="Enter username"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+            <small class="p-error" *ngIf="createForm.get('username')?.invalid && createForm.get('username')?.touched">
+                Username is required (3-50 characters)
+            </small>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Password *</label>
+            <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Enter password"
+                inputStyleClass="w-full" styleClass="w-full"></p-password>
+            <small class="p-error" *ngIf="createForm.get('password')?.invalid && createForm.get('password')?.touched">
+                Password must be at least 8 characters with 1 uppercase and 1 number
+            </small>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Display Name</label>
+            <input type="text" pInputText formControlName="displayName" placeholder="Enter display name"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Email</label>
+            <input type="email" pInputText formControlName="email" placeholder="Enter email"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+            <small class="p-error" *ngIf="createForm.get('email')?.invalid && createForm.get('email')?.touched">
+                Invalid email format
+            </small>
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Role</label>
+            <p-select formControlName="role" [options]="roleOptions" optionLabel="label" optionValue="value"
+                styleClass="w-full"></p-select>
+        </div>
+        <div class="p-3 rounded-lg text-xs" style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
+            <i class="pi pi-info-circle mr-1"></i>
+            User will be required to change password on first login.
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <p-button label="Cancel" (onClick)="showCreateDialog = false"
+                styleClass="p-button-text p-button-secondary"></p-button>
+            <p-button type="submit" label="Create User" [disabled]="createForm.invalid"
+                styleClass="p-button-primary"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Reset Password Dialog -->
+<p-dialog header="Reset Password" [(visible)]="showResetDialog" [modal]="true" [style]="{width: '400px'}"
+    [draggable]="false" [resizable]="false">
+    <form [formGroup]="resetForm" (ngSubmit)="resetPassword()" class="pt-4 space-y-4">
+        <p class="text-sm text-minted-text-secondary">
+            Reset password for <strong class="text-minted-text-primary">{{ resetUsername }}</strong>
+        </p>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">New Password *</label>
+            <p-password formControlName="newPassword" [toggleMask]="true" [feedback]="false"
+                placeholder="Enter new password" inputStyleClass="w-full" styleClass="w-full"></p-password>
+            <small class="p-error" *ngIf="resetForm.get('newPassword')?.invalid && resetForm.get('newPassword')?.touched">
+                Password must be at least 8 characters
+            </small>
+        </div>
+        <div class="p-3 rounded-lg text-xs" style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
+            <i class="pi pi-info-circle mr-1"></i>
+            User will be required to change this password on next login.
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <p-button label="Cancel" (onClick)="showResetDialog = false"
+                styleClass="p-button-text p-button-secondary"></p-button>
+            <p-button type="submit" label="Reset Password" [disabled]="resetForm.invalid"
+                styleClass="p-button-primary"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<!-- Confirm Dialog -->
+<p-confirmDialog></p-confirmDialog>
+
+<!-- Toast -->
+<p-toast position="top-right"></p-toast>

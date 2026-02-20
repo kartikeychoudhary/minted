@@ -40,3 +40,36 @@ export interface ApiResponse<T> {
   path?: string;
   timestamp?: string;
 }
+
+export interface AdminUserResponse {
+  id: number;
+  username: string;
+  displayName: string;
+  email: string | null;
+  isActive: boolean;
+  forcePasswordChange: boolean;
+  currency: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateUserRequest {
+  username: string;
+  password: string;
+  displayName?: string;
+  email?: string;
+  role?: string;
+}
+
+export interface ResetPasswordRequest {
+  newPassword: string;
+}
+
+export interface SignupRequest {
+  username: string;
+  password: string;
+  confirmPassword: string;
+  displayName?: string;
+  email?: string;
+}

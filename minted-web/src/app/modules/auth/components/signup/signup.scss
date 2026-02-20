@@ -1,0 +1,32 @@
+// Signup card styling — matches login page
+.signup-card {
+  border-radius: 1rem !important;
+  border-color: var(--minted-accent-subtle) !important;
+}
+
+.logo-icon {
+  background-color: var(--minted-accent-subtle);
+  color: var(--minted-accent);
+  border: 1px solid var(--minted-accent-subtle);
+}
+
+.blur-3xl {
+  filter: blur(96px);
+}
+
+.signin-link {
+  color: var(--minted-accent);
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--minted-accent-hover);
+  }
+}
+
+::ng-deep {
+  .p-error {
+    color: var(--minted-danger);
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+}

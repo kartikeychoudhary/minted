@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import {
     JobExecution,
     JobScheduleConfig,
     DefaultCategory,
-    DefaultAccountType
+    DefaultAccountType,
+    SystemSettingResponse
 } from '../models/admin.model';
+import { AdminUserResponse, CreateUserRequest, ResetPasswordRequest, ApiResponse } from '../models/user.model';
 
 @Injectable({
     providedIn: 'root'
@@ -66,5 +69,39 @@ export class AdminService {
 
     deleteDefaultAccountType(id: number): Observable<void> {
         return this.http.delete<void>(`${this.apiUrl}/defaults/account-types/${id}`);
+    }
+
+    // --- User Management ---
+    getUsers(): Observable<AdminUserResponse[]> {
+        return this.http.get<ApiResponse<AdminUserResponse[]>>(`${this.apiUrl}/users`).pipe(map(r => r.data!));
+    }
+
+    getUserById(id: number): Observable<AdminUserResponse> {
+        return this.http.get<ApiResponse<AdminUserResponse>>(`${this.apiUrl}/users/${id}`).pipe(map(r => r.data!));
+    }
+
+    createUser(request: CreateUserRequest): Observable<AdminUserResponse> {
+        return this.http.post<ApiResponse<AdminUserResponse>>(`${this.apiUrl}/users`, request).pipe(map(r => r.data!));
+    }
+
+    toggleUserActive(id: number): Observable<AdminUserResponse> {
+        return this.http.put<ApiResponse<AdminUserResponse>>(`${this.apiUrl}/users/${id}/toggle`, {}).pipe(map(r => r.data!));
+    }
+
+    deleteUser(id: number): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/users/${id}`);
+    }
+
+    resetPassword(id: number, request: ResetPasswordRequest): Observable<void> {
+        return this.http.put<void>(`${this.apiUrl}/users/${id}/reset-password`, request);
+    }
+
+    // --- System Settings ---
+    getSetting(key: string): Observable<SystemSettingResponse> {
+        return this.http.get<ApiResponse<SystemSettingResponse>>(`${this.apiUrl}/settings/${key}`).pipe(map(r => r.data!));
+    }
+
+    updateSetting(key: string, value: string): Observable<SystemSettingResponse> {
+        return this.http.put<ApiResponse<SystemSettingResponse>>(`${this.apiUrl}/settings/${key}`, { value }).pipe(map(r => r.data!));
     }
 }
