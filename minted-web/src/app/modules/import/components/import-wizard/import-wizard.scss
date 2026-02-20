@@ -1,0 +1,24 @@
+:host {
+  display: block;
+  min-height: 100%;
+}
+
+::ng-deep {
+  .p-stepper .p-step-header .p-step-number {
+    background-color: var(--minted-bg-surface);
+    color: var(--minted-text-secondary);
+    border: 2px solid var(--minted-border);
+  }
+
+  .p-stepper .p-step-active .p-step-number {
+    background-color: var(--minted-accent);
+    color: white;
+    border-color: var(--minted-accent);
+  }
+
+  .p-stepper .p-step-complete .p-step-number {
+    background-color: var(--minted-success);
+    color: white;
+    border-color: var(--minted-success);
+  }
+}

@@ -1,0 +1,40 @@
+<div class="p-8">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div class="flex items-center gap-4">
+      <button (click)="goBack()"
+        class="p-2 rounded-full transition-colors flex items-center justify-center"
+        style="color: var(--minted-text-secondary);"
+        onmouseover="this.style.backgroundColor='var(--minted-bg-hover)'"
+        onmouseout="this.style.backgroundColor='transparent'">
+        <span class="material-icons">arrow_back</span>
+      </button>
+      <div>
+        <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary)">Import History</h1>
+        <p class="mt-1 text-sm" style="color: var(--minted-text-secondary)">
+          View all your previous CSV imports and their status
+        </p>
+      </div>
+    </div>
+    <button pButton label="New Import" icon="pi pi-plus" (click)="navigateToWizard()"
+      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex items-center justify-center py-16">
+    <i class="pi pi-spin pi-spinner text-4xl" style="color: var(--minted-accent)"></i>
+  </div>
+
+  <!-- AG Grid -->
+  <div *ngIf="!loading" class="rounded-xl overflow-hidden" style="height: 600px; border: 1px solid var(--minted-border);">
+    <ag-grid-angular
+      style="width: 100%; height: 100%;"
+      [theme]="mintedTheme"
+      [rowData]="imports"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [gridOptions]="gridOptions">
+    </ag-grid-angular>
+  </div>
+</div>

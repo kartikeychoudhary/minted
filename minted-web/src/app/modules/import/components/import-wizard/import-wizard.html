@@ -1,0 +1,301 @@
+<p-toast></p-toast>
+
+<div class="p-8">
+  <!-- Page Header -->
+  <div class="flex items-center justify-between mb-8">
+    <div>
+      <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary)">Import Transactions</h1>
+      <p class="mt-1" style="color: var(--minted-text-secondary)">
+        Bulk import transactions from CSV files
+      </p>
+    </div>
+    <button pButton label="Import History" icon="pi pi-history"
+      class="p-button-outlined" (click)="navigateToHistory()"
+      style="color: var(--minted-accent); border-color: var(--minted-accent);">
+    </button>
+  </div>
+
+  <!-- Import Type Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- CSV Import Card (active) -->
+    <div class="rounded-xl p-6 cursor-pointer border-2 transition-all"
+      style="background-color: var(--minted-bg-card); border-color: var(--minted-accent);">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+          style="background-color: var(--minted-accent-subtle);">
+          <span class="material-icons-outlined text-2xl" style="color: var(--minted-accent)">description</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary)">CSV Import</h3>
+          <p class="text-sm" style="color: var(--minted-text-secondary)">Import transactions from a CSV file</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credit Card Statement Card (coming soon) -->
+    <div class="rounded-xl p-6 opacity-50 cursor-not-allowed border-2 transition-all"
+      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center"
+          style="background-color: var(--minted-bg-surface);">
+          <span class="material-icons-outlined text-2xl" style="color: var(--minted-text-muted)">credit_card</span>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary)">Credit Card Statement</h3>
+          <p class="text-sm" style="color: var(--minted-text-secondary)">
+            Parse bank statements automatically
+            <p-tag value="Coming Soon" severity="info" class="ml-2" />
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PrimeNG Stepper -->
+  <p-stepper [(value)]="activeStep" [linear]="true">
+    <p-step-list>
+      <p-step [value]="1">Download Template</p-step>
+      <p-step [value]="2">Upload & Preview</p-step>
+      <p-step [value]="3">Confirm & Import</p-step>
+    </p-step-list>
+
+    <p-step-panels>
+      <!-- STEP 1: Download Template -->
+      <p-step-panel [value]="1">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="rounded-xl p-6 mt-6" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+            <!-- Account Selection -->
+            <div class="mb-6">
+              <label class="block text-sm font-semibold mb-2" style="color: var(--minted-text-primary)">
+                Select Account
+              </label>
+              <p-select
+                [options]="accountOptions"
+                [(ngModel)]="selectedAccountId"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Choose an account"
+                [style]="{ width: '100%', maxWidth: '400px' }">
+              </p-select>
+              <p class="text-xs mt-1" style="color: var(--minted-text-muted)">
+                All imported transactions will be linked to this account
+              </p>
+            </div>
+
+            <!-- Download Template -->
+            <div class="mb-6">
+              <label class="block text-sm font-semibold mb-2" style="color: var(--minted-text-primary)">
+                Download CSV Template
+              </label>
+              <button pButton label="Download Template" icon="pi pi-download"
+                class="p-button-outlined" (click)="downloadTemplate()"
+                style="color: var(--minted-accent); border-color: var(--minted-accent);">
+              </button>
+            </div>
+
+            <!-- CSV Format Instructions -->
+            <div class="rounded-lg p-4" style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
+              <h4 class="text-sm font-semibold mb-3" style="color: var(--minted-text-primary)">
+                <span class="material-icons-outlined text-sm align-middle mr-1">info</span>
+                CSV Format Requirements
+              </h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm" style="color: var(--minted-text-secondary)">
+                <div>
+                  <p class="font-medium mb-1" style="color: var(--minted-text-primary)">Required Columns:</p>
+                  <ul class="list-disc list-inside space-y-1">
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">date</code> — yyyy-MM-dd format</li>
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">amount</code> — positive number</li>
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">type</code> — INCOME, EXPENSE, or TRANSFER</li>
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">description</code> — max 500 chars</li>
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">categoryName</code> — must match existing category</li>
+                  </ul>
+                </div>
+                <div>
+                  <p class="font-medium mb-1" style="color: var(--minted-text-primary)">Optional Columns:</p>
+                  <ul class="list-disc list-inside space-y-1">
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">notes</code> — additional notes</li>
+                    <li><code class="text-xs px-1 py-0.5 rounded" style="background-color: var(--minted-bg-hover)">tags</code> — semicolon-separated</li>
+                  </ul>
+                  <p class="font-medium mt-3 mb-1" style="color: var(--minted-text-primary)">Limits:</p>
+                  <ul class="list-disc list-inside space-y-1">
+                    <li>Maximum 5,000 rows per import</li>
+                    <li>Category names are case-insensitive</li>
+                    <li>Category type must match transaction type</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex pt-6 justify-end">
+            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right"
+              [disabled]="!selectedAccountId" (onClick)="activateCallback(2)"></p-button>
+          </div>
+        </ng-template>
+      </p-step-panel>
+
+      <!-- STEP 2: Upload & Preview -->
+      <p-step-panel [value]="2">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="rounded-xl p-6 mt-6" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+            <!-- File Input -->
+            <div class="mb-6">
+              <label class="block text-sm font-semibold mb-2" style="color: var(--minted-text-primary)">
+                Select CSV File
+              </label>
+              <div class="flex items-center gap-4">
+                <input type="file" accept=".csv" (change)="onFileSelect($event)"
+                  class="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:cursor-pointer"
+                  [style]="'color: var(--minted-text-secondary)'"
+                  style="color: var(--minted-text-secondary);">
+                <button pButton label="Upload & Validate" icon="pi pi-upload"
+                  [loading]="uploading" [disabled]="!selectedFile || uploading"
+                  (click)="uploadFile()"
+                  style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+                </button>
+              </div>
+              <p *ngIf="selectedFile" class="text-xs mt-1" style="color: var(--minted-text-muted)">
+                {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
+              </p>
+            </div>
+
+            <!-- Summary Cards -->
+            <div *ngIf="uploadResponse" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
+                <p class="text-2xl font-bold" style="color: var(--minted-text-primary)">{{ uploadResponse.totalRows }}</p>
+                <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-text-muted)">Total Rows</p>
+              </div>
+              <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-success-subtle); border: 1px solid var(--minted-success-subtle);">
+                <p class="text-2xl font-bold" style="color: var(--minted-success)">{{ uploadResponse.validRows }}</p>
+                <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-success)">Valid</p>
+              </div>
+              <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-danger-subtle); border: 1px solid var(--minted-danger-subtle);">
+                <p class="text-2xl font-bold" style="color: var(--minted-danger)">{{ uploadResponse.errorRows }}</p>
+                <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-danger)">Errors</p>
+              </div>
+              <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-accent-subtle); border: 1px solid var(--minted-accent-subtle);">
+                <p class="text-2xl font-bold" style="color: var(--minted-accent)">{{ uploadResponse.duplicateRows }}</p>
+                <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-accent)">Duplicates</p>
+              </div>
+            </div>
+
+            <!-- AG Grid Preview -->
+            <div *ngIf="uploadResponse" style="height: 400px;">
+              <ag-grid-angular
+                style="width: 100%; height: 100%;"
+                [theme]="mintedTheme"
+                [rowData]="rowData"
+                [columnDefs]="columnDefs"
+                [defaultColDef]="defaultColDef"
+                [gridOptions]="gridOptions">
+              </ag-grid-angular>
+            </div>
+          </div>
+
+          <div class="flex pt-6 justify-between">
+            <p-button label="Back" severity="secondary" icon="pi pi-arrow-left"
+              (onClick)="activateCallback(1)"></p-button>
+            <p-button label="Next" icon="pi pi-arrow-right" iconPos="right"
+              [disabled]="!uploadResponse || uploadResponse.validRows === 0"
+              (onClick)="activateCallback(3)"></p-button>
+          </div>
+        </ng-template>
+      </p-step-panel>
+
+      <!-- STEP 3: Confirm & Import -->
+      <p-step-panel [value]="3">
+        <ng-template #content let-activateCallback="activateCallback">
+          <div class="rounded-xl p-6 mt-6" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+            <ng-container *ngIf="!importComplete">
+              <!-- Import Summary -->
+              <h3 class="text-lg font-semibold mb-4" style="color: var(--minted-text-primary)">Import Summary</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-sm" style="color: var(--minted-text-secondary)">Account</span>
+                    <span class="text-sm font-medium" style="color: var(--minted-text-primary)">{{ getSelectedAccountName() }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm" style="color: var(--minted-text-secondary)">File</span>
+                    <span class="text-sm font-medium" style="color: var(--minted-text-primary)">{{ selectedFile?.name }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm" style="color: var(--minted-text-secondary)">Total Rows</span>
+                    <span class="text-sm font-medium" style="color: var(--minted-text-primary)">{{ uploadResponse?.totalRows }}</span>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex justify-between">
+                    <span class="text-sm" style="color: var(--minted-success)">Valid Rows</span>
+                    <span class="text-sm font-bold" style="color: var(--minted-success)">{{ uploadResponse?.validRows }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm" style="color: var(--minted-danger)">Error Rows (skipped)</span>
+                    <span class="text-sm font-bold" style="color: var(--minted-danger)">{{ uploadResponse?.errorRows }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-sm" style="color: var(--minted-accent)">Duplicate Rows</span>
+                    <span class="text-sm font-bold" style="color: var(--minted-accent)">{{ uploadResponse?.duplicateRows }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Skip Duplicates Toggle -->
+              <div *ngIf="uploadResponse && uploadResponse.duplicateRows > 0"
+                class="flex items-center gap-3 p-4 rounded-lg mb-6"
+                style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
+                <p-toggleSwitch [(ngModel)]="skipDuplicates"></p-toggleSwitch>
+                <div>
+                  <p class="text-sm font-medium" style="color: var(--minted-text-primary)">Skip Duplicate Rows</p>
+                  <p class="text-xs" style="color: var(--minted-text-muted)">
+                    {{ skipDuplicates ? 'Duplicates will be skipped' : 'Duplicates will also be imported' }}
+                  </p>
+                </div>
+              </div>
+
+              <!-- Rows to import -->
+              <div class="p-4 rounded-lg mb-6" style="background-color: var(--minted-accent-subtle); border: 1px solid var(--minted-accent-subtle);">
+                <p class="text-sm" style="color: var(--minted-accent)">
+                  <span class="font-bold text-lg">{{ getRowsToImport() }}</span>
+                  transactions will be imported
+                </p>
+              </div>
+            </ng-container>
+
+            <!-- Post-import success -->
+            <ng-container *ngIf="importComplete && importResult">
+              <div class="text-center py-8">
+                <span class="material-icons-outlined text-6xl mb-4" style="color: var(--minted-success)">check_circle</span>
+                <h3 class="text-xl font-bold mb-2" style="color: var(--minted-text-primary)">Import Started Successfully</h3>
+                <p class="text-sm mb-6" style="color: var(--minted-text-secondary)">
+                  Your transactions are being imported in the background. You can track the progress below.
+                </p>
+                <div class="flex items-center justify-center gap-4">
+                  <button pButton label="View Import Details" icon="pi pi-eye"
+                    (click)="navigateToJobDetail(importResult.id)"
+                    style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+                  </button>
+                  <button pButton label="Import History" icon="pi pi-list"
+                    class="p-button-outlined" (click)="navigateToHistory()"
+                    style="color: var(--minted-accent); border-color: var(--minted-accent);">
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="flex pt-6 justify-between" *ngIf="!importComplete">
+            <p-button label="Back" severity="secondary" icon="pi pi-arrow-left"
+              (onClick)="activateCallback(2)"></p-button>
+            <p-button label="Start Import" icon="pi pi-check"
+              [loading]="importing" (onClick)="confirmImport()"
+              styleClass="p-button-accent"
+              [style]="{ 'background-color': 'var(--minted-accent)', 'border-color': 'var(--minted-accent)' }">
+            </p-button>
+          </div>
+        </ng-template>
+      </p-step-panel>
+    </p-step-panels>
+  </p-stepper>
+</div>

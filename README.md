@@ -42,10 +42,10 @@ A modern, full-stack personal finance application built with **Angular 21** and 
 minted/
 ├── minted-api/          # Spring Boot backend → see minted-api/README.md
 ├── minted-web/          # Angular frontend   → see minted-web/README.md
+├── docs/                # Specs, history, and design references
 ├── docker-compose.yml   # Full-stack Docker orchestration
 ├── Dockerfile           # Frontend multi-stage build (Node → Nginx)
-├── nginx.conf           # Nginx reverse proxy config
-└── Documentation/       # Specs, phases, and design references
+└── nginx.conf           # Nginx reverse proxy config
 ```
 
 ---
@@ -196,11 +196,12 @@ docker compose up --build -d
 | [minted-web/README.md](./minted-web/README.md)         | Frontend setup, architecture, theming    |
 | [minted-api/README.md](./minted-api/README.md)         | Backend setup, API structure, migrations |
 | [IMPLEMENTATION_STATUS.md](./IMPLEMENTATION_STATUS.md)  | Phase-by-phase progress tracker          |
-| [Documentation/QUICKSTART.md](./Documentation/QUICKSTART.md) | Detailed implementation phases      |
-| [Documentation/API_SPEC.md](./Documentation/API_SPEC.md) | REST API specification                 |
-| [Documentation/BACKEND_SPEC.md](./Documentation/BACKEND_SPEC.md) | Backend architecture spec        |
-| [Documentation/FRONTEND_SPEC.md](./Documentation/FRONTEND_SPEC.md) | Frontend architecture spec      |
-| [Documentation/UI_UX_SPEC.md](./Documentation/UI_UX_SPEC.md) | UI/UX design reference              |
+| [docs/API_SPEC.md](./docs/API_SPEC.md)                 | REST API specification                   |
+| [docs/BACKEND_SPEC.md](./docs/BACKEND_SPEC.md)         | Backend architecture spec                |
+| [docs/FRONTEND_SPEC.md](./docs/FRONTEND_SPEC.md)       | Frontend architecture spec               |
+| [docs/UI_UX_SPEC.md](./docs/UI_UX_SPEC.md)             | UI/UX design reference                   |
+| [docs/PROJECT_HISTORY.md](./docs/PROJECT_HISTORY.md)    | Consolidated phase completion log        |
+| [docs/MISTAKES.md](./docs/MISTAKES.md)                  | Error log and prevention rules           |
 
 ---
 

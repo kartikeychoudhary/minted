@@ -28,4 +28,6 @@ public interface TransactionCategoryRepository extends JpaRepository<Transaction
     Optional<TransactionCategory> findByNameAndTypeAndUserId(String name, TransactionType type, Long userId);
 
     boolean existsByNameAndTypeAndUserId(String name, TransactionType type, Long userId);
+
+    Optional<TransactionCategory> findByNameIgnoreCaseAndUserIdAndType(String name, Long userId, TransactionType type);
 }

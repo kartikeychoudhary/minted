@@ -1,0 +1,158 @@
+<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in max-w-5xl mx-auto w-full">
+
+  <!-- Header -->
+  <div class="flex items-center gap-4">
+    <button (click)="goBack()"
+      class="p-2 rounded-full transition-colors flex items-center justify-center"
+      style="color: var(--minted-text-secondary);"
+      onmouseover="this.style.backgroundColor='var(--minted-bg-hover)'"
+      onmouseout="this.style.backgroundColor='transparent'">
+      <span class="material-icons">arrow_back</span>
+    </button>
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight flex items-center gap-3" style="color: var(--minted-text-primary)">
+        Import #{{ importData?.id }}
+        <span *ngIf="importData" class="px-2.5 py-1 text-xs font-semibold rounded-full"
+          [ngStyle]="getStatusStyle(importData.status)">
+          {{ importData.status }}
+        </span>
+      </h1>
+      <p class="text-sm mt-1" style="color: var(--minted-text-secondary)">
+        {{ importData?.fileName || 'Loading details...' }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading"
+    class="flex-1 rounded-xl flex items-center justify-center p-8"
+    style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+    <div class="text-center">
+      <i class="pi pi-spin pi-spinner text-4xl mb-4" style="color: var(--minted-accent)"></i>
+      <p style="color: var(--minted-text-secondary)">Loading import details...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="p-4 rounded-xl border flex items-center gap-3"
+    style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
+    <span class="material-icons" style="color: var(--minted-danger);">error_outline</span>
+    <p class="font-medium">{{ error }}</p>
+  </div>
+
+  <ng-container *ngIf="!loading && importData">
+    <!-- Import Meta Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="rounded-xl p-4" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: var(--minted-text-muted)">Account</p>
+        <p class="font-medium" style="color: var(--minted-text-primary)">{{ importData.accountName }}</p>
+      </div>
+      <div class="rounded-xl p-4" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: var(--minted-text-muted)">File Size</p>
+        <p class="font-medium" style="color: var(--minted-text-primary)">{{ formatFileSize(importData.fileSize) }}</p>
+      </div>
+      <div class="rounded-xl p-4" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: var(--minted-text-muted)">Created</p>
+        <p class="font-medium" style="color: var(--minted-text-primary)">{{ importData.createdAt | date:'medium' }}</p>
+      </div>
+      <div class="rounded-xl p-4" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <p class="text-xs uppercase tracking-wider font-semibold mb-1" style="color: var(--minted-text-muted)">Import Type</p>
+        <p class="font-medium" style="color: var(--minted-text-primary)">{{ importData.importType }}</p>
+      </div>
+    </div>
+
+    <!-- Row Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <p class="text-2xl font-bold" style="color: var(--minted-text-primary)">{{ importData.totalRows }}</p>
+        <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-text-muted)">Total</p>
+      </div>
+      <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-success-subtle); border: 1px solid var(--minted-success-subtle);">
+        <p class="text-2xl font-bold" style="color: var(--minted-success)">{{ importData.validRows }}</p>
+        <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-success)">Valid</p>
+      </div>
+      <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-accent-subtle);">
+        <p class="text-2xl font-bold" style="color: var(--minted-accent)">{{ importData.duplicateRows }}</p>
+        <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-accent)">Duplicates</p>
+      </div>
+      <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-danger-subtle);">
+        <p class="text-2xl font-bold" style="color: var(--minted-danger)">{{ importData.errorRows }}</p>
+        <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-danger)">Errors</p>
+      </div>
+      <div class="rounded-lg p-4 text-center" style="background-color: var(--minted-info-subtle);">
+        <p class="text-2xl font-bold" style="color: var(--minted-info)">{{ importData.importedRows }}</p>
+        <p class="text-xs font-medium uppercase tracking-wider" style="color: var(--minted-info)">Imported</p>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="importData.errorMessage" class="p-4 rounded-xl border"
+      style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
+      <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color: var(--minted-danger);">Import Error</p>
+      <p class="text-sm font-mono whitespace-pre-wrap break-all">{{ importData.errorMessage }}</p>
+    </div>
+
+    <!-- Polling indicator -->
+    <div *ngIf="importData.status === 'IMPORTING'" class="p-3 rounded-lg flex items-center gap-3"
+      style="background-color: var(--minted-info-subtle); border: 1px solid var(--minted-info-subtle);">
+      <i class="pi pi-spin pi-spinner" style="color: var(--minted-info)"></i>
+      <p class="text-sm font-medium" style="color: var(--minted-info)">Import is in progress. Auto-refreshing every 5 seconds...</p>
+    </div>
+
+    <!-- Job Steps Timeline -->
+    <div *ngIf="jobData" class="mt-2 flex flex-col gap-4">
+      <h2 class="text-lg font-bold" style="color: var(--minted-text-primary)">Job Execution Steps</h2>
+
+      <div *ngIf="(!jobData.steps || jobData.steps.length === 0)" class="text-sm italic py-4"
+        style="color: var(--minted-text-secondary)">
+        No step executions recorded yet.
+      </div>
+
+      <div *ngFor="let step of jobData.steps"
+        class="rounded-xl overflow-hidden flex flex-col relative transition-all duration-200"
+        style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <!-- Colored bar at top -->
+        <div class="h-1 w-full" [style.backgroundColor]="getStepStatusColor(step.status)"></div>
+
+        <div class="p-5 flex flex-col gap-4">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm"
+                style="background-color: var(--minted-bg-surface); color: var(--minted-text-primary); border: 1px solid var(--minted-border);">
+                {{ step.stepOrder }}
+              </span>
+              <div>
+                <h3 class="font-bold" style="color: var(--minted-text-primary)">{{ step.stepName }}</h3>
+                <p class="text-xs" style="color: var(--minted-text-muted)">
+                  {{ formatDuration(step.startTime, step.endTime) }}
+                  <span class="px-2 font-mono">&bull;</span>
+                  {{ step.startTime | date:'HH:mm:ss.SSS' }}
+                </p>
+              </div>
+            </div>
+            <span class="px-2.5 py-1 text-[10px] font-bold tracking-wider rounded-full uppercase"
+              [ngStyle]="getStatusStyle(step.status)">
+              {{ step.status }}
+            </span>
+          </div>
+
+          <!-- Step Context -->
+          <div *ngIf="step.contextJson"
+            class="rounded-lg p-3"
+            style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
+            <p class="text-[10px] font-bold uppercase tracking-wider mb-2" style="color: var(--minted-text-muted)">Result Context</p>
+            <pre class="text-xs font-mono overflow-x-auto m-0 p-0 leading-relaxed"
+              style="color: var(--minted-text-secondary)">{{ formatJSON(step.contextJson) }}</pre>
+          </div>
+
+          <!-- Step Error -->
+          <div *ngIf="step.errorMessage" class="p-3 rounded-lg border text-sm"
+            style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
+            <span class="font-bold block mb-1" style="color: var(--minted-danger);">Error at step</span>
+            <span class="font-mono text-xs break-all">{{ step.errorMessage }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
