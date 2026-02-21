@@ -11,7 +11,7 @@ export interface ActionsCallbacks {
   selector: 'app-actions-cell-renderer',
   standalone: false,
   template: `
-    <div class="flex items-center justify-end gap-2">
+    <div class="flex items-center justify-end gap-2" (click)="$event.stopPropagation()">
       <button
         pButton
         type="button"

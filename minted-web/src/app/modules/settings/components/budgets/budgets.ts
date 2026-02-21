@@ -202,6 +202,7 @@ export class Budgets implements OnInit {
 
   confirmDelete(budget: BudgetResponse): void {
     this.confirmationService.confirm({
+      key: 'budgets',
       message: `Are you sure you want to delete budget for ${budget.name}?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',

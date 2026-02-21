@@ -4,6 +4,8 @@ import { AdminUserResponse } from '../../../../core/models/user.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ColDef, GridOptions, themeQuartz } from 'ag-grid-community';
+import { TagCellRendererComponent } from '../cell-renderers/tag-cell-renderer.component';
+import { UserActionsCellRendererComponent } from '../cell-renderers/user-actions-cell-renderer.component';
 
 @Component({
   selector: 'app-user-management',
@@ -57,35 +59,38 @@ export class UserManagement implements OnInit {
     {
       field: 'role',
       headerName: 'Role',
-      width: 100,
-      cellRenderer: (params: any) => {
-        const isAdmin = params.value === 'ADMIN';
-        const bg = isAdmin ? 'var(--minted-accent)' : 'var(--minted-bg-surface)';
-        const color = isAdmin ? '#fff' : 'var(--minted-text-secondary)';
-        return `<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;background:${bg};color:${color}">${params.value}</span>`;
+      width: 110,
+      cellRenderer: TagCellRendererComponent,
+      cellRendererParams: {
+        getTagConfig: (params: any) => ({
+          value: params.value === 'ADMIN' ? 'Admin' : 'User',
+          severity: params.value === 'ADMIN' ? 'contrast' : 'secondary',
+          rounded: true
+        })
       }
     },
     {
       field: 'isActive',
       headerName: 'Status',
-      width: 110,
-      cellRenderer: (params: any) => {
-        const active = params.value;
-        const bg = active ? 'var(--minted-success-subtle)' : 'var(--minted-danger-subtle)';
-        const color = active ? 'var(--minted-success)' : 'var(--minted-danger)';
-        const text = active ? 'Active' : 'Disabled';
-        return `<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.65rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;background:${bg};color:${color}">${text}</span>`;
+      width: 120,
+      cellRenderer: TagCellRendererComponent,
+      cellRendererParams: {
+        getTagConfig: (params: any) => ({
+          value: params.value ? 'Active' : 'Disabled',
+          severity: params.value ? 'success' : 'danger',
+          rounded: true
+        })
       }
     },
     {
       field: 'forcePasswordChange',
       headerName: 'Password',
-      width: 130,
-      cellRenderer: (params: any) => {
-        if (params.value) {
-          return `<span style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:0.65rem;font-weight:700;letter-spacing:0.05em;background:var(--minted-warning-subtle, #fef3c7);color:var(--minted-warning, #d97706)">MUST CHANGE</span>`;
-        }
-        return '';
+      width: 140,
+      cellRenderer: TagCellRendererComponent,
+      cellRendererParams: {
+        getTagConfig: (params: any) => params.value
+          ? { value: 'Must Change', severity: 'warn', rounded: true }
+          : null
       }
     },
     {
@@ -100,41 +105,22 @@ export class UserManagement implements OnInit {
     },
     {
       headerName: 'Actions',
-      width: 220,
+      width: 230,
       sortable: false,
       filter: false,
-      cellRenderer: (params: any) => {
-        const user = params.data as AdminUserResponse;
-        if (!user) return '';
-        const toggleLabel = user.isActive ? 'Disable' : 'Enable';
-        const toggleColor = user.isActive ? 'var(--minted-danger)' : 'var(--minted-success)';
-        return `
-          <div style="display:flex;align-items:center;gap:4px;height:100%">
-            <button data-action="toggle" title="${toggleLabel} user" style="padding:4px 8px;border-radius:6px;font-size:0.7rem;font-weight:600;border:1px solid ${toggleColor};color:${toggleColor};background:transparent;cursor:pointer">${toggleLabel}</button>
-            <button data-action="reset" title="Reset password" style="width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--minted-text-muted);color:var(--minted-text-secondary);background:transparent;cursor:pointer"><span class="material-icons" style="font-size:16px">key</span></button>
-            <button data-action="delete" title="Delete user" style="width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--minted-danger);color:var(--minted-danger);background:transparent;cursor:pointer"><span class="material-icons" style="font-size:16px">delete</span></button>
-          </div>
-        `;
+      cellRenderer: UserActionsCellRendererComponent,
+      cellRendererParams: {
+        callbacks: {
+          onToggle: (user: AdminUserResponse) => this.toggleUserActive(user),
+          onResetPassword: (user: AdminUserResponse) => this.openResetDialog(user),
+          onDelete: (user: AdminUserResponse) => this.deleteUser(user)
+        }
       }
     }
   ];
 
   gridOptions: GridOptions = {
-    domLayout: 'autoHeight',
-    onCellClicked: (params) => {
-      const event = params.event as MouseEvent;
-      const target = event.target as HTMLElement;
-      const user = params.data as AdminUserResponse;
-      if (!user) return;
-
-      if (target.closest('button[data-action="toggle"]')) {
-        this.toggleUserActive(user);
-      } else if (target.closest('button[data-action="reset"]')) {
-        this.openResetDialog(user);
-      } else if (target.closest('button[data-action="delete"]')) {
-        this.deleteUser(user);
-      }
-    }
+    domLayout: 'autoHeight'
   };
 
   constructor(
@@ -291,6 +277,7 @@ export class UserManagement implements OnInit {
 
   deleteUser(user: AdminUserResponse): void {
     this.confirmationService.confirm({
+      key: 'userManagement',
       message: `Are you sure you want to delete user "${user.username}"? This will permanently remove all their data.`,
       header: 'Delete User',
       icon: 'pi pi-exclamation-triangle',

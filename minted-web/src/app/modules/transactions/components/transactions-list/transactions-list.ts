@@ -467,6 +467,7 @@ export class TransactionsList implements OnInit {
 
   deleteTransaction(transaction: TransactionResponse): void {
     this.confirmationService.confirm({
+      key: 'transactions',
       message: `Are you sure you want to delete the transaction "${transaction.description}"?`,
       header: 'Confirm Delete',
       icon: 'pi pi-exclamation-triangle',

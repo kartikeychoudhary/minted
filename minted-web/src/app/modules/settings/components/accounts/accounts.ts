@@ -176,6 +176,7 @@ export class Accounts implements OnInit {
 
   confirmDelete(account: AccountResponse): void {
     this.confirmationService.confirm({
+      key: 'accounts',
       message: `Are you sure you want to disconnect ${account.name}?`,
       header: 'Disconnect Confirmation',
       icon: 'pi pi-exclamation-triangle',

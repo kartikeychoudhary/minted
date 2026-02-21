@@ -164,6 +164,7 @@ export class AccountTypes implements OnInit {
 
   confirmDelete(accountType: AccountTypeResponse): void {
     this.confirmationService.confirm({
+      key: 'accountTypes',
       message: `Are you sure you want to delete ${accountType.name}?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',

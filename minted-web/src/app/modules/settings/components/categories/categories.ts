@@ -190,6 +190,7 @@ export class Categories implements OnInit {
 
   confirmDelete(category: CategoryResponse): void {
     this.confirmationService.confirm({
+      key: 'categories',
       message: `Are you sure you want to delete ${category.name}?`,
       header: 'Delete Confirmation',
       icon: 'pi pi-exclamation-triangle',

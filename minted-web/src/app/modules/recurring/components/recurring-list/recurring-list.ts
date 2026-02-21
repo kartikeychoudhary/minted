@@ -181,6 +181,7 @@ export class RecurringList implements OnInit, OnDestroy {
 
     confirmDelete(tx: RecurringTransaction): void {
         this.confirmationService.confirm({
+            key: 'recurring',
             message: `Are you sure you want to delete "${tx.name}"?`,
             header: 'Delete Recurring Transaction',
             icon: 'pi pi-exclamation-triangle',
