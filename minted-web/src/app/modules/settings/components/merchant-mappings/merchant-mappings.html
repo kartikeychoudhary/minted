@@ -1,0 +1,33 @@
+<div>
+  <div class="flex items-center justify-between mb-4">
+    <div>
+      <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Merchant Mappings</h3>
+      <p class="text-sm" style="color: var(--minted-text-muted);">
+        Define keyword-to-category rules to improve AI categorisation accuracy.
+      </p>
+    </div>
+    <p-button icon="pi pi-plus" label="Add Mapping" (onClick)="addMapping()"
+      styleClass="p-button-sm p-button-outlined"></p-button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-6">
+    <p-progressSpinner [style]="{width: '30px', height: '30px'}"></p-progressSpinner>
+  </div>
+
+  <!-- AG Grid -->
+  <div *ngIf="!loading" class="rounded-lg border overflow-hidden"
+    style="border-color: var(--minted-border);">
+    <ag-grid-angular
+      class="w-full"
+      [theme]="mintedTheme"
+      [rowData]="mappings"
+      [columnDefs]="colDefs"
+      [gridOptions]="gridOptions"
+      (gridReady)="onGridReady($event)"
+      (cellValueChanged)="onCellValueChanged($event)">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

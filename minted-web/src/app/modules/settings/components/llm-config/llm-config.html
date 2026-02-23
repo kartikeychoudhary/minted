@@ -1,0 +1,76 @@
+<div class="p-6 space-y-6">
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-8">
+    <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Section A: API & Model -->
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-semibold mb-1" style="color: var(--minted-text-primary);">API Configuration</h3>
+        <p class="text-sm" style="color: var(--minted-text-muted);">
+          Configure your Gemini API key and model for credit card statement parsing.
+        </p>
+      </div>
+
+      <!-- API Key Status -->
+      <div *ngIf="config?.hasApiKey" class="flex items-center gap-2 p-3 rounded-lg"
+        style="background-color: var(--minted-success-subtle);">
+        <i class="pi pi-check-circle" style="color: var(--minted-success);"></i>
+        <span class="text-sm font-medium" style="color: var(--minted-success);">API key configured</span>
+      </div>
+
+      <form [formGroup]="configForm" (ngSubmit)="saveConfig()" class="space-y-5">
+        <!-- Model Selection -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold" style="color: var(--minted-text-primary);">Model</label>
+          <p-select formControlName="modelId" [options]="modelOptions" optionLabel="label" optionValue="value"
+            placeholder="Select AI model" [style]="{width: '100%'}">
+          </p-select>
+        </div>
+
+        <!-- API Key Input -->
+        <div class="flex flex-col gap-1.5">
+          <label class="text-sm font-semibold" style="color: var(--minted-text-primary);">
+            Gemini API Key
+            <span *ngIf="config?.hasApiKey" class="text-xs font-normal" style="color: var(--minted-text-muted);">
+              (leave blank to keep current key)
+            </span>
+          </label>
+          <input type="password" pInputText formControlName="apiKey"
+            [placeholder]="config?.hasApiKey ? '••••••••••••••••' : 'Enter your Gemini API key'"
+            class="w-full">
+        </div>
+
+        <!-- Info -->
+        <div class="p-4 rounded-lg border"
+          style="background-color: var(--minted-surface); border-color: var(--minted-border);">
+          <div class="flex items-start gap-3">
+            <i class="pi pi-info-circle mt-0.5" style="color: var(--minted-accent);"></i>
+            <div class="text-sm" style="color: var(--minted-text-secondary);">
+              <p class="font-medium mb-1">How to get a Gemini API key:</p>
+              <ol class="list-decimal list-inside space-y-1">
+                <li>Visit Google AI Studio (aistudio.google.com)</li>
+                <li>Sign in with your Google account</li>
+                <li>Click "Get API key" and create a new key</li>
+                <li>Copy the key and paste it above</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end">
+          <p-button type="submit" label="Save Configuration" icon="pi pi-save"
+            [loading]="saving" styleClass="p-button-primary"></p-button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Divider -->
+    <hr class="my-8" style="border-color: var(--minted-border);">
+
+    <!-- Section B: Merchant Mappings -->
+    <app-merchant-mappings></app-merchant-mappings>
+  </div>
+</div>

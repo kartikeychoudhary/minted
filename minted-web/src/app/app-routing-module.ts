@@ -39,6 +39,10 @@ const routes: Routes = [
         loadChildren: () => import('./modules/import/import-module').then(m => m.ImportModule)
       },
       {
+        path: 'statements',
+        loadChildren: () => import('./modules/statement/statement-module').then(m => m.StatementModule)
+      },
+      {
         path: 'admin',
         loadChildren: () => import('./modules/admin/admin-module').then(m => m.AdminModule),
         canActivate: [adminGuard]

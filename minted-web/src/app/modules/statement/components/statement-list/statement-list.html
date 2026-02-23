@@ -1,0 +1,87 @@
+<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
+  <!-- Header -->
+  <header class="shadow-sm border-b"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center">
+        <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
+          style="color: var(--minted-text-secondary);">
+          <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
+        </button>
+        <div class="flex items-center">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
+            style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
+            <i class="pi pi-file-pdf" style="font-size: 1.5rem;"></i>
+          </div>
+          <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Credit Card Statements</h1>
+        </div>
+      </div>
+      <p-button icon="pi pi-plus" label="Parse New Statement" (onClick)="newStatement()"
+        styleClass="p-button-primary"></p-button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Loading -->
+    <div *ngIf="loading" class="flex justify-center py-12">
+      <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && statements.length === 0"
+      class="text-center py-16 rounded-lg border"
+      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+      <i class="pi pi-file-pdf text-4xl mb-4" style="color: var(--minted-text-muted);"></i>
+      <h3 class="text-lg font-semibold mb-2" style="color: var(--minted-text-primary);">No statements yet</h3>
+      <p class="mb-6" style="color: var(--minted-text-secondary);">Upload a credit card PDF statement to get started.</p>
+      <p-button icon="pi pi-plus" label="Parse New Statement" (onClick)="newStatement()"
+        styleClass="p-button-primary"></p-button>
+    </div>
+
+    <!-- Statement Cards -->
+    <div *ngIf="!loading && statements.length > 0" class="space-y-4">
+      <div *ngFor="let stmt of statements"
+        class="rounded-lg border p-5 cursor-pointer transition-all hover:shadow-md"
+        style="background-color: var(--minted-bg-card); border-color: var(--minted-border);"
+        (click)="viewStatement(stmt)">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="flex items-center justify-center w-10 h-10 rounded-lg"
+              style="background-color: var(--minted-accent-subtle);">
+              <i class="pi pi-file-pdf" style="color: var(--minted-accent); font-size: 1.25rem;"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold" style="color: var(--minted-text-primary);">{{ stmt.fileName }}</h3>
+              <div class="flex items-center gap-3 mt-1 text-xs" style="color: var(--minted-text-muted);">
+                <span>{{ stmt.accountName }}</span>
+                <span>&bull;</span>
+                <span>{{ formatFileSize(stmt.fileSize) }}</span>
+                <span>&bull;</span>
+                <span>{{ stmt.createdAt | date:'medium' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="text-right mr-4">
+              <div *ngIf="stmt.parsedCount > 0" class="text-sm font-semibold" style="color: var(--minted-text-primary);">
+                {{ stmt.importedCount > 0 ? stmt.importedCount : stmt.parsedCount }} transactions
+              </div>
+              <div class="text-xs" style="color: var(--minted-text-muted);">
+                {{ getStepLabel(stmt.currentStep) }}
+              </div>
+            </div>
+            <p-tag [value]="getStatusLabel(stmt.status)" [severity]="getStatusSeverity(stmt.status)"></p-tag>
+            <i class="pi pi-chevron-right" style="color: var(--minted-text-muted);"></i>
+          </div>
+        </div>
+        <div *ngIf="stmt.errorMessage" class="mt-3 text-xs p-2 rounded"
+          style="background-color: var(--minted-error-subtle); color: var(--minted-error);">
+          {{ stmt.errorMessage }}
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<p-toast position="top-right"></p-toast>

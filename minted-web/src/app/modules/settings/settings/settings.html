@@ -45,6 +45,10 @@
             <i class="pi pi-user mr-2"></i>
             <span>Profile</span>
           </p-tab>
+          <p-tab value="5">
+            <i class="pi pi-bolt mr-2"></i>
+            <span>LLM Configuration</span>
+          </p-tab>
         </p-tablist>
         <p-tabpanels [style]="{'overflow': 'visible'}">
           <p-tabpanel value="0" [style]="{'overflow': 'visible'}">
@@ -61,6 +65,9 @@
           </p-tabpanel>
           <p-tabpanel value="4" [style]="{'overflow': 'visible'}">
             <app-profile></app-profile>
+          </p-tabpanel>
+          <p-tabpanel value="5" [style]="{'overflow': 'visible'}">
+            <app-llm-config></app-llm-config>
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>

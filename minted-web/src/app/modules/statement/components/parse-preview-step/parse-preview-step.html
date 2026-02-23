@@ -1,0 +1,52 @@
+<div class="space-y-6">
+  <!-- Summary -->
+  <div class="rounded-lg border p-5"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div>
+        <h3 class="font-semibold text-lg" style="color: var(--minted-text-primary);">Parsed Transactions</h3>
+        <p class="text-sm mt-1" style="color: var(--minted-text-muted);">
+          {{ totalCount }} transactions found<span *ngIf="duplicateCount > 0">, {{ duplicateCount }} possible duplicates</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-2" *ngIf="duplicateCount > 0">
+        <p-checkbox [(ngModel)]="skipDuplicates" [binary]="true" inputId="skipDup"></p-checkbox>
+        <label for="skipDup" class="text-sm cursor-pointer" style="color: var(--minted-text-primary);">
+          Skip duplicate transactions on import
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-8">
+    <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
+  </div>
+
+  <!-- AG Grid -->
+  <div *ngIf="!loading" class="rounded-lg border overflow-hidden"
+    style="border-color: var(--minted-border);">
+    <ag-grid-angular
+      class="w-full"
+      [theme]="mintedTheme"
+      [rowData]="rows"
+      [columnDefs]="colDefs"
+      [gridOptions]="gridOptions"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+  </div>
+
+  <!-- Actions -->
+  <div *ngIf="!loading" class="flex justify-between items-center">
+    <p class="text-sm" style="color: var(--minted-text-muted);">
+      {{ importCount }} transactions will be imported
+    </p>
+    <p-button label="Import Transactions" icon="pi pi-download"
+      [disabled]="importing || importCount === 0"
+      [loading]="importing"
+      (onClick)="confirmImport()"
+      styleClass="p-button-primary"></p-button>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>

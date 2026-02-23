@@ -9,7 +9,10 @@ import { Accounts } from './components/accounts/accounts';
 import { Categories } from './components/categories/categories';
 import { Budgets } from './components/budgets/budgets';
 import { Profile } from './components/profile/profile';
+import { LlmConfigComponent } from './components/llm-config/llm-config';
+import { MerchantMappingsComponent } from './components/merchant-mappings/merchant-mappings';
 import { SharedModule } from '../../shared/shared.module';
+import { AgGridModule } from 'ag-grid-angular';
 
 
 @NgModule({
@@ -19,11 +22,14 @@ import { SharedModule } from '../../shared/shared.module';
     Accounts,
     Categories,
     Budgets,
-    Profile
+    Profile,
+    LlmConfigComponent,
+    MerchantMappingsComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
+    AgGridModule,
     SettingsRoutingModule
   ],
   providers: [

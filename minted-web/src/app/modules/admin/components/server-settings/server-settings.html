@@ -1,4 +1,4 @@
-<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full overflow-y-auto">
+<div class="min-h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full">
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize">Server Settings</h1>
@@ -87,6 +87,47 @@
             </div>
         </div>
     </div>
+
+    <!-- Feature Toggles -->
+    <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
+        <div class="p-5 border-b border-minted-border bg-minted-surface flex items-center gap-3">
+            <span class="material-icons text-minted-text-secondary">toggle_on</span>
+            <h2 class="font-bold">Feature Toggles</h2>
+        </div>
+        <div class="p-5 space-y-4">
+            <div class="flex items-center justify-between p-4 border border-minted-border rounded-lg bg-minted-surface">
+                <div>
+                    <span class="font-bold text-minted-text-primary">Credit Card Statement Parser</span>
+                    <p class="text-xs text-minted-text-secondary mt-1">Enable/disable the credit card PDF parsing feature for all users</p>
+                </div>
+                <p-toggleSwitch [(ngModel)]="parserEnabled" (onChange)="toggleParserEnabled()"></p-toggleSwitch>
+            </div>
+            <div class="flex items-center justify-between p-4 border border-minted-border rounded-lg bg-minted-surface">
+                <div>
+                    <span class="font-bold text-minted-text-primary">Share Admin LLM Key</span>
+                    <p class="text-xs text-minted-text-secondary mt-1">Allow users without their own API key to use the admin's Gemini key</p>
+                </div>
+                <p-toggleSwitch [(ngModel)]="adminKeyShared" (onChange)="toggleAdminKeyShared()"></p-toggleSwitch>
+            </div>
+        </div>
+    </div>
+
+    <!-- LLM Models -->
+    <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
+        <div class="p-4 border-b border-minted-border bg-minted-surface flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="material-icons text-minted-text-secondary">smart_toy</span>
+                <h2 class="font-bold text-sm">LLM Models</h2>
+            </div>
+            <p-button icon="pi pi-plus" label="Add Model" (onClick)="openAddModel()"
+                styleClass="p-button-sm p-button-outlined"></p-button>
+        </div>
+        <div class="relative bg-white dark:bg-[#121212]">
+            <ag-grid-angular class="w-full" [theme]="mintedTheme" [rowData]="llmModels"
+                [columnDefs]="llmModelColDefs" [gridOptions]="llmModelGridOptions">
+            </ag-grid-angular>
+        </div>
+    </div>
 </div>
 
 <!-- Modals -->
@@ -136,3 +177,42 @@
         </div>
     </form>
 </p-dialog>
+
+<p-dialog [header]="editingModel ? 'Edit Model' : 'Add LLM Model'" [(visible)]="showModelDialog" [modal]="true"
+    [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+    <form [formGroup]="modelForm" (ngSubmit)="saveModel()" class="pt-4 space-y-4">
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
+            <input type="text" pInputText formControlName="name" placeholder="e.g. Gemini 2.0 Flash"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Provider</label>
+            <input type="text" pInputText formControlName="provider" placeholder="GEMINI" readonly
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Model Key</label>
+            <input type="text" pInputText formControlName="modelKey" placeholder="e.g. gemini-2.0-flash"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+        </div>
+        <div class="flex flex-col gap-1">
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Description</label>
+            <input type="text" pInputText formControlName="description" placeholder="Brief description"
+                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+        </div>
+        <div class="flex items-center gap-2">
+            <p-checkbox formControlName="isDefault" [binary]="true" inputId="isDefaultModel"></p-checkbox>
+            <label for="isDefaultModel" class="text-sm text-minted-text-primary cursor-pointer">Set as default model</label>
+        </div>
+        <div class="flex justify-end gap-2 mt-6">
+            <p-button label="Cancel" (onClick)="showModelDialog = false"
+                styleClass="p-button-text p-button-secondary"></p-button>
+            <p-button type="submit" [label]="editingModel ? 'Update' : 'Create'" [disabled]="modelForm.invalid"
+                styleClass="p-button-primary"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast position="top-right"></p-toast>

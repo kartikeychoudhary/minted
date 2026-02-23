@@ -30,6 +30,7 @@ export class Sidebar {
     { label: 'Transactions', icon: 'receipt_long', route: '/transactions' },
     { label: 'Recurring', icon: 'sync_alt', route: '/recurring' },
     { label: 'Import', icon: 'upload_file', route: '/import' },
+    { label: 'Statements', icon: 'description', route: '/statements' },
     { label: 'Analytics', icon: 'pie_chart', route: '/analytics' },
     { label: 'Notifications', icon: 'notifications', route: '/notifications' },
     { label: 'Settings', icon: 'settings', route: '/settings', section: 'Management' },

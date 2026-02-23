@@ -1,0 +1,25 @@
+-- V0_0_25 — Create credit_card_statements table for statement parsing workflow
+CREATE TABLE credit_card_statements (
+    id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id            BIGINT NOT NULL,
+    account_id         BIGINT NOT NULL,
+    file_name          VARCHAR(255) NOT NULL,
+    file_size          BIGINT DEFAULT 0,
+    status             VARCHAR(30) NOT NULL DEFAULT 'UPLOADED',
+    current_step       INT NOT NULL DEFAULT 1,
+    extracted_text     LONGTEXT,
+    llm_response_json  LONGTEXT,
+    parsed_count       INT DEFAULT 0,
+    duplicate_count    INT DEFAULT 0,
+    imported_count     INT DEFAULT 0,
+    error_message      TEXT,
+    job_execution_id   BIGINT,
+    pdf_password_hint  VARCHAR(20),
+    created_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at         TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id)          REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (account_id)       REFERENCES accounts(id),
+    FOREIGN KEY (job_execution_id) REFERENCES job_executions(id) ON DELETE SET NULL,
+    INDEX idx_stmt_user (user_id),
+    INDEX idx_stmt_status (status)
+);

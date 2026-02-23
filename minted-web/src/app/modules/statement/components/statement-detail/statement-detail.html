@@ -1,0 +1,106 @@
+<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
+  <!-- Header -->
+  <header class="shadow-sm border-b"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center">
+        <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
+          style="color: var(--minted-text-secondary);">
+          <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
+        </button>
+        <div class="flex items-center">
+          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
+            style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
+            <i class="pi pi-file-pdf" style="font-size: 1.5rem;"></i>
+          </div>
+          <div>
+            <h1 class="text-xl font-bold" style="color: var(--minted-text-primary);">
+              {{ statement?.fileName || 'Statement' }}
+            </h1>
+            <p class="text-sm" style="color: var(--minted-text-muted);">
+              {{ statement?.accountName }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <p-tag *ngIf="statement" [value]="statement.status" [severity]="statement.status === 'COMPLETED' ? 'success' : statement.status === 'FAILED' ? 'danger' : 'info'"></p-tag>
+    </div>
+  </header>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="flex justify-center py-12">
+    <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
+  </div>
+
+  <!-- Content -->
+  <main *ngIf="!loading && statement" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Step Indicator -->
+    <div class="rounded-lg border p-6 mb-6"
+      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+      <div class="flex items-center justify-between">
+        <div *ngFor="let step of steps; let i = index" class="flex items-center" [class.flex-1]="i < steps.length - 1">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-colors"
+              [style.backgroundColor]="i < statement.currentStep ? 'var(--minted-accent)' : i === statement.currentStep - 1 ? 'var(--minted-accent)' : 'var(--minted-surface)'"
+              [style.color]="i < statement.currentStep ? 'white' : 'var(--minted-text-muted)'">
+              <i *ngIf="i < statement.currentStep - 1" class="pi pi-check text-xs"></i>
+              <span *ngIf="i >= statement.currentStep - 1">{{ i + 1 }}</span>
+            </div>
+            <span class="text-sm font-medium hidden sm:inline"
+              [style.color]="i < statement.currentStep ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              {{ step.label }}
+            </span>
+          </div>
+          <div *ngIf="i < steps.length - 1" class="flex-1 h-0.5 mx-4 rounded transition-colors"
+            [style.backgroundColor]="i < statement.currentStep - 1 ? 'var(--minted-accent)' : 'var(--minted-border)'">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error Banner -->
+    <div *ngIf="statement.status === 'FAILED'" class="rounded-lg border p-4 mb-6"
+      style="background-color: var(--minted-error-subtle); border-color: var(--minted-error);">
+      <div class="flex items-center gap-2">
+        <i class="pi pi-exclamation-triangle" style="color: var(--minted-error);"></i>
+        <span class="font-semibold" style="color: var(--minted-error);">Processing Failed</span>
+      </div>
+      <p class="mt-2 text-sm" style="color: var(--minted-text-primary);">{{ statement.errorMessage }}</p>
+    </div>
+
+    <!-- Step Content -->
+    <div [ngSwitch]="statement.currentStep">
+      <!-- Step 2: Review Text -->
+      <app-text-review-step *ngSwitchCase="2"
+        [statement]="statement"
+        (statementUpdated)="onStatementUpdated($event)"
+        (startPolling)="startPolling()">
+      </app-text-review-step>
+
+      <!-- Step 3: Preview Transactions -->
+      <app-parse-preview-step *ngSwitchCase="3"
+        [statement]="statement"
+        (statementUpdated)="onStatementUpdated($event)">
+      </app-parse-preview-step>
+
+      <!-- Step 4: Completed -->
+      <app-confirm-step *ngSwitchCase="4"
+        [statement]="statement">
+      </app-confirm-step>
+
+      <!-- Default: completed or other -->
+      <div *ngSwitchDefault>
+        <div *ngIf="statement.status === 'COMPLETED'" class="text-center py-8 rounded-lg border"
+          style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+          <i class="pi pi-check-circle text-4xl mb-3" style="color: var(--minted-success);"></i>
+          <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Import Complete</h3>
+          <p class="mt-2" style="color: var(--minted-text-secondary);">
+            {{ statement.importedCount }} transactions imported successfully.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<p-toast position="top-right"></p-toast>

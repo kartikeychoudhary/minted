@@ -1,0 +1,39 @@
+<div class="space-y-6">
+  <!-- Extracted Text -->
+  <div class="rounded-lg border"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <div class="p-4 border-b flex items-center justify-between"
+      style="border-color: var(--minted-border);">
+      <h3 class="font-semibold" style="color: var(--minted-text-primary);">Extracted Text</h3>
+      <span class="text-xs px-2 py-1 rounded"
+        style="background-color: var(--minted-surface); color: var(--minted-text-muted);">
+        {{ charCount | number }} characters
+      </span>
+    </div>
+    <div class="p-4">
+      <textarea pTextarea [value]="statement.extractedText || ''" readonly
+        [rows]="20" class="w-full font-mono text-xs"
+        style="resize: vertical; background-color: var(--minted-surface); color: var(--minted-text-primary);">
+      </textarea>
+    </div>
+  </div>
+
+  <!-- Parsing Status -->
+  <div *ngIf="parsing" class="rounded-lg border p-6 text-center"
+    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
+    <p class="mt-4 font-medium" style="color: var(--minted-text-primary);">
+      AI is parsing your statement...
+    </p>
+    <p class="text-sm mt-1" style="color: var(--minted-text-muted);">
+      This may take 10-30 seconds. The page will update automatically.
+    </p>
+  </div>
+
+  <!-- Action -->
+  <div *ngIf="!parsing" class="flex justify-end">
+    <p-button label="Send to AI for Parsing" icon="pi pi-bolt"
+      (onClick)="triggerParse()"
+      styleClass="p-button-primary"></p-button>
+  </div>
+</div>

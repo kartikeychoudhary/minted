@@ -1,6 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AdminService } from '../../../../core/services/admin.service';
+import { LlmConfigService } from '../../../../core/services/llm-config.service';
 import { JobScheduleConfig, DefaultCategory, DefaultAccountType } from '../../../../core/models/admin.model';
+import { LlmModel, LlmModelRequest } from '../../../../core/models/llm-config.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ColDef, GridOptions, themeQuartz } from 'ag-grid-community';
@@ -19,6 +21,18 @@ export class ServerSettings implements OnInit {
   loadingSchedules = false;
   loadingCategories = false;
   loadingAccountTypes = false;
+
+  // Feature toggles
+  parserEnabled = false;
+  adminKeyShared = false;
+  loadingToggles = false;
+
+  // LLM Models
+  llmModels: LlmModel[] = [];
+  loadingModels = false;
+  showModelDialog = false;
+  editingModel: LlmModel | null = null;
+  modelForm: FormGroup;
 
   // Modals for new defaults
   showCategoryDialog = false;
@@ -80,8 +94,49 @@ export class ServerSettings implements OnInit {
   };
 
 
+  llmModelColDefs: ColDef[] = [
+    { field: 'name', headerName: 'Name', flex: 1 },
+    { field: 'modelKey', headerName: 'Model Key', flex: 1 },
+    { field: 'provider', headerName: 'Provider', width: 100 },
+    {
+      field: 'isActive', headerName: 'Status', width: 100,
+      cellRenderer: (params: any) => params.value
+        ? '<span style="color:var(--minted-success);font-weight:600">Active</span>'
+        : '<span style="color:var(--minted-text-muted);opacity:0.6">Disabled</span>'
+    },
+    {
+      field: 'isDefault', headerName: 'Default', width: 90,
+      cellRenderer: (params: any) => params.value ? '<i class="pi pi-star-fill" style="color:var(--minted-accent)"></i>' : ''
+    },
+    {
+      headerName: 'Actions', width: 140,
+      cellRenderer: (params: any) => {
+        const toggleLabel = params.data?.isActive ? 'Disable' : 'Enable';
+        return `<button class="text-blue-500 hover:bg-blue-50 p-1 rounded mr-1" data-action="edit" title="Edit"><i class="pi pi-pencil"></i></button>` +
+          `<button class="text-orange-500 hover:bg-orange-50 p-1 rounded mr-1" data-action="toggle" title="${toggleLabel}"><i class="pi pi-${params.data?.isActive ? 'eye-slash' : 'eye'}"></i></button>` +
+          `<button class="text-red-500 hover:bg-red-50 p-1 rounded" data-action="delete" title="Delete"><i class="pi pi-trash"></i></button>`;
+      }
+    }
+  ];
+
+  llmModelGridOptions: GridOptions = {
+    domLayout: 'autoHeight',
+    onCellClicked: (params) => {
+      const event = params.event as MouseEvent;
+      const target = event.target as HTMLElement;
+      if (target.closest('button[data-action="edit"]')) {
+        this.editModel(params.data);
+      } else if (target.closest('button[data-action="toggle"]')) {
+        this.toggleModel(params.data);
+      } else if (target.closest('button[data-action="delete"]')) {
+        this.deleteLlmModel(params.data);
+      }
+    }
+  };
+
   constructor(
     private adminService: AdminService,
+    private llmConfigService: LlmConfigService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private fb: FormBuilder,
@@ -96,12 +151,22 @@ export class ServerSettings implements OnInit {
     this.accountTypeForm = this.fb.group({
       name: ['', Validators.required]
     });
+
+    this.modelForm = this.fb.group({
+      name: ['', Validators.required],
+      provider: ['GEMINI'],
+      modelKey: ['', Validators.required],
+      description: [''],
+      isDefault: [false]
+    });
   }
 
   ngOnInit(): void {
     this.loadSchedules();
     this.loadCategories();
     this.loadAccountTypes();
+    this.loadFeatureToggles();
+    this.loadLlmModels();
   }
 
   loadSchedules() {
@@ -198,6 +263,147 @@ export class ServerSettings implements OnInit {
           next: () => {
             this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Account type deleted' });
             this.loadAccountTypes();
+          }
+        });
+      }
+    });
+  }
+
+  // --- Feature Toggles ---
+
+  loadFeatureToggles() {
+    this.loadingToggles = true;
+    this.adminService.getSetting('CREDIT_CARD_PARSER_ENABLED').subscribe({
+      next: (s) => { this.parserEnabled = s.settingValue === 'true'; this.cdr.detectChanges(); },
+      error: () => { this.cdr.detectChanges(); }
+    });
+    this.adminService.getSetting('ADMIN_LLM_KEY_SHARED').subscribe({
+      next: (s) => { this.adminKeyShared = s.settingValue === 'true'; this.loadingToggles = false; this.cdr.detectChanges(); },
+      error: () => { this.loadingToggles = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  toggleParserEnabled() {
+    // ngModel already updated parserEnabled before onChange fires — use it directly
+    const newVal = this.parserEnabled;
+    this.adminService.updateSetting('CREDIT_CARD_PARSER_ENABLED', String(newVal)).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Updated', detail: `Credit Card Parser ${newVal ? 'enabled' : 'disabled'}` });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.parserEnabled = !newVal; // revert on failure
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to update setting' });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleAdminKeyShared() {
+    // ngModel already updated adminKeyShared before onChange fires — use it directly
+    const newVal = this.adminKeyShared;
+    this.adminService.updateSetting('ADMIN_LLM_KEY_SHARED', String(newVal)).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Updated', detail: `Admin LLM key sharing ${newVal ? 'enabled' : 'disabled'}` });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.adminKeyShared = !newVal; // revert on failure
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to update setting' });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // --- LLM Models ---
+
+  loadLlmModels() {
+    this.loadingModels = true;
+    this.llmConfigService.getAllModels().subscribe({
+      next: (data) => { this.llmModels = data; this.loadingModels = false; this.cdr.detectChanges(); },
+      error: () => { this.loadingModels = false; this.cdr.detectChanges(); }
+    });
+  }
+
+  openAddModel() {
+    this.editingModel = null;
+    this.modelForm.reset({ provider: 'GEMINI', isDefault: false });
+    this.showModelDialog = true;
+  }
+
+  editModel(model: LlmModel) {
+    this.editingModel = model;
+    this.modelForm.patchValue({
+      name: model.name,
+      provider: model.provider,
+      modelKey: model.modelKey,
+      description: model.description,
+      isDefault: model.isDefault
+    });
+    this.showModelDialog = true;
+  }
+
+  saveModel() {
+    if (this.modelForm.invalid) return;
+    const req: LlmModelRequest = this.modelForm.value;
+
+    if (this.editingModel) {
+      this.llmConfigService.updateModel(this.editingModel.id, req).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Model updated' });
+          this.showModelDialog = false;
+          this.loadLlmModels();
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to update model' });
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.llmConfigService.createModel(req).subscribe({
+        next: () => {
+          this.messageService.add({ severity: 'success', summary: 'Created', detail: 'Model created' });
+          this.showModelDialog = false;
+          this.loadLlmModels();
+        },
+        error: (err) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to create model' });
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  toggleModel(model: LlmModel) {
+    const req: LlmModelRequest = {
+      name: model.name,
+      modelKey: model.modelKey,
+      isActive: !model.isActive
+    };
+    this.llmConfigService.updateModel(model.id, req).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Updated', detail: `Model ${model.isActive ? 'disabled' : 'enabled'}` });
+        this.loadLlmModels();
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to toggle model' });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  deleteLlmModel(model: LlmModel) {
+    this.confirmationService.confirm({
+      message: `Delete model "${model.name}"?`,
+      accept: () => {
+        this.llmConfigService.deleteModel(model.id).subscribe({
+          next: () => {
+            this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Model deleted' });
+            this.loadLlmModels();
+          },
+          error: (err) => {
+            this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to delete model' });
+            this.cdr.detectChanges();
           }
         });
       }

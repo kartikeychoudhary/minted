@@ -46,6 +46,9 @@ dependencies {
     // API Docs
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
+    // PDF Text Extraction
+    implementation 'org.apache.pdfbox:pdfbox:3.0.2'
+
     // Utility
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
