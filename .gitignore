@@ -2,10 +2,11 @@
 # Minted Project - Root .gitignore
 # ========================================
 
-# Documentation files (except README.md and DOCKER_README.md)
+# Documentation files (except README.md, DOCKER_README.md, and docs/)
 *.md
 !README.md
 !DOCKER_README.md
+!docs/*.md
 
 # Always include .gitignore files and .dockerignore in subdirectories
 !minted-api/.gitignore
