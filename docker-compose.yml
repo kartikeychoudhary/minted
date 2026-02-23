@@ -48,6 +48,9 @@ services:
       # Jasypt Configuration
       MINTED_JASYPT_PASSWORD: ${MINTED_JASYPT_PASSWORD:-default-jasypt-password}
 
+      # API Key Encryption (for LLM keys stored in DB)
+      MINTED_ENCRYPTION_KEY: ${MINTED_ENCRYPTION_KEY:-${MINTED_JASYPT_PASSWORD:-default-jasypt-password}}
+
       # Server Configuration
       SERVER_PORT: ${BACKEND_PORT:-5500}
 

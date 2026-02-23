@@ -1,5 +1,6 @@
 package com.minted.api.llm.entity;
 
+import com.minted.api.common.util.ApiKeyEncryptor;
 import com.minted.api.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,6 +31,7 @@ public class LlmConfiguration {
     @Column(name = "provider", nullable = false, length = 50)
     private String provider = "GEMINI";
 
+    @Convert(converter = ApiKeyEncryptor.class)
     @Column(name = "api_key", length = 500)
     private String apiKey;
 

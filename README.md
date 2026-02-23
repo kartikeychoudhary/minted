@@ -94,6 +94,7 @@ export MINTED_DB_USER=root
 export MINTED_DB_PASSWORD=your_password
 export MINTED_JWT_SECRET=your-256-bit-secret-key-here
 export MINTED_JASYPT_PASSWORD=your-jasypt-password
+export MINTED_ENCRYPTION_KEY=your-encryption-key-here
 
 # Run database migrations
 ./gradlew flywayMigrate
@@ -144,6 +145,7 @@ MINTED_DB_NAME=minted_db
 MINTED_DB_USER=minted_user
 MINTED_DB_PASSWORD=minted_pass
 MINTED_JASYPT_PASSWORD=default-jasypt-password
+MINTED_ENCRYPTION_KEY=your-encryption-key-here
 BACKEND_PORT=5500
 FRONTEND_PORT=80
 ```
@@ -202,6 +204,34 @@ docker compose up --build -d
 | [docs/UI_UX_SPEC.md](./docs/UI_UX_SPEC.md)             | UI/UX design reference                   |
 | [docs/PROJECT_HISTORY.md](./docs/PROJECT_HISTORY.md)    | Consolidated phase completion log        |
 | [docs/MISTAKES.md](./docs/MISTAKES.md)                  | Error log and prevention rules           |
+
+---
+
+## 🔒 Security
+
+Minted includes several hardened security measures:
+
+- **Default-deny authorization** — All unmatched routes return 403. Only explicitly listed paths are accessible.
+- **AES-256-GCM encryption for API keys** — LLM API keys stored in the database are encrypted at rest using AES-256-GCM with random IVs via a JPA `AttributeConverter`.
+- **Jasypt AES-256 encryption** — Property-level encryption uses `PBEWITHHMACSHA512ANDAES_256` with random IVs (upgraded from legacy DES/MD5).
+- **Restricted CORS headers** — Only `Content-Type`, `Authorization`, `X-Requested-With`, and `Accept` headers are allowed.
+- **No stack trace leakage** — Generic 500 errors return a safe message; details are logged server-side only.
+- **Force password change** — The default admin user must change their password on first login.
+
+### Environment Variables for Security
+
+| Variable | Purpose | Required |
+|---|---|---|
+| `MINTED_JWT_SECRET` | JWT signing key (min 256 bits) | Yes |
+| `MINTED_JASYPT_PASSWORD` | Jasypt property encryption password | Yes (for production) |
+| `MINTED_ENCRYPTION_KEY` | AES-256 key for DB-stored API keys (falls back to `MINTED_JASYPT_PASSWORD`) | Recommended |
+
+Generate secure values:
+```bash
+openssl rand -base64 64   # for JWT_SECRET
+openssl rand -base64 32   # for JASYPT_PASSWORD
+openssl rand -base64 32   # for ENCRYPTION_KEY
+```
 
 ---
 
