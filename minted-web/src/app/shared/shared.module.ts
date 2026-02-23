@@ -33,6 +33,7 @@ import { BadgeModule } from 'primeng/badge';
 import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { StepperModule } from 'primeng/stepper';
+import { DrawerModule } from 'primeng/drawer';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -64,7 +65,8 @@ const PRIMENG_MODULES = [
   BadgeModule,
   TagModule,
   ProgressBarModule,
-  StepperModule
+  StepperModule,
+  DrawerModule
 ];
 
 @NgModule({

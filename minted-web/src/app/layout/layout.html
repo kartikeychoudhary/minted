@@ -23,17 +23,21 @@
           tooltipPosition="bottom">
           <span class="material-icons">{{ (themeService.isDarkMode$ | async) ? 'light_mode' : 'dark_mode' }}</span>
         </button>
-        <!-- Notifications -->
+        <!-- Notifications Bell -->
         <button
           type="button"
+          (click)="toggleNotificationDrawer()"
           class="relative p-2 rounded-full transition-colors"
           [style.color]="'var(--minted-text-muted)'"
           pTooltip="Notifications"
           tooltipPosition="bottom">
           <span class="material-icons">notifications</span>
-          <span class="absolute top-2 right-2 w-2 h-2 rounded-full border-2"
-            [style.background-color]="'var(--minted-danger)'"
-            [style.border-color]="'var(--minted-bg-card)'"></span>
+          <span
+            *ngIf="(notificationService.unreadCount$ | async) as unreadCount"
+            class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-white text-[10px] font-bold leading-none px-1"
+            [style.background-color]="'var(--minted-danger)'">
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </span>
         </button>
       </div>
     </header>
@@ -44,3 +48,137 @@
     </div>
   </main>
 </div>
+
+<!-- Notification Drawer -->
+<p-drawer
+  [(visible)]="isNotificationDrawerVisible"
+  position="right"
+  [style]="{ width: '400px' }"
+  [modal]="true"
+  [dismissible]="true"
+  [closeOnEscape]="true"
+  [showCloseIcon]="true"
+  appendTo="body">
+
+  <ng-template #header>
+    <div class="flex items-center justify-between w-full pr-2">
+      <span class="text-lg font-bold" [style.color]="'var(--minted-text-primary)'">
+        Notifications
+      </span>
+      <div class="flex items-center gap-2">
+        <button
+          *ngIf="(notificationService.unreadCount$ | async) as count"
+          pButton
+          label="Mark all read"
+          class="p-button-text p-button-sm"
+          [style.color]="'var(--minted-accent)'"
+          (click)="notificationService.markAllAsRead()">
+        </button>
+        <button
+          pButton
+          icon="pi pi-trash"
+          class="p-button-text p-button-sm p-button-danger"
+          pTooltip="Clear all read"
+          tooltipPosition="bottom"
+          (click)="notificationService.dismissAllRead()">
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="flex flex-col">
+    <!-- Empty state -->
+    <div
+      *ngIf="(notificationService.notifications$ | async)?.length === 0"
+      class="flex flex-col items-center justify-center py-20 text-center gap-4">
+      <div class="w-24 h-24 rounded-full flex items-center justify-center"
+           [style.background-color]="'var(--minted-accent-subtle)'">
+        <span class="material-icons text-5xl" [style.color]="'var(--minted-accent)'">done_all</span>
+      </div>
+      <h3 class="text-xl font-bold" [style.color]="'var(--minted-text-primary)'">All caught up!</h3>
+      <p class="text-sm max-w-[240px]" [style.color]="'var(--minted-text-muted)'">
+        You've seen all your notifications. Enjoy your organized financial life!
+      </p>
+    </div>
+
+    <!-- Notification list -->
+    <div
+      *ngFor="let n of (notificationService.notifications$ | async)"
+      class="group flex items-start gap-4 p-4 border-b cursor-pointer transition-all"
+      [style.border-color]="'var(--minted-border-light)'"
+      [style.background-color]="n.isRead ? 'transparent' : 'var(--minted-accent-subtle)'"
+      (click)="onNotificationClick(n)">
+
+      <!-- Unread accent bar -->
+      <div *ngIf="!n.isRead"
+           class="absolute left-0 w-1 h-8 rounded-r-full self-center"
+           [style.background-color]="'var(--minted-accent)'">
+      </div>
+
+      <!-- Type icon -->
+      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+           [style.background-color]="getNotificationBg(n.type)">
+        <span class="material-icons" [style.color]="getNotificationColor(n.type)">
+          {{ getNotificationIcon(n.type) }}
+        </span>
+      </div>
+
+      <!-- Content -->
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-start">
+          <span
+            class="text-sm font-semibold truncate"
+            [style.color]="'var(--minted-text-primary)'"
+            [class.font-bold]="!n.isRead">
+            {{ n.title }}
+          </span>
+          <span class="text-[10px] font-medium flex-shrink-0 ml-2"
+                [style.color]="'var(--minted-text-muted)'">
+            {{ getRelativeTime(n.createdAt) }}
+          </span>
+        </div>
+        <p class="text-xs mt-0.5 line-clamp-2" [style.color]="'var(--minted-text-secondary)'">
+          {{ n.message }}
+        </p>
+      </div>
+
+      <!-- Unread dot -->
+      <div *ngIf="!n.isRead"
+           class="w-2 h-2 rounded-full flex-shrink-0 mt-2"
+           [style.background-color]="'var(--minted-accent)'">
+      </div>
+
+      <!-- Dismiss button -->
+      <button
+        class="flex-shrink-0 p-1.5 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+        [style.color]="'var(--minted-text-muted)'"
+        (click)="$event.stopPropagation(); notificationService.dismiss(n.id)"
+        pTooltip="Dismiss"
+        tooltipPosition="left">
+        <span class="material-icons text-lg">close</span>
+      </button>
+    </div>
+
+    <!-- Load more -->
+    <div *ngIf="notificationService.hasMore" class="p-4 text-center">
+      <button
+        pButton
+        label="Load more"
+        class="p-button-text p-button-sm"
+        [style.color]="'var(--minted-accent)'"
+        (click)="notificationService.loadMore()">
+      </button>
+    </div>
+
+    <!-- See all link -->
+    <div *ngIf="(notificationService.notifications$ | async)?.length"
+         class="p-3 text-center border-t cursor-pointer transition-colors"
+         [style.border-color]="'var(--minted-border)'"
+         [style.background-color]="'var(--minted-accent-subtle)'"
+         (click)="viewAllNotifications()">
+      <span class="text-sm font-medium" [style.color]="'var(--minted-accent)'">
+        See all notifications
+      </span>
+    </div>
+  </div>
+</p-drawer>

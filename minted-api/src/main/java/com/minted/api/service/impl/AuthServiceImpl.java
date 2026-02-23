@@ -6,7 +6,9 @@ import com.minted.api.enums.TransactionType;
 import com.minted.api.exception.BadRequestException;
 import com.minted.api.exception.UnauthorizedException;
 import com.minted.api.repository.*;
+import com.minted.api.enums.NotificationType;
 import com.minted.api.service.AuthService;
+import com.minted.api.service.NotificationHelper;
 import com.minted.api.service.SystemSettingService;
 import com.minted.api.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private SystemSettingService systemSettingService;
+
+    @Autowired
+    private NotificationHelper notificationHelper;
 
     @Autowired
     private DefaultCategoryRepository defaultCategoryRepository;
@@ -194,6 +199,8 @@ public class AuthServiceImpl implements AuthService {
 
         User savedUser = userRepository.save(user);
         seedDefaultDataForUser(savedUser);
+        notificationHelper.notify(savedUser.getId(), NotificationType.SUCCESS,
+                "Welcome to Minted!", "Thank you for signing up. Start managing your finances today.");
 
         // Auto-login: generate tokens and return
         String token = jwtUtil.generateToken(savedUser.getUsername());

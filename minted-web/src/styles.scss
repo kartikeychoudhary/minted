@@ -44,6 +44,8 @@
   --minted-danger-subtle: rgba(220, 38, 38, 0.10);
   --minted-info: #3b82f6;
   --minted-info-subtle: rgba(59, 130, 246, 0.10);
+  --minted-warning: #f59e0b;
+  --minted-warning-subtle: rgba(245, 158, 11, 0.10);
 
   // --- Sidebar (brand green) ---
   --minted-sidebar-bg: #166534;
@@ -416,5 +418,27 @@ body {
 
   &:hover {
     background-color: var(--minted-scrollbar-hover);
+  }
+}
+
+// ============================================================
+//  PRIMENG DRAWER — Notification Panel
+// ============================================================
+
+.p-drawer {
+  background: var(--minted-bg-card) !important;
+  border-color: var(--minted-border) !important;
+
+  .p-drawer-header {
+    background: var(--minted-bg-card) !important;
+    color: var(--minted-text-primary) !important;
+    border-bottom: 1px solid var(--minted-border) !important;
+    padding: 1rem 1.25rem !important;
+  }
+
+  .p-drawer-content {
+    background: var(--minted-bg-card) !important;
+    color: var(--minted-text-primary) !important;
+    padding: 0 !important;
   }
 }

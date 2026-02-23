@@ -31,6 +31,10 @@ const routes: Routes = [
         loadChildren: () => import('./modules/analytics/analytics-module').then(m => m.AnalyticsModule)
       },
       {
+        path: 'notifications',
+        loadChildren: () => import('./modules/notifications/notifications-module').then(m => m.NotificationsModule)
+      },
+      {
         path: 'import',
         loadChildren: () => import('./modules/import/import-module').then(m => m.ImportModule)
       },

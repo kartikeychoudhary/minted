@@ -8,6 +8,8 @@ import com.minted.api.enums.TransactionType;
 import com.minted.api.exception.BadRequestException;
 import com.minted.api.exception.ResourceNotFoundException;
 import com.minted.api.repository.*;
+import com.minted.api.enums.NotificationType;
+import com.minted.api.service.NotificationHelper;
 import com.minted.api.service.UserManagementService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ public class UserManagementServiceImpl implements UserManagementService {
     private final RecurringTransactionRepository recurringTransactionRepository;
     private final BulkImportRepository bulkImportRepository;
     private final DashboardCardRepository dashboardCardRepository;
+    private final NotificationHelper notificationHelper;
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
             "^(?=.*[A-Z])(?=.*[0-9]).{8,}$"
@@ -81,6 +84,8 @@ public class UserManagementServiceImpl implements UserManagementService {
 
         User savedUser = userRepository.save(user);
         seedDefaultDataForUser(savedUser);
+        notificationHelper.notify(savedUser.getId(), NotificationType.SUCCESS,
+                "Welcome to Minted!", "Your account has been created. Start managing your finances today.");
 
         log.info("Admin created new user: {}", savedUser.getUsername());
         return AdminUserResponse.from(savedUser);
