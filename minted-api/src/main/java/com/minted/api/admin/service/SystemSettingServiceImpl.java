@@ -6,9 +6,11 @@ import com.minted.api.common.exception.ResourceNotFoundException;
 import com.minted.api.admin.repository.SystemSettingRepository;
 import com.minted.api.admin.service.SystemSettingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SystemSettingServiceImpl implements SystemSettingService {
@@ -38,6 +40,7 @@ public class SystemSettingServiceImpl implements SystemSettingService {
                 .orElseThrow(() -> new ResourceNotFoundException("Setting not found: " + key));
         setting.setSettingValue(value);
         SystemSetting saved = settingRepository.save(setting);
+        log.info("SystemSetting updated: key={}, value={}", key, value);
         return SystemSettingResponse.from(saved);
     }
 

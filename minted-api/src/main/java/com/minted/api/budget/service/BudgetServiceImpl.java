@@ -12,12 +12,14 @@ import com.minted.api.transaction.repository.TransactionCategoryRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.budget.service.BudgetService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BudgetServiceImpl implements BudgetService {
@@ -81,6 +83,7 @@ public class BudgetServiceImpl implements BudgetService {
         budget.setUser(user);
 
         Budget saved = budgetRepository.save(budget);
+        log.info("Budget created: id={}, name={}", saved.getId(), saved.getName());
         return BudgetResponse.from(saved);
     }
 
@@ -112,6 +115,7 @@ public class BudgetServiceImpl implements BudgetService {
         budget.setCategory(category);
 
         Budget updated = budgetRepository.save(budget);
+        log.info("Budget updated: id={}", updated.getId());
         return BudgetResponse.from(updated);
     }
 
@@ -120,6 +124,7 @@ public class BudgetServiceImpl implements BudgetService {
     public void delete(Long id, Long userId) {
         Budget budget = findBudgetByIdAndUserId(id, userId);
         budgetRepository.delete(budget);
+        log.info("Budget deleted: id={}", id);
     }
 
     private Budget findBudgetByIdAndUserId(Long id, Long userId) {

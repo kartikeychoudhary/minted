@@ -349,6 +349,31 @@ Reorganized the entire minted-api from a flat layer-based package structure into
 
 ---
 
+### Structured Logging with MDC (February 24, 2026)
+
+Added 3-layer structured logging infrastructure to the backend. See `docs/LOGGING.md` for full documentation.
+
+- **Layer 1 — MDC Filter + Logback Config:**
+  - `MdcFilter` (servlet filter, highest precedence) sets `requestId`, `method`, `uri`, `clientIp` in SLF4J MDC on every request
+  - `JwtAuthFilter` enriched to set `MDC.put("userId")` after successful JWT validation
+  - `logback-spring.xml` with dev (DEBUG/console), prod (INFO/JSON), and default profiles
+  - Log pattern: `[requestId] [userId] [method uri]` in every line
+- **Layer 2 — Request/Response Interceptor:**
+  - `RequestLoggingInterceptor` logs `>> METHOD /uri` on entry and `<< METHOD /uri status=200 time=42ms` on completion for all `/api/**` paths
+- **Layer 3 — Service-Level Business Logging:**
+  - `@Slf4j` + targeted `log.info(...)` added to 17 service implementations
+  - Write operations (create/update/delete) logged with entity ID and key attributes
+  - Auth events: login success/failure, password change, registration
+  - Read operations: no logging (noise reduction)
+  - 2 services already had `@Slf4j` (`BulkImportServiceImpl`, `CreditCardStatementServiceImpl`) — enhanced by MDC context automatically
+
+**New files (3):** `MdcFilter.java`, `RequestLoggingInterceptor.java`, `logback-spring.xml`
+**Modified files (17):** `JwtAuthFilter`, `SecurityConfig`, + 15 service implementations
+
+**No errors encountered** — `./gradlew compileJava` passed on first attempt.
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

@@ -17,6 +17,7 @@ import com.minted.api.transaction.repository.TransactionCategoryRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.recurring.service.RecurringTransactionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecurringTransactionServiceImpl implements RecurringTransactionService {
@@ -76,6 +78,7 @@ public class RecurringTransactionServiceImpl implements RecurringTransactionServ
         entity.setNextExecutionDate(calculateNextExecutionDate(request.startDate(), request.dayOfMonth() != null ? request.dayOfMonth() : 1));
 
         RecurringTransaction saved = recurringRepo.save(entity);
+        log.info("RecurringTransaction created: id={}, name={}", saved.getId(), saved.getName());
         return RecurringTransactionResponse.from(saved);
     }
 
@@ -106,6 +109,7 @@ public class RecurringTransactionServiceImpl implements RecurringTransactionServ
                 entity.getStartDate(), entity.getDayOfMonth()));
 
         RecurringTransaction saved = recurringRepo.save(entity);
+        log.info("RecurringTransaction updated: id={}", saved.getId());
         return RecurringTransactionResponse.from(saved);
     }
 
@@ -115,6 +119,7 @@ public class RecurringTransactionServiceImpl implements RecurringTransactionServ
         RecurringTransaction entity = recurringRepo.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Recurring transaction not found"));
         recurringRepo.delete(entity);
+        log.info("RecurringTransaction deleted: id={}", id);
     }
 
     @Override

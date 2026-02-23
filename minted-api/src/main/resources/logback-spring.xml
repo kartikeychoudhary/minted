@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{requestId}] [%X{userId:-anonymous}] [%X{method} %X{uri}] %logger{36} - %msg%n"/>
+
+    <!-- Console appender (human-readable) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- JSON console appender (for log aggregation) -->
+    <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>{"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSS}","level":"%level","requestId":"%X{requestId}","userId":"%X{userId:-anonymous}","method":"%X{method}","uri":"%X{uri}","clientIp":"%X{clientIp}","logger":"%logger{36}","message":"%msg"}%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Dev profile: DEBUG for app, INFO for everything else -->
+    <springProfile name="dev">
+        <logger name="com.minted.api" level="DEBUG"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- Prod profile: INFO for app, WARN for everything else, JSON format -->
+    <springProfile name="prod">
+        <logger name="com.minted.api" level="INFO"/>
+        <root level="WARN">
+            <appender-ref ref="JSON_CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- Default (no profile): INFO level, console pattern -->
+    <springProfile name="default">
+        <logger name="com.minted.api" level="INFO"/>
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+</configuration>

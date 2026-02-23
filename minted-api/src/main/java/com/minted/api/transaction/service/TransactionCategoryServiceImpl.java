@@ -13,12 +13,14 @@ import com.minted.api.transaction.repository.TransactionCategoryRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.transaction.service.TransactionCategoryService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionCategoryServiceImpl implements TransactionCategoryService {
@@ -102,6 +104,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
         category.setIsActive(true);
 
         TransactionCategory saved = categoryRepository.save(category);
+        log.info("Category created: id={}, name={}, type={}", saved.getId(), saved.getName(), saved.getType());
         return TransactionCategoryResponse.from(saved);
     }
 
@@ -137,6 +140,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
         category.setParent(parent);
 
         TransactionCategory updated = categoryRepository.save(category);
+        log.info("Category updated: id={}", updated.getId());
         return TransactionCategoryResponse.from(updated);
     }
 
@@ -150,6 +154,7 @@ public class TransactionCategoryServiceImpl implements TransactionCategoryServic
         }
 
         categoryRepository.delete(category);
+        log.info("Category deleted: id={}", id);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.minted.api.transaction.repository.TransactionRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
@@ -104,6 +106,7 @@ public class TransactionServiceImpl implements TransactionService {
         // Update account balances
         updateAccountBalancesForCreate(account, toAccount, request.type(), request.amount());
 
+        log.info("Transaction created: id={}, type={}, amount={}", saved.getId(), saved.getType(), saved.getAmount());
         return TransactionResponse.from(saved);
     }
 
@@ -149,6 +152,7 @@ public class TransactionServiceImpl implements TransactionService {
         // Apply new balance changes
         updateAccountBalancesForCreate(account, toAccount, request.type(), request.amount());
 
+        log.info("Transaction updated: id={}", updated.getId());
         return TransactionResponse.from(updated);
     }
 
@@ -161,6 +165,7 @@ public class TransactionServiceImpl implements TransactionService {
         reverseAccountBalances(transaction);
 
         transactionRepository.delete(transaction);
+        log.info("Transaction deleted: id={}", id);
     }
 
     private void updateAccountBalancesForCreate(Account account, Account toAccount,

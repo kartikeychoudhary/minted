@@ -1,6 +1,6 @@
 # PROJECT SUMMARY — Minted Quick Reference
 
-> **Generated:** February 16, 2026 | **Updated:** February 23, 2026
+> **Generated:** February 16, 2026 | **Updated:** February 24, 2026
 > **Status:** All core features implemented
 
 ---
@@ -63,7 +63,7 @@ minted/
 ├── minted-api/              # Spring Boot backend
 │   ├── src/main/
 │   │   ├── java/com/minted/api/
-│   │   │   ├── common/       # Shared: config, exception, filter, util
+│   │   │   ├── common/       # Shared: config, exception, filter (MdcFilter, JwtAuthFilter), util
 │   │   │   ├── auth/         # Authentication (controller, dto, service)
 │   │   │   ├── user/         # User entity & profile
 │   │   │   ├── account/      # Accounts & account types
@@ -80,6 +80,7 @@ minted/
 │   │   │   └── admin/        # Admin management & settings
 │   │   └── resources/
 │   │       ├── application.properties
+│   │       ├── logback-spring.xml  # MDC-enriched logging (dev/prod profiles)
 │   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_27)
 │   └── build.gradle
 │
@@ -109,6 +110,7 @@ minted/
     ├── API_SPEC.md              # REST API contract
     ├── STITCH_UI_REFERENCE.md   # Stitch project info
     ├── PROJECT_HISTORY.md       # Phase completion log
+    ├── LOGGING.md               # Structured logging & request tracing
     └── PROJECT_SUMMARY.md       # This file
 ```
 
@@ -285,6 +287,7 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 - **Theme system:** Dark mode toggle, 6 accent presets, PrimeNG Aura preset overrides
 - **Notification system:** `NotificationHelper` shared backend component, 30s polling, header bell + drawer + full page
 - **Auth:** JWT with force-password-change flow, signup toggle, admin user management
+- **Structured logging:** MDC-enriched logs with requestId/userId/method/uri on every line; `MdcFilter` → `JwtAuthFilter` pipeline; `logback-spring.xml` with dev (DEBUG/console), prod (INFO/JSON) profiles; `RequestLoggingInterceptor` for request timing; `@Slf4j` on all service impls for business event logging (see `docs/LOGGING.md`)
 - **Bulk import:** CSV wizard with background job processing and step-level tracking
 
 ---

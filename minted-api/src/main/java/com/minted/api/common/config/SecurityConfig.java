@@ -1,6 +1,7 @@
 package com.minted.api.common.config;
 
 import com.minted.api.common.filter.JwtAuthFilter;
+import com.minted.api.common.filter.MdcFilter;
 import com.minted.api.auth.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,9 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Autowired
+    private MdcFilter mdcFilter;
 
     @Autowired
     private JwtAuthFilter jwtAuthFilter;
@@ -58,6 +62,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authenticationProvider(authenticationProvider())
+                .addFilterBefore(mdcFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

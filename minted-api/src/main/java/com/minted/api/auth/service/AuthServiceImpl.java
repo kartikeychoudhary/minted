@@ -20,6 +20,7 @@ import com.minted.api.auth.service.AuthService;
 import com.minted.api.notification.service.NotificationHelper;
 import com.minted.api.admin.service.SystemSettingService;
 import com.minted.api.common.util.JwtUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -72,10 +74,12 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new UnauthorizedException("Invalid username or password"));
 
         if (!user.getIsActive()) {
+            log.warn("Login failed: account inactive for user: {}", request.username());
             throw new UnauthorizedException("User account is not active");
         }
 
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            log.warn("Login failed: bad password for user: {}", request.username());
             throw new UnauthorizedException("Invalid username or password");
         }
 
@@ -92,6 +96,7 @@ public class AuthServiceImpl implements AuthService {
                 user.getRole()
         );
 
+        log.info("Login successful for user: {}", user.getUsername());
         return new LoginResponse(
                 token,
                 refreshToken,
@@ -174,6 +179,7 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(request.newPassword()));
         user.setForcePasswordChange(false);
         userRepository.save(user);
+        log.info("Password changed for user: {}", username);
     }
 
     @Override
@@ -207,6 +213,7 @@ public class AuthServiceImpl implements AuthService {
         user.setRole("USER");
 
         User savedUser = userRepository.save(user);
+        log.info("New user registered: {}", savedUser.getUsername());
         seedDefaultDataForUser(savedUser);
         notificationHelper.notify(savedUser.getId(), NotificationType.SUCCESS,
                 "Welcome to Minted!", "Thank you for signing up. Start managing your finances today.");

@@ -6,11 +6,13 @@ import com.minted.api.common.exception.ResourceNotFoundException;
 import com.minted.api.notification.repository.NotificationRepository;
 import com.minted.api.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationServiceImpl implements NotificationService {
@@ -42,7 +44,9 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public int markAllAsRead(Long userId) {
-        return notificationRepository.markAllAsReadByUserId(userId);
+        int count = notificationRepository.markAllAsReadByUserId(userId);
+        log.info("Marked {} notifications as read for userId={}", count, userId);
+        return count;
     }
 
     @Override
@@ -57,6 +61,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     @Transactional
     public int dismissAllRead(Long userId) {
-        return notificationRepository.deleteAllReadByUserId(userId);
+        int count = notificationRepository.deleteAllReadByUserId(userId);
+        log.info("Dismissed {} read notifications for userId={}", count, userId);
+        return count;
     }
 }

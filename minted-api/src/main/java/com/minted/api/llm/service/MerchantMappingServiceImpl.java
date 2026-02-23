@@ -11,12 +11,14 @@ import com.minted.api.transaction.repository.TransactionCategoryRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.llm.service.MerchantMappingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MerchantMappingServiceImpl implements MerchantMappingService {
@@ -47,6 +49,7 @@ public class MerchantMappingServiceImpl implements MerchantMappingService {
         mapping.setCategory(category);
 
         mapping = mappingRepository.save(mapping);
+        log.info("MerchantMapping created: id={}", mapping.getId());
         return MerchantMappingResponse.from(mapping);
     }
 
@@ -62,6 +65,7 @@ public class MerchantMappingServiceImpl implements MerchantMappingService {
         mapping.setCategory(category);
 
         mapping = mappingRepository.save(mapping);
+        log.info("MerchantMapping updated: id={}", mapping.getId());
         return MerchantMappingResponse.from(mapping);
     }
 
@@ -71,6 +75,7 @@ public class MerchantMappingServiceImpl implements MerchantMappingService {
         MerchantCategoryMapping mapping = mappingRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Mapping not found with id: " + id));
         mappingRepository.delete(mapping);
+        log.info("MerchantMapping deleted: id={}", id);
     }
 
     @Override

@@ -12,12 +12,14 @@ import com.minted.api.admin.repository.DefaultAccountTypeRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.account.service.AccountTypeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountTypeServiceImpl implements AccountTypeService {
@@ -79,6 +81,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
         accountType.setIsActive(true);
 
         AccountType saved = accountTypeRepository.save(accountType);
+        log.info("AccountType created: id={}, name={}", saved.getId(), saved.getName());
         return AccountTypeResponse.from(saved);
     }
 
@@ -102,6 +105,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
         accountType.setIcon(request.icon());
 
         AccountType updated = accountTypeRepository.save(accountType);
+        log.info("AccountType updated: id={}", updated.getId());
         return AccountTypeResponse.from(updated);
     }
 
@@ -115,6 +119,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
         }
 
         accountTypeRepository.delete(accountType);
+        log.info("AccountType deleted: id={}", id);
     }
 
     @Override

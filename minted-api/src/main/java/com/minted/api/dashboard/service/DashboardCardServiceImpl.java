@@ -10,12 +10,14 @@ import com.minted.api.dashboard.repository.DashboardCardRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.dashboard.service.DashboardCardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DashboardCardServiceImpl implements DashboardCardService {
@@ -68,6 +70,7 @@ public class DashboardCardServiceImpl implements DashboardCardService {
         card.setIsActive(true);
 
         DashboardCard saved = cardRepository.save(card);
+        log.info("DashboardCard created: id={}, title={}", saved.getId(), saved.getTitle());
         return DashboardCardResponse.from(saved);
     }
 
@@ -89,6 +92,7 @@ public class DashboardCardServiceImpl implements DashboardCardService {
         }
 
         DashboardCard updated = cardRepository.save(card);
+        log.info("DashboardCard updated: id={}", updated.getId());
         return DashboardCardResponse.from(updated);
     }
 
@@ -97,6 +101,7 @@ public class DashboardCardServiceImpl implements DashboardCardService {
     public void delete(Long id, Long userId) {
         DashboardCard card = findCardByIdAndUserId(id, userId);
         cardRepository.delete(card);
+        log.info("DashboardCard deleted: id={}", id);
     }
 
     @Override

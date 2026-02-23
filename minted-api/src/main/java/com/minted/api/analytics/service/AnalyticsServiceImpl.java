@@ -12,6 +12,7 @@ import com.minted.api.dashboard.repository.DashboardCardRepository;
 import com.minted.api.transaction.repository.TransactionRepository;
 import com.minted.api.analytics.service.AnalyticsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AnalyticsServiceImpl implements AnalyticsService {
@@ -35,6 +37,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     @Override
     @Transactional(readOnly = true)
     public AnalyticsSummaryResponse getSummary(Long userId, LocalDate startDate, LocalDate endDate) {
+        log.debug("Computing analytics summary: userId={}, range={} to {}", userId, startDate, endDate);
         BigDecimal totalIncome = transactionRepository.sumAmountByUserIdAndTypeAndDateBetween(
                 userId, TransactionType.INCOME, startDate, endDate);
         BigDecimal totalExpense = transactionRepository.sumAmountByUserIdAndTypeAndDateBetween(

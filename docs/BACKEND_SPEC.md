@@ -120,9 +120,9 @@ The backend is organized into **feature-based modules** where each domain's cont
 com.minted.api/
 ├── MintedApiApplication.java
 ├── common/                    # Shared infrastructure
-│   ├── config/                # SecurityConfig, SchedulerConfig, DataInitializer
+│   ├── config/                # SecurityConfig, SchedulerConfig, DataInitializer, RequestLoggingInterceptor
 │   ├── exception/             # All exceptions + GlobalExceptionHandler
-│   ├── filter/                # JwtAuthFilter
+│   ├── filter/                # JwtAuthFilter, MdcFilter
 │   └── util/                  # JwtUtil
 ├── auth/                      # Authentication & signup
 ├── user/                      # User entity & profile
@@ -385,6 +385,9 @@ VALUES ('SIGNUP_ENABLED', 'false', 'Controls whether public user registration is
 - CORS: Allow `MINTED_CORS_ORIGINS` env variable values
 - CSRF: Disabled (stateless JWT)
 - Session: `STATELESS`
+- **Filter chain order:** `MdcFilter` → `JwtAuthFilter` → `UsernamePasswordAuthenticationFilter`
+- `MdcFilter` sets request tracing context (requestId, method, uri, clientIp) in SLF4J MDC
+- `JwtAuthFilter` adds `userId` to MDC after successful JWT validation
 
 ### 3.5 Password Change Endpoint
 ```
@@ -953,3 +956,76 @@ All steps fire notifications via `NotificationHelper`:
 - Step 2: SUCCESS — "AI Parsing Complete" with parsed/duplicate counts
 - Step 2 (error): ERROR — "AI Parsing Failed" with error message
 - Step 4: SUCCESS — "Import Complete" with imported count and account name
+
+---
+
+## 10. Structured Logging & Request Tracing
+
+### 10.1 Overview
+
+The backend uses a 3-layer structured logging architecture with MDC (Mapped Diagnostic Context). Every log line includes `requestId`, `userId`, HTTP `method`, and `uri` — enabling filtering and correlation in log management tools (ELK, Loki, Datadog).
+
+**Full documentation:** `docs/LOGGING.md`
+
+### 10.2 MDC Keys
+
+| Key | Set By | Example | Purpose |
+|-----|--------|---------|---------|
+| `requestId` | `MdcFilter` | `a3f8c1e2` | Correlate all logs in one request |
+| `userId` | `JwtAuthFilter` | `admin` | Filter by authenticated user |
+| `method` | `MdcFilter` | `POST` | Filter by HTTP method |
+| `uri` | `MdcFilter` | `/api/v1/transactions` | Filter by endpoint |
+| `clientIp` | `MdcFilter` | `192.168.1.5` | Track client origin |
+
+### 10.3 Infrastructure Components
+
+| Component | File | Purpose |
+|-----------|------|---------|
+| `MdcFilter` | `common/filter/MdcFilter.java` | Servlet filter (`HIGHEST_PRECEDENCE`) — sets MDC keys, clears in `finally` |
+| `JwtAuthFilter` (enhanced) | `common/filter/JwtAuthFilter.java` | Adds `MDC.put("userId")` after JWT validation |
+| `RequestLoggingInterceptor` | `common/config/RequestLoggingInterceptor.java` | Spring `HandlerInterceptor` — logs `>> METHOD /uri` on entry, `<< METHOD /uri status=N time=Xms` on exit |
+| `logback-spring.xml` | `src/main/resources/logback-spring.xml` | Logback config with MDC pattern, dev/prod/default profiles |
+
+### 10.4 Logback Profiles
+
+| Profile | App Level | Root Level | Output Format |
+|---------|-----------|------------|---------------|
+| `dev` | DEBUG | INFO | Console (human-readable) |
+| `prod` | INFO | WARN | JSON (for log aggregation) |
+| `default` | INFO | INFO | Console (human-readable) |
+
+### 10.5 Log Pattern
+
+```
+%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{requestId}] [%X{userId:-anonymous}] [%X{method} %X{uri}] %logger{36} - %msg%n
+```
+
+Example:
+```
+2026-02-24 14:30:22.123 [http-nio-5500-exec-1] INFO  [a3f8c1e2] [admin] [POST /api/v1/transactions] c.m.a.t.s.TransactionServiceImpl - Transaction created: id=42, type=EXPENSE, amount=150.00
+```
+
+### 10.6 Service Logging Policy
+
+- **Write operations (create/update/delete):** `log.info(...)` with entity ID and key attributes
+- **Auth events:** `log.info(...)` for success, `log.warn(...)` for failures
+- **Read operations:** No logging (noise reduction)
+- **Analytics queries:** `log.debug(...)` only (visible in dev profile)
+- **Error paths:** `log.error(...)` with context on catch blocks
+
+All service implementations use Lombok `@Slf4j`. MDC context is automatically included — no manual enrichment needed in service code.
+
+### 10.7 Adding Logging to New Services
+
+```java
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class NewServiceImpl implements NewService {
+    public Entity create(Request request, Long userId) {
+        Entity saved = repository.save(entity);
+        log.info("Entity created: id={}, name={}", saved.getId(), saved.getName());
+        return saved;
+    }
+}
+```

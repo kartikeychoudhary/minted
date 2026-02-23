@@ -7,9 +7,11 @@ import com.minted.api.common.exception.ResourceNotFoundException;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.user.service.UserProfileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
@@ -40,6 +42,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         userRepository.save(user);
+        log.info("Profile updated for user: {}", username);
         return toResponse(user);
     }
 

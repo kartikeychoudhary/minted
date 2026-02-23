@@ -12,6 +12,7 @@ import com.minted.api.account.repository.AccountTypeRepository;
 import com.minted.api.user.repository.UserRepository;
 import com.minted.api.account.service.AccountService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
@@ -72,6 +74,7 @@ public class AccountServiceImpl implements AccountService {
         account.setIsActive(true);
 
         Account saved = accountRepository.save(account);
+        log.info("Account created: id={}, name={}", saved.getId(), saved.getName());
         return AccountResponse.from(saved);
     }
 
@@ -96,6 +99,7 @@ public class AccountServiceImpl implements AccountService {
         account.setIcon(request.icon());
 
         Account updated = accountRepository.save(account);
+        log.info("Account updated: id={}", updated.getId());
         return AccountResponse.from(updated);
     }
 
@@ -104,6 +108,7 @@ public class AccountServiceImpl implements AccountService {
     public void delete(Long id, Long userId) {
         Account account = findAccountByIdAndUserId(id, userId);
         accountRepository.delete(account);
+        log.info("Account deleted: id={}", id);
     }
 
     @Override

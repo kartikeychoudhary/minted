@@ -12,12 +12,14 @@ import com.minted.api.admin.repository.DefaultAccountTypeRepository;
 import com.minted.api.admin.repository.DefaultCategoryRepository;
 import com.minted.api.admin.service.DefaultListsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DefaultListsServiceImpl implements DefaultListsService {
@@ -52,6 +54,7 @@ public class DefaultListsServiceImpl implements DefaultListsService {
 
         DefaultCategory saved = categoryRepository.save(category);
 
+        log.info("Default category created: id={}, name={}", saved.getId(), saved.getName());
         return new DefaultCategoryResponse(
                 saved.getId(),
                 saved.getName(),
@@ -67,6 +70,7 @@ public class DefaultListsServiceImpl implements DefaultListsService {
             throw new ResourceNotFoundException("Default category not found");
         }
         categoryRepository.deleteById(id);
+        log.info("Default category deleted: id={}", id);
     }
 
     @Override
@@ -92,6 +96,7 @@ public class DefaultListsServiceImpl implements DefaultListsService {
 
         DefaultAccountType saved = accountTypeRepository.save(type);
 
+        log.info("Default account type created: id={}, name={}", saved.getId(), saved.getName());
         return new DefaultAccountTypeResponse(
                 saved.getId(),
                 saved.getName()
@@ -105,5 +110,6 @@ public class DefaultListsServiceImpl implements DefaultListsService {
             throw new ResourceNotFoundException("Default account type not found");
         }
         accountTypeRepository.deleteById(id);
+        log.info("Default account type deleted: id={}", id);
     }
 }

@@ -71,6 +71,7 @@ public class LlmConfigServiceImpl implements LlmConfigService {
         }
 
         config = configRepository.save(config);
+        log.info("LLM config saved for userId={}", userId);
 
         List<MerchantMappingResponse> mappings = merchantMappingService.getMappings(userId);
         return LlmConfigResponse.from(config, mappings);
