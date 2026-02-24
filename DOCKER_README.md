@@ -367,6 +367,105 @@ docker rmi minted-frontend minted-backend
 docker network rm minted-network
 ```
 
+## Optional: SigNoz Log Management (Production)
+
+The `docker-compose.prod.yml` overlay adds [SigNoz](https://signoz.io/) for centralized log management, distributed tracing, and metrics collection. It uses the **OpenTelemetry Java Agent** to auto-instrument the backend — no application code changes required.
+
+### SigNoz Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         Host Machine                                │
+│                                                                     │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐    │
+│  │ Frontend │    │ Backend  │    │  MySQL   │    │  SigNoz  │    │
+│  │  (Nginx) │    │  (Java)  │    │  (DB)    │    │   (UI)   │    │
+│  │ Port 80  │    │ Port 5500│    │ Port 3306│    │ Port 3301│    │
+│  └──────────┘    └────┬─────┘    └──────────┘    └────┬─────┘    │
+│                       │ OTLP/gRPC                      │          │
+│                  ┌────▼─────┐                          │          │
+│                  │   OTel   │                          │          │
+│                  │Collector │                          │          │
+│                  │4317/4318 │                          │          │
+│                  └────┬─────┘                          │          │
+│                       │                                │          │
+│                  ┌────▼──────────────────────────────────┘          │
+│                  │  ClickHouse  ◄── ZooKeeper                     │
+│                  │  (Storage)       (Coordination)                 │
+│                  └────────────────────────────────────────          │
+│                                                                     │
+│              minted-network (Bridge)                                │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+- **OTel Java Agent** — attached to the JVM via `JAVA_TOOL_OPTIONS`, auto-captures all SLF4J/Logback logs, HTTP traces, and JVM metrics
+- **SigNoz OTel Collector** — receives OTLP data and forwards it to ClickHouse
+- **ClickHouse** — time-series database for logs, traces, and metrics storage
+- **ZooKeeper** — coordination service for ClickHouse
+- **SigNoz UI** — query and visualization dashboard
+
+### Starting with SigNoz
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+This starts all standard services plus the SigNoz stack. The backend automatically switches to:
+- `prod` Spring profile (JSON structured logging)
+- OTel agent instrumentation (logs, traces, metrics exported via OTLP)
+
+### Additional Ports
+
+| Port | Service              | Purpose                  |
+|------|----------------------|--------------------------|
+| 3301 | SigNoz UI            | Log viewer dashboard     |
+| 4317 | OTel Collector gRPC  | OTLP gRPC endpoint       |
+| 4318 | OTel Collector HTTP  | OTLP HTTP endpoint       |
+
+### Additional Containers
+
+| Container              | Image                                    | Purpose                       |
+|------------------------|------------------------------------------|-------------------------------|
+| minted-otel-collector  | signoz/signoz-otel-collector:latest      | Receives and routes telemetry |
+| minted-clickhouse      | clickhouse/clickhouse-server:24.1-alpine | Time-series storage           |
+| minted-zookeeper       | bitnami/zookeeper:3.9                    | ClickHouse coordination       |
+| minted-signoz          | signoz/signoz:latest                     | Query service and UI          |
+
+### Additional Volumes
+
+| Volume                  | Purpose                        |
+|-------------------------|--------------------------------|
+| minted_clickhouse_data  | ClickHouse data persistence    |
+| minted_zookeeper_data   | ZooKeeper data persistence     |
+
+### SigNoz Files
+
+| File                                | Purpose                                      |
+|-------------------------------------|----------------------------------------------|
+| `docker-compose.prod.yml`          | Production compose overlay with SigNoz stack |
+| `minted-api/Dockerfile.prod`       | Backend Dockerfile with OTel agent included  |
+| `signoz/otel-collector-config.yaml` | OTel Collector pipeline configuration        |
+
+### Verification
+
+1. Start the production stack and wait ~60s for ClickHouse and SigNoz to initialize
+2. Open http://localhost:3301 — SigNoz UI should load
+3. Make API requests to the backend (login, create transactions, etc.)
+4. In SigNoz UI, go to **Logs** tab — verify `minted-api` logs appear with MDC fields (`requestId`, `userId`, `method`, `uri`)
+5. In SigNoz UI, go to **Traces** tab — verify HTTP request traces appear
+
+### Stopping with SigNoz
+
+```bash
+# Stop all containers (data preserved in volumes)
+docker compose -f docker-compose.yml -f docker-compose.prod.yml down
+
+# Stop AND delete all volumes (database, logs, metrics, traces all lost)
+docker compose -f docker-compose.yml -f docker-compose.prod.yml down -v
+```
+
+---
+
 ## Support
 
 For issues or questions:

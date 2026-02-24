@@ -1,0 +1,110 @@
+services:
+  # Override backend to use prod Dockerfile with OTel agent
+  backend:
+    build:
+      context: ./minted-api
+      dockerfile: Dockerfile.prod
+    depends_on:
+      mysql:
+        condition: service_healthy
+      signoz-otel-collector:
+        condition: service_started
+    environment:
+      # Activate prod profile for JSON structured logging
+      SPRING_PROFILES_ACTIVE: prod
+
+      # OpenTelemetry Java Agent (attached via JAVA_TOOL_OPTIONS, no code changes needed)
+      JAVA_TOOL_OPTIONS: "-javaagent:/opt/opentelemetry-javaagent.jar"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name=minted-api"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://signoz-otel-collector:4317"
+      OTEL_LOGS_EXPORTER: otlp
+      OTEL_METRICS_EXPORTER: otlp
+      OTEL_TRACES_EXPORTER: otlp
+
+  # --- SigNoz Stack ---
+
+  zookeeper:
+    image: bitnami/zookeeper:3.9
+    container_name: minted-zookeeper
+    restart: unless-stopped
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper
+    networks:
+      - minted-network
+    healthcheck:
+      test: ["CMD-SHELL", "echo ruok | nc localhost 2181 | grep imok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.1-alpine
+    container_name: minted-clickhouse
+    restart: unless-stopped
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      CLICKHOUSE_DB: signoz_logs
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    networks:
+      - minted-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  signoz-otel-collector:
+    image: signoz/signoz-otel-collector:latest
+    container_name: minted-otel-collector
+    restart: unless-stopped
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    volumes:
+      - ./signoz/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: ["--config", "/etc/otel-collector-config.yaml"]
+    ports:
+      - "4317:4317"   # gRPC OTLP
+      - "4318:4318"   # HTTP OTLP
+    networks:
+      - minted-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:13133/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  signoz:
+    image: signoz/signoz:latest
+    container_name: minted-signoz
+    restart: unless-stopped
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+      signoz-otel-collector:
+        condition: service_started
+    environment:
+      SIGNOZ_CLICKHOUSE_HOST: clickhouse
+      SIGNOZ_CLICKHOUSE_PORT: 9000
+    ports:
+      - "3301:3301"
+    networks:
+      - minted-network
+
+volumes:
+  clickhouse_data:
+    driver: local
+    name: minted_clickhouse_data
+  zookeeper_data:
+    driver: local
+    name: minted_zookeeper_data
