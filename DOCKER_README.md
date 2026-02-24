@@ -330,6 +330,88 @@ For production deployments:
    - Redirect HTTP to HTTPS
    - Use HSTS headers
 
+## SigNoz Observability (Optional)
+
+An alternative Docker Compose file is provided to run the backend with [OpenTelemetry](https://opentelemetry.io/) instrumentation, sending traces, metrics, and logs to an existing [SigNoz](https://signoz.io/) instance.
+
+### Prerequisites
+
+- A running SigNoz instance reachable from the Docker host
+- The SigNoz OTLP collector endpoint (default: `http://localhost:4317`)
+
+### Usage
+
+```bash
+docker compose -f docker-compose.signoz.yml up -d --build
+```
+
+This uses `minted-api/Dockerfile.signoz`, which downloads the OpenTelemetry Java agent at build time and attaches it to the JVM automatically.
+
+### Configuration
+
+Add these to your `.env` file to customize (all are optional):
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `OTEL_SERVICE_NAME` | `minted-backend` | Service name shown in SigNoz |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | `http://host.docker.internal:4317` | SigNoz OTLP collector endpoint |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `grpc` | OTLP protocol (`grpc` or `http/protobuf`) |
+| `OTEL_RESOURCE_ATTRIBUTES` | `deployment.environment=docker,service.namespace=minted` | Additional resource attributes |
+| `OTEL_METRICS_EXPORTER` | `otlp` | Metrics exporter (`otlp` or `none`) |
+| `OTEL_LOGS_EXPORTER` | `otlp` | Logs exporter (`otlp` or `none`) |
+| `OTEL_TRACES_EXPORTER` | `otlp` | Traces exporter (`otlp` or `none`) |
+
+### Example: Pointing to a Remote SigNoz Instance
+
+```bash
+# .env
+OTEL_EXPORTER_OTLP_ENDPOINT=http://192.168.1.50:4317
+OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production,service.namespace=minted
+```
+
+### Architecture with SigNoz
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Host Machine                              │
+│                                                                  │
+│  ┌──────────┐    ┌──────────────┐    ┌──────────┐              │
+│  │ Frontend │────│   Backend    │────│  MySQL   │              │
+│  │  (Nginx) │    │ (Java+OTEL) │    │  (DB)    │              │
+│  │ Port 80  │    │  Port 5500   │    │ Port 3306│              │
+│  └──────────┘    └──────┬───────┘    └──────────┘              │
+│                         │ OTLP (gRPC :4317)                     │
+│                         ▼                                        │
+│               ┌──────────────────┐                              │
+│               │  SigNoz Collector │                              │
+│               │   (external)      │                              │
+│               └──────────────────┘                              │
+│                                                                  │
+│  └──────────────────────────────────────────┘                   │
+│              minted-network (Bridge)                             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Disabling Specific Telemetry
+
+To send only traces (no metrics/logs):
+
+```bash
+# .env
+OTEL_METRICS_EXPORTER=none
+OTEL_LOGS_EXPORTER=none
+```
+
+### Switching Back to Standard Mode
+
+To run without observability, use the standard compose file:
+
+```bash
+docker compose up -d --build
+```
+
+---
+
 ## Updating the Application
 
 1. Pull latest changes:
