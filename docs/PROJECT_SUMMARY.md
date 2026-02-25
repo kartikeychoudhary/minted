@@ -1,6 +1,6 @@
 # PROJECT SUMMARY — Minted Quick Reference
 
-> **Generated:** February 16, 2026 | **Updated:** February 24, 2026
+> **Generated:** February 16, 2026 | **Updated:** February 25, 2026
 > **Status:** All core features implemented
 
 ---
@@ -81,7 +81,7 @@ minted/
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── logback-spring.xml  # MDC-enriched logging (dev/prod profiles)
-│   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_27)
+│   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_29)
 │   └── build.gradle
 │
 ├── minted-web/              # Angular frontend
@@ -181,7 +181,9 @@ minted/
 - [x] Notification System (NotificationHelper, bell badge, drawer, full page)
 
 ### Phase 8: Polish & Responsive ⏳
-- [ ] Mobile responsiveness (375px, 768px, 1024px, 1440px breakpoints)
+- [x] Mobile responsiveness (hamburger sidebar drawer, responsive dialogs/grids, auth pages)
+- [x] Bulk import cron job removed (processing is user-action driven)
+- [x] Import wizard: Credit Card Statement card linked to /statements
 - [ ] Configurable dashboard cards
 - [ ] Budget tracking polish
 
@@ -275,10 +277,10 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 
 **Phases 1–7 complete.** All core features are implemented and working.
 
-- **Backend:** 22 Flyway migrations (V0_0_1 through V0_0_22), 10+ entities, full REST API
-- **Frontend:** 9 feature modules (auth, dashboard, transactions, recurring, analytics, import, notifications, settings, admin), layout with sidebar + notification drawer
+- **Backend:** 29 Flyway migrations (V0_0_1 through V0_0_29), 10+ entities, full REST API
+- **Frontend:** 9 feature modules (auth, dashboard, transactions, recurring, analytics, import, notifications, settings, admin), layout with sidebar + notification drawer + mobile responsive
 - **Infrastructure:** Docker Compose (Nginx + Spring Boot + MySQL), ports 7800 (web) / 7801 (API)
-- **Remaining:** Configurable dashboard cards, budget tracking polish, mobile responsiveness
+- **Remaining:** Configurable dashboard cards, budget tracking polish
 
 ### Key Architectural Highlights
 - **Feature-based backend modules:** 15 modules (auth, user, account, transaction, budget, dashboard, analytics, recurring, notification, job, bulkimport, statement, llm, admin, common) — each module has its own controller/dto/entity/repository/service
@@ -288,7 +290,8 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 - **Notification system:** `NotificationHelper` shared backend component, 30s polling, header bell + drawer + full page
 - **Auth:** JWT with force-password-change flow, signup toggle, admin user management
 - **Structured logging:** MDC-enriched logs with requestId/userId/method/uri on every line; `MdcFilter` → `JwtAuthFilter` pipeline; `logback-spring.xml` with dev (DEBUG/console), prod (INFO/JSON) profiles; `RequestLoggingInterceptor` for request timing; `@Slf4j` on all service impls for business event logging (see `docs/LOGGING.md`)
-- **Bulk import:** CSV wizard with background job processing and step-level tracking
+- **Bulk import:** CSV wizard with user-action-driven async processing and step-level tracking (no cron job)
+- **Mobile responsive:** PrimeNG Drawer sidebar on mobile, hamburger menu, global dialog/grid overrides, responsive auth pages
 
 ---
 
@@ -296,7 +299,6 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 
 1. Configurable dashboard cards (drag-and-drop, chart type selection)
 2. Budget tracking improvements (progress bars, alerts)
-3. Mobile responsiveness (375px–1440px breakpoints)
 
 ---
 

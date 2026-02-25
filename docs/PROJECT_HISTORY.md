@@ -186,7 +186,7 @@
   - Repository: `BulkImportRepository` + additions to `TransactionCategoryRepository` (name lookup) and `TransactionRepository` (duplicate check)
   - DTOs: `CsvRowPreview`, `CsvUploadResponse`, `BulkImportConfirmRequest`, `BulkImportResponse`
   - Service: `BulkImportServiceImpl` with CSV parsing (quoted fields), per-row validation, duplicate detection, 5000 row limit
-  - Job: `BulkImportJob` (sweep for stuck imports) + async 4-step processing via `TransactionTemplate`
+  - Async 4-step processing via `TransactionTemplate` (cron sweep removed Feb 25 — processing is user-action driven)
   - Controller: `BulkImportController` (6 endpoints: template, upload, confirm, list, get, job details)
 - **Frontend (14 new files):**
   - Model: `import.model.ts` with TypeScript interfaces
@@ -331,14 +331,14 @@ Reorganized the entire minted-api from a flat layer-based package structure into
 | `recurring/` | 11 | RecurringTransaction entity, frequency/status enums, RecurringTransactionJob, repo/service/controller/DTOs |
 | `notification/` | 8 | Notification entity, NotificationType enum, NotificationHelper, repo/service/controller/DTO |
 | `job/` | 17 | JobExecution/JobScheduleConfig/JobStepExecution entities, job enums, repos/services/DTOs |
-| `bulkimport/` | 12 | BulkImport entity, ImportStatus/ImportType enums, BulkImportJob, repo/service/controller/DTOs |
+| `bulkimport/` | 11 | BulkImport entity, ImportStatus/ImportType enums, repo/service/controller/DTOs (BulkImportJob removed) |
 | `statement/` | 12 | CreditCardStatement entity, StatementStatus enum, StatementParser/CreditCardStatementService, controller/DTOs |
 | `llm/` | 20 | LlmModel/LlmConfiguration/MerchantCategoryMapping entities, GeminiLlmService, repos/services/controllers/DTOs |
 | `admin/` | 22 | AdminController, DefaultCategory/DefaultAccountType/SystemSetting entities, repos, DefaultListsService/SystemSettingService/UserManagementService, DTOs |
 
 **Key decisions:**
 - Service implementations placed directly in `<feature>/service/` (no separate `impl/` sub-package)
-- Feature-specific jobs live in `<feature>/job/` (e.g., `bulkimport/job/BulkImportJob.java`)
+- Feature-specific jobs live in `<feature>/job/` (e.g., `recurring/job/RecurringTransactionJob.java`)
 - Shared job framework entities/services remain in top-level `job/` module
 - `common/` holds cross-cutting infrastructure (security, exceptions, JWT filter/util)
 
@@ -374,7 +374,62 @@ Added 3-layer structured logging infrastructure to the backend. See `docs/LOGGIN
 
 ---
 
+### Mobile Responsive Design (February 25, 2026)
+
+Added mobile-responsive layout while keeping the existing desktop design identical. All changes are behind `max-width: 767px` or Tailwind `md:` breakpoint media queries.
+
+- **Quick Fixes:**
+  - Tab title changed from "MintedWeb" to "Minted"
+  - Added `<link rel="preconnect">` hints for Google Fonts (faster icon loading)
+  - Added `font-display=swap` to Material Icons URLs (prevents invisible text during font load)
+
+- **Mobile Sidebar Drawer:**
+  - Desktop sidebar wrapped in `hidden md:block` — unchanged on desktop
+  - PrimeNG `<p-drawer>` for mobile sidebar (position left, 280px, modal)
+  - Hamburger menu button (`material-icons: menu`) in header, visible only on mobile (`md:hidden`)
+  - Sidebar component: `@Input() mobileMode` forces expanded layout, hides toggle chevron
+  - Sidebar component: `@Output() navigationClicked` auto-closes drawer on nav link click
+  - Layout auto-closes mobile sidebar on `NavigationEnd` router events
+  - Header "Minted" text replaced with hamburger button (brand text already in sidebar)
+
+- **Global Responsive Overrides (`styles.scss`):**
+  - PrimeNG dialogs capped at `90vw` on mobile (fixes 10+ dialogs at once)
+  - AG Grid viewport-relative height (`60vh`, min `300px`) on mobile
+  - Notification drawer width: `min(400px, 100vw)`
+
+- **Module-Specific Fixes:**
+  - Transactions page: outer padding `p-4 sm:p-8`
+  - Auth login/signup: brand text `text-xl sm:text-2xl`, form padding `px-4 sm:px-8`
+  - Dashboard/recurring already had responsive breakpoints — no changes needed
+
+- **Files modified (10):** `index.html`, `styles.scss`, `layout.html`, `layout.ts`, `layout.scss`, `sidebar.html`, `sidebar.ts`, `transactions-list.html`, `login.html`, `signup.html`
+- **No new dependencies** — PrimeNG Drawer already in SharedModule
+
+---
+
+### Bulk Import: Remove Scheduled Cron Job (February 25, 2026)
+
+Removed the 5-minute scheduled cron sweep for bulk CSV imports. Import processing was already user-action driven via the confirm endpoint.
+
+- **Deleted:** `bulkimport/job/BulkImportJob.java` — the `@PostConstruct`-registered cron sweep that scanned for stuck imports every 5 minutes
+- **Added:** `V0_0_29__remove_bulk_import_scheduled_job.sql` — deletes the `BULK_IMPORT_PROCESSOR` row from `job_schedule_configs`
+- **Unchanged:** `BulkImportServiceImpl.confirmImport()` — still triggers `processImportAsync()` immediately via `CompletableFuture.runAsync()` after transaction commit
+- **Flow remains:** Upload CSV → Preview/Validate → User confirms → Async processing starts immediately → Poll for progress
+
+---
+
+### Import Wizard: Link Credit Card Statement Card (February 25, 2026)
+
+Made the Credit Card Statement card in the import wizard active and clickable, navigating to the existing `/statements` route.
+
+- **Removed:** `opacity-50`, `cursor-not-allowed`, `Coming Soon` p-tag from the statement card
+- **Added:** `cursor-pointer`, `hover:shadow-md`, blue icon tint (`--minted-info`), `(click)="navigateToStatements()"`
+- **Added:** `navigateToStatements()` method to `ImportWizard` component routing to `/statements`
+- **Files modified (2):** `import-wizard.html`, `import-wizard.ts`
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.
-Remaining work: Configurable dashboard cards, budget tracking polish, mobile responsiveness.
+Remaining work: Configurable dashboard cards, budget tracking polish.

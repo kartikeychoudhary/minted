@@ -598,17 +598,19 @@ Singleton service managing global currency display:
 ### Breakpoints (matching Tailwind defaults)
 | Screen | Width | Layout |
 |--------|-------|--------|
-| Mobile | < 640px (`sm`) | Sidebar collapsed as overlay, single column grid, AG Grid switches to simplified view |
-| Tablet | 640–1024px (`md`) | Sidebar collapsed by default, 1-2 column grid |
-| Desktop | > 1024px (`lg`) | Sidebar always visible, 2 column grid |
+| Mobile | < 768px (`md`) | Sidebar hidden, hamburger opens PrimeNG Drawer, single column grids |
+| Desktop | >= 768px (`md`) | Sidebar always visible, normal multi-column layout |
 
-### Key Responsive Behaviors
-1. **Sidebar:** Collapsible hamburger menu on mobile/tablet. Always visible on desktop.
-2. **Dashboard cards:** Stack to single column on mobile.
-3. **Transaction grid:** On mobile (< 640px), consider hiding less important columns (Notes, Tags) and making the grid horizontally scrollable, OR switch to a card/list view.
-4. **Forms/Dialogs:** Full-width on mobile, constrained width on desktop.
-5. **Filter bar:** Collapses into a dropdown/accordion on mobile.
-6. **Font sizes:** Use Tailwind responsive prefixes (`text-sm md:text-base`).
+### Implemented Responsive Behaviors
+1. **Sidebar:** Hidden on mobile via `hidden md:block`. PrimeNG `<p-drawer>` opens from left with full sidebar content (`mobileMode` input). Hamburger button (`material-icons: menu`) visible only on mobile (`md:hidden`). Auto-closes on navigation.
+2. **Dialogs:** Global `@media (max-width: 767px)` in `styles.scss` caps all `.p-dialog` at `90vw`.
+3. **AG Grid:** Global mobile override sets `height: 60vh !important; min-height: 300px` on all `ag-grid-angular` elements.
+4. **Notification drawer:** Width `min(400px, 100vw)` — fills screen on small devices.
+5. **Header:** Padding `px-4 md:px-8`. "Minted" text removed (brand in sidebar only).
+6. **Auth pages:** Form padding `px-4 sm:px-8`, brand text `text-xl sm:text-2xl`.
+7. **Transactions page:** Container padding `p-4 sm:p-8`. Filters already use `flex-col sm:flex-row`.
+8. **Dashboard/Recurring:** Already had responsive breakpoints at 768px and 1024px (KPI grid, charts grid, form grid, summary grid).
+9. **Font sizes:** Use Tailwind responsive prefixes (`text-xl sm:text-2xl`).
 
 ---
 
@@ -703,7 +705,7 @@ HTTP client (`providedIn: 'root'`) for `/api/v1/imports`:
 - **Step 3:** Import summary + Skip duplicates toggle (p-toggleswitch) + Start Import button + Post-import success with navigation to job detail
 - AG Grid theme: exact copy of minted theme from transactions-list (`themeQuartz.withParams()` with CSS var references)
 - Preview columns: #, Status (badge renderer), Date, Amount (CurrencyService.format), Type, Description, Category, Error
-- Import type cards: CSV Import (active) + Credit Card Statement (coming soon, disabled)
+- Import type cards: CSV Import (active) + Credit Card Statement (active, navigates to `/statements`)
 
 #### ImportJobs (`/import/jobs`)
 - AG Grid table showing import history
