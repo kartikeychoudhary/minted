@@ -84,10 +84,11 @@
         <button
           *ngIf="(notificationService.unreadCount$ | async) as count"
           pButton
-          label="Mark all read"
           class="p-button-text p-button-sm"
           [style.color]="'var(--minted-accent)'"
           (click)="notificationService.markAllAsRead()">
+          <i class="pi pi-check" pButtonIcon></i>
+          <span pButtonLabel>Mark all read</span>
         </button>
         <button
           pButton
