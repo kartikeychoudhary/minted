@@ -32,19 +32,19 @@
       </div>
     </div>
 
-    <!-- Credit Card Statement Card (coming soon) -->
-    <div class="rounded-xl p-6 opacity-50 cursor-not-allowed border-2 transition-all"
-      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <!-- Credit Card Statement Card -->
+    <div class="rounded-xl p-6 cursor-pointer border-2 transition-all hover:shadow-md"
+      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);"
+      (click)="navigateToStatements()">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl flex items-center justify-center"
-          style="background-color: var(--minted-bg-surface);">
-          <span class="material-icons-outlined text-2xl" style="color: var(--minted-text-muted)">credit_card</span>
+          style="background-color: var(--minted-info-subtle);">
+          <span class="material-icons-outlined text-2xl" style="color: var(--minted-info)">credit_card</span>
         </div>
         <div>
           <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary)">Credit Card Statement</h3>
           <p class="text-sm" style="color: var(--minted-text-secondary)">
             Parse bank statements automatically
-            <p-tag value="Coming Soon" severity="info" class="ml-2" />
           </p>
         </div>
       </div>

@@ -229,6 +229,10 @@ export class ImportWizard implements OnInit {
     this.router.navigate(['/import/jobs']);
   }
 
+  navigateToStatements(): void {
+    this.router.navigate(['/statements']);
+  }
+
   navigateToJobDetail(id: number): void {
     this.router.navigate(['/import/jobs', id]);
   }
