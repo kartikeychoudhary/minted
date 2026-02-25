@@ -471,6 +471,11 @@ Body: { currentPassword, newPassword, confirmPassword }
 | `period` | `LAST_3_MONTHS` | Last 90 days |
 | `period` | `CUSTOM` | Use startDate + endDate |
 
+**Transaction ↔ Split Integration:**
+- `TransactionResponse` includes `isSplit: Boolean` field indicating whether the transaction has been split
+- `TransactionServiceImpl` queries `SplitTransactionRepository.findSourceTransactionIdsByUserId()` to build a `Set<Long>` of split source IDs, then passes `splitIds.contains(t.getId())` to `TransactionResponse.from()` in all read methods and `update()`
+- `create()` always returns `isSplit = false`
+
 ### 4.6 Budgets
 | Method | Path | Description |
 |--------|------|-------------|
@@ -1080,7 +1085,7 @@ Manages the user's friend list for split transactions. Follows the soft-delete p
 - Fields: shareAmount, sharePercentage (nullable), isPayer, isSettled, settledAt
 
 **Repository Queries:**
-- `SplitTransactionRepository`: sumOwedToUser (JPQL), sumUserOwes (JPQL)
+- `SplitTransactionRepository`: sumOwedToUser (JPQL), sumUserOwes (JPQL), findSourceTransactionIdsByUserId (returns List<Long> of source transaction IDs that have been split)
 - `SplitShareRepository`: findUnsettledBalancesByUserId (GROUP BY friend, net balance), findUnsettledByUserIdAndFriendId
 
 **Service:** `SplitServiceImpl.java`

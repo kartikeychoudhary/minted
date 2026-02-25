@@ -30,6 +30,7 @@ export interface TransactionResponse {
   categoryColor: string;
   isRecurring: boolean;
   tags: string | null;
+  isSplit: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -24,10 +24,11 @@ public record TransactionResponse(
         String categoryColor,
         Boolean isRecurring,
         String tags,
+        Boolean isSplit,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-    public static TransactionResponse from(Transaction transaction) {
+    public static TransactionResponse from(Transaction transaction, boolean isSplit) {
         return new TransactionResponse(
                 transaction.getId(),
                 transaction.getAmount(),
@@ -45,6 +46,7 @@ public record TransactionResponse(
                 transaction.getCategory().getColor(),
                 transaction.getIsRecurring(),
                 transaction.getTags(),
+                isSplit,
                 transaction.getCreatedAt(),
                 transaction.getUpdatedAt()
         );

@@ -18,8 +18,9 @@ export interface ActionsCallbacks {
         type="button"
         icon="pi pi-users"
         class="p-button-text p-button-rounded p-button-sm"
+        [ngClass]="{'split-active': params.data?.isSplit}"
         (click)="onSplitClick()"
-        pTooltip="Split"
+        [pTooltip]="params.data?.isSplit ? 'Already split' : 'Split'"
         tooltipPosition="top">
       </button>
       <button
@@ -67,6 +68,12 @@ export interface ActionsCallbacks {
       background-color: var(--minted-bg-hover) !important;
       border-color: var(--minted-accent) !important;
       color: var(--minted-accent);
+    }
+
+    ::ng-deep .p-button-text.split-active {
+      color: var(--minted-accent) !important;
+      border-color: var(--minted-accent) !important;
+      background: var(--minted-accent-subtle) !important;
     }
 
     ::ng-deep .p-button-text.p-button-danger {

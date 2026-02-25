@@ -17,6 +17,9 @@ public interface SplitTransactionRepository extends JpaRepository<SplitTransacti
 
     Optional<SplitTransaction> findByIdAndUserId(Long id, Long userId);
 
+    @Query("SELECT st.sourceTransaction.id FROM SplitTransaction st WHERE st.user.id = :userId AND st.sourceTransaction IS NOT NULL")
+    List<Long> findSourceTransactionIdsByUserId(@Param("userId") Long userId);
+
     @Query("SELECT COALESCE(SUM(ss.shareAmount), 0) FROM SplitShare ss " +
            "JOIN ss.splitTransaction st " +
            "WHERE st.user.id = :userId AND ss.friend IS NOT NULL AND ss.isPayer = false AND ss.isSettled = false")

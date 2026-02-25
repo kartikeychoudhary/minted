@@ -258,6 +258,181 @@
   </form>
 </p-dialog>
 
+<!-- ═══════ Split Transaction Dialog ═══════ -->
+<p-dialog
+  [(visible)]="showSplitDialog"
+  header="Split Transaction"
+  [modal]="true"
+  [style]="{ width: '640px', maxHeight: '90vh' }"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="onSplitDialogHide()">
+  <form *ngIf="splitForm" [formGroup]="splitForm" (ngSubmit)="saveSplit()">
+    <div class="space-y-5">
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Description *</label>
+        <input pInputText formControlName="description" class="w-full" placeholder="What was this for?" />
+        <small class="text-red-500" *ngIf="splitForm.get('description')?.invalid && splitForm.get('description')?.touched">
+          Description is required
+        </small>
+      </div>
+
+      <!-- Category + Amount -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Category *</label>
+          <input pInputText formControlName="categoryName" class="w-full" placeholder="e.g. Dining" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Total Amount *</label>
+          <p-inputNumber formControlName="totalAmount" [minFractionDigits]="2" [maxFractionDigits]="2"
+            [min]="0.01" class="w-full" placeholder="0.00"
+            (onInput)="onTotalAmountChange()">
+          </p-inputNumber>
+        </div>
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Date *</label>
+        <p-datepicker formControlName="transactionDate" [showIcon]="true" dateFormat="yy-mm-dd"
+          styleClass="w-full">
+        </p-datepicker>
+      </div>
+
+      <hr style="border-color: var(--minted-border);" />
+
+      <!-- Split Type -->
+      <div>
+        <label class="block text-sm font-medium mb-3" style="color: var(--minted-text-secondary);">Split Type</label>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="cursor-pointer" (click)="onSplitTypeChange('EQUAL')">
+            <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
+              [style.background-color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+              [style.border-color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent)' : 'var(--minted-border)'"
+              [style.color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              <i class="pi pi-equals mb-1 text-lg"></i>
+              <span class="text-sm font-medium">Equal</span>
+            </div>
+          </div>
+          <div class="cursor-pointer" (click)="onSplitTypeChange('UNEQUAL')">
+            <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
+              [style.background-color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+              [style.border-color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent)' : 'var(--minted-border)'"
+              [style.color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              <i class="pi pi-chart-pie mb-1 text-lg"></i>
+              <span class="text-sm font-medium">Unequal</span>
+            </div>
+          </div>
+          <div class="cursor-pointer" (click)="onSplitTypeChange('SHARE')">
+            <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
+              [style.background-color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+              [style.border-color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent)' : 'var(--minted-border)'"
+              [style.color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              <i class="pi pi-percentage mb-1 text-lg"></i>
+              <span class="text-sm font-medium">By Share</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split With Friends -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <label class="block text-sm font-medium" style="color: var(--minted-text-secondary);">Split with friends</label>
+        </div>
+        <div class="space-y-3">
+          <!-- Entries -->
+          <div *ngFor="let entry of splitFriendEntries; let i = index"
+            class="flex items-center gap-3 p-3 rounded-lg border"
+            [style.background-color]="entry.friendId === null ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+            [style.border-color]="entry.friendId === null ? 'var(--minted-accent)' : 'var(--minted-border)'">
+            <!-- Avatar -->
+            <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white"
+              [style.background-color]="entry.avatarColor">
+              {{ entry.friendId === null ? 'ME' : getInitials(entry.friendName) }}
+            </div>
+            <!-- Name -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate" style="color: var(--minted-text-primary);">
+                {{ entry.friendId === null ? 'You (Payer)' : entry.friendName }}
+              </p>
+              <p *ngIf="entry.friendId === null" class="text-xs" style="color: var(--minted-text-muted);">Paying full amount</p>
+            </div>
+            <!-- Amount -->
+            <div class="flex items-center gap-3">
+              <div *ngIf="selectedSplitType === 'EQUAL'" class="text-right">
+                <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(entry.shareAmount) }}</p>
+              </div>
+              <input *ngIf="selectedSplitType === 'UNEQUAL'" type="number" step="0.01" [min]="0"
+                class="w-24 px-2 py-1 rounded text-sm text-right"
+                style="background-color: var(--minted-bg-input); color: var(--minted-text-primary); border: 1px solid var(--minted-border);"
+                [(ngModel)]="entry.shareAmount" [ngModelOptions]="{ standalone: true }" />
+              <div *ngIf="selectedSplitType === 'SHARE'" class="flex items-center gap-2">
+                <input type="number" step="0.01" [min]="0" [max]="100"
+                  class="w-16 px-2 py-1 rounded text-sm text-right"
+                  style="background-color: var(--minted-bg-input); color: var(--minted-text-primary); border: 1px solid var(--minted-border);"
+                  [(ngModel)]="entry.sharePercentage" [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="onSharePercentageChange(i)" />
+                <span class="text-xs" style="color: var(--minted-text-muted);">%</span>
+                <span class="text-xs" style="color: var(--minted-text-secondary);">{{ currencyService.format(entry.shareAmount) }}</span>
+              </div>
+              <!-- Remove button (not for "Me") -->
+              <button *ngIf="entry.friendId !== null" type="button"
+                class="p-1 transition-colors hover:text-red-500"
+                style="color: var(--minted-text-muted);"
+                (click)="removeFriendFromSplit(i)">
+                <i class="pi pi-times text-sm"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Add friend placeholder -->
+          <div *ngIf="availableFriendsForSplit.length > 0"
+            class="border border-dashed rounded-lg p-3"
+            style="border-color: var(--minted-border);">
+            <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Add a friend:</p>
+            <div class="flex flex-wrap gap-2">
+              <button *ngFor="let f of availableFriendsForSplit" type="button"
+                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border hover:border-green-400 hover:bg-green-50 transition-colors"
+                style="background-color: var(--minted-bg-card); border-color: var(--minted-border); color: var(--minted-text-primary);"
+                (click)="addFriendToSplit(f)">
+                <div class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+                  [style.background-color]="f.avatarColor">
+                  {{ getInitials(f.name) }}
+                </div>
+                {{ f.name }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Box -->
+      <div class="p-4 rounded-lg flex justify-between items-center"
+        style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
+        <span class="text-sm font-medium" style="color: var(--minted-text-muted);">Total Split</span>
+        <span class="text-lg font-bold" style="color: var(--minted-text-primary);">
+          {{ currencyService.format(getSplitTotal()) }}
+          <span *ngIf="splitForm.get('totalAmount')?.value" class="text-xs font-normal ml-1"
+            style="color: var(--minted-text-muted);">
+            of {{ currencyService.format(splitForm.get('totalAmount')?.value) }}
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button pButton type="button" class="p-button-text" (click)="showSplitDialog = false">Cancel</button>
+      <button pButton type="submit">
+        <i class="pi pi-sitemap mr-2"></i>
+        Add to Splits
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
 <!-- Confirmation Dialog -->
 <p-confirmDialog key="transactions"></p-confirmDialog>
 

@@ -524,6 +524,55 @@ Six fixes and enhancements across Settings, Account management, and LLM integrat
 
 ---
 
+### Splits: Transaction Integration & Inline Split Dialog (February 25, 2026)
+
+Enhanced the transactions list with an `isSplit` indicator and an inline split dialog, replacing the previous route-based navigation to `/splits`.
+
+#### Backend Changes (3 files modified)
+
+- **`SplitTransactionRepository`**: Added `findSourceTransactionIdsByUserId()` JPQL query — returns all source transaction IDs that have been split
+- **`TransactionResponse`**: Added `isSplit: Boolean` field to DTO record; updated `from()` factory to accept `boolean isSplit` parameter
+- **`TransactionServiceImpl`**: All read methods (`getAllByUserId`, `getAllByUserIdAndDateRange`, `getAllByFilters`, `getById`) and `update()` now query split IDs via `Set<Long>` lookup and pass `isSplit` flag to each `TransactionResponse.from()` call; `create()` returns `isSplit = false`
+
+#### Frontend Changes (4 files modified)
+
+- **`transaction.model.ts`**: Added `isSplit: boolean` field to `TransactionResponse` interface
+- **`actions-cell-renderer.component.ts`**:
+  - Added `onSplit` optional callback to `ActionsCallbacks` interface
+  - Split button shows `split-active` CSS class (accent border + background) when `params.data.isSplit === true`
+  - Dynamic tooltip: "Already split" vs "Split"
+- **`transactions-list.ts`**:
+  - Imports `FriendService`, `SplitService`, split/friend models
+  - `SplitFriendEntry` interface for tracking per-friend share state
+  - `initSplitForm()`: Reactive form with description, categoryName, totalAmount, transactionDate, sourceTransactionId
+  - `loadFriends()`: Loads friends list on init (parallel with transactions/categories/accounts)
+  - `splitTransaction(transaction)`: Opens modal pre-filled with transaction data, initializes "Me" as payer
+  - 3 split type calculations:
+    - **EQUAL**: Auto-divides total with `Math.floor` rounding, remainder to first entry
+    - **UNEQUAL**: Manual amount entry per friend (no auto-recalculation)
+    - **SHARE**: Percentage-based with `onSharePercentageChange()` converting % to amounts
+  - `saveSplit()`: Validates form + minimum 2 participants + split total matches transaction total, then calls `SplitService.create()`
+  - `onSplitDialogHide()`: Resets form, entries, and available friends on close
+  - Helper methods: `getInitials()`, `getSplitTotal()`, `recalculateShares()`, `updateAvailableFriends()`
+  - Removed `Router` dependency (no longer navigating to `/splits`)
+- **`transactions-list.html`**:
+  - 640px modal dialog with split form: description, category, amount, date fields
+  - 3-button split type selector using PrimeIcons (`pi-equals`, `pi-chart-pie`, `pi-percentage`)
+  - Friend list with color avatars, initials, editable share amounts
+  - SHARE mode: percentage input with live amount calculation
+  - Dashed-border "Add friend" section with friend chips
+  - Summary box showing split total vs. transaction total
+  - Cancel and "Add to Splits" submit button with `pi-sitemap` icon
+
+### Issues Encountered
+- **Material Icons in split dialog**: Template initially used `<span class="material-icons">` (balance, pie_chart, percent, close, call_split) from Stitch prototypes. Replaced with PrimeIcons (`pi-equals`, `pi-chart-pie`, `pi-percentage`, `pi-times`, `pi-sitemap`). Project only permits PrimeNG/FortAwesome icons.
+- **Missing `>` on `<p-dialog>` tag**: Adding `(onHide)` attribute left the tag unterminated, causing Angular build error `NG5002: Opening tag "p-dialog" not terminated`. Fixed by adding closing `>`.
+- **UNEQUAL/SHARE split calculations missing**: Only EQUAL type had recalculation logic. Added percentage-based calculation for SHARE and manual entry for UNEQUAL.
+
+**Files modified (7):** SplitTransactionRepository.java, TransactionResponse.java, TransactionServiceImpl.java, transaction.model.ts, actions-cell-renderer.component.ts, transactions-list.ts, transactions-list.html
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

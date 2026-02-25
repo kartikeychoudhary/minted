@@ -1182,18 +1182,54 @@ modules/splits/
 
 **Dark mode:** All colors use inline `style` attributes with CSS variables (`var(--minted-bg-card)`, `var(--minted-text-primary)`, etc.) — never hardcoded Tailwind color classes.
 
-**Material icons:** Uses `<span class="material-icons">icon_name</span>` (not `material-symbols-outlined`).
+**Icons:** Uses PrimeIcons (`pi pi-*`) for all icons in the splits module. Material Icons are NOT permitted per project rules.
 
 ### 14.5 Integration with Transactions Page
 
+The transactions list has an **inline split dialog** that allows splitting a transaction without navigating away.
+
+#### Backend: `isSplit` Flag
+- `TransactionResponse` DTO includes `isSplit: Boolean` field
+- `TransactionServiceImpl` queries `SplitTransactionRepository.findSourceTransactionIdsByUserId()` to build a `Set<Long>` of split transaction IDs
+- All read methods and `update()` pass `isSplit` flag to `TransactionResponse.from()`
+- `create()` returns `isSplit = false` (newly created transactions are never split)
+
+#### Frontend: Split Button in AG Grid
 - `ActionsCallbacks` interface extended with optional `onSplit` callback
-- "Split" button added to transactions AG Grid actions column (pi-users icon)
-- `splitTransaction()` method navigates to `/splits` with query params: `sourceTransactionId`, `description`, `categoryName`, `totalAmount`, `transactionDate`
-- SplitsPage reads query params on init and auto-opens split dialog when `sourceTransactionId` is present
+- "Split" button (pi-users icon) added to transactions AG Grid actions column
+- When `isSplit === true`: button shows `split-active` CSS class (accent border + accent-subtle background) and "Already split" tooltip
+- When `isSplit === false`: default styling with "Split" tooltip
+
+#### Frontend: Inline Split Dialog
+- `splitTransaction(transaction)` opens a 640px `<p-dialog>` pre-filled with transaction data
+- Reactive form: description, categoryName, totalAmount, transactionDate, sourceTransactionId
+- **Split type selector** (3 buttons with PrimeIcons):
+  - **Equal** (`pi-equals`): Auto-divides total evenly with `Math.floor` rounding; remainder goes to first entry (payer)
+  - **Unequal** (`pi-chart-pie`): Manual amount entry per friend, no auto-recalculation
+  - **By Share** (`pi-percentage`): Percentage input per friend with live amount calculation via `onSharePercentageChange()`
+- **Friend management**: Add/remove friends from split; "Me" entry (payer) cannot be removed
+- **Validation**: Form validity + minimum 2 participants + split total must match transaction total (within 0.01 tolerance)
+- **Submit**: Calls `SplitService.create()` with `SplitTransactionRequest`
+- **Dialog cleanup**: `onSplitDialogHide()` resets form, entries, split type, and available friends list
+- Helper methods: `getInitials()`, `getSplitTotal()`, `recalculateShares()`, `updateAvailableFriends()`
+
+#### `SplitFriendEntry` Interface (local to TransactionsList)
+```typescript
+interface SplitFriendEntry {
+  friendId: number | null;   // null = "Me" (payer)
+  friendName: string;
+  avatarColor: string;
+  shareAmount: number;
+  sharePercentage: number | null;
+  isPayer: boolean;
+}
+```
 
 ### 14.6 Modified Files
 - `app-routing-module.ts` — Added lazy route for `splits` → `SplitsModule`
 - `sidebar.ts` — Added "Splits" nav item (icon: `call_split`, after Statements)
-- `actions-cell-renderer.component.ts` — Added `onSplit` callback + Split button
-- `transactions-list.ts` — Added `Router` injection + `splitTransaction()` method
+- `actions-cell-renderer.component.ts` — Added `onSplit` callback + Split button with `split-active` styling
+- `transactions-list.ts` — Inline split dialog with `FriendService`, `SplitService`, split form, 3 split type calculations
+- `transactions-list.html` — Split dialog template with type selector, friend list, share inputs, summary box
+- `transaction.model.ts` — Added `isSplit: boolean` to `TransactionResponse`
 

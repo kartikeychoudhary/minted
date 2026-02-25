@@ -13,6 +13,7 @@ import com.minted.api.account.repository.AccountRepository;
 import com.minted.api.transaction.repository.TransactionCategoryRepository;
 import com.minted.api.transaction.repository.TransactionRepository;
 import com.minted.api.user.repository.UserRepository;
+import com.minted.api.split.repository.SplitTransactionRepository;
 import com.minted.api.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,20 +35,23 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository accountRepository;
     private final TransactionCategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final SplitTransactionRepository splitTransactionRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<TransactionResponse> getAllByUserId(Long userId) {
+        Set<Long> splitIds = new HashSet<>(splitTransactionRepository.findSourceTransactionIdsByUserId(userId));
         return transactionRepository.findByUserId(userId).stream()
-                .map(TransactionResponse::from)
+                .map(t -> TransactionResponse.from(t, splitIds.contains(t.getId())))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TransactionResponse> getAllByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
+        Set<Long> splitIds = new HashSet<>(splitTransactionRepository.findSourceTransactionIdsByUserId(userId));
         return transactionRepository.findByUserIdAndDateRangeOrderByDateDesc(userId, startDate, endDate).stream()
-                .map(TransactionResponse::from)
+                .map(t -> TransactionResponse.from(t, splitIds.contains(t.getId())))
                 .collect(Collectors.toList());
     }
 
@@ -53,16 +59,18 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(readOnly = true)
     public List<TransactionResponse> getAllByFilters(Long userId, Long accountId, Long categoryId,
                                                      TransactionType type, LocalDate startDate, LocalDate endDate) {
+        Set<Long> splitIds = new HashSet<>(splitTransactionRepository.findSourceTransactionIdsByUserId(userId));
         return transactionRepository.findByFilters(userId, accountId, categoryId, type, startDate, endDate).stream()
-                .map(TransactionResponse::from)
+                .map(t -> TransactionResponse.from(t, splitIds.contains(t.getId())))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public TransactionResponse getById(Long id, Long userId) {
+        Set<Long> splitIds = new HashSet<>(splitTransactionRepository.findSourceTransactionIdsByUserId(userId));
         Transaction transaction = findTransactionByIdAndUserId(id, userId);
-        return TransactionResponse.from(transaction);
+        return TransactionResponse.from(transaction, splitIds.contains(transaction.getId()));
     }
 
     @Override
@@ -107,7 +115,7 @@ public class TransactionServiceImpl implements TransactionService {
         updateAccountBalancesForCreate(account, toAccount, request.type(), request.amount());
 
         log.info("Transaction created: id={}, type={}, amount={}", saved.getId(), saved.getType(), saved.getAmount());
-        return TransactionResponse.from(saved);
+        return TransactionResponse.from(saved, false);
     }
 
     @Override
@@ -153,7 +161,8 @@ public class TransactionServiceImpl implements TransactionService {
         updateAccountBalancesForCreate(account, toAccount, request.type(), request.amount());
 
         log.info("Transaction updated: id={}", updated.getId());
-        return TransactionResponse.from(updated);
+        Set<Long> splitIds = new HashSet<>(splitTransactionRepository.findSourceTransactionIdsByUserId(userId));
+        return TransactionResponse.from(updated, splitIds.contains(updated.getId()));
     }
 
     @Override

@@ -1,9 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { CategoryService } from '../../../../core/services/category.service';
 import { AccountService } from '../../../../core/services/account.service';
+import { FriendService } from '../../../../core/services/friend.service';
+import { SplitService } from '../../../../core/services/split.service';
 import {
   TransactionRequest,
   TransactionResponse,
@@ -12,11 +13,26 @@ import {
 } from '../../../../core/models/transaction.model';
 import { CategoryResponse, TransactionType } from '../../../../core/models/category.model';
 import { AccountResponse } from '../../../../core/models/account.model';
+import { FriendResponse } from '../../../../core/models/friend.model';
+import {
+  SplitTransactionRequest,
+  SplitShareRequest,
+  SplitType
+} from '../../../../core/models/split.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ColDef, GridApi, GridReadyEvent, GridOptions, themeQuartz } from 'ag-grid-community';
 import { CategoryCellRendererComponent } from '../cell-renderers/category-cell-renderer.component';
 import { ActionsCellRendererComponent } from '../cell-renderers/actions-cell-renderer.component';
 import { CurrencyService } from '../../../../core/services/currency.service';
+
+interface SplitFriendEntry {
+  friendId: number | null;
+  friendName: string;
+  avatarColor: string;
+  shareAmount: number;
+  sharePercentage: number | null;
+  isPayer: boolean;
+}
 
 @Component({
   selector: 'app-transactions-list',
@@ -110,22 +126,33 @@ export class TransactionsList implements OnInit {
   categoryOptions: { label: string; value: number | undefined }[] = [];
   toAccountOptions: { label: string; value: number | null }[] = [];
 
+  // Split dialog state
+  showSplitDialog = false;
+  splitForm?: FormGroup;
+  friends: FriendResponse[] = [];
+  splitFriendEntries: SplitFriendEntry[] = [];
+  selectedSplitType: SplitType = 'EQUAL';
+  availableFriendsForSplit: FriendResponse[] = [];
+  avatarColors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6'];
+
   constructor(
     private transactionService: TransactionService,
     private categoryService: CategoryService,
     private accountService: AccountService,
+    private friendService: FriendService,
+    private splitService: SplitService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    public currencyService: CurrencyService,
-    private router: Router
+    public currencyService: CurrencyService
   ) {
     this.setupGridColumns();
   }
 
   ngOnInit(): void {
     this.initForm();
+    this.initSplitForm();
     this.loadData();
   }
 
@@ -229,7 +256,8 @@ export class TransactionsList implements OnInit {
     Promise.all([
       this.loadCategories(),
       this.loadAccounts(),
-      this.loadTransactions()
+      this.loadTransactions(),
+      this.loadFriends()
     ]).finally(() => {
       this.loading = false;
       this.cdr.detectChanges();
@@ -512,15 +540,183 @@ export class TransactionsList implements OnInit {
     return date.toISOString().split('T')[0];
   }
 
-  splitTransaction(transaction: TransactionResponse): void {
-    this.router.navigate(['/splits'], {
-      queryParams: {
-        sourceTransactionId: transaction.id,
-        description: transaction.description,
-        categoryName: transaction.categoryName,
-        totalAmount: transaction.amount,
-        transactionDate: transaction.transactionDate
+  // ── Split Dialog Methods ──
+
+  initSplitForm(): void {
+    this.splitForm = this.formBuilder.group({
+      sourceTransactionId: [null],
+      description: ['', [Validators.required, Validators.maxLength(500)]],
+      categoryName: ['', [Validators.required, Validators.maxLength(100)]],
+      totalAmount: [null, [Validators.required, Validators.min(0.01)]],
+      transactionDate: [new Date(), Validators.required]
+    });
+  }
+
+  async loadFriends(): Promise<void> {
+    this.friendService.getAll().subscribe({
+      next: (data) => {
+        this.friends = data;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load friends' });
       }
     });
+  }
+
+  splitTransaction(transaction: TransactionResponse): void {
+    this.splitForm?.patchValue({
+      sourceTransactionId: transaction.id,
+      description: transaction.description,
+      categoryName: transaction.categoryName,
+      totalAmount: transaction.amount,
+      transactionDate: new Date(transaction.transactionDate)
+    });
+    this.selectedSplitType = 'EQUAL';
+    this.splitFriendEntries = [
+      { friendId: null, friendName: 'Me', avatarColor: '#22c55e', shareAmount: 0, sharePercentage: null, isPayer: true }
+    ];
+    this.updateAvailableFriends();
+    this.recalculateShares();
+    this.showSplitDialog = true;
+  }
+
+  addFriendToSplit(friend: FriendResponse): void {
+    if (this.splitFriendEntries.some(e => e.friendId === friend.id)) return;
+    this.splitFriendEntries.push({
+      friendId: friend.id,
+      friendName: friend.name,
+      avatarColor: friend.avatarColor,
+      shareAmount: 0,
+      sharePercentage: null,
+      isPayer: false
+    });
+    this.updateAvailableFriends();
+    this.recalculateShares();
+  }
+
+  removeFriendFromSplit(index: number): void {
+    if (this.splitFriendEntries[index].friendId === null) return;
+    this.splitFriendEntries.splice(index, 1);
+    this.updateAvailableFriends();
+    this.recalculateShares();
+  }
+
+  updateAvailableFriends(): void {
+    const usedIds = new Set(this.splitFriendEntries.filter(e => e.friendId !== null).map(e => e.friendId));
+    this.availableFriendsForSplit = this.friends.filter(f => !usedIds.has(f.id));
+  }
+
+  onSplitTypeChange(type: SplitType): void {
+    this.selectedSplitType = type;
+    this.recalculateShares();
+  }
+
+  recalculateShares(): void {
+    const totalAmount = this.splitForm?.get('totalAmount')?.value || 0;
+    const count = this.splitFriendEntries.length;
+    if (count === 0) return;
+
+    if (this.selectedSplitType === 'EQUAL') {
+      const equalAmount = Math.floor((totalAmount / count) * 100) / 100;
+      const remainder = Math.round((totalAmount - equalAmount * count) * 100) / 100;
+      this.splitFriendEntries.forEach((entry, i) => {
+        entry.shareAmount = i === 0 ? equalAmount + remainder : equalAmount;
+        entry.sharePercentage = null;
+      });
+    } else if (this.selectedSplitType === 'SHARE') {
+      // Distribute by equal percentage, user can then edit
+      const equalPct = Math.floor((100 / count) * 100) / 100;
+      const pctRemainder = Math.round((100 - equalPct * count) * 100) / 100;
+      this.splitFriendEntries.forEach((entry, i) => {
+        const pct = i === 0 ? equalPct + pctRemainder : equalPct;
+        entry.sharePercentage = pct;
+        entry.shareAmount = Math.round((totalAmount * pct / 100) * 100) / 100;
+      });
+    }
+    // UNEQUAL: leave amounts as-is for manual entry (no auto-recalculation)
+    this.cdr.detectChanges();
+  }
+
+  onTotalAmountChange(): void {
+    this.recalculateShares();
+  }
+
+  onSharePercentageChange(index: number): void {
+    const totalAmount = this.splitForm?.get('totalAmount')?.value || 0;
+    const entry = this.splitFriendEntries[index];
+    const pct = entry.sharePercentage || 0;
+    entry.shareAmount = Math.round((totalAmount * pct / 100) * 100) / 100;
+    this.cdr.detectChanges();
+  }
+
+  getSplitTotal(): number {
+    return this.splitFriendEntries.reduce((sum, e) => sum + (e.shareAmount || 0), 0);
+  }
+
+  saveSplit(): void {
+    if (this.splitForm?.invalid) {
+      Object.keys(this.splitForm.controls).forEach(key => {
+        this.splitForm?.get(key)?.markAsTouched();
+      });
+      return;
+    }
+
+    if (this.splitFriendEntries.length < 2) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Add at least one friend to split with' });
+      return;
+    }
+
+    const totalAmount = this.splitForm!.value.totalAmount || 0;
+    const splitTotal = this.getSplitTotal();
+    if (Math.abs(splitTotal - totalAmount) > 0.01) {
+      this.messageService.add({ severity: 'warn', summary: 'Warning', detail: 'Split amounts must add up to the total amount' });
+      return;
+    }
+
+    const formValue = this.splitForm!.value;
+    const shares: SplitShareRequest[] = this.splitFriendEntries.map(entry => ({
+      friendId: entry.friendId,
+      shareAmount: entry.shareAmount,
+      sharePercentage: entry.sharePercentage || undefined,
+      isPayer: entry.isPayer
+    }));
+
+    const request: SplitTransactionRequest = {
+      sourceTransactionId: formValue.sourceTransactionId,
+      description: formValue.description,
+      categoryName: formValue.categoryName,
+      totalAmount: formValue.totalAmount,
+      splitType: this.selectedSplitType,
+      transactionDate: this.formatDate(formValue.transactionDate),
+      shares
+    };
+
+    this.splitService.create(request).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Split created' });
+        this.showSplitDialog = false;
+        this.loadTransactions();
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err?.error?.message || 'Failed to create split' });
+      }
+    });
+  }
+
+  onSplitDialogHide(): void {
+    this.splitForm?.reset({ transactionDate: new Date() });
+    this.splitFriendEntries = [];
+    this.selectedSplitType = 'EQUAL';
+    this.availableFriendsForSplit = [...this.friends];
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '?';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   }
 }

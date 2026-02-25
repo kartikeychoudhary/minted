@@ -351,6 +351,7 @@ If an account with the same name was previously soft-deleted, creating a new acc
           "color": "#FF5722"
         },
         "isRecurring": false,
+        "isSplit": false,
         "tags": ["team", "work"],
         "createdAt": "2026-02-15T10:30:00Z"
       }

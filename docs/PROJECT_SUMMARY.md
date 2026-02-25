@@ -77,11 +77,12 @@ minted/
 │   │   │   ├── bulkimport/   # CSV bulk import
 │   │   │   ├── statement/    # Credit card statement parser
 │   │   │   ├── llm/          # LLM config & merchant mappings
+│   │   │   ├── split/        # Split transactions & friends
 │   │   │   └── admin/        # Admin management & settings
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── logback-spring.xml  # MDC-enriched logging (dev/prod profiles)
-│   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_29)
+│   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_31)
 │   └── build.gradle
 │
 ├── minted-web/              # Angular frontend
@@ -96,6 +97,7 @@ minted/
 │   │   │   ├── analytics/   # Analytics overview
 │   │   │   ├── import/      # Bulk CSV importer
 │   │   │   ├── notifications/ # Notifications full page
+│   │   │   ├── splits/       # Bill splitting with friends
 │   │   │   ├── settings/    # Settings tabs (Profile, Accounts, Categories, Budgets)
 │   │   │   └── admin/       # User management, jobs, server settings
 │   │   └── layout/          # Sidebar, header, notification drawer
@@ -180,7 +182,10 @@ minted/
 - [x] User Management & Signup (admin CRUD, signup toggle, public registration)
 - [x] Notification System (NotificationHelper, bell badge, drawer, full page)
 
-### Phase 8: Polish & Responsive ⏳
+### Phase 8: Splits & Polish ⏳
+- [x] Bill splitting with friends (backend: friends + split transactions + shares + settlement + balance summary)
+- [x] Splits module frontend (dedicated `/splits` page with AG Grid, friend management, split CRUD, settle, CSV export)
+- [x] Transaction ↔ Split integration (`isSplit` flag on TransactionResponse, inline split dialog in transactions list)
 - [x] Mobile responsiveness (hamburger sidebar drawer, responsive dialogs/grids, auth pages)
 - [x] Bulk import cron job removed (processing is user-action driven)
 - [x] Import wizard: Credit Card Statement card linked to /statements
@@ -277,13 +282,13 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 
 **Phases 1–7 complete.** All core features are implemented and working.
 
-- **Backend:** 29 Flyway migrations (V0_0_1 through V0_0_29), 10+ entities, full REST API
-- **Frontend:** 9 feature modules (auth, dashboard, transactions, recurring, analytics, import, notifications, settings, admin), layout with sidebar + notification drawer + mobile responsive
+- **Backend:** 31 Flyway migrations (V0_0_1 through V0_0_31), 15+ entities, full REST API
+- **Frontend:** 10 feature modules (auth, dashboard, transactions, recurring, analytics, import, notifications, splits, settings, admin), layout with sidebar + notification drawer + mobile responsive
 - **Infrastructure:** Docker Compose (Nginx + Spring Boot + MySQL), ports 7800 (web) / 7801 (API)
 - **Remaining:** Configurable dashboard cards, budget tracking polish
 
 ### Key Architectural Highlights
-- **Feature-based backend modules:** 15 modules (auth, user, account, transaction, budget, dashboard, analytics, recurring, notification, job, bulkimport, statement, llm, admin, common) — each module has its own controller/dto/entity/repository/service
+- **Feature-based backend modules:** 17 modules (auth, user, account, transaction, budget, dashboard, analytics, recurring, notification, job, bulkimport, statement, llm, split, friend, admin, common) — each module has its own controller/dto/entity/repository/service
 - **Design tokens:** All colors via `--minted-*` CSS custom properties (light + dark mode)
 - **AG Grid v35:** Custom `ag-theme-minted` theme with CSS var references
 - **Theme system:** Dark mode toggle, 6 accent presets, PrimeNG Aura preset overrides
@@ -291,6 +296,7 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 - **Auth:** JWT with force-password-change flow, signup toggle, admin user management
 - **Structured logging:** MDC-enriched logs with requestId/userId/method/uri on every line; `MdcFilter` → `JwtAuthFilter` pipeline; `logback-spring.xml` with dev (DEBUG/console), prod (INFO/JSON) profiles; `RequestLoggingInterceptor` for request timing; `@Slf4j` on all service impls for business event logging (see `docs/LOGGING.md`)
 - **Bulk import:** CSV wizard with user-action-driven async processing and step-level tracking (no cron job)
+- **Splits:** Friend management with soft-delete, 3 split types (Equal/Unequal/Share), balance tracking, settlement with notifications, inline split dialog in transactions, `isSplit` flag on transaction responses, CSV export per friend
 - **Mobile responsive:** PrimeNG Drawer sidebar on mobile, hamburger menu, global dialog/grid overrides, responsive auth pages
 
 ---
