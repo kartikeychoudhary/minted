@@ -271,7 +271,7 @@
     flex-shrink: 0;
 }
 
-.tx-icon .material-icons {
+.tx-icon i[class*="pi"] {
     font-size: 20px;
 }
 
@@ -370,7 +370,7 @@
     transition: all 0.15s;
 }
 
-.action-btn .material-icons {
+.action-btn i[class*="pi"] {
     font-size: 20px;
 }
 

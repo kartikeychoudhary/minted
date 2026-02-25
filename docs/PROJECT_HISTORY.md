@@ -573,6 +573,72 @@ Enhanced the transactions list with an `isSplit` indicator and an inline split d
 
 ---
 
+### Icon Standardization: PrimeNG Icons Only (February 25, 2026)
+
+Migrated the entire app from 3 icon libraries (Google Material Icons ~200+ usages, Font Awesome 1 usage) to PrimeNG Icons (`pi pi-*`) exclusively. Reduces visual inconsistency and eliminates unnecessary CSS/font loads.
+
+#### Backend Changes
+
+- **`V0_0_32__update_icons_to_primeng.sql`** — Converts `fa-*` prefixed icons and short-form names (`bank`, `credit-card`, `wallet`, `chart`) to `pi pi-*` format in `account_types`, `default_categories`, and `transaction_categories`
+- **`V0_0_33__fix_category_icons.sql`** — Updates Food & Dining, Groceries, and EMI to better-matching PrimeNG icons
+- **`V0_0_34__fix_bare_material_icons.sql`** — Converts bare Material icon names (`restaurant`, `shopping_bag`, `directions_car`, etc.) that the settings UI had been saving to the DB; fixes invalid `pi pi-shop` from V0_0_33; catch-all sets any remaining non-`pi pi-*` icons to `pi pi-tag`
+- **`DataInitializer.java`** — `getDefaultIconForAccountType()` now returns `pi pi-*` format
+
+#### Frontend: Layout (4 files)
+- **Sidebar** (`sidebar.ts`, `sidebar.html`): All nav icons changed from Material names to `pi pi-*` classes. Logo, toggle chevrons, user menu icons all converted. Template changed from `<span class="material-icons">{{ item.icon }}</span>` to `<i [class]="item.icon">`.
+- **Header** (`layout.html`, `layout.ts`): Hamburger, theme toggle, notification bell, drawer icons all converted. `getNotificationIcon()` returns PrimeNG classes.
+
+#### Frontend: Feature Modules (20+ files)
+- **Dashboard**: KPI card icons (`trending_up` → `pi pi-arrow-up`, etc.)
+- **Recurring Transactions**: All action/status/type icons + category `iconMap`
+- **Splits**: 11 Material icon instances replaced
+- **Import**: Wizard step icons, job list/detail back arrows
+- **Admin**: User management, server settings, job detail icons
+- **Notifications**: Type icons, action buttons
+- **Settings Profile**: Theme toggle, accent check icons
+- **Statement**: `fa fa-tag` → `pi pi-tag` in AG Grid cell renderer
+
+#### Frontend: Category Icon System Fix (3 files)
+- **`categories.ts`** (Settings): Root cause fix — `iconOptions` array was storing Material icon names (`restaurant`, `shopping_bag`) as `value` (saved to DB) while displaying PrimeNG icons visually. Changed all `value` fields to `pi pi-*` format. Expanded from 12 to 24 icon options. Updated form defaults.
+- **`category-cell-renderer.component.ts`** (Transactions AG Grid): Added `getIconClass()` method with legacy Material→PrimeNG fallback map for old DB values. Ensures icons render even before migration runs.
+- **`categories.ts` `getIconClass()`**: Simplified — checks `pi pi-` prefix first, falls back to Material mapping for legacy values.
+
+#### Cleanup (3 files)
+- **`index.html`**: Removed Google Material Icons and Material Icons Outlined `<link>` tags
+- **`styles.scss`**: Removed `@import '@fortawesome/fontawesome-free/css/all.min.css'`
+- **`package.json`**: Uninstalled `@fortawesome/fontawesome-free` dependency
+
+#### Icon Mapping Reference
+
+| Old (Material/FA) | New (PrimeNG) |
+|---|---|
+| `dashboard` | `pi pi-th-large` |
+| `receipt_long` | `pi pi-list` |
+| `sync_alt` | `pi pi-sync` |
+| `upload_file` | `pi pi-upload` |
+| `description` | `pi pi-file` |
+| `call_split` | `pi pi-sitemap` |
+| `pie_chart` | `pi pi-chart-pie` |
+| `notifications` | `pi pi-bell` |
+| `settings` | `pi pi-cog` |
+| `trending_up/down` | `pi pi-arrow-up/down` |
+| `restaurant` | `pi pi-shopping-cart` |
+| `shopping_bag` | `pi pi-shopping-bag` |
+| `fa-utensils` | `pi pi-shopping-cart` |
+| `fa-graduation-cap` | `pi pi-book` |
+| `fa fa-tag` | `pi pi-tag` |
+
+#### Issues Encountered
+- **`pi pi-shop` is not a valid PrimeNG icon**: Used in V0_0_33 for Food & Dining. Fixed in V0_0_34 by converting to `pi pi-shopping-cart`.
+- **Categories settings UI saving Material icon names to DB**: The `iconOptions` array stored Material names as `value` (e.g., `restaurant`) while showing PrimeNG icons in the dropdown. Users creating/editing categories got Material names saved. Fixed by changing `value` to `pi pi-*` format and adding V0_0_34 migration for existing data.
+- **Bare Material icon names not caught by V0_0_32**: V0_0_32 only converted `fa-*` prefixed icons. Bare names like `restaurant`, `school` from the settings UI were missed. Fixed in V0_0_34 with explicit mapping + catch-all.
+- **Never modify applied Flyway migrations**: V0_0_33 was already applied to the database. Created V0_0_34 as a new migration instead of modifying V0_0_33.
+
+**Files created (3):** V0_0_32, V0_0_33, V0_0_34 migrations
+**Files modified (30+):** DataInitializer.java, sidebar.ts/html, layout.html/ts, home.html/scss, recurring-list.html/ts/scss, splits-page.html, import-jobs/wizard/job-detail HTML, admin user-management/server-settings/job-detail HTML, jobs-list.ts, import-jobs.ts, notifications-list.html/ts, profile.html, parse-preview-step.ts, category-cell-renderer.component.ts, categories.ts, transactions-list.scss, index.html, styles.scss, package.json
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

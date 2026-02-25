@@ -60,7 +60,7 @@ export class ParsePreviewStep implements OnInit {
       field: 'categoryName', headerName: 'Category', width: 160, editable: true,
       cellRenderer: (params: any) => {
         const ruleIcon = params.data?.mappedByRule
-          ? '<i class="fa fa-tag" title="Category assigned by merchant mapping" style="color:var(--minted-accent);margin-right:4px;font-size:10px"></i>'
+          ? '<i class="pi pi-tag" title="Category assigned by merchant mapping" style="color:var(--minted-accent);margin-right:4px;font-size:10px"></i>'
           : '';
         return `${ruleIcon}${params.value || ''}`;
       }

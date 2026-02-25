@@ -117,11 +117,11 @@ public class DataInitializer implements ApplicationRunner {
 
     private String getDefaultIconForAccountType(String name) {
         String lowerName = name.toLowerCase();
-        if (lowerName.contains("bank")) return "bank";
-        if (lowerName.contains("card")) return "credit-card";
-        if (lowerName.contains("wallet")) return "wallet";
-        if (lowerName.contains("invest")) return "chart";
-        return "bank"; // fallback
+        if (lowerName.contains("bank")) return "pi pi-building-columns";
+        if (lowerName.contains("card")) return "pi pi-credit-card";
+        if (lowerName.contains("wallet")) return "pi pi-wallet";
+        if (lowerName.contains("invest")) return "pi pi-chart-line";
+        return "pi pi-building-columns"; // fallback
     }
 
     private String getDefaultColorForCategory(String name) {

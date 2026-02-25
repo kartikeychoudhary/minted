@@ -81,12 +81,12 @@ export class Layout implements OnInit, OnDestroy {
 
   getNotificationIcon(type: NotificationType): string {
     switch (type) {
-      case 'SUCCESS': return 'check_circle';
-      case 'WARNING': return 'warning';
-      case 'ERROR':   return 'error';
-      case 'SYSTEM':  return 'campaign';
+      case 'SUCCESS': return 'pi pi-check-circle';
+      case 'WARNING': return 'pi pi-exclamation-triangle';
+      case 'ERROR':   return 'pi pi-times-circle';
+      case 'SYSTEM':  return 'pi pi-megaphone';
       case 'INFO':
-      default:        return 'info';
+      default:        return 'pi pi-info-circle';
     }
   }
 

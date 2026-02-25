@@ -8,7 +8,7 @@
   <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen"
     [class.px-4]="!mobileMode && !isOpen">
     <div class="flex items-center gap-2" [class.justify-center]="!mobileMode && !isOpen">
-      <span class="material-icons text-3xl" [style.color]="'var(--minted-accent)'">account_balance_wallet</span>
+      <i class="pi pi-wallet text-3xl" [style.color]="'var(--minted-accent)'"></i>
       <span *ngIf="mobileMode || isOpen" class="text-xl font-bold tracking-tight">Minted</span>
     </div>
   </div>
@@ -19,7 +19,7 @@
     [style.background-color]="'var(--minted-bg-card)'" [style.color]="'var(--minted-text-secondary)'"
     [style.border-color]="'var(--minted-border)'" [attr.aria-label]="isOpen ? 'Collapse sidebar' : 'Expand sidebar'"
     pTooltip="{{ isOpen ? 'Collapse' : 'Expand' }}" tooltipPosition="right">
-    <span class="material-icons text-sm">{{ isOpen ? 'chevron_left' : 'chevron_right' }}</span>
+    <i [class]="isOpen ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" class="text-sm"></i>
   </button>
 
   <!-- Navigation Links -->
@@ -40,10 +40,8 @@
         [class.px-3]="mobileMode || isOpen" [class.py-2.5]="mobileMode || isOpen" [class.gap-3]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen"
         [class.p-3]="!mobileMode && !isOpen" [pTooltip]="!mobileMode && !isOpen ? item.label : ''" tooltipPosition="right"
         (click)="onNavClick()">
-        <span class="material-icons text-xl transition-colors" [class.text-primary]="isActive(item.route)"
-          [class.group-hover:text-primary]="!isActive(item.route)">
-          {{ item.icon }}
-        </span>
+        <i [class]="item.icon" class="text-xl transition-colors" [class.text-primary]="isActive(item.route)"
+          [class.group-hover:text-primary]="!isActive(item.route)"></i>
         <span *ngIf="mobileMode || isOpen" class="font-medium">{{ item.label }}</span>
       </a>
     </ng-container>
@@ -70,7 +68,7 @@
       </div>
 
       <!-- Dropdown Icon (shown when open) -->
-      <span *ngIf="mobileMode || isOpen" class="material-icons text-white/40 text-lg">expand_more</span>
+      <i *ngIf="mobileMode || isOpen" class="pi pi-chevron-down text-white/40 text-lg"></i>
     </div>
 
     <!-- User Menu Dropdown -->
@@ -80,13 +78,13 @@
       <button type="button" (click)="navigateToProfile()"
         class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
         [style.color]="'var(--minted-text-primary)'">
-        <span class="material-icons text-lg" [style.color]="'var(--minted-text-secondary)'">person</span>
+        <i class="pi pi-user text-lg" [style.color]="'var(--minted-text-secondary)'"></i>
         <span>Profile Settings</span>
       </button>
       <button type="button" (click)="logout()"
         class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t"
         [style.border-color]="'var(--minted-border)'">
-        <span class="material-icons text-red-600 text-lg">logout</span>
+        <i class="pi pi-sign-out text-red-600 text-lg"></i>
         <span>Logout</span>
       </button>
     </div>

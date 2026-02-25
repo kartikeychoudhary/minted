@@ -96,7 +96,7 @@ export class JobsList implements OnInit {
       cellClass: 'flex items-center',
       cellRenderer: (params: any) => {
         return `<button class="text-primary hover:underline font-medium flex items-center gap-1 text-sm outline-none cursor-pointer border-none bg-transparent" data-action="view-details">
-                  Details <span class="material-icons text-sm">chevron_right</span>
+                  Details <i class="pi pi-chevron-right text-sm"></i>
                 </button>`;
       }
     }

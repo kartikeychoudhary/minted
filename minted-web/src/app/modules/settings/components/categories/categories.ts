@@ -27,20 +27,32 @@ export class Categories implements OnInit {
     { label: 'Transfer', value: TransactionType.TRANSFER }
   ];
 
-  // Icon options with colors
+  // Icon options — value is the PrimeNG class stored in DB
   iconOptions = [
-    { label: 'Restaurant', value: 'restaurant', icon: 'pi pi-gift', color: 'red' },
-    { label: 'Shopping Bag', value: 'shopping_bag', icon: 'pi pi-shopping-bag', color: 'blue' },
-    { label: 'Car', value: 'directions_car', icon: 'pi pi-car', color: 'green' },
-    { label: 'Movie', value: 'movie', icon: 'pi pi-video', color: 'purple' },
-    { label: 'Home', value: 'home', icon: 'pi pi-home', color: 'amber' },
-    { label: 'Health', value: 'local_hospital', icon: 'pi pi-heart', color: 'pink' },
-    { label: 'Education', value: 'school', icon: 'pi pi-book', color: 'indigo' },
-    { label: 'Travel', value: 'flight', icon: 'pi pi-send', color: 'teal' },
-    { label: 'Utilities', value: 'bolt', icon: 'pi pi-bolt', color: 'orange' },
-    { label: 'Salary', value: 'attach_money', icon: 'pi pi-dollar', color: 'green' },
-    { label: 'Gift', value: 'card_giftcard', icon: 'pi pi-gift', color: 'pink' },
-    { label: 'Investment', value: 'trending_up', icon: 'pi pi-chart-line', color: 'blue' }
+    { label: 'Shopping Cart', value: 'pi pi-shopping-cart', icon: 'pi pi-shopping-cart', color: 'red' },
+    { label: 'Shopping Bag', value: 'pi pi-shopping-bag', icon: 'pi pi-shopping-bag', color: 'blue' },
+    { label: 'Car', value: 'pi pi-car', icon: 'pi pi-car', color: 'green' },
+    { label: 'Video', value: 'pi pi-video', icon: 'pi pi-video', color: 'purple' },
+    { label: 'Home', value: 'pi pi-home', icon: 'pi pi-home', color: 'amber' },
+    { label: 'Heart', value: 'pi pi-heart', icon: 'pi pi-heart', color: 'pink' },
+    { label: 'Book', value: 'pi pi-book', icon: 'pi pi-book', color: 'indigo' },
+    { label: 'Travel', value: 'pi pi-send', icon: 'pi pi-send', color: 'teal' },
+    { label: 'Bolt', value: 'pi pi-bolt', icon: 'pi pi-bolt', color: 'orange' },
+    { label: 'Wallet', value: 'pi pi-wallet', icon: 'pi pi-wallet', color: 'green' },
+    { label: 'Gift', value: 'pi pi-gift', icon: 'pi pi-gift', color: 'pink' },
+    { label: 'Chart', value: 'pi pi-chart-line', icon: 'pi pi-chart-line', color: 'blue' },
+    { label: 'Briefcase', value: 'pi pi-briefcase', icon: 'pi pi-briefcase', color: 'indigo' },
+    { label: 'Money', value: 'pi pi-money-bill', icon: 'pi pi-money-bill', color: 'green' },
+    { label: 'Calculator', value: 'pi pi-calculator', icon: 'pi pi-calculator', color: 'amber' },
+    { label: 'Map', value: 'pi pi-map', icon: 'pi pi-map', color: 'teal' },
+    { label: 'Sync', value: 'pi pi-sync', icon: 'pi pi-sync', color: 'blue' },
+    { label: 'Shield', value: 'pi pi-shield', icon: 'pi pi-shield', color: 'indigo' },
+    { label: 'User', value: 'pi pi-user', icon: 'pi pi-user', color: 'purple' },
+    { label: 'Tag', value: 'pi pi-tag', icon: 'pi pi-tag', color: 'orange' },
+    { label: 'Star', value: 'pi pi-star', icon: 'pi pi-star', color: 'amber' },
+    { label: 'Credit Card', value: 'pi pi-credit-card', icon: 'pi pi-credit-card', color: 'blue' },
+    { label: 'Desktop', value: 'pi pi-desktop', icon: 'pi pi-desktop', color: 'indigo' },
+    { label: 'Percentage', value: 'pi pi-percentage', icon: 'pi pi-percentage', color: 'green' }
   ];
 
   // Color options
@@ -75,7 +87,7 @@ export class Categories implements OnInit {
     this.categoryForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       type: [TransactionType.EXPENSE, Validators.required],
-      icon: ['restaurant'],
+      icon: ['pi pi-shopping-cart'],
       color: ['red']
     });
   }
@@ -110,7 +122,7 @@ export class Categories implements OnInit {
     this.selectedIcon = this.iconOptions[0];
     this.categoryForm?.reset({
       type: TransactionType.EXPENSE,
-      icon: 'restaurant',
+      icon: 'pi pi-shopping-cart',
       color: 'red'
     });
     this.duplicateError = '';
@@ -240,18 +252,14 @@ export class Categories implements OnInit {
       return 'pi pi-tag';
     }
 
-    const iconOption = this.iconOptions.find(opt => opt.value === iconValue);
-    if (iconOption) {
-      return iconOption.icon;
-    }
-
+    // If already a PrimeNG icon class, use directly
     if (iconValue.startsWith('pi pi-')) {
       return iconValue;
     }
 
-    // Map Material Icons to PrimeIcons
+    // Legacy Material icon fallback for old DB values
     const iconMap: { [key: string]: string } = {
-      'restaurant': 'pi pi-gift',
+      'restaurant': 'pi pi-shopping-cart',
       'shopping_bag': 'pi pi-shopping-bag',
       'directions_car': 'pi pi-car',
       'movie': 'pi pi-video',

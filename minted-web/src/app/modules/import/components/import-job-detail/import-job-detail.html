@@ -7,7 +7,7 @@
       style="color: var(--minted-text-secondary);"
       onmouseover="this.style.backgroundColor='var(--minted-bg-hover)'"
       onmouseout="this.style.backgroundColor='transparent'">
-      <span class="material-icons">arrow_back</span>
+      <i class="pi pi-arrow-left"></i>
     </button>
     <div>
       <h1 class="text-2xl font-bold tracking-tight flex items-center gap-3" style="color: var(--minted-text-primary)">
@@ -36,7 +36,7 @@
   <!-- Error State -->
   <div *ngIf="error" class="p-4 rounded-xl border flex items-center gap-3"
     style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
-    <span class="material-icons" style="color: var(--minted-danger);">error_outline</span>
+    <i class="pi pi-exclamation-circle" style="color: var(--minted-danger);"></i>
     <p class="font-medium">{{ error }}</p>
   </div>
 

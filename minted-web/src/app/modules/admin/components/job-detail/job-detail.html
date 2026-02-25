@@ -4,8 +4,7 @@
     <div class="flex items-center gap-4">
         <button (click)="goBack()"
             class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors group flex items-center justify-center">
-            <span
-                class="material-icons text-minted-text-secondary group-hover:text-minted-primary transition-colors">arrow_back</span>
+            <i class="pi pi-arrow-left text-minted-text-secondary group-hover:text-minted-primary transition-colors"></i>
         </button>
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize flex items-center gap-3">
@@ -37,7 +36,7 @@
     <!-- Error State -->
     <div *ngIf="error" class="p-4 rounded-xl border flex items-center gap-3"
         style="background-color: var(--minted-danger-subtle); color: var(--minted-danger); border-color: var(--minted-danger-subtle);">
-        <span class="material-icons" style="color: var(--minted-danger);">error_outline</span>
+        <i class="pi pi-exclamation-circle" style="color: var(--minted-danger);"></i>
         <p class="font-medium">{{ error }}</p>
     </div>
 

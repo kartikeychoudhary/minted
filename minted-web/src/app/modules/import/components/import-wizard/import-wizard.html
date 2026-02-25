@@ -23,7 +23,7 @@
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl flex items-center justify-center"
           style="background-color: var(--minted-accent-subtle);">
-          <span class="material-icons-outlined text-2xl" style="color: var(--minted-accent)">description</span>
+          <i class="pi pi-file text-2xl" style="color: var(--minted-accent)"></i>
         </div>
         <div>
           <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary)">CSV Import</h3>
@@ -39,7 +39,7 @@
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-xl flex items-center justify-center"
           style="background-color: var(--minted-info-subtle);">
-          <span class="material-icons-outlined text-2xl" style="color: var(--minted-info)">credit_card</span>
+          <i class="pi pi-credit-card text-2xl" style="color: var(--minted-info)"></i>
         </div>
         <div>
           <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary)">Credit Card Statement</h3>
@@ -96,7 +96,7 @@
             <!-- CSV Format Instructions -->
             <div class="rounded-lg p-4" style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
               <h4 class="text-sm font-semibold mb-3" style="color: var(--minted-text-primary)">
-                <span class="material-icons-outlined text-sm align-middle mr-1">info</span>
+                <i class="pi pi-info-circle text-sm align-middle mr-1"></i>
                 CSV Format Requirements
               </h4>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm" style="color: var(--minted-text-secondary)">
@@ -266,7 +266,7 @@
             <!-- Post-import success -->
             <ng-container *ngIf="importComplete && importResult">
               <div class="text-center py-8">
-                <span class="material-icons-outlined text-6xl mb-4" style="color: var(--minted-success)">check_circle</span>
+                <i class="pi pi-check-circle text-6xl mb-4" style="color: var(--minted-success)"></i>
                 <h3 class="text-xl font-bold mb-2" style="color: var(--minted-text-primary)">Import Started Successfully</h3>
                 <p class="text-sm mb-6" style="color: var(--minted-text-secondary)">
                   Your transactions are being imported in the background. You can track the progress below.

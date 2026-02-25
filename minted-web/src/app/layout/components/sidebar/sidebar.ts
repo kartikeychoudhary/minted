@@ -28,21 +28,21 @@ export class Sidebar {
   navigationItems: NavigationItem[] = [];
 
   private baseNavigationItems: NavigationItem[] = [
-    { label: 'Dashboard', icon: 'dashboard', route: '/' },
-    { label: 'Transactions', icon: 'receipt_long', route: '/transactions' },
-    { label: 'Recurring', icon: 'sync_alt', route: '/recurring' },
-    { label: 'Import', icon: 'upload_file', route: '/import' },
-    { label: 'Statements', icon: 'description', route: '/statements' },
-    { label: 'Splits', icon: 'call_split', route: '/splits' },
-    { label: 'Analytics', icon: 'pie_chart', route: '/analytics' },
-    { label: 'Notifications', icon: 'notifications', route: '/notifications' },
-    { label: 'Settings', icon: 'settings', route: '/settings', section: 'Management' },
+    { label: 'Dashboard', icon: 'pi pi-th-large', route: '/' },
+    { label: 'Transactions', icon: 'pi pi-list', route: '/transactions' },
+    { label: 'Recurring', icon: 'pi pi-sync', route: '/recurring' },
+    { label: 'Import', icon: 'pi pi-upload', route: '/import' },
+    { label: 'Statements', icon: 'pi pi-file', route: '/statements' },
+    { label: 'Splits', icon: 'pi pi-sitemap', route: '/splits' },
+    { label: 'Analytics', icon: 'pi pi-chart-pie', route: '/analytics' },
+    { label: 'Notifications', icon: 'pi pi-bell', route: '/notifications' },
+    { label: 'Settings', icon: 'pi pi-cog', route: '/settings', section: 'Management' },
   ];
 
   private adminNavigationItems: NavigationItem[] = [
-    { label: 'Users', icon: 'group', route: '/admin/users', section: 'Admin' },
-    { label: 'Server Jobs', icon: 'schedule', route: '/admin/jobs' },
-    { label: 'Server Settings', icon: 'dns', route: '/admin/settings' }
+    { label: 'Users', icon: 'pi pi-users', route: '/admin/users', section: 'Admin' },
+    { label: 'Server Jobs', icon: 'pi pi-clock', route: '/admin/jobs' },
+    { label: 'Server Settings', icon: 'pi pi-server', route: '/admin/settings' }
   ];
 
   constructor(

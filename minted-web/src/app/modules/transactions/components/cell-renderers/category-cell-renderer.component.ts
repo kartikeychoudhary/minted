@@ -10,7 +10,7 @@ import { ICellRendererParams } from 'ag-grid-community';
       <div
         class="flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center"
         [ngClass]="getCategoryColorClass()">
-        <span class="material-icons-outlined text-base">{{ params.data.categoryIcon || 'receipt_long' }}</span>
+        <i [class]="getIconClass()" class="text-base"></i>
       </div>
       <div>
       <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ params.data.categoryName }}</div>
@@ -24,6 +24,12 @@ import { ICellRendererParams } from 'ag-grid-community';
       width: 100%;
       height: 100%;
     }
+    :host i[class*="pi"] {
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   `]
 })
 export class CategoryCellRendererComponent implements ICellRendererAngularComp {
@@ -36,6 +42,32 @@ export class CategoryCellRendererComponent implements ICellRendererAngularComp {
   refresh(params: ICellRendererParams): boolean {
     this.params = params;
     return true;
+  }
+
+  getIconClass(): string {
+    const icon = this.params.data.categoryIcon;
+    if (!icon || typeof icon !== 'string') {
+      return 'pi pi-tag';
+    }
+    if (icon.startsWith('pi pi-')) {
+      return icon;
+    }
+    // Legacy Material icon fallback
+    const iconMap: Record<string, string> = {
+      'restaurant': 'pi pi-shopping-cart',
+      'shopping_bag': 'pi pi-shopping-bag',
+      'directions_car': 'pi pi-car',
+      'movie': 'pi pi-video',
+      'home': 'pi pi-home',
+      'local_hospital': 'pi pi-heart',
+      'school': 'pi pi-book',
+      'flight': 'pi pi-send',
+      'bolt': 'pi pi-bolt',
+      'attach_money': 'pi pi-dollar',
+      'card_giftcard': 'pi pi-gift',
+      'trending_up': 'pi pi-chart-line'
+    };
+    return iconMap[icon] || 'pi pi-tag';
   }
 
   getCategoryColorClass(): string {

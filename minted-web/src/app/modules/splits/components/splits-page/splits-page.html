@@ -21,12 +21,12 @@
       <button pButton
         class="p-button-outlined"
         (click)="openNewFriendDialog()">
-        <span class="material-icons text-[18px] mr-2">group_add</span>
+        <i class="pi pi-user-plus text-[18px] mr-2"></i>
         Add Friend
       </button>
       <button pButton
         (click)="openNewSplitDialog()">
-        <span class="material-icons text-[18px] mr-2">call_split</span>
+        <i class="pi pi-sitemap text-[18px] mr-2"></i>
         Add Split
       </button>
     </div>
@@ -57,7 +57,7 @@
         <div class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group" (click)="openNewFriendDialog()">
           <div class="w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center group-hover:text-green-500 group-hover:border-green-500 transition-colors"
             style="border-color: var(--minted-border); color: var(--minted-text-muted);">
-            <span class="material-icons">add</span>
+            <i class="pi pi-plus"></i>
           </div>
           <span class="text-xs font-medium" style="color: var(--minted-text-muted);">Add</span>
         </div>
@@ -96,7 +96,7 @@
   <!-- Pending Settlements -->
   <div class="mb-10" *ngIf="friendBalances.length > 0">
     <h2 class="text-xl font-bold mb-5 flex items-center gap-2" style="color: var(--minted-text-primary);">
-      <span class="material-icons" style="color: var(--minted-accent);">pending_actions</span>
+      <i class="pi pi-clock" style="color: var(--minted-accent);"></i>
       Pending Settlements
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -123,7 +123,7 @@
           <div class="flex gap-2">
             <button pButton class="p-button-sm p-button-text" pTooltip="Export CSV" tooltipPosition="top"
               (click)="exportFriendCSV(fb)">
-              <span class="material-icons text-[16px]">download</span>
+              <i class="pi pi-download text-[16px]"></i>
             </button>
             <button pButton class="p-button-sm" (click)="openSettleDialog(fb)">
               Settle
@@ -261,7 +261,7 @@
               [style.background-color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
               [style.border-color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent)' : 'var(--minted-border)'"
               [style.color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
-              <span class="material-icons mb-1">balance</span>
+              <i class="pi pi-equals mb-1"></i>
               <span class="text-sm font-medium">Equal</span>
             </div>
           </div>
@@ -270,7 +270,7 @@
               [style.background-color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
               [style.border-color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent)' : 'var(--minted-border)'"
               [style.color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
-              <span class="material-icons mb-1">pie_chart</span>
+              <i class="pi pi-chart-pie mb-1"></i>
               <span class="text-sm font-medium">Unequal</span>
             </div>
           </div>
@@ -279,7 +279,7 @@
               [style.background-color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
               [style.border-color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent)' : 'var(--minted-border)'"
               [style.color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
-              <span class="material-icons mb-1">percent</span>
+              <i class="pi pi-percentage mb-1"></i>
               <span class="text-sm font-medium">By Share</span>
             </div>
           </div>
@@ -323,7 +323,7 @@
                 class="p-1 transition-colors hover:text-red-500"
                 style="color: var(--minted-text-muted);"
                 (click)="removeFriendFromSplit(i)">
-                <span class="material-icons text-[18px]">close</span>
+                <i class="pi pi-times text-[18px]"></i>
               </button>
             </div>
           </div>
@@ -366,7 +366,7 @@
     <div class="flex justify-end gap-3 mt-6">
       <button pButton type="button" class="p-button-text" (click)="showSplitDialog = false">Cancel</button>
       <button pButton type="submit">
-        <span class="material-icons text-[18px] mr-2">call_split</span>
+        <i class="pi pi-sitemap text-[18px] mr-2"></i>
         {{ isEditSplit ? 'Update Split' : 'Add to Splits' }}
       </button>
     </div>
@@ -430,7 +430,7 @@
 
   <div class="flex flex-col gap-3 mt-6">
     <button pButton class="w-full justify-center" (click)="confirmSettle()">
-      <span class="material-icons mr-2">lock</span>
+      <i class="pi pi-lock mr-2"></i>
       Confirm Settlement
     </button>
     <button pButton class="p-button-text w-full justify-center" (click)="showSettleDialog = false">Cancel</button>

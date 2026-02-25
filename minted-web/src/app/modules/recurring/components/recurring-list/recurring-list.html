@@ -14,7 +14,7 @@
     <section class="form-card">
         <div class="form-card-header">
             <h3 class="form-card-title">
-                <span class="material-icons form-icon">add_circle</span>
+                <i class="pi pi-plus-circle form-icon"></i>
                 {{ editing ? 'Edit Recurring Transaction' : 'New Recurring Transaction' }}
             </h3>
             <span class="step-badge">{{ editing ? 'Editing' : 'Step 1: Basic Info' }}</span>
@@ -86,7 +86,7 @@
                     <button *ngIf="editing" type="button" class="cancel-btn" (click)="cancelEdit()">Cancel</button>
                     <button type="submit" class="submit-btn" [disabled]="submitting">
                         {{ editing ? 'Update Schedule' : 'Create Schedule' }}
-                        <span class="material-icons btn-icon">arrow_forward</span>
+                        <i class="pi pi-arrow-right btn-icon"></i>
                     </button>
                 </div>
             </form>
@@ -98,7 +98,7 @@
         <div class="table-header">
             <h3 class="table-title">Active Schedules</h3>
             <div class="search-wrapper">
-                <span class="material-icons search-icon">search</span>
+                <i class="pi pi-search search-icon"></i>
                 <input class="search-input" placeholder="Filter transactions..." [(ngModel)]="searchQuery"
                     (input)="onSearch()" />
             </div>
@@ -125,10 +125,8 @@
                     <td>
                         <div class="tx-name-cell">
                             <div class="tx-icon" [style.background]="tx.type === 'INCOME' ? '#dcfce7' : '#fee2e2'">
-                                <span class="material-icons"
-                                    [style.color]="tx.type === 'INCOME' ? '#16a34a' : '#dc2626'">
-                                    {{ tx.type === 'INCOME' ? 'payments' : 'receipt_long' }}
-                                </span>
+                                <i [class]="tx.type === 'INCOME' ? 'pi pi-money-bill' : 'pi pi-list'"
+                                    [style.color]="tx.type === 'INCOME' ? '#16a34a' : '#dc2626'"></i>
                             </div>
                             <div>
                                 <span class="tx-name">
@@ -156,15 +154,14 @@
                     <td class="text-right">
                         <div class="action-btns">
                             <button class="action-btn edit-btn" (click)="editTransaction(tx)" pTooltip="Edit">
-                                <span class="material-icons">edit</span>
+                                <i class="pi pi-pencil"></i>
                             </button>
                             <button class="action-btn toggle-btn" (click)="toggleStatus(tx)"
                                 [pTooltip]="tx.status === 'ACTIVE' ? 'Pause' : 'Resume'">
-                                <span class="material-icons">{{ tx.status === 'ACTIVE' ? 'pause_circle' : 'play_circle'
-                                    }}</span>
+                                <i [class]="tx.status === 'ACTIVE' ? 'pi pi-pause' : 'pi pi-play'"></i>
                             </button>
                             <button class="action-btn delete-btn" (click)="confirmDelete(tx)" pTooltip="Delete">
-                                <span class="material-icons">delete</span>
+                                <i class="pi pi-trash"></i>
                             </button>
                         </div>
                     </td>
@@ -173,7 +170,7 @@
             <ng-template pTemplate="emptymessage">
                 <tr>
                     <td colspan="5" class="empty-message">
-                        <span class="material-icons empty-icon">sync_disabled</span>
+                        <i class="pi pi-times-circle empty-icon"></i>
                         <p>No recurring transactions found</p>
                     </td>
                 </tr>
@@ -185,7 +182,7 @@
     <div class="summary-grid" *ngIf="summary">
         <div class="summary-card expense-card">
             <div class="summary-icon-wrapper expense-icon-bg">
-                <span class="material-icons">trending_down</span>
+                <i class="pi pi-arrow-down"></i>
             </div>
             <div>
                 <span class="summary-label">Est. Monthly Expenses</span>
@@ -194,7 +191,7 @@
         </div>
         <div class="summary-card income-card">
             <div class="summary-icon-wrapper income-icon-bg">
-                <span class="material-icons">trending_up</span>
+                <i class="pi pi-arrow-up"></i>
             </div>
             <div>
                 <span class="summary-label">Est. Monthly Income</span>
@@ -203,7 +200,7 @@
         </div>
         <div class="summary-card flux-card">
             <div class="summary-icon-wrapper flux-icon-bg">
-                <span class="material-icons">account_balance</span>
+                <i class="pi pi-wallet"></i>
             </div>
             <div>
                 <span class="summary-label">Scheduled Net Flux</span>
