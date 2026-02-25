@@ -1376,3 +1376,158 @@ DELETE /api/v1/notifications/read
 
 Managed via existing admin settings endpoints: `GET/PUT /api/v1/admin/settings/{key}`
 
+---
+
+## 15. Friends
+
+### GET `/friends`
+Returns all active friends for the authenticated user.
+**Response:** `{ success: true, data: FriendResponse[] }`
+
+### GET `/friends/{id}`
+**Response:** `{ success: true, data: FriendResponse }`
+
+### POST `/friends`
+**Request:**
+```json
+{
+  "name": "Marcus Chen",
+  "email": "marcus@email.com",
+  "phone": "+1 555 0101",
+  "avatarColor": "#6366f1"
+}
+```
+**Response (201):** `{ success: true, data: FriendResponse, message: "Friend added successfully" }`
+
+### PUT `/friends/{id}`
+Same body as POST. **Response:** `{ success: true, data: FriendResponse, message: "Friend updated successfully" }`
+
+### DELETE `/friends/{id}`
+Soft-delete (sets `isActive=false`). **Response:** `{ success: true, message: "Friend removed successfully" }`
+
+### FriendResponse
+```json
+{
+  "id": 1,
+  "name": "Marcus Chen",
+  "email": "marcus@email.com",
+  "phone": "+1 555 0101",
+  "avatarColor": "#6366f1",
+  "isActive": true,
+  "createdAt": "2026-02-25T10:00:00",
+  "updatedAt": "2026-02-25T10:00:00"
+}
+```
+
+---
+
+## 16. Split Transactions
+
+### GET `/splits`
+Returns all split transactions for the authenticated user (ordered by date desc).
+**Response:** `{ success: true, data: SplitTransactionResponse[] }`
+
+### GET `/splits/{id}`
+**Response:** `{ success: true, data: SplitTransactionResponse }`
+
+### POST `/splits`
+**Request:**
+```json
+{
+  "sourceTransactionId": null,
+  "description": "Dinner at Mario's",
+  "categoryName": "Dining",
+  "totalAmount": 142.50,
+  "splitType": "EQUAL",
+  "transactionDate": "2026-02-25",
+  "shares": [
+    { "friendId": null, "shareAmount": 47.50, "isPayer": true },
+    { "friendId": 1, "shareAmount": 47.50, "isPayer": false },
+    { "friendId": 2, "shareAmount": 47.50, "isPayer": false }
+  ]
+}
+```
+- `friendId: null` represents "Me" (the authenticated user)
+- `splitType`: `EQUAL` | `UNEQUAL` | `SHARE`
+- For `EQUAL` split type, share amounts are auto-calculated (remainder goes to first share)
+
+**Response (201):** `{ success: true, data: SplitTransactionResponse, message: "Split transaction created successfully" }`
+
+### PUT `/splits/{id}`
+Same body as POST. Existing shares are cleared and rebuilt via orphanRemoval. **Response:** `{ success: true, data: SplitTransactionResponse }`
+
+### DELETE `/splits/{id}`
+Hard delete (cascades to shares). **Response:** `{ success: true, message: "Split transaction deleted successfully" }`
+
+### GET `/splits/summary`
+Returns aggregate balances.
+**Response:**
+```json
+{
+  "success": true,
+  "data": {
+    "youAreOwed": 450.00,
+    "youOwe": 125.50
+  }
+}
+```
+
+### GET `/splits/balances`
+Returns per-friend net balance (unsettled shares only).
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    { "friendId": 1, "friendName": "Marcus Chen", "avatarColor": "#6366f1", "balance": 124.50 },
+    { "friendId": 2, "friendName": "Sarah Jenkins", "avatarColor": "#ec4899", "balance": -85.00 }
+  ]
+}
+```
+Positive balance = friend owes user. Negative = user owes friend.
+
+### POST `/splits/settle`
+Settles all unsettled shares for a friend. Sends notification on success.
+**Request:**
+```json
+{ "friendId": 1 }
+```
+**Response:** `{ success: true, message: "Settlement completed successfully" }`
+
+### GET `/splits/friend/{friendId}/shares`
+Returns all shares for a specific friend (for CSV export).
+**Response:** `{ success: true, data: SplitShareResponse[] }`
+
+### SplitTransactionResponse
+```json
+{
+  "id": 1,
+  "sourceTransactionId": null,
+  "description": "Dinner at Mario's",
+  "categoryName": "Dining",
+  "totalAmount": 142.50,
+  "splitType": "EQUAL",
+  "transactionDate": "2026-02-25",
+  "isSettled": false,
+  "yourShare": 47.50,
+  "shares": [
+    {
+      "id": 1,
+      "friendId": null,
+      "friendName": "Me",
+      "friendAvatarColor": null,
+      "shareAmount": 47.50,
+      "sharePercentage": null,
+      "isPayer": true,
+      "isSettled": false,
+      "settledAt": null,
+      "splitDescription": "Dinner at Mario's",
+      "splitCategoryName": "Dining",
+      "splitTransactionDate": "2026-02-25"
+    }
+  ],
+  "createdAt": "2026-02-25T10:00:00",
+  "updatedAt": "2026-02-25T10:00:00"
+}
+```
+

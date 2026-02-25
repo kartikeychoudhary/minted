@@ -43,6 +43,10 @@ const routes: Routes = [
         loadChildren: () => import('./modules/statement/statement-module').then(m => m.StatementModule)
       },
       {
+        path: 'splits',
+        loadChildren: () => import('./modules/splits/splits-module').then(m => m.SplitsModule)
+      },
+      {
         path: 'admin',
         loadChildren: () => import('./modules/admin/admin-module').then(m => m.AdminModule),
         canActivate: [adminGuard]

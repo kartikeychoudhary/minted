@@ -33,6 +33,7 @@ export class Sidebar {
     { label: 'Recurring', icon: 'sync_alt', route: '/recurring' },
     { label: 'Import', icon: 'upload_file', route: '/import' },
     { label: 'Statements', icon: 'description', route: '/statements' },
+    { label: 'Splits', icon: 'call_split', route: '/splits' },
     { label: 'Analytics', icon: 'pie_chart', route: '/analytics' },
     { label: 'Notifications', icon: 'notifications', route: '/notifications' },
     { label: 'Settings', icon: 'settings', route: '/settings', section: 'Management' },

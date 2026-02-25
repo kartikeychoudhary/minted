@@ -472,6 +472,58 @@ Six fixes and enhancements across Settings, Account management, and LLM integrat
 
 ---
 
+## Phase: Splits Feature — Bill Splitting with Friends
+
+**Completed:** February 25, 2026
+
+### Deliverables
+
+#### Database (1 file)
+- `V0_0_31__create_friends_and_splits_tables.sql` — 3 tables: `friends`, `split_transactions`, `split_shares` with all FKs, indexes, and unique constraints
+
+#### Backend: `friend` package (7 files)
+- `Friend.java` entity with soft delete via `isActive`, `@ManyToOne` to User
+- `FriendRepository.java` — user-scoped queries, soft-delete restore pattern
+- `FriendRequest.java` / `FriendResponse.java` — Java record DTOs with validation
+- `FriendService.java` / `FriendServiceImpl.java` — CRUD with duplicate name check, soft-delete restore
+- `FriendController.java` — REST at `/api/v1/friends`
+
+#### Backend: `split` package (15 files)
+- `SplitType.java` enum (EQUAL, UNEQUAL, SHARE)
+- `SplitTransaction.java` — `@OneToMany` cascade with orphanRemoval, `@JdbcTypeCode(Types.VARCHAR)` on enum
+- `SplitShare.java` — `@ManyToOne` to SplitTransaction and Friend (nullable for "Me")
+- `SplitTransactionRepository.java` — JPQL for sumOwedToUser/sumUserOwes
+- `SplitShareRepository.java` — JPQL for unsettled balances per friend, group-by aggregation
+- 7 DTO records: SplitShareRequest/Response, SplitTransactionRequest/Response, SplitBalanceSummaryResponse, FriendBalanceResponse, SettleRequest
+- `SplitServiceImpl.java` — EQUAL auto-division with rounding, settle with notification via NotificationHelper
+- `SplitTransactionController.java` — 9 endpoints at `/api/v1/splits`
+
+#### Frontend: Models & Services (4 files)
+- `friend.model.ts` / `split.model.ts` — TypeScript interfaces
+- `friend.service.ts` / `split.service.ts` — HTTP services with client-side CSV export
+
+#### Frontend: Splits Module (7 files)
+- `SplitsModule` — lazy-loaded NgModule with AgGridModule, MessageService, ConfirmationService
+- `SplitsPage` — main component with friends card, balance summary cards, pending settlements, AG Grid table
+- 3 PrimeNG dialogs: Add/Edit Friend, Split Transaction (split type selector + friend management), Settlement Review
+- `SplitFriendsCellRendererComponent` — avatar circles for "Split With" AG Grid column
+- `SplitActionsCellRendererComponent` — Edit/Delete buttons for AG Grid
+
+#### Frontend: Integration (4 existing files modified)
+- `app-routing-module.ts` — added `splits` lazy route
+- `sidebar.ts` — added "Splits" nav item (icon: `call_split`)
+- `actions-cell-renderer.component.ts` — added "Split" button (pi-users) + `onSplit` callback
+- `transactions-list.ts` — added `splitTransaction()` navigating to `/splits` with query params
+
+### Issues Encountered
+- **Material Icons**: Used `material-symbols-outlined` from Stitch prototypes instead of `material-icons` loaded in app. Fixed by replacing all icon class references.
+- **Dark Theme**: Used hardcoded Tailwind color classes (`bg-white`, `text-slate-900`) instead of CSS variable inline styles. Fixed by using `style="background-color: var(--minted-bg-card);"` pattern matching analytics-overview.
+
+**Files created (33 new):** V0_0_31 migration, 7 friend package files, 15 split package files, 4 frontend models/services, 7 splits module files
+**Files modified (4):** app-routing-module.ts, sidebar.ts, actions-cell-renderer.component.ts, transactions-list.ts
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

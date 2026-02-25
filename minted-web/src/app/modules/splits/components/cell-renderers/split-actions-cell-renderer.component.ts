@@ -2,26 +2,16 @@ import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 
-export interface ActionsCallbacks {
+export interface SplitActionsCallbacks {
   onEdit: (data: any) => void;
   onDelete: (data: any) => void;
-  onSplit?: (data: any) => void;
 }
 
 @Component({
-  selector: 'app-actions-cell-renderer',
+  selector: 'app-split-actions-cell-renderer',
   standalone: false,
   template: `
     <div class="flex items-center justify-end gap-2" (click)="$event.stopPropagation()">
-      <button
-        pButton
-        type="button"
-        icon="pi pi-users"
-        class="p-button-text p-button-rounded p-button-sm"
-        (click)="onSplitClick()"
-        pTooltip="Split"
-        tooltipPosition="top">
-      </button>
       <button
         pButton
         type="button"
@@ -81,15 +71,15 @@ export interface ActionsCallbacks {
     }
   `]
 })
-export class ActionsCellRendererComponent implements ICellRendererAngularComp {
-  params!: ICellRendererParams & { callbacks?: ActionsCallbacks };
+export class SplitActionsCellRendererComponent implements ICellRendererAngularComp {
+  params!: ICellRendererParams & { callbacks?: SplitActionsCallbacks };
 
   agInit(params: ICellRendererParams): void {
-    this.params = params as ICellRendererParams & { callbacks?: ActionsCallbacks };
+    this.params = params as ICellRendererParams & { callbacks?: SplitActionsCallbacks };
   }
 
   refresh(params: ICellRendererParams): boolean {
-    this.params = params as ICellRendererParams & { callbacks?: ActionsCallbacks };
+    this.params = params as ICellRendererParams & { callbacks?: SplitActionsCallbacks };
     return true;
   }
 
@@ -102,12 +92,6 @@ export class ActionsCellRendererComponent implements ICellRendererAngularComp {
   onDeleteClick(): void {
     if (this.params.callbacks?.onDelete) {
       this.params.callbacks.onDelete(this.params.data);
-    }
-  }
-
-  onSplitClick(): void {
-    if (this.params.callbacks?.onSplit) {
-      this.params.callbacks.onSplit(this.params.data);
     }
   }
 }

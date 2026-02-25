@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+// AG Grid overrides to match minted theme
+::ng-deep {
+  .ag-overlay-no-rows-center {
+    color: var(--minted-text-muted);
+    font-size: 14px;
+  }
+
+  .cell-v-center {
+    display: flex !important;
+    align-items: center;
+  }
+
+  .ag-cell-actions {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+  }
+}

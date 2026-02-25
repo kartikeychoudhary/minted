@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { CategoryService } from '../../../../core/services/category.service';
@@ -117,7 +118,8 @@ export class TransactionsList implements OnInit {
     private confirmationService: ConfirmationService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    public currencyService: CurrencyService
+    public currencyService: CurrencyService,
+    private router: Router
   ) {
     this.setupGridColumns();
   }
@@ -194,7 +196,8 @@ export class TransactionsList implements OnInit {
         cellRendererParams: {
           callbacks: {
             onEdit: (data: any) => this.openEditDialog(data),
-            onDelete: (data: any) => this.deleteTransaction(data)
+            onDelete: (data: any) => this.deleteTransaction(data),
+            onSplit: (data: any) => this.splitTransaction(data)
           }
         },
         cellClass: 'ag-cell-actions'
@@ -507,5 +510,17 @@ export class TransactionsList implements OnInit {
       return date;
     }
     return date.toISOString().split('T')[0];
+  }
+
+  splitTransaction(transaction: TransactionResponse): void {
+    this.router.navigate(['/splits'], {
+      queryParams: {
+        sourceTransactionId: transaction.id,
+        description: transaction.description,
+        categoryName: transaction.categoryName,
+        totalAmount: transaction.amount,
+        transactionDate: transaction.transactionDate
+      }
+    });
   }
 }

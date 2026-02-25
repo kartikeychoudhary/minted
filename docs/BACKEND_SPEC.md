@@ -1035,3 +1035,71 @@ public class NewServiceImpl implements NewService {
     }
 }
 ```
+
+---
+
+## 11. Splits Feature
+
+### 11.1 Friend Package (`com.minted.api.friend`)
+
+Manages the user's friend list for split transactions. Follows the soft-delete pattern.
+
+**Entity:** `Friend.java`
+- `@ManyToOne` to User (FK user_id, ON DELETE CASCADE)
+- Soft delete via `isActive` boolean
+- Fields: id, name, email (nullable), phone (nullable), avatarColor (default `#6366f1`)
+- Unique constraint: `uk_user_friend_name(user_id, name)`
+
+**Repository:** `FriendRepository.java`
+- `findByUserIdAndIsActiveTrue()` — list active friends
+- `findByIdAndUserId()` — single friend scoped to user
+- `existsByNameAndUserIdAndIsActiveTrue()` — duplicate check
+- `findByNameAndUserIdAndIsActiveFalse()` — soft-delete restore
+
+**Service:** `FriendServiceImpl.java`
+- `create()` — checks for soft-deleted friend with same name first (restores), then checks duplicate active, then creates
+- `update()` — validates name uniqueness if changed
+- `delete()` — soft-delete (sets isActive=false)
+
+**Controller:** `FriendController.java` at `/api/v1/friends`
+- Standard CRUD: GET (list), GET/{id}, POST, PUT/{id}, DELETE/{id}
+
+### 11.2 Split Package (`com.minted.api.split`)
+
+**Enum:** `SplitType` — EQUAL, UNEQUAL, SHARE
+
+**Entity:** `SplitTransaction.java`
+- `@ManyToOne` to User and Transaction (source, nullable, ON DELETE SET NULL)
+- `@Enumerated(EnumType.STRING)` + `@JdbcTypeCode(Types.VARCHAR)` on splitType (matches VARCHAR column in Flyway)
+- `@OneToMany(cascade = ALL, orphanRemoval = true)` to SplitShare
+- Fields: description, categoryName (stored as string, not FK), totalAmount, splitType, transactionDate, isSettled (denormalized)
+
+**Entity:** `SplitShare.java`
+- `@ManyToOne` to SplitTransaction (NOT NULL, ON DELETE CASCADE)
+- `@ManyToOne` to Friend (nullable — null means "Me"/the authenticated user)
+- Fields: shareAmount, sharePercentage (nullable), isPayer, isSettled, settledAt
+
+**Repository Queries:**
+- `SplitTransactionRepository`: sumOwedToUser (JPQL), sumUserOwes (JPQL)
+- `SplitShareRepository`: findUnsettledBalancesByUserId (GROUP BY friend, net balance), findUnsettledByUserIdAndFriendId
+
+**Service:** `SplitServiceImpl.java`
+- `create()` — validates shares sum = totalAmount (or auto-calculates for EQUAL). For EQUAL: divides evenly with remainder to first share.
+- `update()` — clears shares via orphanRemoval, rebuilds from request
+- `settleFriend()` — marks all unsettled shares for a friend as settled, checks if parent split_transaction is fully settled, sends notification via NotificationHelper
+- `getBalanceSummary()` — JPQL aggregation of owed/owing amounts
+- `getFriendBalances()` — GROUP BY friend with net balance per friend
+
+**Controller:** `SplitTransactionController.java` at `/api/v1/splits`
+- CRUD: GET, GET/{id}, POST, PUT/{id}, DELETE/{id}
+- Analytics: GET /summary, GET /balances
+- Settlement: POST /settle
+- Export: GET /friend/{friendId}/shares
+
+### 11.3 Database Migration
+
+**`V0_0_31__create_friends_and_splits_tables.sql`**
+- `friends` table: user-scoped, soft-delete, unique(user_id, name)
+- `split_transactions` table: FK to users (CASCADE) and transactions (SET NULL)
+- `split_shares` table: FK to split_transactions (CASCADE) and friends (SET NULL)
+- Indexes on: user_id, is_settled, transaction_date, friend_id, split_transaction_id

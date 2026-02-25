@@ -1,0 +1,442 @@
+<!-- Loading Skeleton -->
+<div *ngIf="loading" class="p-8">
+  <p-skeleton width="200px" height="40px" styleClass="mb-4"></p-skeleton>
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+    <p-skeleton width="100%" height="120px" styleClass="lg:col-span-6"></p-skeleton>
+    <p-skeleton width="100%" height="120px" styleClass="lg:col-span-3"></p-skeleton>
+    <p-skeleton width="100%" height="120px" styleClass="lg:col-span-3"></p-skeleton>
+  </div>
+  <p-skeleton width="100%" height="400px"></p-skeleton>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="!loading" class="p-8">
+  <!-- Page Header -->
+  <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+    <div>
+      <h1 class="text-3xl tracking-tight mb-2 font-bold" style="color: var(--minted-text-primary);">Splits</h1>
+      <p class="text-lg" style="color: var(--minted-text-muted);">Manage shared expenses and settle up with friends easily.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button pButton
+        class="p-button-outlined"
+        (click)="openNewFriendDialog()">
+        <span class="material-icons text-[18px] mr-2">group_add</span>
+        Add Friend
+      </button>
+      <button pButton
+        (click)="openNewSplitDialog()">
+        <span class="material-icons text-[18px] mr-2">call_split</span>
+        Add Split
+      </button>
+    </div>
+  </div>
+
+  <!-- Summary Cards Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+    <!-- Friends Quick List -->
+    <div class="lg:col-span-6 rounded-xl p-6 shadow-sm"
+      style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-base font-semibold" style="color: var(--minted-text-primary);">Friends</h3>
+        <span class="text-sm" style="color: var(--minted-text-muted);">{{ friends.length }} total</span>
+      </div>
+      <div class="flex gap-4 overflow-x-auto pb-2" style="scrollbar-width: thin;">
+        <!-- Friend Items -->
+        <div *ngFor="let friend of friends"
+          class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group"
+          (click)="openEditFriendDialog(friend)">
+          <div class="w-14 h-14 rounded-full border-2 p-0.5 group-hover:border-green-500 transition-colors flex items-center justify-center"
+            [style.background-color]="friend.avatarColor"
+            [style.border-color]="'var(--minted-border)'">
+            <span class="text-white font-bold text-sm">{{ getInitials(friend.name) }}</span>
+          </div>
+          <span class="text-xs font-medium truncate w-full text-center" style="color: var(--minted-text-secondary);">{{ friend.name }}</span>
+        </div>
+        <!-- Add New Button -->
+        <div class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group" (click)="openNewFriendDialog()">
+          <div class="w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center group-hover:text-green-500 group-hover:border-green-500 transition-colors"
+            style="border-color: var(--minted-border); color: var(--minted-text-muted);">
+            <span class="material-icons">add</span>
+          </div>
+          <span class="text-xs font-medium" style="color: var(--minted-text-muted);">Add</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- You Are Owed -->
+    <div class="lg:col-span-3 rounded-xl p-6 shadow-sm flex flex-col justify-between"
+      style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+      <div>
+        <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You are owed</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(balanceSummary.youAreOwed) }}</span>
+        </div>
+      </div>
+      <div class="mt-4 pt-4" style="border-top: 1px solid var(--minted-border-light);">
+        <p class="text-xs" style="color: var(--minted-text-muted);">From {{ friendBalances.length }} friend(s)</p>
+      </div>
+    </div>
+
+    <!-- You Owe -->
+    <div class="lg:col-span-3 rounded-xl p-6 shadow-sm flex flex-col justify-between"
+      style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+      <div>
+        <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You owe</h3>
+        <div class="flex items-baseline gap-2">
+          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(balanceSummary.youOwe) }}</span>
+        </div>
+      </div>
+      <div class="mt-4 pt-4" style="border-top: 1px solid var(--minted-border-light);">
+        <p class="text-xs" style="color: var(--minted-text-muted);">Across split transactions</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Settlements -->
+  <div class="mb-10" *ngIf="friendBalances.length > 0">
+    <h2 class="text-xl font-bold mb-5 flex items-center gap-2" style="color: var(--minted-text-primary);">
+      <span class="material-icons" style="color: var(--minted-accent);">pending_actions</span>
+      Pending Settlements
+    </h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div *ngFor="let fb of friendBalances"
+        class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+        style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm"
+            [style.background-color]="fb.avatarColor"
+            [style.border]="'1px solid var(--minted-border-light)'">
+            {{ getInitials(fb.friendName) }}
+          </div>
+          <div>
+            <h4 class="font-bold" style="color: var(--minted-text-primary);">{{ fb.friendName }}</h4>
+            <p class="text-xs" style="color: var(--minted-text-muted);">
+              {{ fb.balance > 0 ? 'Owes you' : 'You owe' }}
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between">
+          <div class="text-lg font-bold" [ngClass]="fb.balance > 0 ? 'text-emerald-600' : 'text-orange-600'">
+            {{ fb.balance > 0 ? '+' : '' }}{{ currencyService.format(fb.balance) }}
+          </div>
+          <div class="flex gap-2">
+            <button pButton class="p-button-sm p-button-text" pTooltip="Export CSV" tooltipPosition="top"
+              (click)="exportFriendCSV(fb)">
+              <span class="material-icons text-[16px]">download</span>
+            </button>
+            <button pButton class="p-button-sm" (click)="openSettleDialog(fb)">
+              Settle
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AG Grid — Recent Activity -->
+  <div class="rounded-xl shadow-sm overflow-hidden"
+    style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+    <div class="px-6 py-5" style="border-bottom: 1px solid var(--minted-border);">
+      <h3 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recent Activity</h3>
+    </div>
+    <ag-grid-angular
+      style="height: 500px; width: 100%;"
+      [theme]="mintedTheme"
+      [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef"
+      [gridOptions]="gridOptions"
+      [rowData]="rowData"
+      (gridReady)="onGridReady($event)">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<!-- ═══════ Friend Dialog ═══════ -->
+<p-dialog
+  [(visible)]="showFriendDialog"
+  [header]="isEditFriend ? 'Edit Friend' : 'Add Friend'"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [closable]="true"
+  [draggable]="false">
+  <form *ngIf="friendForm" [formGroup]="friendForm" (ngSubmit)="saveFriend()">
+    <div class="space-y-4">
+      <!-- Name -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Name *</label>
+        <input pInputText formControlName="name" class="w-full" placeholder="Friend's name" />
+        <small class="text-red-500" *ngIf="friendForm.get('name')?.invalid && friendForm.get('name')?.touched">
+          Name is required
+        </small>
+      </div>
+      <!-- Email -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Email</label>
+        <input pInputText formControlName="email" class="w-full" placeholder="friend@email.com" />
+      </div>
+      <!-- Phone -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Phone</label>
+        <input pInputText formControlName="phone" class="w-full" placeholder="+1 234 567 890" />
+      </div>
+      <!-- Avatar Color -->
+      <div>
+        <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Avatar Color</label>
+        <div class="flex gap-3">
+          <div *ngFor="let color of avatarColors"
+            class="w-8 h-8 rounded-full cursor-pointer border-2 transition-all"
+            [style.background-color]="color"
+            [ngClass]="friendForm.get('avatarColor')?.value === color ? 'scale-110' : 'border-transparent'"
+            [style.border-color]="friendForm.get('avatarColor')?.value === color ? 'var(--minted-text-primary)' : 'transparent'"
+            (click)="friendForm.get('avatarColor')?.setValue(color)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex justify-between mt-6">
+      <button *ngIf="isEditFriend" pButton type="button" class="p-button-danger p-button-text"
+        (click)="deleteFriendConfirm(selectedFriend!); showFriendDialog = false">
+        Remove
+      </button>
+      <span *ngIf="!isEditFriend"></span>
+      <div class="flex gap-3">
+        <button pButton type="button" class="p-button-text" (click)="showFriendDialog = false">Cancel</button>
+        <button pButton type="submit">{{ isEditFriend ? 'Update' : 'Add Friend' }}</button>
+      </div>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- ═══════ Split Transaction Dialog ═══════ -->
+<p-dialog
+  [(visible)]="showSplitDialog"
+  header="Split Transaction"
+  [modal]="true"
+  [style]="{ width: '640px', maxHeight: '90vh' }"
+  [closable]="true"
+  [draggable]="false">
+  <form *ngIf="splitForm" [formGroup]="splitForm" (ngSubmit)="saveSplit()">
+    <div class="space-y-5">
+      <!-- Description -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Description *</label>
+        <input pInputText formControlName="description" class="w-full" placeholder="What was this for?" />
+        <small class="text-red-500" *ngIf="splitForm.get('description')?.invalid && splitForm.get('description')?.touched">
+          Description is required
+        </small>
+      </div>
+
+      <!-- Category + Amount -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Category *</label>
+          <input pInputText formControlName="categoryName" class="w-full" placeholder="e.g. Dining" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Total Amount *</label>
+          <p-inputNumber formControlName="totalAmount" [minFractionDigits]="2" [maxFractionDigits]="2"
+            [min]="0.01" class="w-full" placeholder="0.00"
+            (onInput)="onTotalAmountChange()">
+          </p-inputNumber>
+        </div>
+      </div>
+
+      <!-- Date -->
+      <div>
+        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Date *</label>
+        <p-datepicker formControlName="transactionDate" [showIcon]="true" dateFormat="yy-mm-dd"
+          styleClass="w-full">
+        </p-datepicker>
+      </div>
+
+      <hr style="border-color: var(--minted-border);" />
+
+      <!-- Split Type -->
+      <div>
+        <label class="block text-sm font-medium mb-3" style="color: var(--minted-text-secondary);">Split Type</label>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="cursor-pointer" (click)="onSplitTypeChange('EQUAL')">
+            <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
+              [style.background-color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+              [style.border-color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent)' : 'var(--minted-border)'"
+              [style.color]="selectedSplitType === 'EQUAL' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              <span class="material-icons mb-1">balance</span>
+              <span class="text-sm font-medium">Equal</span>
+            </div>
+          </div>
+          <div class="cursor-pointer" (click)="onSplitTypeChange('UNEQUAL')">
+            <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
+              [style.background-color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+              [style.border-color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent)' : 'var(--minted-border)'"
+              [style.color]="selectedSplitType === 'UNEQUAL' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              <span class="material-icons mb-1">pie_chart</span>
+              <span class="text-sm font-medium">Unequal</span>
+            </div>
+          </div>
+          <div class="cursor-pointer" (click)="onSplitTypeChange('SHARE')">
+            <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
+              [style.background-color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+              [style.border-color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent)' : 'var(--minted-border)'"
+              [style.color]="selectedSplitType === 'SHARE' ? 'var(--minted-accent)' : 'var(--minted-text-muted)'">
+              <span class="material-icons mb-1">percent</span>
+              <span class="text-sm font-medium">By Share</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split With Friends -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <label class="block text-sm font-medium" style="color: var(--minted-text-secondary);">Split with friends</label>
+        </div>
+        <div class="space-y-3">
+          <!-- Entries -->
+          <div *ngFor="let entry of splitFriendEntries; let i = index"
+            class="flex items-center gap-3 p-3 rounded-lg border"
+            [style.background-color]="entry.friendId === null ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-surface)'"
+            [style.border-color]="entry.friendId === null ? 'var(--minted-accent)' : 'var(--minted-border)'">
+            <!-- Avatar -->
+            <div class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white"
+              [style.background-color]="entry.avatarColor">
+              {{ entry.friendId === null ? 'ME' : getInitials(entry.friendName) }}
+            </div>
+            <!-- Name -->
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-medium truncate" style="color: var(--minted-text-primary);">
+                {{ entry.friendId === null ? 'You (Payer)' : entry.friendName }}
+              </p>
+              <p *ngIf="entry.friendId === null" class="text-xs" style="color: var(--minted-text-muted);">Paying full amount</p>
+            </div>
+            <!-- Amount -->
+            <div class="flex items-center gap-3">
+              <div *ngIf="selectedSplitType === 'EQUAL'" class="text-right">
+                <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(entry.shareAmount) }}</p>
+              </div>
+              <input *ngIf="selectedSplitType !== 'EQUAL'" type="number" step="0.01"
+                class="w-24 px-2 py-1 rounded text-sm text-right"
+                style="background-color: var(--minted-bg-input); color: var(--minted-text-primary); border: 1px solid var(--minted-border);"
+                [(ngModel)]="entry.shareAmount" [ngModelOptions]="{ standalone: true }" />
+              <!-- Remove button (not for "Me") -->
+              <button *ngIf="entry.friendId !== null" type="button"
+                class="p-1 transition-colors hover:text-red-500"
+                style="color: var(--minted-text-muted);"
+                (click)="removeFriendFromSplit(i)">
+                <span class="material-icons text-[18px]">close</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Add friend placeholder -->
+          <div *ngIf="availableFriendsForSplit.length > 0"
+            class="border border-dashed rounded-lg p-3"
+            style="border-color: var(--minted-border);">
+            <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Add a friend:</p>
+            <div class="flex flex-wrap gap-2">
+              <button *ngFor="let f of availableFriendsForSplit" type="button"
+                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border hover:border-green-400 hover:bg-green-50 transition-colors"
+                style="background-color: var(--minted-bg-card); border-color: var(--minted-border); color: var(--minted-text-primary);"
+                (click)="addFriendToSplit(f)">
+                <div class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+                  [style.background-color]="f.avatarColor">
+                  {{ getInitials(f.name) }}
+                </div>
+                {{ f.name }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Box -->
+      <div class="p-4 rounded-lg flex justify-between items-center"
+        style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border);">
+        <span class="text-sm font-medium" style="color: var(--minted-text-muted);">Total Split</span>
+        <span class="text-lg font-bold" style="color: var(--minted-text-primary);">
+          {{ currencyService.format(getSplitTotal()) }}
+          <span *ngIf="splitForm.get('totalAmount')?.value" class="text-xs font-normal ml-1"
+            style="color: var(--minted-text-muted);">
+            of {{ currencyService.format(splitForm.get('totalAmount')?.value) }}
+          </span>
+        </span>
+      </div>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-6">
+      <button pButton type="button" class="p-button-text" (click)="showSplitDialog = false">Cancel</button>
+      <button pButton type="submit">
+        <span class="material-icons text-[18px] mr-2">call_split</span>
+        {{ isEditSplit ? 'Update Split' : 'Add to Splits' }}
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<!-- ═══════ Settle Dialog ═══════ -->
+<p-dialog
+  [(visible)]="showSettleDialog"
+  header="Review Settlement"
+  [modal]="true"
+  [style]="{ width: '500px', maxHeight: '90vh' }"
+  [closable]="true"
+  [draggable]="false">
+  <div *ngIf="settleFriend" class="space-y-6">
+    <!-- Friend Avatar + Amount -->
+    <div class="flex flex-col items-center justify-center py-4 text-center">
+      <div class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4 shadow-sm"
+        [style.background-color]="settleFriend.avatarColor"
+        [style.border]="'4px solid var(--minted-bg-card)'">
+        {{ getInitials(settleFriend.friendName) }}
+      </div>
+      <p class="text-sm font-medium" style="color: var(--minted-text-muted);">
+        {{ settleFriend.balance > 0 ? 'Payment from' : 'Payment to' }}
+        <span class="font-bold" style="color: var(--minted-text-primary);">{{ settleFriend.friendName }}</span>
+      </p>
+      <div class="mt-2">
+        <span class="text-4xl font-extrabold tracking-tight" style="color: var(--minted-text-primary);">
+          {{ currencyService.format(settleFriend.balance > 0 ? settleFriend.balance : -settleFriend.balance) }}
+        </span>
+      </div>
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mt-2"
+        [ngClass]="settleFriend.balance > 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'">
+        Full Balance Settlement
+      </div>
+    </div>
+
+    <!-- Transaction Details -->
+    <div class="rounded-xl p-4"
+      style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border-light);">
+      <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color: var(--minted-text-muted);">Transaction Details</p>
+      <div *ngIf="settleLoading" class="text-center py-4">
+        <p-progressSpinner [style]="{ width: '30px', height: '30px' }"></p-progressSpinner>
+      </div>
+      <div *ngIf="!settleLoading" class="space-y-3 max-h-[200px] overflow-y-auto">
+        <div *ngFor="let share of settleShares" class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-semibold" style="color: var(--minted-text-primary);">{{ share.splitDescription }}</p>
+            <p class="text-[11px]" style="color: var(--minted-text-muted);">{{ share.splitTransactionDate }} &bull; {{ share.splitCategoryName }}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(share.shareAmount) }}</p>
+          </div>
+        </div>
+        <div *ngIf="settleShares.length === 0" class="text-center text-sm py-2" style="color: var(--minted-text-muted);">
+          No unsettled transactions
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-3 mt-6">
+    <button pButton class="w-full justify-center" (click)="confirmSettle()">
+      <span class="material-icons mr-2">lock</span>
+      Confirm Settlement
+    </button>
+    <button pButton class="p-button-text w-full justify-center" (click)="showSettleDialog = false">Cancel</button>
+  </div>
+</p-dialog>
+
+<!-- Confirm Dialog + Toast -->
+<p-confirmDialog key="splits"></p-confirmDialog>
+<p-toast></p-toast>

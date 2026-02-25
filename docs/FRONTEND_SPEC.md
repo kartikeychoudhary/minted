@@ -1110,3 +1110,90 @@ New tab (value="5") added to existing Settings page.
 - `admin server-settings.ts/html` — Added feature toggles, LLM models grid, model dialog
 - `shared.module.ts` — No changes needed (all PrimeNG modules already present)
 
+---
+
+## 14. Splits Module
+
+Bill splitting with friends. Users can add friends, split transactions (standalone or from existing transactions), track who owes whom, settle debts, and export per-friend CSV reports.
+
+### 14.1 Models
+
+**`core/models/friend.model.ts`**
+- `FriendRequest` — name (required), email, phone, avatarColor
+- `FriendResponse` — id, name, email, phone, avatarColor, isActive, createdAt, updatedAt
+
+**`core/models/split.model.ts`**
+- `SplitType` — `'EQUAL' | 'UNEQUAL' | 'SHARE'`
+- `SplitShareRequest` — friendId (null=Me), shareAmount, sharePercentage, isPayer
+- `SplitShareResponse` — includes splitDescription, splitCategoryName, splitTransactionDate
+- `SplitTransactionRequest` — description, categoryName, totalAmount, splitType, transactionDate, shares[]
+- `SplitTransactionResponse` — includes yourShare (computed), shares list
+- `SplitBalanceSummaryResponse` — youAreOwed, youOwe
+- `FriendBalanceResponse` — friendId, friendName, avatarColor, balance (+/-)
+- `SettleRequest` — friendId
+
+### 14.2 Services
+
+**`core/services/friend.service.ts`** (`providedIn: 'root'`)
+- Standard CRUD for `/api/v1/friends`
+- Methods: getAll, getById, create, update, delete
+
+**`core/services/split.service.ts`** (`providedIn: 'root'`)
+- CRUD for `/api/v1/splits`
+- Methods: getAll, getById, create, update, delete
+- Analytics: getBalanceSummary, getFriendBalances
+- Settlement: settle
+- Export: getSharesByFriend, exportFriendShares (client-side CSV generation)
+
+### 14.3 Module Structure
+
+```
+modules/splits/
+├── splits-module.ts                    # NgModule (CommonModule, SharedModule, AgGridModule)
+├── splits-routing-module.ts            # { path: '', component: SplitsPage }
+└── components/
+    ├── splits-page/
+    │   ├── splits-page.ts              # Main component — all UI logic
+    │   ├── splits-page.html            # Template
+    │   └── splits-page.scss            # AG Grid theme overrides
+    └── cell-renderers/
+        ├── split-friends-cell-renderer.component.ts   # Avatar circles for "Split With" column
+        └── split-actions-cell-renderer.component.ts   # Edit/Delete buttons
+```
+
+**Module providers:** `[MessageService, ConfirmationService]` — per MISTAKES.md rule.
+
+### 14.4 SplitsPage Component
+
+**Template layout** (matches Stitch reference `split-transactions.html`):
+
+1. **Header** — "Splits" title + "Add Friend" / "Add Split" buttons
+2. **Friends card** — horizontal scroll of friend avatar circles (initials in colored circles) + dashed "Add" button
+3. **Summary cards** (2-col) — "You are owed" (green) / "You owe" (orange) with formatted amounts
+4. **Pending settlements** — Cards per friend showing avatar, name, balance (+/-), "Settle" + "Export CSV" buttons
+5. **AG Grid** — split transactions table: Date, Description, Category, Split With (avatar circles), Total, Your Share, Actions
+
+**Dialogs (all `<p-dialog>`):**
+- **Add/Edit Friend** — name, email, phone, avatar color picker (8 preset colors)
+- **Split Transaction** — description, category, total amount, date, split type radios (Equal/Unequal/By Share), friend multi-select with share amounts, summary box
+- **Settlement Review** — friend avatar, total amount, itemized unsettled shares list, confirm button
+
+**AG Grid** uses the same `mintedTheme` pattern (`themeQuartz.withParams()` with `--minted-*` CSS vars) as transactions-list.
+
+**Dark mode:** All colors use inline `style` attributes with CSS variables (`var(--minted-bg-card)`, `var(--minted-text-primary)`, etc.) — never hardcoded Tailwind color classes.
+
+**Material icons:** Uses `<span class="material-icons">icon_name</span>` (not `material-symbols-outlined`).
+
+### 14.5 Integration with Transactions Page
+
+- `ActionsCallbacks` interface extended with optional `onSplit` callback
+- "Split" button added to transactions AG Grid actions column (pi-users icon)
+- `splitTransaction()` method navigates to `/splits` with query params: `sourceTransactionId`, `description`, `categoryName`, `totalAmount`, `transactionDate`
+- SplitsPage reads query params on init and auto-opens split dialog when `sourceTransactionId` is present
+
+### 14.6 Modified Files
+- `app-routing-module.ts` — Added lazy route for `splits` → `SplitsModule`
+- `sidebar.ts` — Added "Splits" nav item (icon: `call_split`, after Statements)
+- `actions-cell-renderer.component.ts` — Added `onSplit` callback + Split button
+- `transactions-list.ts` — Added `Router` injection + `splitTransaction()` method
+
