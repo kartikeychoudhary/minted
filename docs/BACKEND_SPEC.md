@@ -890,6 +890,9 @@ User-defined keyword-to-category rules for improving LLM accuracy.
 #### V0_0_27 — System Settings Seed
 Adds `CREDIT_CARD_PARSER_ENABLED` (true) and `ADMIN_LLM_KEY_SHARED` (false) to `system_settings`.
 
+#### V0_0_30 — Add EMI Default Category
+Inserts "EMI" (`pi pi-calculator`, EXPENSE) into `default_categories`. Auto-provisioned to users on next category API call via `mergeCategories()`.
+
 ### 9.3 Entities
 
 | Entity | Table | Key Features |
@@ -912,9 +915,12 @@ Adds `CREDIT_CARD_PARSER_ENABLED` (true) and `ADMIN_LLM_KEY_SHARED` (false) to `
 
 #### LlmService (Interface) / GeminiLlmService (Implementation)
 - Generic `LlmService` interface for future provider extensibility
+- `parseStatement()` accepts `List<String> availableCategories` — the user's active category names (defaults + custom)
 - `GeminiLlmService` calls `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`
 - Uses Spring `RestClient` (no new dependencies)
-- Structured prompt engineering with merchant category hints injection
+- Structured prompt engineering with:
+  - **Available Categories block** — tells LLM "you MUST pick from this list, do NOT invent new categories"
+  - **Merchant category hints** — injected as "ABSOLUTE RULES" (highest priority, overrides category list)
 - JSON response parsing with markdown cleanup
 
 #### MerchantMappingService / MerchantMappingServiceImpl
@@ -932,7 +938,7 @@ Orchestrates the 4-step workflow:
 
 1. **`uploadAndExtract`** — Validates PDF, extracts text via PDFBox, saves statement with TEXT_EXTRACTED status
 2. **`triggerLlmParse`** — Resolves LLM config, creates JobExecution, fires async processing after commit
-3. **`processLlmParseAsync`** — Calls GeminiLlmService, applies merchant mapping pre-pass, runs duplicate detection, saves results
+3. **`processLlmParseAsync`** — Fetches user's active categories via `TransactionCategoryService`, calls GeminiLlmService with category names + merchant mappings, applies merchant mapping pre-pass, runs duplicate detection, saves results
 4. **`confirmImport`** — Creates Transaction entities from parsed rows, updates account balance, sets COMPLETED status
 
 **Async pattern:** Uses `TransactionSynchronizationManager.registerSynchronization(afterCommit)` + `CompletableFuture.runAsync()` + `TransactionTemplate` (same proven pattern as BulkImportServiceImpl).

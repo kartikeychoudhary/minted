@@ -497,11 +497,18 @@ export interface ChartDataset {
 #### Tab: Accounts
 - Table (PrimeNG `p-table`) listing all accounts with columns: Name, Type, Balance, Currency, Status
 - Add/Edit via inline editing or dialog
-- Deactivate (soft delete) with confirm dialog
+- Delete performs soft delete (`isActive = false`) — account disappears from UI
+- Creating an account with the same name as a previously deleted one restores the soft-deleted record
+- `refreshData()` method reloads both accounts and account types (called on tab activation)
 
 #### Tab: Account Types
 - Table listing account types: Name, Description, Icon
-- Add/Edit/Deactivate
+- Add/Edit/Soft Delete (sets `isActive = false`)
+- Soft-deleted types shown at bottom with strikethrough text, reduced opacity (55%), red "Deleted" badge, and "Undo" button to restore
+- Active types sorted first, inactive last
+- Default system types cannot be deleted (buttons disabled)
+- Restore calls `PATCH /account-types/{id}/toggle` via `AccountTypeService.toggleActive()`
+- Tab switch from Account Types to Accounts triggers `refreshData()` to prevent stale dropdown data
 
 #### Tab: Categories
 - Tree table or grouped table showing categories (with sub-categories)

@@ -184,11 +184,15 @@
       "name": "Bank Account",
       "description": "Savings and current bank accounts",
       "icon": "fa-building-columns",
-      "isActive": true
+      "isActive": true,
+      "isDefault": false,
+      "createdAt": "2026-02-16T10:00:00",
+      "updatedAt": "2026-02-16T10:00:00"
     }
   ]
 }
 ```
+**Note:** Soft-deleted types (`isActive: false`) are included in this response. Filter client-side or use `GET /account-types/active` for active-only.
 
 ### POST `/account-types`
 **Request:**
@@ -204,7 +208,12 @@
 Same body as POST.
 
 ### DELETE `/account-types/{id}`
-Soft delete — sets `isActive = false`.
+Soft delete — sets `isActive = false`. Default account types cannot be deleted (returns 400).
+
+Soft-deleted types remain in `GET /account-types` response with `isActive: false`. Use `PATCH /account-types/{id}/toggle` to restore.
+
+### PATCH `/account-types/{id}/toggle`
+Toggles `isActive` status. Used to restore soft-deleted account types.
 
 ---
 
@@ -253,7 +262,10 @@ Soft delete — sets `isActive = false`.
 Same body as POST.
 
 ### DELETE `/accounts/{id}`
-Soft delete.
+Soft delete — sets `isActive = false`. Account remains in DB but is excluded from `GET /accounts` responses.
+
+### POST `/accounts` — Restore Behavior
+If an account with the same name was previously soft-deleted, creating a new account with that name **restores** the soft-deleted record (updates its fields and sets `isActive = true`) instead of creating a duplicate.
 
 ---
 

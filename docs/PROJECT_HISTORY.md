@@ -429,6 +429,49 @@ Made the Credit Card Statement card in the import wizard active and clickable, n
 
 ---
 
+### Settings Bug Fixes: Soft Delete, Stale Tabs, EMI, LLM Categories (February 25, 2026)
+
+Six fixes and enhancements across Settings, Account management, and LLM integration.
+
+#### Bug Fix: Account Type FK Deletion Error
+- **Before:** Deleting an account type linked to accounts threw a raw 500 FK constraint error
+- **After:** Account type deletion is now **soft delete** (`isActive = false`), never hard delete
+- Frontend shows soft-deleted types at the bottom of the list with strikethrough, reduced opacity, "Deleted" badge, and an "Undo" button to restore
+- `AccountTypeServiceImpl.delete()` sets `isActive=false` instead of calling `accountTypeRepository.delete()`
+- `AccountTypeService.toggleActive()` endpoint (`PATCH /{id}/toggle`) used for restore
+
+#### Bug Fix: Account Hard Delete → Soft Delete
+- `AccountServiceImpl.delete()` now sets `isActive=false` instead of hard-deleting
+- `AccountServiceImpl.getAllByUserId()` changed from `findByUserId()` to `findByUserIdAndIsActiveTrue()` — UI never sees soft-deleted accounts
+- `AccountServiceImpl.create()` checks for soft-deleted accounts with the same name — restores them instead of throwing `DuplicateResourceException`
+- Added `findByNameAndUserIdAndIsActiveFalse()` to `AccountRepository`
+
+#### Bug Fix: Stale Data on Settings Tab Switch
+- PrimeNG Tabs keep components alive, so `ngOnInit()` doesn't re-fire on tab switch
+- Added `(valueChange)="onTabChange($event)"` on `<p-tabs>` in settings template
+- When switching to Accounts tab (value="1"), calls `accountsComponent.refreshData()` via `@ViewChild`
+- `Accounts.refreshData()` reloads both accounts and account types
+
+#### Bug Fix: Account Type Delete Error Message
+- Frontend `deleteAccountType()` error handler now shows the API error message (`error.error.message`) instead of a generic string
+
+#### Enhancement: "EMI" Default Category
+- Added `V0_0_30__add_emi_default_category.sql` — inserts "EMI" as an EXPENSE default category
+- Color mapping already existed in `TransactionCategoryServiceImpl.getDefaultColorForCategory()` (`"EMI" -> "#607D8B"`)
+- Auto-provisioned to users on next category API call via existing `mergeCategories()` logic
+
+#### Enhancement: LLM Category Hints in Prompt
+- `LlmService.parseStatement()` now accepts `List<String> availableCategories` parameter
+- `GeminiLlmService.buildPrompt()` includes an "AVAILABLE CATEGORIES" block instructing the LLM: "you MUST pick from this list, do NOT invent new categories"
+- `CreditCardStatementServiceImpl.processLlmParseAsync()` fetches all active user categories (including auto-provisioned defaults like EMI) and passes their names to the LLM
+- Merchant mapping hints remain as "ABSOLUTE RULES" (highest priority), but for unmapped merchants the LLM now picks from the user's existing category list
+
+**Files modified (14):** `AccountTypeServiceImpl.java`, `AccountServiceImpl.java`, `AccountRepository.java`, `GeminiLlmService.java`, `LlmService.java`, `CreditCardStatementServiceImpl.java`, `account-type.model.ts`, `account-type.service.ts`, `account-types.html`, `account-types.ts`, `accounts.ts`, `settings.html`, `settings.ts`, `V0_0_30__add_emi_default_category.sql`
+
+**No errors encountered** — both `./gradlew build -x test` and `ng build` passed on first attempt (after fixing PrimeNG `valueChange` event type).
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.
