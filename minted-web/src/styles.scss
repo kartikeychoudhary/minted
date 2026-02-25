@@ -422,6 +422,24 @@ body {
 }
 
 // ============================================================
+//  RESPONSIVE — Mobile overrides (< 768px)
+// ============================================================
+
+@media (max-width: 767px) {
+  // Cap all PrimeNG dialogs at 90vw on mobile
+  .p-dialog {
+    max-width: 90vw !important;
+    width: 90vw !important;
+  }
+
+  // AG Grid: viewport-relative height on mobile
+  ag-grid-angular {
+    height: 60vh !important;
+    min-height: 300px;
+  }
+}
+
+// ============================================================
 //  PRIMENG DRAWER — Notification Panel
 // ============================================================
 

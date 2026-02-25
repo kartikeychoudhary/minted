@@ -13,17 +13,17 @@
   <main class="relative z-10 w-full max-w-md shadow-lg border overflow-hidden login-card"
     style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
     <!-- Header Section with Logo -->
-    <div class="pt-10 pb-6 px-8 text-center">
+    <div class="pt-10 pb-6 px-4 sm:px-8 text-center">
       <!-- Gold Coin Icon -->
       <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 shadow-sm logo-icon">
         <i class="pi pi-dollar" style="font-size: 1.875rem;"></i>
       </div>
-      <h1 class="text-2xl font-bold tracking-tight" style="color: #1e293b;">Minted</h1>
+      <h1 class="text-xl sm:text-2xl font-bold tracking-tight" style="color: #1e293b;">Minted</h1>
       <p class="mt-2 text-sm" style="color: #857f79;">Secure access to your wealth portfolio</p>
     </div>
 
     <!-- Form Section -->
-    <form *ngIf="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-8 pb-10 space-y-6">
+    <form *ngIf="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-4 sm:px-8 pb-10 space-y-6">
       <!-- Username Input with Icon -->
       <div>
         <p-iconfield styleClass="w-full">
@@ -61,7 +61,7 @@
     </form>
 
     <!-- Footer Area -->
-    <div class="py-4 px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;"
+    <div class="py-4 px-4 sm:px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;"
       *ngIf="signupEnabled">
       <p class="text-xs" style="color: #857f79;">
         Don't have an account?

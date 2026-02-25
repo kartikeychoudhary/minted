@@ -19,3 +19,21 @@ main {
     background-color: var(--minted-scrollbar-hover);
   }
 }
+
+// Mobile sidebar drawer — remove default padding, let sidebar fill entire drawer
+::ng-deep .mobile-sidebar-drawer {
+  .p-drawer-content {
+    padding: 0 !important;
+    overflow: hidden;
+  }
+
+  .p-drawer-header {
+    display: none !important;
+  }
+
+  // Match sidebar background
+  &.p-drawer {
+    background: var(--minted-sidebar-bg) !important;
+    border: none !important;
+  }
+}

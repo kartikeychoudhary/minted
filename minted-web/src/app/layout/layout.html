@@ -1,16 +1,31 @@
 <div class="h-screen flex overflow-hidden" [style.background-color]="'var(--minted-bg-page)'">
-  <!-- Sidebar -->
-  <app-sidebar (sidebarToggle)="onSidebarToggle($event)"></app-sidebar>
+  <!-- Sidebar (desktop only) -->
+  <div class="hidden md:block">
+    <app-sidebar (sidebarToggle)="onSidebarToggle($event)"></app-sidebar>
+  </div>
+
+  <!-- Mobile Sidebar Drawer -->
+  <p-drawer [(visible)]="isMobileSidebarVisible" position="left"
+    [style]="{ width: '280px' }" [modal]="true" [showCloseIcon]="false"
+    styleClass="mobile-sidebar-drawer" appendTo="body">
+    <app-sidebar [mobileMode]="true" (navigationClicked)="isMobileSidebarVisible = false"></app-sidebar>
+  </p-drawer>
 
   <!-- Main Content Area -->
   <main class="flex-1 flex flex-col h-full overflow-hidden relative">
     <!-- Top Header -->
     <header
-      class="h-16 flex items-center justify-between px-8 flex-shrink-0 border-b"
+      class="h-16 flex items-center justify-between px-4 md:px-8 flex-shrink-0 border-b"
       [style.background-color]="'var(--minted-bg-card)'"
       [style.border-color]="'var(--minted-border)'">
       <div>
-        <h1 class="text-xl font-bold" [style.color]="'var(--minted-text-primary)'">{{ 'Minted' }}</h1>
+        <!-- Hamburger menu (mobile only) -->
+        <button type="button" (click)="toggleMobileSidebar()"
+          class="md:hidden p-2 rounded-full transition-colors"
+          [style.color]="'var(--minted-text-secondary)'"
+          pTooltip="Menu" tooltipPosition="bottom">
+          <span class="material-icons">menu</span>
+        </button>
       </div>
       <div class="flex items-center gap-4">
         <!-- Theme Toggle -->
@@ -53,7 +68,7 @@
 <p-drawer
   [(visible)]="isNotificationDrawerVisible"
   position="right"
-  [style]="{ width: '400px' }"
+  [style]="{ width: 'min(400px, 100vw)' }"
   [modal]="true"
   [dismissible]="true"
   [closeOnEscape]="true"

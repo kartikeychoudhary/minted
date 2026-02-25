@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../core/services/theme.service';
 import { NotificationService } from '../core/services/notification.service';
 import { AuthService } from '../core/services/auth.service';
@@ -16,6 +16,9 @@ import { NotificationType } from '../core/models/notification.model';
 export class Layout implements OnInit, OnDestroy {
   isSidebarOpen = true;
   isNotificationDrawerVisible = false;
+  isMobileSidebarVisible = false;
+  private mobileQuery!: MediaQueryList;
+  private mobileQueryListener!: (e: MediaQueryListEvent) => void;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -34,6 +37,23 @@ export class Layout implements OnInit, OnDestroy {
         this.notificationService.stopPolling();
       }
     });
+
+    // Auto-close mobile sidebar on navigation
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.isMobileSidebarVisible = false;
+    });
+  }
+
+  get isMobile(): boolean {
+    return window.innerWidth < 768;
+  }
+
+  toggleMobileSidebar(): void {
+    this.isMobileSidebarVisible = !this.isMobileSidebarVisible;
+    this.cdr.detectChanges();
   }
 
   onSidebarToggle(isOpen: boolean): void {

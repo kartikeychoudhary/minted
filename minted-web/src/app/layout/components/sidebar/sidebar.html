@@ -1,18 +1,20 @@
-<aside [class]="isOpen ? 'w-64' : 'w-20'"
-  class="h-screen flex-shrink-0 text-white flex flex-col transition-all duration-300 relative"
+<aside [class]="(mobileMode || isOpen) ? 'w-64' : 'w-20'"
+  class="flex-shrink-0 text-white flex flex-col transition-all duration-300 relative"
+  [class.h-screen]="!mobileMode"
+  [class.h-full]="mobileMode"
   [style.background-color]="'var(--minted-sidebar-bg)'">
 
   <!-- Logo Area -->
-  <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="isOpen" [class.justify-center]="!isOpen"
-    [class.px-4]="!isOpen">
-    <div class="flex items-center gap-2" [class.justify-center]="!isOpen">
+  <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen"
+    [class.px-4]="!mobileMode && !isOpen">
+    <div class="flex items-center gap-2" [class.justify-center]="!mobileMode && !isOpen">
       <span class="material-icons text-3xl" [style.color]="'var(--minted-accent)'">account_balance_wallet</span>
-      <span *ngIf="isOpen" class="text-xl font-bold tracking-tight">Minted</span>
+      <span *ngIf="mobileMode || isOpen" class="text-xl font-bold tracking-tight">Minted</span>
     </div>
   </div>
 
-  <!-- Toggle Button -->
-  <button type="button" (click)="toggleSidebar()"
+  <!-- Toggle Button (hidden in mobile drawer) -->
+  <button *ngIf="!mobileMode" type="button" (click)="toggleSidebar()"
     class="absolute -right-3 top-20 rounded-full p-1.5 shadow-lg transition-colors z-10 border"
     [style.background-color]="'var(--minted-bg-card)'" [style.color]="'var(--minted-text-secondary)'"
     [style.border-color]="'var(--minted-border)'" [attr.aria-label]="isOpen ? 'Collapse sidebar' : 'Expand sidebar'"
@@ -21,27 +23,28 @@
   </button>
 
   <!-- Navigation Links -->
-  <nav class="flex-1 overflow-y-auto py-6 space-y-1" [class.px-3]="isOpen" [class.px-2]="!isOpen">
+  <nav class="flex-1 overflow-y-auto py-6 space-y-1" [class.px-3]="mobileMode || isOpen" [class.px-2]="!mobileMode && !isOpen">
     <ng-container *ngFor="let item of navigationItems">
       <!-- Section Header -->
-      <div *ngIf="item.section && isOpen" class="pt-4 pb-2">
+      <div *ngIf="item.section && (mobileMode || isOpen)" class="pt-4 pb-2">
         <p class="px-3 text-xs font-semibold text-white/40 uppercase tracking-wider">{{ item.section }}</p>
       </div>
 
       <!-- Separator for section in collapsed mode -->
-      <div *ngIf="item.section && !isOpen" class="h-px bg-white/10 my-2 mx-2"></div>
+      <div *ngIf="item.section && !mobileMode && !isOpen" class="h-px bg-white/10 my-2 mx-2"></div>
 
       <!-- Navigation Link -->
       <a [routerLink]="item.route" routerLinkActive="bg-white/10 text-white shadow-sm border border-white/5"
         [routerLinkActiveOptions]="{ exact: item.route === '/' }"
         class="flex items-center rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors group"
-        [class.px-3]="isOpen" [class.py-2.5]="isOpen" [class.gap-3]="isOpen" [class.justify-center]="!isOpen"
-        [class.p-3]="!isOpen" [pTooltip]="!isOpen ? item.label : ''" tooltipPosition="right">
+        [class.px-3]="mobileMode || isOpen" [class.py-2.5]="mobileMode || isOpen" [class.gap-3]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen"
+        [class.p-3]="!mobileMode && !isOpen" [pTooltip]="!mobileMode && !isOpen ? item.label : ''" tooltipPosition="right"
+        (click)="onNavClick()">
         <span class="material-icons text-xl transition-colors" [class.text-primary]="isActive(item.route)"
           [class.group-hover:text-primary]="!isActive(item.route)">
           {{ item.icon }}
         </span>
-        <span *ngIf="isOpen" class="font-medium">{{ item.label }}</span>
+        <span *ngIf="mobileMode || isOpen" class="font-medium">{{ item.label }}</span>
       </a>
     </ng-container>
   </nav>
@@ -49,29 +52,29 @@
   <!-- User Profile Section -->
   <div class="p-4 border-t border-white/10 relative">
     <div (click)="toggleUserMenu()"
-      class="flex items-center rounded-lg hover:bg-white/5 cursor-pointer transition-colors" [class.gap-3]="isOpen"
-      [class.p-2]="isOpen" [class.justify-center]="!isOpen" [class.p-3]="!isOpen"
-      [pTooltip]="!isOpen ? currentUser?.displayName : ''" tooltipPosition="right">
+      class="flex items-center rounded-lg hover:bg-white/5 cursor-pointer transition-colors" [class.gap-3]="mobileMode || isOpen"
+      [class.p-2]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen" [class.p-3]="!mobileMode && !isOpen"
+      [pTooltip]="!mobileMode && !isOpen ? currentUser?.displayName : ''" tooltipPosition="right">
 
       <!-- Avatar -->
       <div class="rounded-full border-2 border-white/20 flex items-center justify-center font-semibold text-white"
-        [class.w-9]="isOpen" [class.h-9]="isOpen" [class.w-10]="!isOpen" [class.h-10]="!isOpen"
+        [class.w-9]="mobileMode || isOpen" [class.h-9]="mobileMode || isOpen" [class.w-10]="!mobileMode && !isOpen" [class.h-10]="!mobileMode && !isOpen"
         [style.background-color]="'var(--minted-accent)'">
         {{ getInitials(currentUser?.displayName || 'U') }}
       </div>
 
       <!-- User Info (shown when open) -->
-      <div *ngIf="isOpen" class="flex-1 min-w-0">
+      <div *ngIf="mobileMode || isOpen" class="flex-1 min-w-0">
         <p class="text-sm font-medium text-white truncate">{{ currentUser?.displayName }}</p>
         <p class="text-xs text-white/50 truncate">{{ currentUser?.email }}</p>
       </div>
 
       <!-- Dropdown Icon (shown when open) -->
-      <span *ngIf="isOpen" class="material-icons text-white/40 text-lg">expand_more</span>
+      <span *ngIf="mobileMode || isOpen" class="material-icons text-white/40 text-lg">expand_more</span>
     </div>
 
     <!-- User Menu Dropdown -->
-    <div *ngIf="showUserMenu && isOpen"
+    <div *ngIf="showUserMenu && (mobileMode || isOpen)"
       class="absolute bottom-full left-4 right-4 mb-2 rounded-lg shadow-lg border overflow-hidden"
       [style.background-color]="'var(--minted-bg-card)'" [style.border-color]="'var(--minted-border)'">
       <button type="button" (click)="navigateToProfile()"

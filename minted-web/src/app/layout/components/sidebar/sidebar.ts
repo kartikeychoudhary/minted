@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
@@ -17,7 +17,9 @@ interface NavigationItem {
   styleUrl: './sidebar.scss'
 })
 export class Sidebar {
+  @Input() mobileMode = false;
   @Output() sidebarToggle = new EventEmitter<boolean>();
+  @Output() navigationClicked = new EventEmitter<void>();
 
   isOpen = true;
   currentUser: any = null;
@@ -88,11 +90,19 @@ export class Sidebar {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+    this.onNavClick();
+  }
+
+  onNavClick(): void {
+    if (this.mobileMode) {
+      this.navigationClicked.emit();
+    }
   }
 
   navigateToProfile(): void {
     this.router.navigate(['/settings']);
     this.showUserMenu = false;
+    this.onNavClick();
   }
 
   getInitials(name: string): string {
