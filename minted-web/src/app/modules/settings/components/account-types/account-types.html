@@ -36,7 +36,8 @@
       </ng-template>
 
       <ng-template pTemplate="body" let-accountType>
-        <tr class="transition-colors" style="--hover-bg: var(--minted-bg-hover);">
+        <tr class="transition-colors" [style.opacity]="accountType.isActive === false ? '0.55' : '1'"
+          style="--hover-bg: var(--minted-bg-hover);">
           <td>
             <div class="flex h-10 w-10 items-center justify-center rounded-lg"
               [ngClass]="getIconBackgroundClass(accountType.icon)">
@@ -45,30 +46,51 @@
           </td>
           <td>
             <div class="flex items-center gap-2">
-              <span class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ accountType.name }}</span>
+              <span class="text-sm font-medium"
+                [style.text-decoration]="accountType.isActive === false ? 'line-through' : 'none'"
+                [style.color]="accountType.isActive === false ? 'var(--minted-text-secondary)' : 'var(--minted-text-primary)'">
+                {{ accountType.name }}
+              </span>
               <span *ngIf="accountType.isDefault"
                 class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
                 style="background-color: var(--minted-accent); color: white;">
                 <i class="pi pi-lock" style="font-size: 0.625rem;"></i>
                 Default
               </span>
+              <span *ngIf="accountType.isActive === false"
+                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium"
+                style="background-color: #fee2e2; color: #991b1b;">
+                Deleted
+              </span>
             </div>
           </td>
           <td>
-            <div class="text-sm" style="color: var(--minted-text-secondary);">{{ accountType.description }}</div>
+            <div class="text-sm"
+              [style.text-decoration]="accountType.isActive === false ? 'line-through' : 'none'"
+              style="color: var(--minted-text-secondary);">
+              {{ accountType.description }}
+            </div>
           </td>
           <td style="text-align: right;">
-            <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
-              (click)="showEditDialog(accountType)" [pTooltip]="accountType.isDefault ? 'Default types cannot be edited' : 'Edit'" tooltipPosition="top"
-              [disabled]="accountType.isDefault"
-              style="color: var(--minted-text-secondary);">
-            </button>
-            <button pButton type="button" icon="pi pi-trash"
-              class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="confirmDelete(accountType)"
-              [pTooltip]="accountType.isDefault ? 'Default types cannot be deleted' : 'Delete'" tooltipPosition="top"
-              [disabled]="accountType.isDefault"
-              style="color: var(--minted-text-secondary);">
-            </button>
+            <ng-container *ngIf="accountType.isActive !== false; else undoActions">
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-text p-button-sm mr-2"
+                (click)="showEditDialog(accountType)" [pTooltip]="accountType.isDefault ? 'Default types cannot be edited' : 'Edit'" tooltipPosition="top"
+                [disabled]="accountType.isDefault"
+                style="color: var(--minted-text-secondary);">
+              </button>
+              <button pButton type="button" icon="pi pi-trash"
+                class="p-button-rounded p-button-text p-button-sm p-button-danger" (click)="confirmDelete(accountType)"
+                [pTooltip]="accountType.isDefault ? 'Default types cannot be deleted' : 'Delete'" tooltipPosition="top"
+                [disabled]="accountType.isDefault"
+                style="color: var(--minted-text-secondary);">
+              </button>
+            </ng-container>
+            <ng-template #undoActions>
+              <button pButton type="button" icon="pi pi-undo" label="Undo"
+                class="p-button-rounded p-button-text p-button-sm p-button-success"
+                (click)="restoreAccountType(accountType)" pTooltip="Restore this account type" tooltipPosition="top">
+              </button>
+            </ng-template>
           </td>
         </tr>
       </ng-template>
@@ -87,9 +109,9 @@
   <div class="border rounded-lg p-4 flex gap-3" style="background-color: #eff6ff; border-color: #bfdbfe;">
     <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
     <div>
-      <h4 class="text-sm font-medium" style="color: #1e3a8a;">Default Account Types</h4>
-      <p class="text-sm mt-1" style="color: #1e40af;">Some account types like 'Cash' are system protected and cannot be
-        deleted, but you can edit their display names.</p>
+      <h4 class="text-sm font-medium" style="color: #1e3a8a;">Account Types</h4>
+      <p class="text-sm mt-1" style="color: #1e40af;">Default account types are system protected and cannot be deleted.
+        Custom types can be deleted and will appear with a strikethrough — use the Undo button to restore them.</p>
     </div>
   </div>
 </div>

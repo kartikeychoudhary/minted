@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional(readOnly = true)
     public List<AccountResponse> getAllByUserId(Long userId) {
-        return accountRepository.findByUserId(userId).stream()
+        return accountRepository.findByUserIdAndIsActiveTrue(userId).stream()
                 .map(AccountResponse::from)
                 .collect(Collectors.toList());
     }
@@ -55,7 +56,23 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountResponse create(AccountRequest request, Long userId) {
-        // Check if account with same name already exists for user
+        // Check if a soft-deleted account with the same name exists — restore it
+        Optional<Account> softDeleted = accountRepository.findByNameAndUserIdAndIsActiveFalse(request.name(), userId);
+        if (softDeleted.isPresent()) {
+            Account account = softDeleted.get();
+            AccountType accountType = findAccountTypeByIdAndUserId(request.accountTypeId(), userId);
+            account.setAccountType(accountType);
+            account.setBalance(request.balance() != null ? request.balance() : BigDecimal.ZERO);
+            account.setCurrency(request.currency() != null ? request.currency() : "INR");
+            account.setColor(request.color());
+            account.setIcon(request.icon());
+            account.setIsActive(true);
+            Account restored = accountRepository.save(account);
+            log.info("Account restored from soft-delete: id={}, name={}", restored.getId(), restored.getName());
+            return AccountResponse.from(restored);
+        }
+
+        // Check if an active account with same name already exists
         if (accountRepository.existsByNameAndUserId(request.name(), userId)) {
             throw new com.minted.api.common.exception.DuplicateResourceException("Account with name '" + request.name() + "' already exists");
         }
@@ -107,8 +124,9 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void delete(Long id, Long userId) {
         Account account = findAccountByIdAndUserId(id, userId);
-        accountRepository.delete(account);
-        log.info("Account deleted: id={}", id);
+        account.setIsActive(false);
+        accountRepository.save(account);
+        log.info("Account soft-deleted: id={}", id);
     }
 
     @Override

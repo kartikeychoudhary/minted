@@ -22,6 +22,8 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     boolean existsByNameAndUserId(String name, Long userId);
 
+    Optional<Account> findByNameAndUserIdAndIsActiveFalse(String name, Long userId);
+
     List<Account> findByAccountTypeIdAndUserId(Long accountTypeId, Long userId);
 
     @Query("SELECT a FROM Account a WHERE a.user.id = :userId AND a.isActive = true ORDER BY a.balance DESC")

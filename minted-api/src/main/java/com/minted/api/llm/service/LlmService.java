@@ -10,5 +10,7 @@ public interface LlmService {
     String getProviderName();
 
     List<ParsedTransactionRow> parseStatement(String extractedText, Long userId, Long statementId,
-                                               List<MerchantCategoryMapping> merchantMappings, String apiKey, String modelKey);
+                                               List<MerchantCategoryMapping> merchantMappings,
+                                               List<String> availableCategories,
+                                               String apiKey, String modelKey);
 }

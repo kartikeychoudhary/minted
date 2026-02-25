@@ -63,7 +63,11 @@ export class AccountTypes implements OnInit {
     this.accountTypeService.getAll().subscribe({
       next: (data) => {
         console.log('Account types loaded successfully:', data);
-        this.accountTypes = data;
+        // Sort: active first, inactive (soft-deleted) last
+        this.accountTypes = data.sort((a, b) => {
+          if (a.isActive === b.isActive) return 0;
+          return a.isActive ? -1 : 1;
+        });
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -184,11 +188,31 @@ export class AccountTypes implements OnInit {
         });
         this.loadAccountTypes();
       },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error?.error?.message || 'Failed to delete account type'
+        });
+      }
+    });
+  }
+
+  restoreAccountType(accountType: AccountTypeResponse): void {
+    this.accountTypeService.toggleActive(accountType.id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Restored',
+          detail: `Account type '${accountType.name}' restored successfully`
+        });
+        this.loadAccountTypes();
+      },
       error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: 'Failed to delete account type'
+          detail: 'Failed to restore account type'
         });
       }
     });

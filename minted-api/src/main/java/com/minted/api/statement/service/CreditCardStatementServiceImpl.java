@@ -8,6 +8,7 @@ import com.minted.api.user.entity.User;
 import com.minted.api.account.entity.Account;
 import com.minted.api.statement.entity.CreditCardStatement;
 import com.minted.api.transaction.entity.Transaction;
+import com.minted.api.transaction.dto.TransactionCategoryResponse;
 import com.minted.api.transaction.entity.TransactionCategory;
 import com.minted.api.llm.entity.MerchantCategoryMapping;
 import com.minted.api.job.entity.JobExecution;
@@ -32,6 +33,7 @@ import com.minted.api.statement.service.StatementParserService;
 import com.minted.api.llm.service.LlmService;
 import com.minted.api.llm.service.LlmConfigService;
 import com.minted.api.llm.service.MerchantMappingService;
+import com.minted.api.transaction.service.TransactionCategoryService;
 import com.minted.api.admin.service.SystemSettingService;
 import com.minted.api.notification.service.NotificationHelper;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +74,7 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
     private final LlmService llmService;
     private final LlmConfigService llmConfigService;
     private final MerchantMappingService merchantMappingService;
+    private final TransactionCategoryService transactionCategoryService;
     private final SystemSettingService systemSettingService;
     private final NotificationHelper notificationHelper;
     private final ObjectMapper objectMapper;
@@ -197,8 +200,11 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
                 // Step 1: LLM Parse
                 JobStepExecution step1 = createStep(execution, "LLM Parse", 1);
                 List<MerchantCategoryMapping> mappings = merchantMappingService.getRawMappings(userId);
+                List<String> categoryNames = transactionCategoryService.getAllActiveByUserId(userId).stream()
+                        .map(c -> c.name())
+                        .collect(Collectors.toList());
                 List<ParsedTransactionRow> rows = llmService.parseStatement(
-                        statement.getExtractedText(), userId, statementId, mappings, apiKey, modelKey);
+                        statement.getExtractedText(), userId, statementId, mappings, categoryNames, apiKey, modelKey);
                 completeStep(step1, null);
                 execution.setCompletedSteps(1);
                 jobExecutionRepository.save(execution);

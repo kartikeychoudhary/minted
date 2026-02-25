@@ -19,6 +19,7 @@ export interface AccountTypeResponse {
   name: string;
   description: string;
   icon: string;
+  isActive: boolean;
   isDefault: boolean;
   createdAt: string;
   updatedAt: string;

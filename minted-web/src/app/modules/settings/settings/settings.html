@@ -23,7 +23,7 @@
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="overflow: visible;">
     <div class="rounded-lg shadow-sm border"
       style="background-color: var(--minted-bg-card); border-color: var(--minted-border); overflow: visible;">
-      <p-tabs value="0" [style]="{'overflow': 'visible'}">
+      <p-tabs value="0" (valueChange)="onTabChange($event)" [style]="{'overflow': 'visible'}">
         <p-tablist [style]="{'overflow': 'visible'}">
           <p-tab value="0">
             <i class="pi pi-building mr-2"></i>
@@ -55,7 +55,7 @@
             <app-account-types></app-account-types>
           </p-tabpanel>
           <p-tabpanel value="1" [style]="{'overflow': 'visible'}">
-            <app-accounts></app-accounts>
+            <app-accounts #accountsComponent></app-accounts>
           </p-tabpanel>
           <p-tabpanel value="2" [style]="{'overflow': 'visible'}">
             <app-categories></app-categories>

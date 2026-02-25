@@ -35,8 +35,9 @@ public class GeminiLlmService implements LlmService {
     @Override
     public List<ParsedTransactionRow> parseStatement(String extractedText, Long userId, Long statementId,
                                                       List<MerchantCategoryMapping> merchantMappings,
+                                                      List<String> availableCategories,
                                                       String apiKey, String modelKey) {
-        String prompt = buildPrompt(extractedText, merchantMappings);
+        String prompt = buildPrompt(extractedText, merchantMappings, availableCategories);
 
         String url = GEMINI_API_URL
                 .replace("{model}", modelKey)
@@ -107,7 +108,7 @@ public class GeminiLlmService implements LlmService {
         }
     }
 
-    String buildPrompt(String extractedText, List<MerchantCategoryMapping> merchantMappings) {
+    String buildPrompt(String extractedText, List<MerchantCategoryMapping> merchantMappings, List<String> availableCategories) {
         StringBuilder sb = new StringBuilder();
         sb.append("You are a financial data extraction expert. Extract all transactions from the following credit card statement text.\n\n");
         sb.append("Return ONLY a valid JSON array with no markdown, no code blocks, no explanation.\n");
@@ -116,13 +117,19 @@ public class GeminiLlmService implements LlmService {
         sb.append("- \"type\": \"EXPENSE\" or \"INCOME\" (credits/refunds = INCOME, purchases = EXPENSE)\n");
         sb.append("- \"description\": string (merchant name / transaction description, max 200 chars)\n");
         sb.append("- \"transactionDate\": string in \"YYYY-MM-DD\" format\n");
-        sb.append("- \"categoryName\": string — see MERCHANT HINTS below first, then use your best guess\n");
+        sb.append("- \"categoryName\": string — MUST be one of the AVAILABLE CATEGORIES listed below\n");
         sb.append("- \"notes\": string (any extra info like reference number, empty string if none)\n\n");
+
+        if (availableCategories != null && !availableCategories.isEmpty()) {
+            sb.append("=== AVAILABLE CATEGORIES (you MUST pick from this list, do NOT invent new categories) ===\n");
+            sb.append(String.join(", ", availableCategories));
+            sb.append("\n=== END AVAILABLE CATEGORIES ===\n\n");
+        }
 
         if (merchantMappings != null && !merchantMappings.isEmpty()) {
             sb.append("=== MERCHANT CATEGORY HINTS (treat these as ABSOLUTE RULES, highest priority) ===\n");
             sb.append(buildMerchantHintsBlock(merchantMappings));
-            sb.append("For all other merchants not listed above, use your best judgment.\n");
+            sb.append("For all other merchants not listed above, pick the best matching category from the AVAILABLE CATEGORIES list.\n");
             sb.append("=== END HINTS ===\n\n");
         }
 

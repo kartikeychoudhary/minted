@@ -41,6 +41,11 @@ export class Accounts implements OnInit {
     }, 0);
   }
 
+  refreshData(): void {
+    this.loadAccounts();
+    this.loadAccountTypes();
+  }
+
   initForm(): void {
     this.accountForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],

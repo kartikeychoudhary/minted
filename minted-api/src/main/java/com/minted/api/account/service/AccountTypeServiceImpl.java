@@ -118,8 +118,9 @@ public class AccountTypeServiceImpl implements AccountTypeService {
             throw new BadRequestException("Default account types cannot be deleted");
         }
 
-        accountTypeRepository.delete(accountType);
-        log.info("AccountType deleted: id={}", id);
+        accountType.setIsActive(false);
+        accountTypeRepository.save(accountType);
+        log.info("AccountType soft-deleted: id={}", id);
     }
 
     @Override
