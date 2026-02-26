@@ -11,6 +11,7 @@ export interface FriendResponse {
   email: string | null;
   phone: string | null;
   avatarColor: string;
+  avatarBase64: string | null;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

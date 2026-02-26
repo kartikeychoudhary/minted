@@ -93,7 +93,8 @@ public class AuthServiceImpl implements AuthService {
                 user.getEmail(),
                 user.getForcePasswordChange(),
                 user.getCurrency(),
-                user.getRole()
+                user.getRole(),
+                null
         );
 
         log.info("Login successful for user: {}", user.getUsername());
@@ -132,7 +133,8 @@ public class AuthServiceImpl implements AuthService {
                     user.getEmail(),
                     user.getForcePasswordChange(),
                     user.getCurrency() != null ? user.getCurrency() : "USD",
-                    user.getRole()
+                    user.getRole(),
+                    null
             );
 
             return new LoginResponse(
@@ -229,7 +231,8 @@ public class AuthServiceImpl implements AuthService {
                 savedUser.getEmail(),
                 savedUser.getForcePasswordChange(),
                 savedUser.getCurrency(),
-                savedUser.getRole()
+                savedUser.getRole(),
+                null
         );
 
         return new LoginResponse(token, refreshToken, "Bearer", jwtExpiration, userResponse);

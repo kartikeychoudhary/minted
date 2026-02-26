@@ -12,7 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -107,6 +110,45 @@ public class FriendServiceImpl implements FriendService {
         friend.setIsActive(false);
         friendRepository.save(friend);
         log.info("Friend soft-deleted: id={}", id);
+    }
+
+    @Override
+    @Transactional
+    public FriendResponse uploadAvatar(Long id, Long userId, MultipartFile file) {
+        Friend friend = findFriendByIdAndUserId(id, userId);
+
+        if (file.getSize() > 2 * 1024 * 1024) {
+            throw new IllegalArgumentException("Avatar file size must not exceed 2MB");
+        }
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed");
+        }
+
+        try {
+            friend.setAvatarData(file.getBytes());
+            friend.setAvatarContentType(contentType);
+            friend.setAvatarFileSize((int) file.getSize());
+            friend.setAvatarUpdatedAt(LocalDateTime.now());
+            Friend saved = friendRepository.save(friend);
+            log.info("Avatar uploaded for friend id={}", id);
+            return FriendResponse.from(saved);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read avatar file", e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public FriendResponse deleteAvatar(Long id, Long userId) {
+        Friend friend = findFriendByIdAndUserId(id, userId);
+        friend.setAvatarData(null);
+        friend.setAvatarContentType(null);
+        friend.setAvatarFileSize(null);
+        friend.setAvatarUpdatedAt(null);
+        Friend saved = friendRepository.save(friend);
+        log.info("Avatar deleted for friend id={}", id);
+        return FriendResponse.from(saved);
     }
 
     private Friend findFriendByIdAndUserId(Long id, Long userId) {

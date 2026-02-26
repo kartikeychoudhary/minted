@@ -88,11 +88,13 @@ export class Profile implements OnInit {
     const username = localStorage.getItem('username') || 'User';
     const email = localStorage.getItem('email') || '';
     const displayName = localStorage.getItem('displayName') || username;
+    const avatarBase64 = localStorage.getItem('avatarBase64') || null;
 
     this.currentUser = {
       username,
       email,
-      displayName
+      displayName,
+      avatarBase64
     };
 
     this.profileForm?.patchValue({
@@ -100,6 +102,14 @@ export class Profile implements OnInit {
       email: email,
       displayName: displayName
     });
+  }
+
+  getInitials(name: string): string {
+    return name
+      .split(' ')
+      .map(p => p.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
   }
 
   saveProfile(): void {
@@ -130,6 +140,35 @@ export class Profile implements OnInit {
           summary: 'Error',
           detail: 'Failed to update profile'
         });
+      }
+    });
+  }
+
+  onAvatarSelected(file: File): void {
+    this.profileService.uploadAvatar(file).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          const avatarBase64 = (response.data as any).avatarBase64 || null;
+          if (this.currentUser) { this.currentUser.avatarBase64 = avatarBase64; }
+          if (avatarBase64) { localStorage.setItem('avatarBase64', avatarBase64); }
+        }
+        this.messageService.add({ severity: 'success', summary: 'Avatar Updated', detail: 'Profile picture saved.' });
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload avatar.' });
+      }
+    });
+  }
+
+  onAvatarRemoved(): void {
+    this.profileService.deleteAvatar().subscribe({
+      next: () => {
+        if (this.currentUser) { this.currentUser.avatarBase64 = null; }
+        localStorage.removeItem('avatarBase64');
+        this.messageService.add({ severity: 'info', summary: 'Avatar Removed', detail: 'Profile picture removed.' });
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to remove avatar.' });
       }
     });
   }

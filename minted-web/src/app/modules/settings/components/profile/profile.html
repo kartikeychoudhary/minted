@@ -13,17 +13,11 @@
         <div class="p-6 space-y-6">
           <!-- Profile Photo -->
           <div class="flex items-center gap-6">
-            <div class="relative">
-              <div class="w-20 h-20 rounded-full border-4 flex items-center justify-center"
-                style="border-color: var(--minted-border); background-color: var(--minted-accent);">
-                <i class="pi pi-user" style="font-size: 2rem; color: white;"></i>
-              </div>
-              <button type="button" class="absolute bottom-0 right-0 p-1.5 rounded-full shadow-lg transition-colors"
-                style="background-color: var(--minted-accent); color: white;" pTooltip="Upload Photo"
-                tooltipPosition="top">
-                <i class="pi pi-camera" style="font-size: 0.875rem;"></i>
-              </button>
-            </div>
+            <app-avatar-upload [currentAvatarUrl]="currentUser?.avatarBase64"
+              [initials]="getInitials(currentUser?.displayName || currentUser?.username || 'U')"
+              [color]="'var(--minted-accent)'" label="Profile Picture" size="lg"
+              (avatarSelected)="onAvatarSelected($event)" (avatarRemoved)="onAvatarRemoved()">
+            </app-avatar-upload>
             <div class="flex-1">
               <h3 class="font-medium" style="color: var(--minted-text-primary);">Profile Photo</h3>
               <p class="text-xs mt-1" style="color: var(--minted-text-secondary);">PNG, JPG or GIF. Max 2MB.</p>

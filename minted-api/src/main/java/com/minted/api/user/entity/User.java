@@ -46,6 +46,19 @@ public class User {
     @Column(length = 20, nullable = false)
     private String role = "USER";
 
+    @Lob
+    @Column(name = "avatar_data", columnDefinition = "LONGBLOB")
+    private byte[] avatarData;
+
+    @Column(name = "avatar_content_type", length = 50)
+    private String avatarContentType;
+
+    @Column(name = "avatar_file_size")
+    private Integer avatarFileSize;
+
+    @Column(name = "avatar_updated_at")
+    private LocalDateTime avatarUpdatedAt;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -54,3 +67,4 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
+

@@ -11,7 +11,7 @@ import { FriendRequest, FriendResponse } from '../models/friend.model';
 export class FriendService {
   private apiUrl = `${environment.apiUrl}/friends`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getAll(): Observable<FriendResponse[]> {
     return this.http.get<{ success: boolean; data: FriendResponse[] }>(this.apiUrl)
@@ -35,5 +35,17 @@ export class FriendService {
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  uploadAvatar(id: number, file: File): Observable<FriendResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ success: boolean; data: FriendResponse }>(`${this.apiUrl}/${id}/avatar`, formData)
+      .pipe(map(response => response.data));
+  }
+
+  deleteAvatar(id: number): Observable<FriendResponse> {
+    return this.http.delete<{ success: boolean; data: FriendResponse }>(`${this.apiUrl}/${id}/avatar`)
+      .pipe(map(response => response.data));
   }
 }

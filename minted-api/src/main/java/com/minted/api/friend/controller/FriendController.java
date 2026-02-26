@@ -9,9 +9,11 @@ import com.minted.api.user.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -86,6 +88,35 @@ public class FriendController {
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Friend removed successfully"
+        ));
+    }
+
+    @PostMapping(value = "/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> uploadFriendAvatar(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        FriendResponse friend = friendService.uploadAvatar(id, userId, file);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", friend,
+                "message", "Friend avatar uploaded successfully"
+        ));
+    }
+
+    @DeleteMapping("/{id}/avatar")
+    public ResponseEntity<Map<String, Object>> deleteFriendAvatar(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        FriendResponse friend = friendService.deleteAvatar(id, userId);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", friend,
+                "message", "Friend avatar removed successfully"
         ));
     }
 

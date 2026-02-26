@@ -272,7 +272,7 @@ export class SplitsPage implements OnInit {
         this.balanceSummary = data;
         this.cdr.detectChanges();
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -282,7 +282,7 @@ export class SplitsPage implements OnInit {
         this.friendBalances = data;
         this.cdr.detectChanges();
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -578,6 +578,10 @@ export class SplitsPage implements OnInit {
 
   // ── Helpers ──
 
+  getFriend(friendId: number): FriendResponse | undefined {
+    return this.friends.find(f => f.id === friendId);
+  }
+
   getInitials(name: string): string {
     if (!name) return '?';
     const parts = name.trim().split(' ');
@@ -590,5 +594,39 @@ export class SplitsPage implements OnInit {
   formatDate(date: Date | string): string {
     if (typeof date === 'string') return date;
     return date.toISOString().split('T')[0];
+  }
+
+  onFriendAvatarSelected(file: File): void {
+    if (!this.selectedFriend) return;
+    this.friendService.uploadAvatar(this.selectedFriend.id, file).subscribe({
+      next: (updated) => {
+        // Update in-place so the ring preview refreshes
+        if (this.selectedFriend) {
+          this.selectedFriend.avatarBase64 = updated.avatarBase64;
+        }
+        // Also refresh the friends list
+        this.loadFriends();
+        this.messageService.add({ severity: 'success', summary: 'Avatar Updated', detail: 'Friend avatar saved.' });
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to upload friend avatar.' });
+      }
+    });
+  }
+
+  onFriendAvatarRemoved(): void {
+    if (!this.selectedFriend) return;
+    this.friendService.deleteAvatar(this.selectedFriend.id).subscribe({
+      next: (updated) => {
+        if (this.selectedFriend) {
+          this.selectedFriend.avatarBase64 = null;
+        }
+        this.loadFriends();
+        this.messageService.add({ severity: 'info', summary: 'Avatar Removed', detail: 'Friend avatar removed.' });
+      },
+      error: () => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to remove friend avatar.' });
+      }
+    });
   }
 }

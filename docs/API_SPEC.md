@@ -1518,6 +1518,33 @@ Same body as POST. **Response:** `{ success: true, data: FriendResponse, message
 ### DELETE `/friends/{id}`
 Soft-delete (sets `isActive=false`). **Response:** `{ success: true, message: "Friend removed successfully" }`
 
+### POST `/friends/{id}/avatar`
+Upload avatar image for a friend. Multipart form data.
+
+**Request Params:**
+- `file` — Image file (max 2MB, must be image/* content type)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": { "...FriendResponse with avatarBase64..." },
+  "message": "Friend avatar uploaded successfully"
+}
+```
+
+### DELETE `/friends/{id}/avatar`
+Remove avatar from a friend. Falls back to initials display.
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": { "...FriendResponse with avatarBase64: null..." },
+  "message": "Friend avatar removed successfully"
+}
+```
+
 ### FriendResponse
 ```json
 {
@@ -1526,15 +1553,74 @@ Soft-delete (sets `isActive=false`). **Response:** `{ success: true, message: "F
   "email": "marcus@email.com",
   "phone": "+1 555 0101",
   "avatarColor": "#6366f1",
+  "avatarBase64": "data:image/jpeg;base64,/9j/4AAQ...",
   "isActive": true,
   "createdAt": "2026-02-25T10:00:00",
   "updatedAt": "2026-02-25T10:00:00"
 }
 ```
 
+> `avatarBase64` is `null` when no avatar has been uploaded. When present, it is a full data URI (e.g., `data:image/jpeg;base64,...`) ready for direct use in `<img src>`.
+
 ---
 
-## 16. Split Transactions
+## 16. User Profile
+
+### GET `/profile`
+Returns the authenticated user's profile.
+**Response:** `{ success: true, data: UserResponse }`
+
+### PUT `/profile`
+Update display name, email, or currency.
+**Request:** `{ displayName, email, currency }`
+**Response:** `{ success: true, data: UserResponse, message: "Profile updated successfully" }`
+
+### POST `/profile/avatar`
+Upload avatar image for the authenticated user. Multipart form data.
+
+**Request Params:**
+- `file` — Image file (max 2MB, must be image/* content type)
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": { "...UserResponse with avatarBase64..." },
+  "message": "Avatar uploaded successfully"
+}
+```
+
+### DELETE `/profile/avatar`
+Remove the authenticated user's avatar.
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": { "...UserResponse with avatarBase64: null..." },
+  "message": "Avatar removed successfully"
+}
+```
+
+### UserResponse
+```json
+{
+  "id": 1,
+  "username": "admin",
+  "displayName": "Administrator",
+  "email": "admin@example.com",
+  "forcePasswordChange": false,
+  "currency": "INR",
+  "role": "ADMIN",
+  "avatarBase64": "data:image/jpeg;base64,/9j/4AAQ..."
+}
+```
+
+> `avatarBase64` is `null` when no avatar has been uploaded. It is omitted in auth login/signup/refresh responses to keep payloads lean.
+
+---
+
+## 17. Split Transactions
 
 ### GET `/splits`
 Returns all split transactions for the authenticated user (ordered by date desc).

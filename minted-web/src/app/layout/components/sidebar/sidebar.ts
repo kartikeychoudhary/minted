@@ -113,4 +113,8 @@ export class Sidebar {
     }
     return name.substring(0, 2).toUpperCase();
   }
+
+  get userAvatar(): string | null {
+    return localStorage.getItem('avatarBase64');
+  }
 }

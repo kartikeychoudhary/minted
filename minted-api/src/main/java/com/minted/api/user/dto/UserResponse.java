@@ -7,6 +7,7 @@ public record UserResponse(
         String email,
         Boolean forcePasswordChange,
         String currency,
-        String role
+        String role,
+        String avatarBase64
 ) {
 }

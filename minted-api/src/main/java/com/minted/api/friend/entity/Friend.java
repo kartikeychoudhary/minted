@@ -39,6 +39,19 @@ public class Friend {
     @Column(name = "avatar_color", length = 7)
     private String avatarColor = "#6366f1";
 
+    @Lob
+    @Column(name = "avatar_data", columnDefinition = "LONGBLOB")
+    private byte[] avatarData;
+
+    @Column(name = "avatar_content_type", length = 50)
+    private String avatarContentType;
+
+    @Column(name = "avatar_file_size")
+    private Integer avatarFileSize;
+
+    @Column(name = "avatar_updated_at")
+    private LocalDateTime avatarUpdatedAt;
+
     @Column(name = "is_active")
     private Boolean isActive = true;
 
@@ -50,3 +63,4 @@ public class Friend {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
+

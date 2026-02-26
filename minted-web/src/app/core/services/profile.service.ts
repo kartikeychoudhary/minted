@@ -12,7 +12,7 @@ export interface UserProfileUpdateRequest {
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getProfile(): Observable<ApiResponse<User>> {
     return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/profile`);
@@ -20,5 +20,15 @@ export class ProfileService {
 
   updateProfile(request: UserProfileUpdateRequest): Observable<ApiResponse<User>> {
     return this.http.put<ApiResponse<User>>(`${environment.apiUrl}/profile`, request);
+  }
+
+  uploadAvatar(file: File): Observable<ApiResponse<User>> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiResponse<User>>(`${environment.apiUrl}/profile/avatar`, formData);
+  }
+
+  deleteAvatar(): Observable<ApiResponse<User>> {
+    return this.http.delete<ApiResponse<User>>(`${environment.apiUrl}/profile/avatar`);
   }
 }

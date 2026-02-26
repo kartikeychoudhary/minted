@@ -172,11 +172,13 @@ AppModule
 │   └── ErrorInterceptor
 │
 ├── SharedModule (imported by feature modules)
+│   ├── AvatarUploadComponent (reusable avatar picker with crop)
 │   ├── ConfirmDialogComponent
 │   ├── LoadingSpinnerComponent
 │   ├── DateRangePickerComponent
 │   ├── CurrencyPipe
 │   ├── RelativeDatePipe
+│   ├── ImageCropperComponent (ngx-image-cropper, standalone import)
 │   └── Common PrimeNG module re-exports
 │
 ├── LayoutModule
@@ -1108,7 +1110,7 @@ New tab (value="5") added to existing Settings page.
 - `settings-module.ts` — Added `LlmConfigComponent`, `MerchantMappingsComponent`, `AgGridModule`
 - `settings.html` — Added LLM Configuration tab (value="5")
 - `admin server-settings.ts/html` — Added feature toggles, LLM models grid, model dialog
-- `shared.module.ts` — No changes needed (all PrimeNG modules already present)
+- `shared.module.ts` — Imports `ImageCropperComponent` (ngx-image-cropper), declares+exports `AvatarUploadComponent`
 
 ---
 
@@ -1120,7 +1122,7 @@ Bill splitting with friends. Users can add friends, split transactions (standalo
 
 **`core/models/friend.model.ts`**
 - `FriendRequest` — name (required), email, phone, avatarColor
-- `FriendResponse` — id, name, email, phone, avatarColor, isActive, createdAt, updatedAt
+- `FriendResponse` — id, name, email, phone, avatarColor, avatarBase64 (data URI or null), isActive, createdAt, updatedAt
 
 **`core/models/split.model.ts`**
 - `SplitType` — `'EQUAL' | 'UNEQUAL' | 'SHARE'`
@@ -1232,4 +1234,55 @@ interface SplitFriendEntry {
 - `transactions-list.ts` — Inline split dialog with `FriendService`, `SplitService`, split form, 3 split type calculations
 - `transactions-list.html` — Split dialog template with type selector, friend list, share inputs, summary box
 - `transaction.model.ts` — Added `isSplit: boolean` to `TransactionResponse`
+
+---
+
+## 15. Avatar Upload Feature
+
+Reusable avatar upload with image cropping for user profiles and friends.
+
+### 15.1 Shared Component: `AvatarUploadComponent`
+
+**Location:** `shared/components/avatar-upload/`
+
+**Inputs:**
+| Input | Type | Default | Description |
+|-------|------|---------|-------------|
+| `currentAvatarUrl` | `string \| null` | `null` | Existing avatar as data URI or image URL |
+| `initials` | `string` | `'U'` | Fallback initials when no avatar |
+| `color` | `string` | `'#6366f1'` | Background color for initials fallback |
+| `label` | `string` | `'Profile Picture'` | Label shown in crop dialog header |
+| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Avatar ring size (40px / 64px / 96px) |
+
+**Outputs:**
+| Output | Type | Description |
+|--------|------|-------------|
+| `avatarSelected` | `File` | Emits cropped JPEG file ready for API upload |
+| `avatarRemoved` | `void` | Emits when user clicks remove button |
+
+**Behavior:**
+- Displays circular avatar ring with hover camera overlay
+- Click opens native file picker (accepts `image/*`)
+- File selection opens crop dialog (`ngx-image-cropper`, 1:1 aspect ratio, 512px output, JPEG)
+- Crop dialog shows live circular preview
+- "Use this photo" emits cropped `File`, "Cancel" discards
+- Remove button (shown only when avatar exists) emits `avatarRemoved`
+- Validates: image/* content type, max 2MB
+
+**Dependencies:** `ngx-image-cropper` (standalone component imported in SharedModule)
+
+### 15.2 Profile Integration
+
+- `profile.service.ts` — Added `uploadAvatar(file)` and `deleteAvatar()` methods
+- `profile.ts` — Added `onAvatarSelected(file)`, `onAvatarRemoved()` handlers. Avatar stored in `localStorage('avatarBase64')` for sidebar access.
+- `profile.html` — Uses `<app-avatar-upload>` with size="lg"
+- `sidebar.ts` — `userAvatar` getter reads from localStorage
+- `sidebar.html` — Shows `<img>` when avatar exists, initials fallback otherwise
+
+### 15.3 Friends/Splits Integration
+
+- `friend.service.ts` — Added `uploadAvatar(id, file)` and `deleteAvatar(id)` methods
+- `friend.model.ts` — Added `avatarBase64: string | null` to `FriendResponse`
+- `splits-page.ts` — Added `onFriendAvatarSelected()`, `onFriendAvatarRemoved()`, `getFriend()` helper
+- `splits-page.html` — All avatar circles (friend ring, balance cards, split shares, settle dialog, available friends pills) check `avatarBase64` for image, fallback to initials. Edit friend dialog includes `<app-avatar-upload>`.
 

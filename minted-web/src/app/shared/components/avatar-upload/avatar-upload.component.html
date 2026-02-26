@@ -1,0 +1,55 @@
+<div class="avatar-upload-wrapper" [style.--avatar-size.px]="pixelSize">
+
+    <!-- Hidden file input -->
+    <input #fileInput type="file" accept="image/*" style="display:none" (change)="onFileSelected($event)">
+
+    <!-- Avatar preview / trigger -->
+    <div class="avatar-ring" [style.width.px]="pixelSize" [style.height.px]="pixelSize"
+        pTooltip="Click to change {{ label }}" tooltipPosition="bottom" (click)="openPicker()" role="button"
+        [attr.aria-label]="'Upload ' + label">
+
+        <img *ngIf="previewUrl" [src]="previewUrl" class="avatar-img" alt="Avatar preview">
+
+        <div *ngIf="!previewUrl" class="avatar-initials" [style.background-color]="color"
+            [style.font-size.px]="fontSize">
+            {{ initials }}
+        </div>
+
+        <!-- Hover overlay -->
+        <div class="avatar-overlay">
+            <i class="pi pi-camera"></i>
+        </div>
+    </div>
+
+    <!-- Remove button (only if avatar exists) -->
+    <button *ngIf="previewUrl" type="button" pButton
+        class="avatar-remove-btn p-button-rounded p-button-danger p-button-text p-button-sm" icon="pi pi-times"
+        pTooltip="Remove avatar" tooltipPosition="right" (click)="removeAvatar()">
+    </button>
+</div>
+
+<!-- Crop Dialog -->
+<p-dialog [(visible)]="showDialog" [header]="'Crop ' + label" [modal]="true" [draggable]="false" [resizable]="false"
+    [style]="{ width: '520px' }" styleClass="avatar-crop-dialog" (onHide)="cancelCrop()">
+
+    <div class="crop-container">
+        <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="1"
+            format="jpeg" [resizeToWidth]="512" [cropperMinWidth]="64" outputType="blob"
+            (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded($event)" (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()">
+        </image-cropper>
+    </div>
+
+    <!-- Preview of crop result -->
+    <div *ngIf="croppedImageUrl" class="crop-preview-row">
+        <span class="crop-preview-label">Preview</span>
+        <img [src]="croppedImageUrl" class="crop-preview-img" alt="Cropped preview">
+    </div>
+
+    <ng-template pTemplate="footer">
+        <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-text" (onClick)="cancelCrop()"></p-button>
+        <p-button label="Use this photo" icon="pi pi-check" [disabled]="!croppedImageBlob" styleClass="p-button-success"
+            (onClick)="confirmCrop()">
+        </p-button>
+    </ng-template>
+</p-dialog>

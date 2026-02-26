@@ -747,6 +747,50 @@ Enhanced the statement parser to support CSV/TXT files (not just PDF), added edi
 
 ---
 
+### Avatar Upload Feature (February 27, 2026)
+
+Added avatar image upload with crop support for both user profiles and friends. Avatars are stored as LONGBLOB in the database (max 2MB) and served as base64 data URIs.
+
+#### Database (2 migrations)
+- **`V0_0_38__add_avatar_to_users.sql`**: Adds `avatar_data` (LONGBLOB), `avatar_content_type` (VARCHAR 50), `avatar_file_size` (INT), `avatar_updated_at` (TIMESTAMP) to `users` table
+- **`V0_0_39__add_avatar_to_friends.sql`**: Same 4 columns added to `friends` table
+
+#### Backend Changes (11 files)
+- **`User.java`**: Added `avatarData` (byte[], @Lob LONGBLOB), `avatarContentType`, `avatarFileSize`, `avatarUpdatedAt` fields
+- **`UserResponse.java`**: Added `avatarBase64` field (data URI string)
+- **`UserProfileService.java`**: Added `uploadAvatar(username, MultipartFile)` and `deleteAvatar(username)` interface methods
+- **`UserProfileServiceImpl.java`**: Implemented avatar upload (2MB max, image/* validation, base64 encoding in `toResponse()`) and delete (nullifies all avatar fields)
+- **`UserProfileController.java`**: Added `POST /api/v1/profile/avatar` (multipart) and `DELETE /api/v1/profile/avatar` endpoints
+- **`AuthServiceImpl.java`**: Updated 3 `UserResponse` constructor calls to include `null` for avatarBase64 (auth flow doesn't return avatar data)
+- **`Friend.java`**: Added same 4 avatar fields as User entity
+- **`FriendResponse.java`**: Added `avatarBase64` field with base64 encoding in `from()` method
+- **`FriendService.java`**: Added `uploadAvatar(id, userId, MultipartFile)` and `deleteAvatar(id, userId)` interface methods
+- **`FriendServiceImpl.java`**: Implemented friend avatar upload/delete with same validation (2MB, image/*)
+- **`FriendController.java`**: Added `POST /api/v1/friends/{id}/avatar` and `DELETE /api/v1/friends/{id}/avatar` endpoints
+
+#### Frontend: Shared Component (3 new files)
+- **`shared/components/avatar-upload/avatar-upload.component.ts`**: Reusable `AvatarUploadComponent` (non-standalone) with inputs: `currentAvatarUrl`, `initials`, `color`, `label`, `size` (sm/md/lg). Outputs: `avatarSelected` (File), `avatarRemoved`. Uses `ngx-image-cropper` for 1:1 aspect ratio crop, 512px output, JPEG format. Includes file validation (image/*, 2MB max).
+- **`avatar-upload.component.html`**: Avatar ring with hover camera overlay, remove button, crop dialog with preview
+- **`avatar-upload.component.scss`**: Styled avatar ring (3px accent border, hover glow), crop dialog layout, preview row
+
+#### Frontend: Integration (8 files modified)
+- **`package.json`**: Added `ngx-image-cropper` dependency
+- **`shared.module.ts`**: Imported `ImageCropperComponent`, declared and exported `AvatarUploadComponent`
+- **`profile.service.ts`**: Added `uploadAvatar(file)` and `deleteAvatar()` HTTP methods
+- **`profile.ts`**: Added `onAvatarSelected(file)`, `onAvatarRemoved()`, `getInitials()`. Avatar stored in localStorage for sidebar access.
+- **`profile.html`**: Replaced static camera icon with `<app-avatar-upload>` component
+- **`friend.service.ts`**: Added `uploadAvatar(id, file)` and `deleteAvatar(id)` HTTP methods
+- **`friend.model.ts`**: Added `avatarBase64: string | null` to `FriendResponse`
+- **`splits-page.ts`**: Added `onFriendAvatarSelected()`, `onFriendAvatarRemoved()`, `getFriend()` helper. Avatar upload in edit friend dialog (edit mode only).
+- **`splits-page.html`**: Updated all avatar circles (friend ring, balance cards, split shares, settle dialog, available friends pills) to show `<img>` when `avatarBase64` exists, fallback to initials. Added `<app-avatar-upload>` in edit friend dialog.
+- **`sidebar.html`**: Shows user avatar image when available, falls back to initials
+- **`sidebar.ts`**: Added `userAvatar` getter reading from localStorage
+
+**Files created (5 + 2 migrations):** V0_0_38, V0_0_39, avatar-upload.component.ts, avatar-upload.component.html, avatar-upload.component.scss
+**Files modified (17):** User.java, UserResponse.java, UserProfileService.java, UserProfileServiceImpl.java, UserProfileController.java, AuthServiceImpl.java, Friend.java, FriendResponse.java, FriendService.java, FriendServiceImpl.java, FriendController.java, shared.module.ts, package.json, profile.service.ts, profile.ts, profile.html, friend.service.ts, friend.model.ts, splits-page.ts, splits-page.html, sidebar.html, sidebar.ts
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

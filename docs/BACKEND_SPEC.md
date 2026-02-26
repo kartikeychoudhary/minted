@@ -1053,6 +1053,7 @@ Manages the user's friend list for split transactions. Follows the soft-delete p
 - `@ManyToOne` to User (FK user_id, ON DELETE CASCADE)
 - Soft delete via `isActive` boolean
 - Fields: id, name, email (nullable), phone (nullable), avatarColor (default `#6366f1`)
+- Avatar fields: avatarData (@Lob LONGBLOB), avatarContentType (VARCHAR 50), avatarFileSize (INT), avatarUpdatedAt (TIMESTAMP)
 - Unique constraint: `uk_user_friend_name(user_id, name)`
 
 **Repository:** `FriendRepository.java`
@@ -1065,9 +1066,15 @@ Manages the user's friend list for split transactions. Follows the soft-delete p
 - `create()` — checks for soft-deleted friend with same name first (restores), then checks duplicate active, then creates
 - `update()` — validates name uniqueness if changed
 - `delete()` — soft-delete (sets isActive=false)
+- `uploadAvatar()` — validates 2MB max + image/* content type, stores bytes in LONGBLOB
+- `deleteAvatar()` — nullifies all avatar fields
+
+**DTO:** `FriendResponse.java`
+- `avatarBase64` field: `data:{contentType};base64,{encoded}` data URI, or null if no avatar
 
 **Controller:** `FriendController.java` at `/api/v1/friends`
 - Standard CRUD: GET (list), GET/{id}, POST, PUT/{id}, DELETE/{id}
+- Avatar: POST `/{id}/avatar` (multipart), DELETE `/{id}/avatar`
 
 ### 11.2 Split Package (`com.minted.api.split`)
 
@@ -1108,3 +1115,28 @@ Manages the user's friend list for split transactions. Follows the soft-delete p
 - `split_transactions` table: FK to users (CASCADE) and transactions (SET NULL)
 - `split_shares` table: FK to split_transactions (CASCADE) and friends (SET NULL)
 - Indexes on: user_id, is_settled, transaction_date, friend_id, split_transaction_id
+
+### 11.4 Avatar Support
+
+**`V0_0_38__add_avatar_to_users.sql`**
+- Adds `avatar_data` (LONGBLOB), `avatar_content_type` (VARCHAR 50), `avatar_file_size` (INT), `avatar_updated_at` (TIMESTAMP NULL) to `users`
+
+**`V0_0_39__add_avatar_to_friends.sql`**
+- Adds same 4 avatar columns to `friends`
+
+**User Entity Avatar Fields:**
+- `avatarData` (`@Lob`, `columnDefinition = "LONGBLOB"`) — raw image bytes, max 2MB enforced in service
+- `avatarContentType` (VARCHAR 50) — MIME type (image/jpeg, image/png, image/webp)
+- `avatarFileSize` (INT) — file size in bytes
+- `avatarUpdatedAt` (TIMESTAMP) — last upload timestamp
+
+**User Profile Service:**
+- `uploadAvatar(username, MultipartFile)` — validates 2MB + image/*, stores bytes, returns UserResponse with base64
+- `deleteAvatar(username)` — nullifies all 4 avatar fields
+- `toResponse()` — encodes avatar as `data:{contentType};base64,{encoded}` data URI
+
+**User Profile Controller** at `/api/v1/profile`:
+- `POST /avatar` (multipart) — upload user avatar
+- `DELETE /avatar` — remove user avatar
+
+**Auth note:** `AuthServiceImpl` passes `null` for `avatarBase64` in login/signup/refresh responses to keep auth payloads lean. Avatar is loaded via `GET /profile`.

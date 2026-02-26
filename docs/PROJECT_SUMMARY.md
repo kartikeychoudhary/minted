@@ -1,6 +1,6 @@
 # PROJECT SUMMARY — Minted Quick Reference
 
-> **Generated:** February 16, 2026 | **Updated:** February 25, 2026
+> **Generated:** February 16, 2026 | **Updated:** February 27, 2026
 > **Status:** All core features implemented
 
 ---
@@ -189,6 +189,7 @@ minted/
 - [x] Mobile responsiveness (hamburger sidebar drawer, responsive dialogs/grids, auth pages)
 - [x] Bulk import cron job removed (processing is user-action driven)
 - [x] Import wizard: Credit Card Statement card linked to /statements
+- [x] Avatar upload: User profile + friends avatar with crop (ngx-image-cropper), LONGBLOB storage, base64 data URI
 - [ ] Configurable dashboard cards
 - [ ] Budget tracking polish
 
@@ -282,13 +283,13 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 
 **Phases 1–7 complete.** All core features are implemented and working.
 
-- **Backend:** 31 Flyway migrations (V0_0_1 through V0_0_31), 15+ entities, full REST API
+- **Backend:** 39 Flyway migrations (V0_0_1 through V0_0_39), 15+ entities, full REST API
 - **Frontend:** 10 feature modules (auth, dashboard, transactions, recurring, analytics, import, notifications, splits, settings, admin), layout with sidebar + notification drawer + mobile responsive
 - **Infrastructure:** Docker Compose (Nginx + Spring Boot + MySQL), ports 7800 (web) / 7801 (API)
 - **Remaining:** Configurable dashboard cards, budget tracking polish
 
 ### Key Architectural Highlights
-- **Feature-based backend modules:** 17 modules (auth, user, account, transaction, budget, dashboard, analytics, recurring, notification, job, bulkimport, statement, llm, split, friend, admin, common) — each module has its own controller/dto/entity/repository/service
+- **Feature-based backend modules:** 18 modules (auth, user, account, transaction, budget, dashboard, analytics, recurring, notification, job, bulkimport, statement, llm, split, friend, dashboardconfig, admin, common) — each module has its own controller/dto/entity/repository/service
 - **Design tokens:** All colors via `--minted-*` CSS custom properties (light + dark mode)
 - **AG Grid v35:** Custom `ag-theme-minted` theme with CSS var references
 - **Theme system:** Dark mode toggle, 6 accent presets, PrimeNG Aura preset overrides
@@ -297,6 +298,7 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 - **Structured logging:** MDC-enriched logs with requestId/userId/method/uri on every line; `MdcFilter` → `JwtAuthFilter` pipeline; `logback-spring.xml` with dev (DEBUG/console), prod (INFO/JSON) profiles; `RequestLoggingInterceptor` for request timing; `@Slf4j` on all service impls for business event logging (see `docs/LOGGING.md`)
 - **Bulk import:** CSV wizard with user-action-driven async processing and step-level tracking (no cron job)
 - **Splits:** Friend management with soft-delete, 3 split types (Equal/Unequal/Share), balance tracking, settlement with notifications, inline split dialog in transactions, `isSplit` flag on transaction responses, CSV export per friend
+- **Avatar upload:** Reusable `AvatarUploadComponent` (shared) with ngx-image-cropper (1:1, 512px JPEG). LONGBLOB storage in DB, base64 data URIs. Integrated in: user profile, friends, sidebar.
 - **Mobile responsive:** PrimeNG Drawer sidebar on mobile, hamburger menu, global dialog/grid overrides, responsive auth pages
 
 ---

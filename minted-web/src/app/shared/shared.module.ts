@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ImageCropperComponent } from 'ngx-image-cropper';
+import { AvatarUploadComponent } from './components/avatar-upload/avatar-upload.component';
 
 // PrimeNG Modules
 import { ButtonModule } from 'primeng/button';
@@ -72,17 +74,22 @@ const PRIMENG_MODULES = [
 ];
 
 @NgModule({
-  declarations: [],
+  declarations: [
+    AvatarUploadComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    ImageCropperComponent,
     ...PRIMENG_MODULES
   ],
   exports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    ImageCropperComponent,
+    AvatarUploadComponent,
     ...PRIMENG_MODULES
   ]
 })

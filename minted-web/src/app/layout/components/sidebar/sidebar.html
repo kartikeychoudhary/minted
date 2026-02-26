@@ -55,10 +55,12 @@
       [pTooltip]="!mobileMode && !isOpen ? currentUser?.displayName : ''" tooltipPosition="right">
 
       <!-- Avatar -->
-      <div class="rounded-full border-2 border-white/20 flex items-center justify-center font-semibold text-white"
+      <div
+        class="rounded-full border-2 border-white/20 flex items-center justify-center font-semibold text-white overflow-hidden shrink-0"
         [class.w-9]="mobileMode || isOpen" [class.h-9]="mobileMode || isOpen" [class.w-10]="!mobileMode && !isOpen"
         [class.h-10]="!mobileMode && !isOpen" [style.background-color]="'var(--minted-accent)'">
-        {{ getInitials(currentUser?.displayName || 'U') }}
+        <img *ngIf="userAvatar" [src]="userAvatar" class="w-full h-full object-cover">
+        <span *ngIf="!userAvatar">{{ getInitials(currentUser?.displayName || 'U') }}</span>
       </div>
 
       <!-- User Info (shown when open) -->

@@ -5,9 +5,11 @@ import com.minted.api.user.dto.UserResponse;
 import com.minted.api.user.service.UserProfileService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -39,6 +41,31 @@ public class UserProfileController {
                 "success", true,
                 "data", updated,
                 "message", "Profile updated successfully"
+        ));
+    }
+
+    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, Object>> uploadAvatar(
+            Authentication authentication,
+            @RequestParam("file") MultipartFile file
+    ) {
+        String username = authentication.getName();
+        UserResponse updated = userProfileService.uploadAvatar(username, file);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", updated,
+                "message", "Avatar uploaded successfully"
+        ));
+    }
+
+    @DeleteMapping("/avatar")
+    public ResponseEntity<Map<String, Object>> deleteAvatar(Authentication authentication) {
+        String username = authentication.getName();
+        UserResponse updated = userProfileService.deleteAvatar(username);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", updated,
+                "message", "Avatar removed successfully"
         ));
     }
 }
