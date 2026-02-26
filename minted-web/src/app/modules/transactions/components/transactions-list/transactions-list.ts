@@ -81,6 +81,11 @@ export class TransactionsList implements OnInit {
     checkboxCheckedBorderColor: 'var(--minted-accent)',
     checkboxUncheckedBackgroundColor: 'transparent',
     checkboxUncheckedBorderColor: 'var(--minted-border)',
+    // Pagination button styling via AG Grid theming API
+    iconButtonHoverBackgroundColor: 'var(--minted-bg-hover)',
+    iconButtonHoverColor: 'var(--minted-accent)',
+    iconButtonBorderRadius: 4,
+    iconSize: 16,
   });
 
   private gridApi!: GridApi;
@@ -194,8 +199,8 @@ export class TransactionsList implements OnInit {
       {
         headerName: 'Description',
         field: 'description',
-        flex: 1,
-        minWidth: 250,
+        width: 220,
+        minWidth: 120,
         cellClass: 'cell-v-center'
       },
       {
@@ -223,7 +228,9 @@ export class TransactionsList implements OnInit {
       {
         headerName: '',
         field: 'actions',
-        width: 120,
+        width: 160,
+        minWidth: 160,
+        maxWidth: 160,
         sortable: false,
         cellRenderer: ActionsCellRendererComponent,
         cellRendererParams: {
