@@ -51,7 +51,7 @@ export interface ActionsCallbacks {
       height: 100%;
     }
 
-    ::ng-deep .p-button-sm {
+    ::ng-deep .p-button-rounded {
       width: 2.25rem;
       height: 2.25rem;
       padding: 0;
