@@ -11,7 +11,7 @@ public interface CreditCardStatementService {
 
     StatementResponse uploadAndExtract(MultipartFile file, Long accountId, String pdfPassword, Long userId);
 
-    StatementResponse triggerLlmParse(Long statementId, Long userId);
+    StatementResponse triggerLlmParse(Long statementId, Long userId, String editedText);
 
     void confirmImport(ConfirmStatementRequest request, Long userId);
 

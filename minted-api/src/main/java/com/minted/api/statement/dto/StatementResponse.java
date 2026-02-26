@@ -19,10 +19,19 @@ public record StatementResponse(
         Integer importedCount,
         String errorMessage,
         Long jobExecutionId,
+        String fileType,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
     public static StatementResponse from(CreditCardStatement statement) {
+        // Suppress extractedText for statuses beyond TEXT_EXTRACTED to avoid bloating responses
+        String text = statement.getExtractedText();
+        StatementStatus status = statement.getStatus();
+        if (status == StatementStatus.SENT_FOR_AI_PARSING || status == StatementStatus.LLM_PARSED
+                || status == StatementStatus.CONFIRMING || status == StatementStatus.COMPLETED) {
+            text = null;
+        }
+
         return new StatementResponse(
                 statement.getId(),
                 statement.getAccount().getId(),
@@ -31,12 +40,13 @@ public record StatementResponse(
                 statement.getFileSize(),
                 statement.getStatus(),
                 statement.getCurrentStep(),
-                statement.getExtractedText(),
+                text,
                 statement.getParsedCount(),
                 statement.getDuplicateCount(),
                 statement.getImportedCount(),
                 statement.getErrorMessage(),
                 statement.getJobExecution() != null ? statement.getJobExecution().getId() : null,
+                statement.getFileType(),
                 statement.getCreatedAt(),
                 statement.getUpdatedAt()
         );

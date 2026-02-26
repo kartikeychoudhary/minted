@@ -27,7 +27,8 @@ import java.time.LocalDateTime;
     @NamedQuery(
         name = "Transaction.sumAmountByUserIdAndTypeAndDateBetween",
         query = "SELECT SUM(t.amount) FROM Transaction t WHERE t.user.id = :userId " +
-                "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate"
+                "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL)"
     ),
     @NamedQuery(
         name = "Transaction.findByFilters",
@@ -48,6 +49,7 @@ import java.time.LocalDateTime;
         query = "SELECT t.category.id, t.category.name, SUM(t.amount), COUNT(t), t.category.icon, t.category.color " +
                 "FROM Transaction t WHERE t.user.id = :userId " +
                 "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
                 "GROUP BY t.category.id, t.category.name, t.category.icon, t.category.color " +
                 "ORDER BY SUM(t.amount) DESC"
     ),
@@ -56,6 +58,7 @@ import java.time.LocalDateTime;
         query = "SELECT YEAR(t.transactionDate), MONTH(t.transactionDate), SUM(t.amount) " +
                 "FROM Transaction t WHERE t.user.id = :userId " +
                 "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
                 "GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate) " +
                 "ORDER BY YEAR(t.transactionDate), MONTH(t.transactionDate)"
     ),
@@ -64,6 +67,7 @@ import java.time.LocalDateTime;
         query = "SELECT t.account.id, t.account.name, SUM(t.amount) " +
                 "FROM Transaction t WHERE t.user.id = :userId " +
                 "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
                 "GROUP BY t.account.id, t.account.name " +
                 "ORDER BY SUM(t.amount) DESC"
     ),
@@ -73,6 +77,7 @@ import java.time.LocalDateTime;
                 "FROM Transaction t WHERE t.user.id = :userId " +
                 "AND t.type = com.minted.api.transaction.enums.TransactionType.EXPENSE " +
                 "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
                 "GROUP BY t.transactionDate " +
                 "ORDER BY t.transactionDate ASC"
     )
@@ -121,6 +126,9 @@ public class Transaction {
 
     @Column(name = "is_recurring")
     private Boolean isRecurring = false;
+
+    @Column(name = "exclude_from_analysis")
+    private Boolean excludeFromAnalysis = false;
 
     @Column(name = "tags", length = 500)
     private String tags;

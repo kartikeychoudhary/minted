@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { ColDef, GridOptions, GridApi, GridReadyEvent, themeQuartz } from 'ag-grid-community';
 import { StatementService } from '../../../../core/services/statement.service';
+import { CategoryService } from '../../../../core/services/category.service';
+import { CategoryResponse } from '../../../../core/models/category.model';
 import { CreditCardStatement, ParsedTransactionRow } from '../../../../core/models/statement.model';
 
 @Component({
@@ -16,6 +18,8 @@ export class ParsePreviewStep implements OnInit {
   @Output() statementUpdated = new EventEmitter<CreditCardStatement>();
 
   rows: ParsedTransactionRow[] = [];
+  categories: CategoryResponse[] = [];
+  categoryNames: string[] = [];
   loading = true;
   importing = false;
   skipDuplicates = true;
@@ -58,11 +62,19 @@ export class ParsePreviewStep implements OnInit {
     },
     {
       field: 'categoryName', headerName: 'Category', width: 160, editable: true,
+      cellEditor: 'agSelectCellEditor',
+      cellEditorParams: () => ({ values: this.categoryNames }),
       cellRenderer: (params: any) => {
         const ruleIcon = params.data?.mappedByRule
           ? '<i class="pi pi-tag" title="Category assigned by merchant mapping" style="color:var(--minted-accent);margin-right:4px;font-size:10px"></i>'
           : '';
         return `${ruleIcon}${params.value || ''}`;
+      },
+      onCellValueChanged: (params: any) => {
+        const cat = this.categories.find(c => c.name === params.newValue);
+        if (cat) {
+          params.data.matchedCategoryId = cat.id;
+        }
       }
     },
     { field: 'notes', headerName: 'Notes', width: 150, editable: true }
@@ -82,6 +94,7 @@ export class ParsePreviewStep implements OnInit {
 
   constructor(
     private statementService: StatementService,
+    private categoryService: CategoryService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private router: Router,
@@ -89,7 +102,17 @@ export class ParsePreviewStep implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadCategories();
     this.loadParsedRows();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAll().subscribe({
+      next: (cats) => {
+        this.categories = cats;
+        this.categoryNames = cats.map(c => c.name);
+      }
+    });
   }
 
   loadParsedRows(): void {

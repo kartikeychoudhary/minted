@@ -53,6 +53,7 @@ export class StatementList implements OnInit {
       case 'LLM_PARSED': return 'info';
       case 'UPLOADED':
       case 'CONFIRMING': return 'warn';
+      case 'SENT_FOR_AI_PARSING': return 'warn';
       case 'FAILED': return 'danger';
       default: return 'secondary';
     }
@@ -62,6 +63,7 @@ export class StatementList implements OnInit {
     switch (status) {
       case 'UPLOADED': return 'Uploaded';
       case 'TEXT_EXTRACTED': return 'Text Extracted';
+      case 'SENT_FOR_AI_PARSING': return 'AI Parsing...';
       case 'LLM_PARSED': return 'AI Parsed';
       case 'CONFIRMING': return 'Confirming';
       case 'COMPLETED': return 'Completed';

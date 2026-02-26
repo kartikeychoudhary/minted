@@ -11,6 +11,7 @@ export interface TransactionRequest {
   categoryId: number;
   isRecurring?: boolean;
   tags?: string;
+  excludeFromAnalysis?: boolean;
 }
 
 export interface TransactionResponse {
@@ -31,6 +32,7 @@ export interface TransactionResponse {
   isRecurring: boolean;
   tags: string | null;
   isSplit: boolean;
+  excludeFromAnalysis: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,5 +50,7 @@ export enum DateFilterOption {
   THIS_MONTH = 'THIS_MONTH',
   LAST_MONTH = 'LAST_MONTH',
   LAST_3_MONTHS = 'LAST_3_MONTHS',
+  LAST_6_MONTHS = 'LAST_6_MONTHS',
+  LAST_YEAR = 'LAST_YEAR',
   CUSTOM = 'CUSTOM'
 }

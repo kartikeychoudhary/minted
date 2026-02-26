@@ -126,11 +126,24 @@
         </small>
       </div>
 
+      <!-- Currency Field -->
+      <div>
+        <label for="currency" class="block text-sm font-medium mb-2"
+          style="color: var(--minted-text-secondary);">Currency</label>
+        <p-select id="currency" formControlName="currency" [options]="currencyService.currencies"
+          optionLabel="label" optionValue="code" placeholder="Select currency" appendTo="body"
+          styleClass="w-full"
+          [class.p-invalid]="accountForm.get('currency')?.invalid && accountForm.get('currency')?.touched">
+        </p-select>
+      </div>
+
       <!-- Balance Field -->
       <div>
         <label for="balance" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Current
           Balance</label>
-        <p-inputnumber id="balance" formControlName="balance" mode="currency" currency="USD" locale="en-US"
+        <p-inputnumber id="balance" formControlName="balance" mode="currency"
+          [currency]="accountForm.get('currency')?.value || currencyService.currentCurrency"
+          [locale]="getLocaleForCurrency(accountForm.get('currency')?.value)"
           styleClass="w-full"
           [class.p-invalid]="accountForm.get('balance')?.invalid && accountForm.get('balance')?.touched">
         </p-inputnumber>
@@ -138,14 +151,6 @@
           *ngIf="accountForm.get('balance')?.invalid && accountForm.get('balance')?.touched">
           Balance is required
         </small>
-      </div>
-
-      <!-- Currency Field -->
-      <div>
-        <label for="currency" class="block text-sm font-medium mb-2"
-          style="color: var(--minted-text-secondary);">Currency</label>
-        <input pInputText id="currency" formControlName="currency" placeholder="USD" class="w-full" maxlength="3"
-          [class.p-invalid]="accountForm.get('currency')?.invalid && accountForm.get('currency')?.touched" />
       </div>
 
       <!-- Icon Field -->

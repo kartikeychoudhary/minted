@@ -23,4 +23,8 @@ public interface TransactionService {
     TransactionResponse update(Long id, TransactionRequest request, Long userId);
 
     void delete(Long id, Long userId);
+
+    void bulkDelete(List<Long> ids, Long userId);
+
+    void bulkUpdateCategory(List<Long> ids, Long categoryId, Long userId);
 }

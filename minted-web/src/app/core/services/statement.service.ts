@@ -27,9 +27,10 @@ export class StatementService {
     ).pipe(map(r => r.data));
   }
 
-  triggerParse(statementId: number): Observable<CreditCardStatement> {
+  triggerParse(statementId: number, editedText?: string): Observable<CreditCardStatement> {
+    const body = editedText ? { extractedText: editedText } : {};
     return this.http.post<{ success: boolean; data: CreditCardStatement }>(
-      `${this.apiUrl}/${statementId}/parse`, {}
+      `${this.apiUrl}/${statementId}/parse`, body
     ).pipe(map(r => r.data));
   }
 

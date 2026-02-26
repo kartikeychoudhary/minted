@@ -6,7 +6,18 @@
       <p class="text-sm mt-1" style="color: var(--minted-text-muted);">Manage and categorize your financial activity.
       </p>
     </div>
-    <div class="flex gap-3">
+    <div class="flex gap-3 items-center">
+      <!-- Bulk action buttons (visible when rows selected) -->
+      <span *ngIf="selectedTransactions.length > 0" class="text-sm font-medium px-2 py-1 rounded-full"
+        style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
+        {{ selectedTransactions.length }} selected
+      </span>
+      <button *ngIf="selectedTransactions.length > 0" pButton type="button" label="Delete Selected" icon="pi pi-trash"
+        class="p-button-danger p-button-outlined p-button-sm" (click)="bulkDelete()">
+      </button>
+      <button *ngIf="selectedTransactions.length > 0" pButton type="button" label="Change Category" icon="pi pi-tags"
+        class="p-button-outlined p-button-sm" (click)="openBulkCategoryDialog()">
+      </button>
       <button pButton type="button" label="Export" icon="pi pi-download" class="p-button-outlined"
         (click)="exportTransactions()" [disabled]="filteredTransactions.length === 0">
       </button>
@@ -50,6 +61,24 @@
             [style.color]="selectedDateFilter !== DateFilterOption.LAST_3_MONTHS ? 'var(--minted-text-secondary)' : null"
             (click)="onDateFilterChange(DateFilterOption.LAST_3_MONTHS)">
             Last 3 Months
+          </button>
+          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
+            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
+            [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
+            [class.border]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
+            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
+            [style.color]="selectedDateFilter !== DateFilterOption.LAST_6_MONTHS ? 'var(--minted-text-secondary)' : null"
+            (click)="onDateFilterChange(DateFilterOption.LAST_6_MONTHS)">
+            Last 6 Months
+          </button>
+          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
+            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_YEAR"
+            [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_YEAR"
+            [class.border]="selectedDateFilter === DateFilterOption.LAST_YEAR"
+            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_YEAR"
+            [style.color]="selectedDateFilter !== DateFilterOption.LAST_YEAR ? 'var(--minted-text-secondary)' : null"
+            (click)="onDateFilterChange(DateFilterOption.LAST_YEAR)">
+            Last Year
           </button>
           <button type="button"
             class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors flex items-center gap-1"
@@ -108,7 +137,7 @@
   <div class="shadow-sm">
     <ag-grid-angular style="width: 100%; height: 600px;" [rowData]="rowData" [columnDefs]="columnDefs"
       [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [loading]="loading" [theme]="mintedTheme"
-      (gridReady)="onGridReady($event)">
+      (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged()">
     </ag-grid-angular>
   </div>
 </div>
@@ -233,13 +262,23 @@
         </div>
 
         <div class="flex items-end pb-2">
-          <div class="flex items-center gap-2">
-            <p-checkbox formControlName="isRecurring" [binary]="true" inputId="isRecurring">
-            </p-checkbox>
-            <label for="isRecurring" class="text-sm font-medium cursor-pointer"
-              style="color: var(--minted-text-secondary);">
-              Recurring Transaction
-            </label>
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-2">
+              <p-checkbox formControlName="isRecurring" [binary]="true" inputId="isRecurring">
+              </p-checkbox>
+              <label for="isRecurring" class="text-sm font-medium cursor-pointer"
+                style="color: var(--minted-text-secondary);">
+                Recurring Transaction
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <p-checkbox formControlName="excludeFromAnalysis" [binary]="true" inputId="excludeFromAnalysis">
+              </p-checkbox>
+              <label for="excludeFromAnalysis" class="text-sm font-medium cursor-pointer"
+                style="color: var(--minted-text-secondary);">
+                Exclude from Analysis
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -431,6 +470,29 @@
       </button>
     </div>
   </form>
+</p-dialog>
+
+<!-- Bulk Category Dialog -->
+<p-dialog [(visible)]="showBulkCategoryDialog" header="Change Category" [modal]="true"
+  [style]="{width: '400px'}" [draggable]="false" [resizable]="false">
+  <div class="space-y-4">
+    <p class="text-sm" style="color: var(--minted-text-secondary);">
+      Select a new category for {{ selectedTransactions.length }} selected transaction(s).
+    </p>
+    <div>
+      <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category</label>
+      <p-select [(ngModel)]="bulkCategoryId" [options]="categories" optionLabel="name" optionValue="id"
+        placeholder="Select category" appendTo="body" styleClass="w-full">
+      </p-select>
+    </div>
+  </div>
+  <div class="flex justify-end gap-3 mt-6 pt-4 border-t" style="border-color: var(--minted-border);">
+    <button pButton type="button" label="Cancel" class="p-button-text" (click)="showBulkCategoryDialog = false">
+    </button>
+    <button pButton type="button" label="Update" [disabled]="!bulkCategoryId" (click)="saveBulkCategory()"
+      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+    </button>
+  </div>
 </p-dialog>
 
 <!-- Confirmation Dialog -->

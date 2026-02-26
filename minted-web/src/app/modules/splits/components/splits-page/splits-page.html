@@ -15,17 +15,15 @@
   <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
     <div>
       <h1 class="text-3xl tracking-tight mb-2 font-bold" style="color: var(--minted-text-primary);">Splits</h1>
-      <p class="text-lg" style="color: var(--minted-text-muted);">Manage shared expenses and settle up with friends easily.</p>
+      <p class="text-lg" style="color: var(--minted-text-muted);">Manage shared expenses and settle up with friends
+        easily.</p>
     </div>
     <div class="flex items-center gap-3">
-      <button pButton
-        class="p-button-outlined"
-        (click)="openNewFriendDialog()">
+      <button pButton class="p-button-outlined" (click)="openNewFriendDialog()">
         <i class="pi pi-user-plus text-[18px] mr-2"></i>
         Add Friend
       </button>
-      <button pButton
-        (click)="openNewSplitDialog()">
+      <button pButton (click)="openNewSplitDialog()">
         <i class="pi pi-sitemap text-[18px] mr-2"></i>
         Add Split
       </button>
@@ -43,19 +41,20 @@
       </div>
       <div class="flex gap-4 overflow-x-auto pb-2" style="scrollbar-width: thin;">
         <!-- Friend Items -->
-        <div *ngFor="let friend of friends"
-          class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group"
+        <div *ngFor="let friend of friends" class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group"
           (click)="openEditFriendDialog(friend)">
-          <div class="w-14 h-14 rounded-full border-2 p-0.5 group-hover:border-green-500 transition-colors flex items-center justify-center"
-            [style.background-color]="friend.avatarColor"
-            [style.border-color]="'var(--minted-border)'">
+          <div
+            class="w-14 h-14 rounded-full border-2 p-0.5 group-hover:border-green-500 transition-colors flex items-center justify-center"
+            [style.background-color]="friend.avatarColor" [style.border-color]="'var(--minted-border)'">
             <span class="text-white font-bold text-sm">{{ getInitials(friend.name) }}</span>
           </div>
-          <span class="text-xs font-medium truncate w-full text-center" style="color: var(--minted-text-secondary);">{{ friend.name }}</span>
+          <span class="text-xs font-medium truncate w-full text-center" style="color: var(--minted-text-secondary);">{{
+            friend.name }}</span>
         </div>
         <!-- Add New Button -->
         <div class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group" (click)="openNewFriendDialog()">
-          <div class="w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center group-hover:text-green-500 group-hover:border-green-500 transition-colors"
+          <div
+            class="w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center group-hover:text-green-500 group-hover:border-green-500 transition-colors"
             style="border-color: var(--minted-border); color: var(--minted-text-muted);">
             <i class="pi pi-plus"></i>
           </div>
@@ -70,7 +69,8 @@
       <div>
         <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You are owed</h3>
         <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(balanceSummary.youAreOwed) }}</span>
+          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{
+            currencyService.format(balanceSummary.youAreOwed) }}</span>
         </div>
       </div>
       <div class="mt-4 pt-4" style="border-top: 1px solid var(--minted-border-light);">
@@ -84,7 +84,8 @@
       <div>
         <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You owe</h3>
         <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(balanceSummary.youOwe) }}</span>
+          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{
+            currencyService.format(balanceSummary.youOwe) }}</span>
         </div>
       </div>
       <div class="mt-4 pt-4" style="border-top: 1px solid var(--minted-border-light);">
@@ -100,13 +101,11 @@
       Pending Settlements
     </h2>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div *ngFor="let fb of friendBalances"
-        class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
+      <div *ngFor="let fb of friendBalances" class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
         style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
         <div class="flex items-center gap-4 mb-4">
           <div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm"
-            [style.background-color]="fb.avatarColor"
-            [style.border]="'1px solid var(--minted-border-light)'">
+            [style.background-color]="fb.avatarColor" [style.border]="'1px solid var(--minted-border-light)'">
             {{ getInitials(fb.friendName) }}
           </div>
           <div>
@@ -125,9 +124,9 @@
               (click)="exportFriendCSV(fb)">
               <i class="pi pi-download text-[16px]"></i>
             </button>
-            <button pButton class="p-button-sm" (click)="openSettleDialog(fb)">
-              <i class="pi pi-check" pButtonIcon></i>
-              <span pButtonLabel>Settle</span>
+            <button pButton sclass="p-button-sm p-button-text" pTooltip="Settle" tooltipPosition="top"
+              (click)="openSettleDialog(fb)">
+              <i class="pi pi-check text-[16px]"></i>
             </button>
           </div>
         </div>
@@ -141,26 +140,15 @@
     <div class="px-6 py-5" style="border-bottom: 1px solid var(--minted-border);">
       <h3 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recent Activity</h3>
     </div>
-    <ag-grid-angular
-      style="height: 500px; width: 100%;"
-      [theme]="mintedTheme"
-      [columnDefs]="columnDefs"
-      [defaultColDef]="defaultColDef"
-      [gridOptions]="gridOptions"
-      [rowData]="rowData"
-      (gridReady)="onGridReady($event)">
+    <ag-grid-angular style="height: 500px; width: 100%;" [theme]="mintedTheme" [columnDefs]="columnDefs"
+      [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [rowData]="rowData" (gridReady)="onGridReady($event)">
     </ag-grid-angular>
   </div>
 </div>
 
 <!-- ═══════ Friend Dialog ═══════ -->
-<p-dialog
-  [(visible)]="showFriendDialog"
-  [header]="isEditFriend ? 'Edit Friend' : 'Add Friend'"
-  [modal]="true"
-  [style]="{ width: '450px' }"
-  [closable]="true"
-  [draggable]="false">
+<p-dialog [(visible)]="showFriendDialog" [header]="isEditFriend ? 'Edit Friend' : 'Add Friend'" [modal]="true"
+  [style]="{ width: '450px' }" [closable]="true" [draggable]="false">
   <form *ngIf="friendForm" [formGroup]="friendForm" (ngSubmit)="saveFriend()">
     <div class="space-y-4">
       <!-- Name -->
@@ -185,8 +173,7 @@
       <div>
         <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Avatar Color</label>
         <div class="flex gap-3">
-          <div *ngFor="let color of avatarColors"
-            class="w-8 h-8 rounded-full cursor-pointer border-2 transition-all"
+          <div *ngFor="let color of avatarColors" class="w-8 h-8 rounded-full cursor-pointer border-2 transition-all"
             [style.background-color]="color"
             [ngClass]="friendForm.get('avatarColor')?.value === color ? 'scale-110' : 'border-transparent'"
             [style.border-color]="friendForm.get('avatarColor')?.value === color ? 'var(--minted-text-primary)' : 'transparent'"
@@ -210,20 +197,16 @@
 </p-dialog>
 
 <!-- ═══════ Split Transaction Dialog ═══════ -->
-<p-dialog
-  [(visible)]="showSplitDialog"
-  header="Split Transaction"
-  [modal]="true"
-  [style]="{ width: '640px', maxHeight: '90vh' }"
-  [closable]="true"
-  [draggable]="false">
+<p-dialog [(visible)]="showSplitDialog" header="Split Transaction" [modal]="true"
+  [style]="{ width: '640px', maxHeight: '90vh' }" [closable]="true" [draggable]="false">
   <form *ngIf="splitForm" [formGroup]="splitForm" (ngSubmit)="saveSplit()">
     <div class="space-y-5">
       <!-- Description -->
       <div>
         <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Description *</label>
         <input pInputText formControlName="description" class="w-full" placeholder="What was this for?" />
-        <small class="text-red-500" *ngIf="splitForm.get('description')?.invalid && splitForm.get('description')?.touched">
+        <small class="text-red-500"
+          *ngIf="splitForm.get('description')?.invalid && splitForm.get('description')?.touched">
           Description is required
         </small>
       </div>
@@ -235,10 +218,10 @@
           <input pInputText formControlName="categoryName" class="w-full" placeholder="e.g. Dining" />
         </div>
         <div>
-          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Total Amount *</label>
-          <p-inputNumber formControlName="totalAmount" [minFractionDigits]="2" [maxFractionDigits]="2"
-            [min]="0.01" class="w-full" placeholder="0.00"
-            (onInput)="onTotalAmountChange()">
+          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Total Amount
+            *</label>
+          <p-inputNumber formControlName="totalAmount" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.01"
+            class="w-full" placeholder="0.00" (onInput)="onTotalAmountChange()">
           </p-inputNumber>
         </div>
       </div>
@@ -246,8 +229,7 @@
       <!-- Date -->
       <div>
         <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Date *</label>
-        <p-datepicker formControlName="transactionDate" [showIcon]="true" dateFormat="yy-mm-dd"
-          styleClass="w-full">
+        <p-datepicker formControlName="transactionDate" [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full">
         </p-datepicker>
       </div>
 
@@ -290,7 +272,8 @@
       <!-- Split With Friends -->
       <div>
         <div class="flex items-center justify-between mb-3">
-          <label class="block text-sm font-medium" style="color: var(--minted-text-secondary);">Split with friends</label>
+          <label class="block text-sm font-medium" style="color: var(--minted-text-secondary);">Split with
+            friends</label>
         </div>
         <div class="space-y-3">
           <!-- Entries -->
@@ -308,30 +291,29 @@
               <p class="text-sm font-medium truncate" style="color: var(--minted-text-primary);">
                 {{ entry.friendId === null ? 'You (Payer)' : entry.friendName }}
               </p>
-              <p *ngIf="entry.friendId === null" class="text-xs" style="color: var(--minted-text-muted);">Paying full amount</p>
+              <p *ngIf="entry.friendId === null" class="text-xs" style="color: var(--minted-text-muted);">Paying full
+                amount</p>
             </div>
             <!-- Amount -->
             <div class="flex items-center gap-3">
               <div *ngIf="selectedSplitType === 'EQUAL'" class="text-right">
-                <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(entry.shareAmount) }}</p>
+                <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{
+                  currencyService.format(entry.shareAmount) }}</p>
               </div>
               <input *ngIf="selectedSplitType !== 'EQUAL'" type="number" step="0.01"
                 class="w-24 px-2 py-1 rounded text-sm text-right"
                 style="background-color: var(--minted-bg-input); color: var(--minted-text-primary); border: 1px solid var(--minted-border);"
                 [(ngModel)]="entry.shareAmount" [ngModelOptions]="{ standalone: true }" />
               <!-- Remove button (not for "Me") -->
-              <button *ngIf="entry.friendId !== null" type="button"
-                class="p-1 transition-colors hover:text-red-500"
-                style="color: var(--minted-text-muted);"
-                (click)="removeFriendFromSplit(i)">
+              <button *ngIf="entry.friendId !== null" type="button" class="p-1 transition-colors hover:text-red-500"
+                style="color: var(--minted-text-muted);" (click)="removeFriendFromSplit(i)">
                 <i class="pi pi-times text-[18px]"></i>
               </button>
             </div>
           </div>
 
           <!-- Add friend placeholder -->
-          <div *ngIf="availableFriendsForSplit.length > 0"
-            class="border border-dashed rounded-lg p-3"
+          <div *ngIf="availableFriendsForSplit.length > 0" class="border border-dashed rounded-lg p-3"
             style="border-color: var(--minted-border);">
             <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Add a friend:</p>
             <div class="flex flex-wrap gap-2">
@@ -375,19 +357,13 @@
 </p-dialog>
 
 <!-- ═══════ Settle Dialog ═══════ -->
-<p-dialog
-  [(visible)]="showSettleDialog"
-  header="Review Settlement"
-  [modal]="true"
-  [style]="{ width: '500px', maxHeight: '90vh' }"
-  [closable]="true"
-  [draggable]="false">
+<p-dialog [(visible)]="showSettleDialog" header="Review Settlement" [modal]="true"
+  [style]="{ width: '500px', maxHeight: '90vh' }" [closable]="true" [draggable]="false">
   <div *ngIf="settleFriend" class="space-y-6">
     <!-- Friend Avatar + Amount -->
     <div class="flex flex-col items-center justify-center py-4 text-center">
       <div class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4 shadow-sm"
-        [style.background-color]="settleFriend.avatarColor"
-        [style.border]="'4px solid var(--minted-bg-card)'">
+        [style.background-color]="settleFriend.avatarColor" [style.border]="'4px solid var(--minted-bg-card)'">
         {{ getInitials(settleFriend.friendName) }}
       </div>
       <p class="text-sm font-medium" style="color: var(--minted-text-muted);">
@@ -399,7 +375,8 @@
           {{ currencyService.format(settleFriend.balance > 0 ? settleFriend.balance : -settleFriend.balance) }}
         </span>
       </div>
-      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mt-2"
+      <div
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider mt-2"
         [ngClass]="settleFriend.balance > 0 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-red-50 text-red-600 border border-red-100'">
         Full Balance Settlement
       </div>
@@ -408,7 +385,8 @@
     <!-- Transaction Details -->
     <div class="rounded-xl p-4"
       style="background-color: var(--minted-bg-surface); border: 1px solid var(--minted-border-light);">
-      <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color: var(--minted-text-muted);">Transaction Details</p>
+      <p class="text-[10px] font-bold uppercase tracking-widest mb-3" style="color: var(--minted-text-muted);">
+        Transaction Details</p>
       <div *ngIf="settleLoading" class="text-center py-4">
         <p-progressSpinner [style]="{ width: '30px', height: '30px' }"></p-progressSpinner>
       </div>
@@ -416,13 +394,16 @@
         <div *ngFor="let share of settleShares" class="flex items-start justify-between">
           <div>
             <p class="text-sm font-semibold" style="color: var(--minted-text-primary);">{{ share.splitDescription }}</p>
-            <p class="text-[11px]" style="color: var(--minted-text-muted);">{{ share.splitTransactionDate }} &bull; {{ share.splitCategoryName }}</p>
+            <p class="text-[11px]" style="color: var(--minted-text-muted);">{{ share.splitTransactionDate }} &bull; {{
+              share.splitCategoryName }}</p>
           </div>
           <div class="text-right">
-            <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{ currencyService.format(share.shareAmount) }}</p>
+            <p class="text-sm font-bold" style="color: var(--minted-text-primary);">{{
+              currencyService.format(share.shareAmount) }}</p>
           </div>
         </div>
-        <div *ngIf="settleShares.length === 0" class="text-center text-sm py-2" style="color: var(--minted-text-muted);">
+        <div *ngIf="settleShares.length === 0" class="text-center text-sm py-2"
+          style="color: var(--minted-text-muted);">
           No unsettled transactions
         </div>
       </div>

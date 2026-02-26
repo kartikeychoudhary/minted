@@ -1,5 +1,5 @@
-export type StatementStatus = 'UPLOADED' | 'TEXT_EXTRACTED' | 'LLM_PARSED'
-  | 'CONFIRMING' | 'COMPLETED' | 'FAILED';
+export type StatementStatus = 'UPLOADED' | 'TEXT_EXTRACTED' | 'SENT_FOR_AI_PARSING'
+  | 'LLM_PARSED' | 'CONFIRMING' | 'COMPLETED' | 'FAILED';
 
 export interface ParsedTransactionRow {
   tempId: string;
@@ -30,6 +30,7 @@ export interface CreditCardStatement {
   importedCount: number;
   errorMessage: string | null;
   jobExecutionId: number | null;
+  fileType: string;
   createdAt: string;
   updatedAt: string;
 }

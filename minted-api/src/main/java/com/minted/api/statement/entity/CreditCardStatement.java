@@ -75,6 +75,9 @@ public class CreditCardStatement {
     @Column(name = "pdf_password_hint", length = 20)
     private String pdfPasswordHint;
 
+    @Column(name = "file_type", length = 10)
+    private String fileType = "PDF";
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

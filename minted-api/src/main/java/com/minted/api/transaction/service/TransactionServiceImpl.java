@@ -108,6 +108,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setUser(user);
         transaction.setIsRecurring(request.isRecurring() != null ? request.isRecurring() : false);
         transaction.setTags(request.tags());
+        transaction.setExcludeFromAnalysis(request.excludeFromAnalysis() != null ? request.excludeFromAnalysis() : false);
 
         Transaction saved = transactionRepository.save(transaction);
 
@@ -154,6 +155,7 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setCategory(category);
         transaction.setIsRecurring(request.isRecurring() != null ? request.isRecurring() : false);
         transaction.setTags(request.tags());
+        transaction.setExcludeFromAnalysis(request.excludeFromAnalysis() != null ? request.excludeFromAnalysis() : false);
 
         Transaction updated = transactionRepository.save(transaction);
 
@@ -175,6 +177,35 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.delete(transaction);
         log.info("Transaction deleted: id={}", id);
+    }
+
+    @Override
+    @Transactional
+    public void bulkDelete(List<Long> ids, Long userId) {
+        if (ids == null || ids.isEmpty()) {
+            throw new BadRequestException("No transaction IDs provided");
+        }
+        for (Long id : ids) {
+            Transaction transaction = findTransactionByIdAndUserId(id, userId);
+            reverseAccountBalances(transaction);
+            transactionRepository.delete(transaction);
+        }
+        log.info("Bulk deleted {} transactions for userId={}", ids.size(), userId);
+    }
+
+    @Override
+    @Transactional
+    public void bulkUpdateCategory(List<Long> ids, Long categoryId, Long userId) {
+        if (ids == null || ids.isEmpty()) {
+            throw new BadRequestException("No transaction IDs provided");
+        }
+        TransactionCategory category = findCategoryByIdAndUserId(categoryId, userId);
+        for (Long id : ids) {
+            Transaction transaction = findTransactionByIdAndUserId(id, userId);
+            transaction.setCategory(category);
+            transactionRepository.save(transaction);
+        }
+        log.info("Bulk updated category to {} for {} transactions, userId={}", categoryId, ids.size(), userId);
     }
 
     private void updateAccountBalancesForCreate(Account account, Account toAccount,

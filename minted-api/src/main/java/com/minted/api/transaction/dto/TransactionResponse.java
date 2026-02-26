@@ -25,6 +25,7 @@ public record TransactionResponse(
         Boolean isRecurring,
         String tags,
         Boolean isSplit,
+        Boolean excludeFromAnalysis,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -47,6 +48,7 @@ public record TransactionResponse(
                 transaction.getIsRecurring(),
                 transaction.getTags(),
                 isSplit,
+                transaction.getExcludeFromAnalysis(),
                 transaction.getCreatedAt(),
                 transaction.getUpdatedAt()
         );

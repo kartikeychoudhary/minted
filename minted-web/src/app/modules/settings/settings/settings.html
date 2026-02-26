@@ -49,6 +49,10 @@
             <i class="pi pi-bolt mr-2"></i>
             <span>LLM Configuration</span>
           </p-tab>
+          <p-tab value="6">
+            <i class="pi pi-objects-column mr-2"></i>
+            <span>Dashboard</span>
+          </p-tab>
         </p-tablist>
         <p-tabpanels [style]="{'overflow': 'visible'}">
           <p-tabpanel value="0" [style]="{'overflow': 'visible'}">
@@ -68,6 +72,9 @@
           </p-tabpanel>
           <p-tabpanel value="5" [style]="{'overflow': 'visible'}">
             <app-llm-config></app-llm-config>
+          </p-tabpanel>
+          <p-tabpanel value="6" [style]="{'overflow': 'visible'}">
+            <app-dashboard-config></app-dashboard-config>
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>

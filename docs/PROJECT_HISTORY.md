@@ -639,6 +639,114 @@ Migrated the entire app from 3 icon libraries (Google Material Icons ~200+ usage
 
 ---
 
+### Bug Fix: Account Dialog Currency Dropdown (February 26, 2026)
+
+Fixed the account creation/edit dialog to use a proper currency dropdown instead of a free-text input, and made the balance field dynamically adapt to the selected currency.
+
+- **`accounts.html`**: Changed currency field from `<input pInputText>` to `<p-select>` dropdown using `CurrencyService.currencies` array. Moved currency field above balance field so user selects currency first. Changed balance `<p-inputnumber>` from hardcoded `currency="USD" locale="en-US"` to dynamic `[currency]` and `[locale]` bindings.
+- **`accounts.ts`**: Changed `private currencyService` to `public currencyService` for template access. Added `getLocaleForCurrency(code)` helper method that looks up the locale from CurrencyService.currencies.
+- **Files modified (2):** `accounts.html`, `accounts.ts`
+
+---
+
+### Transactions Page Enhancements (February 26, 2026)
+
+Added bulk operations, extended date filters, and default sort to the transactions page.
+
+#### Backend Changes (3 files)
+- **`TransactionService.java`**: Added `bulkDelete(List<Long> ids, Long userId)` and `bulkUpdateCategory(List<Long> ids, Long categoryId, Long userId)` interface methods
+- **`TransactionServiceImpl.java`**: Implemented bulk delete (iterates, reverses account balances, deletes) and bulk category update (validates category, updates each transaction)
+- **`TransactionController.java`**: Added `DELETE /bulk` endpoint (accepts `{ "ids": [...] }`) and `PUT /bulk/category` endpoint (accepts `{ "ids": [...], "categoryId": N }`)
+
+#### Frontend Changes (4 files)
+- **`transaction.model.ts`**: Added `LAST_6_MONTHS` and `LAST_YEAR` to `DateFilterOption` enum
+- **`transaction.service.ts`**: Added `bulkDelete(ids)` and `bulkUpdateCategory(ids, categoryId)` HTTP methods
+- **`transactions-list.ts`**: Added `selectedTransactions`, `showBulkCategoryDialog`, `bulkCategoryId` state. Added `sort: 'desc'` to transactionDate column. Added LAST_6_MONTHS/LAST_YEAR cases in `getDateRange()`. Added `onSelectionChanged()`, `bulkDelete()`, `openBulkCategoryDialog()`, `saveBulkCategory()` methods. Added excludeFromAnalysis to form/dialog/save.
+- **`transactions-list.html`**: Added bulk action buttons (Delete Selected, Change Category) with selection count badge. Added Last 6 Months and Last Year date filter buttons. Added `(selectionChanged)` event on ag-grid. Added "Exclude from Analysis" checkbox in transaction dialog. Added Bulk Category Dialog.
+
+**Files created (0), modified (7):** TransactionService.java, TransactionServiceImpl.java, TransactionController.java, transaction.model.ts, transaction.service.ts, transactions-list.ts, transactions-list.html
+
+---
+
+### Exclude from Analysis & Dashboard Configuration (February 26, 2026)
+
+Added an "Exclude from Analysis" flag on transactions and a Dashboard Configuration settings tab for excluding categories from analytics.
+
+#### Database (2 migrations)
+- **`V0_0_35__add_exclude_from_analysis.sql`**: `ALTER TABLE transactions ADD COLUMN exclude_from_analysis BOOLEAN DEFAULT FALSE;`
+- **`V0_0_36__create_dashboard_config.sql`**: Creates `dashboard_configurations` table with `user_id` (UNIQUE FK), `excluded_category_ids` (TEXT, comma-separated), timestamps
+
+#### Backend: Transaction Changes (4 files)
+- **`Transaction.java`**: Added `excludeFromAnalysis` field (Boolean, default false). Updated ALL 5 analytics `@NamedQuery` to add `AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL)` filter
+- **`TransactionRequest.java`**: Added `Boolean excludeFromAnalysis` field
+- **`TransactionResponse.java`**: Added `Boolean excludeFromAnalysis` field, updated `from()` method
+- **`TransactionServiceImpl.java`**: Updated `create()` and `update()` to handle excludeFromAnalysis
+
+#### Backend: Dashboard Config (NEW package — 7 files)
+- **`dashboardconfig/entity/DashboardConfiguration.java`**: JPA entity with `@OneToOne` User relationship, `excludedCategoryIds` TEXT field
+- **`dashboardconfig/dto/DashboardConfigRequest.java`**: Record with `List<Long> excludedCategoryIds`
+- **`dashboardconfig/dto/DashboardConfigResponse.java`**: Record with `from()` static method parsing comma-separated IDs
+- **`dashboardconfig/repository/DashboardConfigurationRepository.java`**: JPA repo with `findByUserId()`
+- **`dashboardconfig/service/DashboardConfigService.java`**: Interface with `getConfig`, `saveConfig`, `getExcludedCategoryIds`
+- **`dashboardconfig/service/DashboardConfigServiceImpl.java`**: Implementation storing comma-separated category IDs
+- **`dashboardconfig/controller/DashboardConfigController.java`**: `GET` and `PUT` endpoints at `/api/v1/dashboard-config`
+
+#### Frontend (6 files: 4 new, 2 modified)
+- **`dashboard-config.model.ts`** (NEW): TypeScript interfaces
+- **`dashboard-config.service.ts`** (NEW): HTTP service (`providedIn: 'root'`)
+- **`dashboard-config/dashboard-config.ts`** (NEW): Component with category multiselect and save
+- **`dashboard-config/dashboard-config.html`** (NEW): PrimeNG multiselect for category exclusion, save button, info card
+- **`settings-module.ts`**: Added DashboardConfigComponent import/declaration
+- **`settings.html`**: Added "Dashboard" tab (value="6") with `pi-objects-column` icon
+
+**Files created (6 + 2 migrations):** V0_0_35, V0_0_36, DashboardConfiguration.java, DashboardConfigRequest.java, DashboardConfigResponse.java, DashboardConfigurationRepository.java, DashboardConfigService.java, DashboardConfigServiceImpl.java, DashboardConfigController.java, dashboard-config.model.ts, dashboard-config.service.ts, dashboard-config.ts, dashboard-config.html
+**Files modified (6):** Transaction.java, TransactionRequest.java, TransactionResponse.java, TransactionServiceImpl.java, settings-module.ts, settings.html
+
+---
+
+### Financial Statements Module Enhancements (February 26, 2026)
+
+Enhanced the statement parser to support CSV/TXT files (not just PDF), added editable text review, new SENT_FOR_AI_PARSING status, category dropdown in preview, and renamed module to "Financial Statements".
+
+#### Database (1 migration)
+- **`V0_0_37__add_file_type_to_statements.sql`**: `ALTER TABLE credit_card_statements ADD COLUMN file_type VARCHAR(10) DEFAULT 'PDF';`
+
+#### Backend Changes (6 files)
+- **`StatementStatus.java`**: Added `SENT_FOR_AI_PARSING` enum value between `TEXT_EXTRACTED` and `LLM_PARSED`
+- **`CreditCardStatement.java`**: Added `fileType` field (String, default "PDF")
+- **`StatementResponse.java`**: Added `fileType` field. Added logic to suppress `extractedText` when status is `SENT_FOR_AI_PARSING`, `LLM_PARSED`, `CONFIRMING`, or `COMPLETED` (reduces API payload)
+- **`CreditCardStatementController.java`**: Updated parse endpoint to accept optional `@RequestBody Map<String, String> body` with `extractedText` key
+- **`CreditCardStatementService.java`**: Updated `triggerLlmParse` signature to accept `String editedText` parameter
+- **`CreditCardStatementServiceImpl.java`**:
+  - `uploadAndExtract()`: Detects file type from extension/content type. For CSV/TXT: reads file bytes as UTF-8 text directly (no PDFBox). For PDF: delegates to existing `StatementParserService.extractText()`. Sets `fileType` on entity. Max 5MB for CSV/TXT, 20MB for PDF.
+  - `triggerLlmParse()`: Accepts `editedText` param — overwrites stored text if provided. Sets `SENT_FOR_AI_PARSING` status before starting async processing.
+  - Added `detectFileType()` private helper.
+
+#### Frontend Changes (10 files)
+- **`statement.model.ts`**: Added `SENT_FOR_AI_PARSING` to `StatementStatus` type. Added `fileType: string` to `CreditCardStatement` interface.
+- **`statement.service.ts`**: Updated `triggerParse()` to accept optional `editedText` parameter, sends as `{ extractedText }` in request body.
+- **`upload-step.ts`**: Added `selectedFileType` state (`'PDF' | 'CSV' | 'TXT'`), `fileTypes` array with icon/accept/description per type, `onFileTypeSelect()` method, `currentFileTypeConfig` getter. Updated `onFileSelect()` validation for dynamic max size.
+- **`upload-step.html`**: Added 3 file type selection cards (PDF/CSV/TXT) with visual active state. Dynamic file input accept attribute. Password section shown only for PDF. Updated header text to "Financial Statements".
+- **`text-review-step.ts`**: Implemented `OnChanges`. Added `editedText`, `textModified` state. Added `onTextChange()` and `ngOnChanges()`. Updated `triggerParse()` to send edited text only if modified.
+- **`text-review-step.html`**: Changed textarea from `readonly` with `[value]` to editable with `[ngModel]`/`(ngModelChange)`. Added "Modified" badge. Added info text about editing.
+- **`statement-detail.ts`**: Updated polling condition to continue during `SENT_FOR_AI_PARSING` status.
+- **`statement-list.ts`**: Added `SENT_FOR_AI_PARSING` to `getStatusSeverity()` (warn) and `getStatusLabel()` ("AI Parsing...").
+- **`statement-list.html`**: Renamed "Credit Card Statements" to "Financial Statements". Updated empty state text.
+- **`parse-preview-step.ts`**: Injected `CategoryService`. Added `categories` and `categoryNames` arrays. Added `loadCategories()` in `ngOnInit()`. Updated categoryName column to use `agSelectCellEditor` with dynamic `cellEditorParams` from loaded categories. Added `onCellValueChanged` to update `matchedCategoryId` when category is selected.
+
+#### Import Module (1 file modified)
+- **`import-wizard.html`**: Renamed "Credit Card Statement" card to "Financial Statement"
+
+#### Shared Module Fix (1 file modified)
+- **`shared.module.ts`**: Added `MultiSelectModule` import/export (required by dashboard-config component)
+
+**Files created (1 migration):** V0_0_37
+**Files modified (17):** StatementStatus.java, CreditCardStatement.java, StatementResponse.java, CreditCardStatementController.java, CreditCardStatementService.java, CreditCardStatementServiceImpl.java, statement.model.ts, statement.service.ts, upload-step.ts, upload-step.html, text-review-step.ts, text-review-step.html, statement-detail.ts, statement-list.ts, statement-list.html, parse-preview-step.ts, import-wizard.html, shared.module.ts
+
+**No errors encountered during backend build.** Frontend had one build error (MultiSelectModule not imported) — fixed immediately.
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

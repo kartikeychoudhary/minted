@@ -387,6 +387,52 @@ Same body as POST.
 ### DELETE `/transactions/{id}`
 Hard delete with confirmation.
 
+### DELETE `/transactions/bulk`
+Bulk delete multiple transactions. Reverses account balances for each deleted transaction.
+
+**Request:**
+```json
+{
+  "ids": [101, 102, 103]
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "3 transactions deleted",
+  "deletedCount": 3
+}
+```
+
+### PUT `/transactions/bulk/category`
+Bulk update category for multiple transactions.
+
+**Request:**
+```json
+{
+  "ids": [101, 102, 103],
+  "categoryId": 5
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "3 transactions updated",
+  "updatedCount": 3
+}
+```
+
+### Transaction Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `excludeFromAnalysis` | Boolean | If `true`, transaction is excluded from all analytics/summary queries. Default: `false`. |
+| `isSplit` | Boolean | Read-only. `true` if this transaction has been linked to a split transaction. |
+
 ---
 
 ## 7. Budgets
@@ -1179,9 +1225,11 @@ DELETE /api/v1/notifications/read
 `POST /api/v1/statements/upload`
 
 **Request Params:**
-- `file` — PDF file (max 20MB)
+- `file` — PDF (max 20MB), CSV (max 5MB), or TXT (max 5MB) file
 - `accountId` — Target account ID (Long)
-- `pdfPassword` — Optional PDF password (String)
+- `pdfPassword` — Optional PDF password (String, only used for PDF files)
+
+**Supported file types:** PDF (`.pdf`), CSV (`.csv`), TXT (`.txt`). For CSV/TXT files, contents are read as UTF-8 text directly. For PDF files, text is extracted via PDFBox.
 
 **Response (200):**
 ```json
@@ -1193,6 +1241,7 @@ DELETE /api/v1/notifications/read
     "accountName": "HDFC Credit Card",
     "fileName": "statement_jan.pdf",
     "fileSize": 204800,
+    "fileType": "PDF",
     "status": "TEXT_EXTRACTED",
     "currentStep": 2,
     "extractedText": "HDFC BANK CREDIT CARD STATEMENT...",
@@ -1211,15 +1260,29 @@ DELETE /api/v1/notifications/read
 
 `POST /api/v1/statements/{id}/parse`
 
+**Request Body (optional):**
+```json
+{
+  "extractedText": "Edited text content to override stored text before parsing..."
+}
+```
+
+If `extractedText` is provided and non-blank, it overwrites the stored extracted text before sending to AI. This allows users to fix OCR/extraction errors in the text review step.
+
 **Response (202 Accepted):**
 ```json
 {
   "success": true,
-  "data": { "...StatementResponse with status still TEXT_EXTRACTED..." },
+  "data": { "...StatementResponse with status SENT_FOR_AI_PARSING..." },
   "message": "AI parsing started"
 }
 ```
-> Parsing runs asynchronously. Poll `GET /statements/{id}` until `status` changes to `LLM_PARSED` or `FAILED`.
+
+**Statement Status Flow:** `UPLOADED` → `TEXT_EXTRACTED` → `SENT_FOR_AI_PARSING` → `LLM_PARSED` → `COMPLETED`
+
+> Parsing runs asynchronously. Poll `GET /statements/{id}` until `status` changes from `SENT_FOR_AI_PARSING` to `LLM_PARSED` or `FAILED`.
+
+**Note:** `extractedText` is suppressed (null) in API responses when status is `SENT_FOR_AI_PARSING`, `LLM_PARSED`, `CONFIRMING`, or `COMPLETED` to reduce payload size.
 
 #### Get Parsed Transaction Rows
 
@@ -1368,7 +1431,56 @@ DELETE /api/v1/notifications/read
 }
 ```
 
-### 14.4 New System Settings
+### 14.4 Dashboard Configuration (`/api/v1/dashboard-config`)
+
+Per-user configuration for excluding categories from analytics dashboards.
+
+#### Get Dashboard Config
+
+`GET /api/v1/dashboard-config`
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "userId": 1,
+    "excludedCategoryIds": [4, 7, 12]
+  }
+}
+```
+
+Returns empty `excludedCategoryIds: []` if no config exists for the user yet.
+
+#### Save Dashboard Config
+
+`PUT /api/v1/dashboard-config`
+
+**Request:**
+```json
+{
+  "excludedCategoryIds": [4, 7, 12]
+}
+```
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "userId": 1,
+    "excludedCategoryIds": [4, 7, 12]
+  }
+}
+```
+
+Creates config if none exists, updates if already exists.
+
+---
+
+### 14.5 New System Settings
 
 | Key | Default | Description |
 |-----|---------|-------------|

@@ -34,6 +34,7 @@ import { TagModule } from 'primeng/tag';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { StepperModule } from 'primeng/stepper';
 import { DrawerModule } from 'primeng/drawer';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -66,7 +67,8 @@ const PRIMENG_MODULES = [
   TagModule,
   ProgressBarModule,
   StepperModule,
-  DrawerModule
+  DrawerModule,
+  MultiSelectModule
 ];
 
 @NgModule({

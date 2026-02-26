@@ -11,6 +11,7 @@ import { Budgets } from './components/budgets/budgets';
 import { Profile } from './components/profile/profile';
 import { LlmConfigComponent } from './components/llm-config/llm-config';
 import { MerchantMappingsComponent } from './components/merchant-mappings/merchant-mappings';
+import { DashboardConfigComponent } from './components/dashboard-config/dashboard-config';
 import { SharedModule } from '../../shared/shared.module';
 import { AgGridModule } from 'ag-grid-angular';
 
@@ -24,7 +25,8 @@ import { AgGridModule } from 'ag-grid-angular';
     Budgets,
     Profile,
     LlmConfigComponent,
-    MerchantMappingsComponent
+    MerchantMappingsComponent,
+    DashboardConfigComponent
   ],
   imports: [
     CommonModule,

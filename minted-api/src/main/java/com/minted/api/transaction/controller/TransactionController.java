@@ -125,6 +125,36 @@ public class TransactionController {
         ));
     }
 
+    @DeleteMapping("/bulk")
+    public ResponseEntity<Map<String, Object>> bulkDeleteTransactions(
+            @RequestBody Map<String, List<Long>> request,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        List<Long> ids = request.get("ids");
+        transactionService.bulkDelete(ids, userId);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Transactions deleted successfully"
+        ));
+    }
+
+    @PutMapping("/bulk/category")
+    public ResponseEntity<Map<String, Object>> bulkUpdateCategory(
+            @RequestBody Map<String, Object> request,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        @SuppressWarnings("unchecked")
+        List<Long> ids = ((List<Number>) request.get("ids")).stream().map(Number::longValue).toList();
+        Long categoryId = ((Number) request.get("categoryId")).longValue();
+        transactionService.bulkUpdateCategory(ids, categoryId, userId);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Transaction categories updated successfully"
+        ));
+    }
+
     private Long getUserId(Authentication authentication) {
         String username = authentication.getName();
         User user = userRepository.findByUsername(username)

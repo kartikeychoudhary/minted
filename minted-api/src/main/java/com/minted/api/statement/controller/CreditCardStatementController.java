@@ -41,10 +41,12 @@ public class CreditCardStatementController {
     @PostMapping("/{id}/parse")
     public ResponseEntity<Map<String, Object>> triggerParse(
             @PathVariable Long id,
+            @RequestBody(required = false) Map<String, String> body,
             Authentication authentication
     ) {
         Long userId = getUserId(authentication);
-        StatementResponse response = statementService.triggerLlmParse(id, userId);
+        String editedText = body != null ? body.get("extractedText") : null;
+        StatementResponse response = statementService.triggerLlmParse(id, userId, editedText);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(Map.of(
                 "success", true,
                 "data", response,

@@ -4,17 +4,27 @@
     style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
     <div class="p-4 border-b flex items-center justify-between"
       style="border-color: var(--minted-border);">
-      <h3 class="font-semibold" style="color: var(--minted-text-primary);">Extracted Text</h3>
+      <div class="flex items-center gap-2">
+        <h3 class="font-semibold" style="color: var(--minted-text-primary);">Extracted Text</h3>
+        <span *ngIf="textModified" class="text-xs px-2 py-0.5 rounded font-medium"
+          style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
+          Modified
+        </span>
+      </div>
       <span class="text-xs px-2 py-1 rounded"
         style="background-color: var(--minted-surface); color: var(--minted-text-muted);">
         {{ charCount | number }} characters
       </span>
     </div>
     <div class="p-4">
-      <textarea pTextarea [value]="statement.extractedText || ''" readonly
+      <textarea pTextarea [ngModel]="editedText" (ngModelChange)="onTextChange($event)"
         [rows]="20" class="w-full font-mono text-xs"
         style="resize: vertical; background-color: var(--minted-surface); color: var(--minted-text-primary);">
       </textarea>
+      <p class="text-xs mt-2" style="color: var(--minted-text-muted);">
+        <i class="pi pi-info-circle mr-1"></i>
+        You can edit the text above to fix extraction errors before sending to AI for parsing.
+      </p>
     </div>
   </div>
 

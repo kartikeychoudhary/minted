@@ -33,5 +33,7 @@ public record TransactionRequest(
         Boolean isRecurring,
 
         @Size(max = 500, message = "Tags must not exceed 500 characters")
-        String tags
+        String tags,
+
+        Boolean excludeFromAnalysis
 ) {}

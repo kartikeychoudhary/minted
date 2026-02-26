@@ -30,7 +30,7 @@ export class Accounts implements OnInit {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef,
-    private currencyService: CurrencyService
+    public currencyService: CurrencyService
   ) { }
 
   ngOnInit(): void {
@@ -225,6 +225,11 @@ export class Accounts implements OnInit {
 
   formatCurrency(balance: number, currency?: string): string {
     return this.currencyService.format(balance);
+  }
+
+  getLocaleForCurrency(code: string): string {
+    if (!code) return this.currencyService.currentLocale;
+    return this.currencyService.currencies.find(c => c.code === code)?.locale || 'en-US';
   }
 
   isNegativeBalance(balance: number): boolean {

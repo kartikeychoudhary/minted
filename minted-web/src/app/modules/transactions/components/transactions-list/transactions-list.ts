@@ -118,6 +118,11 @@ export class TransactionsList implements OnInit {
     { label: 'Transfer', value: TransactionType.TRANSFER }
   ];
 
+  // Bulk operations
+  selectedTransactions: TransactionResponse[] = [];
+  showBulkCategoryDialog = false;
+  bulkCategoryId?: number;
+
   // Expose enums to template
   DateFilterOption = DateFilterOption;
 
@@ -171,6 +176,7 @@ export class TransactionsList implements OnInit {
         headerName: 'Date',
         field: 'transactionDate',
         width: 130,
+        sort: 'desc',
         cellClass: 'cell-v-center',
         valueFormatter: (params) => {
           const date = new Date(params.value);
@@ -236,6 +242,74 @@ export class TransactionsList implements OnInit {
     this.gridApi = params.api;
   }
 
+  onSelectionChanged(): void {
+    if (this.gridApi) {
+      this.selectedTransactions = this.gridApi.getSelectedRows();
+      this.cdr.detectChanges();
+    }
+  }
+
+  bulkDelete(): void {
+    if (this.selectedTransactions.length === 0) return;
+    this.confirmationService.confirm({
+      key: 'transactions',
+      message: `Are you sure you want to delete ${this.selectedTransactions.length} selected transaction(s)?`,
+      header: 'Confirm Bulk Delete',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        const ids = this.selectedTransactions.map(t => t.id);
+        this.transactionService.bulkDelete(ids).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: `${ids.length} transaction(s) deleted successfully`
+            });
+            this.selectedTransactions = [];
+            this.loadTransactions();
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to delete transactions'
+            });
+          }
+        });
+      }
+    });
+  }
+
+  openBulkCategoryDialog(): void {
+    if (this.selectedTransactions.length === 0) return;
+    this.bulkCategoryId = undefined;
+    this.showBulkCategoryDialog = true;
+  }
+
+  saveBulkCategory(): void {
+    if (!this.bulkCategoryId || this.selectedTransactions.length === 0) return;
+    const ids = this.selectedTransactions.map(t => t.id);
+    this.transactionService.bulkUpdateCategory(ids, this.bulkCategoryId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Category updated for ${ids.length} transaction(s)`
+        });
+        this.showBulkCategoryDialog = false;
+        this.selectedTransactions = [];
+        this.loadTransactions();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update categories'
+        });
+      }
+    });
+  }
+
   initForm(): void {
     this.transactionForm = this.formBuilder.group({
       amount: [null, [Validators.required, Validators.min(0.01)]],
@@ -247,7 +321,8 @@ export class TransactionsList implements OnInit {
       toAccountId: [null],
       categoryId: [null, Validators.required],
       isRecurring: [false],
-      tags: ['', Validators.maxLength(500)]
+      tags: ['', Validators.maxLength(500)],
+      excludeFromAnalysis: [false]
     });
   }
 
@@ -331,6 +406,12 @@ export class TransactionsList implements OnInit {
         break;
       case DateFilterOption.LAST_3_MONTHS:
         startDate = new Date(today.getFullYear(), today.getMonth() - 3, 1);
+        break;
+      case DateFilterOption.LAST_6_MONTHS:
+        startDate = new Date(today.getFullYear(), today.getMonth() - 6, 1);
+        break;
+      case DateFilterOption.LAST_YEAR:
+        startDate = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
         break;
       case DateFilterOption.CUSTOM:
         startDate = this.customStartDate || new Date(today.getFullYear(), today.getMonth(), 1);
@@ -428,7 +509,8 @@ export class TransactionsList implements OnInit {
       toAccountId: transaction.toAccountId,
       categoryId: transaction.categoryId,
       isRecurring: transaction.isRecurring,
-      tags: transaction.tags
+      tags: transaction.tags,
+      excludeFromAnalysis: transaction.excludeFromAnalysis || false
     });
     this.showDialog = true;
   }
@@ -452,7 +534,8 @@ export class TransactionsList implements OnInit {
       toAccountId: formValue.toAccountId,
       categoryId: formValue.categoryId,
       isRecurring: formValue.isRecurring,
-      tags: formValue.tags
+      tags: formValue.tags,
+      excludeFromAnalysis: formValue.excludeFromAnalysis
     };
 
     if (this.isEditMode && this.selectedTransaction) {

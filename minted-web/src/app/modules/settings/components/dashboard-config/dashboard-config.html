@@ -1,0 +1,44 @@
+<div class="space-y-6">
+  <!-- Section Header -->
+  <div>
+    <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Dashboard Configuration</h2>
+    <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Configure which categories are excluded from
+      your analytics and dashboard charts.</p>
+  </div>
+
+  <!-- Excluded Categories -->
+  <div class="rounded-xl border shadow-sm p-6"
+    style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">
+          Excluded Categories
+        </label>
+        <p class="text-xs mb-3" style="color: var(--minted-text-muted);">
+          Transactions in these categories will not appear in your dashboard analytics, charts, or summary calculations.
+        </p>
+        <p-multiselect [(ngModel)]="excludedCategoryIds" [options]="categories" optionLabel="name" optionValue="id"
+          placeholder="Select categories to exclude" [filter]="true" filterPlaceholder="Search categories..."
+          appendTo="body" styleClass="w-full" [loading]="loading" display="chip">
+        </p-multiselect>
+      </div>
+
+      <div class="flex justify-end pt-4 border-t" style="border-color: var(--minted-border);">
+        <button pButton type="button" label="Save Configuration" icon="pi pi-check" (click)="saveConfig()"
+          [loading]="saving" style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Info Card -->
+  <div class="border rounded-lg p-4 flex gap-3" style="background-color: #eff6ff; border-color: #bfdbfe;">
+    <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
+    <div>
+      <h4 class="text-sm font-medium" style="color: #1e3a8a;">How Exclusions Work</h4>
+      <p class="text-sm mt-1" style="color: #1e40af;">Categories excluded here will be filtered out from all dashboard
+        analytics including: total income/expense summaries, category-wise breakdowns, spending trends, and chart
+        visualizations. Individual transactions can also be excluded using the "Exclude from Analysis" toggle.</p>
+    </div>
+  </div>
+</div>

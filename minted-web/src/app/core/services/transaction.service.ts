@@ -65,6 +65,14 @@ export class TransactionService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  bulkDelete(ids: number[]): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/bulk`, { body: { ids } });
+  }
+
+  bulkUpdateCategory(ids: number[], categoryId: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/bulk/category`, { ids, categoryId });
+  }
+
   // Utility method to export transactions (basic CSV export)
   exportTransactions(transactions: TransactionResponse[]): void {
     const headers = ['Date', 'Category', 'Description', 'Account', 'Amount', 'Type'];

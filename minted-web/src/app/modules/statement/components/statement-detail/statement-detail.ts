@@ -74,7 +74,7 @@ export class StatementDetail implements OnInit, OnDestroy {
       this.statementService.getStatement(stmtId).subscribe({
         next: (stmt) => {
           this.statement = stmt;
-          if (stmt.status !== 'TEXT_EXTRACTED' && stmt.status !== 'UPLOADED') {
+          if (stmt.status !== 'TEXT_EXTRACTED' && stmt.status !== 'UPLOADED' && stmt.status !== 'SENT_FOR_AI_PARSING') {
             this.stopPolling();
           }
           this.cdr.detectChanges();

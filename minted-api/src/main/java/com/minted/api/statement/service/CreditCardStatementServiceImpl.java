@@ -47,6 +47,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -89,12 +90,17 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
         if (file.isEmpty()) {
             throw new BadRequestException("File is required.");
         }
-        String contentType = file.getContentType();
-        if (contentType == null || !contentType.equals("application/pdf")) {
-            throw new BadRequestException("Only PDF files are accepted.");
+
+        // Determine file type from extension/content type
+        String originalFilename = file.getOriginalFilename() != null ? file.getOriginalFilename() : "statement";
+        String fileType = detectFileType(originalFilename, file.getContentType());
+        if (fileType == null) {
+            throw new BadRequestException("Unsupported file type. Accepted formats: PDF, CSV, TXT.");
         }
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new BadRequestException("File size exceeds maximum of 20MB.");
+
+        long maxSize = "PDF".equals(fileType) ? MAX_FILE_SIZE : 5 * 1024 * 1024; // 5MB for text/csv
+        if (file.getSize() > maxSize) {
+            throw new BadRequestException("File size exceeds maximum of " + (maxSize / (1024 * 1024)) + "MB.");
         }
 
         User user = userRepository.findById(userId)
@@ -106,8 +112,9 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
         CreditCardStatement statement = new CreditCardStatement();
         statement.setUser(user);
         statement.setAccount(account);
-        statement.setFileName(file.getOriginalFilename() != null ? file.getOriginalFilename() : "statement.pdf");
+        statement.setFileName(originalFilename);
         statement.setFileSize(file.getSize());
+        statement.setFileType(fileType);
         statement.setStatus(StatementStatus.UPLOADED);
         statement.setCurrentStep(1);
         if (pdfPassword != null && !pdfPassword.isBlank()) {
@@ -116,9 +123,18 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
 
         statement = statementRepository.save(statement);
 
-        // Extract text
+        // Extract text based on file type
         try {
-            String extractedText = statementParserService.extractText(file.getBytes(), pdfPassword);
+            String extractedText;
+            if ("CSV".equals(fileType) || "TXT".equals(fileType)) {
+                extractedText = new String(file.getBytes(), StandardCharsets.UTF_8);
+                if (extractedText.length() > 100_000) {
+                    extractedText = extractedText.substring(0, 100_000)
+                            + "\n[Note: File text truncated at 100,000 characters for LLM processing]";
+                }
+            } else {
+                extractedText = statementParserService.extractText(file.getBytes(), pdfPassword);
+            }
             statement.setExtractedText(extractedText);
             statement.setStatus(StatementStatus.TEXT_EXTRACTED);
             statement.setCurrentStep(2);
@@ -137,7 +153,7 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
             statement.setStatus(StatementStatus.FAILED);
             statement.setErrorMessage("Failed to extract text: " + e.getMessage());
             statementRepository.save(statement);
-            throw new BadRequestException("Failed to extract text from PDF: " + e.getMessage());
+            throw new BadRequestException("Failed to extract text from file: " + e.getMessage());
         }
 
         return StatementResponse.from(statement);
@@ -145,7 +161,7 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
 
     @Override
     @Transactional
-    public StatementResponse triggerLlmParse(Long statementId, Long userId) {
+    public StatementResponse triggerLlmParse(Long statementId, Long userId, String editedText) {
         checkFeatureEnabled();
 
         CreditCardStatement statement = statementRepository.findByIdAndUserId(statementId, userId)
@@ -153,6 +169,11 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
 
         if (statement.getStatus() != StatementStatus.TEXT_EXTRACTED) {
             throw new BadRequestException("Statement is not ready for parsing. Current status: " + statement.getStatus());
+        }
+
+        // If edited text provided, overwrite stored text
+        if (editedText != null && !editedText.isBlank()) {
+            statement.setExtractedText(editedText);
         }
 
         // Resolve LLM config
@@ -168,6 +189,7 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
         execution = jobExecutionRepository.save(execution);
 
         statement.setJobExecution(execution);
+        statement.setStatus(StatementStatus.SENT_FOR_AI_PARSING);
         statement = statementRepository.save(statement);
 
         // Trigger async processing after commit
@@ -458,5 +480,19 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
         if (contextJson != null) {
             step.setContextJson(contextJson);
         }
+    }
+
+    private String detectFileType(String filename, String contentType) {
+        String lower = filename.toLowerCase();
+        if (lower.endsWith(".pdf")) return "PDF";
+        if (lower.endsWith(".csv")) return "CSV";
+        if (lower.endsWith(".txt")) return "TXT";
+        // Fallback to content type
+        if (contentType != null) {
+            if (contentType.equals("application/pdf")) return "PDF";
+            if (contentType.equals("text/csv")) return "CSV";
+            if (contentType.startsWith("text/plain")) return "TXT";
+        }
+        return null;
     }
 }

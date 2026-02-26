@@ -19,6 +19,13 @@ export class UploadStep implements OnInit {
   selectedFile: File | null = null;
   uploading = false;
   showPassword = false;
+  selectedFileType: 'PDF' | 'CSV' | 'TXT' = 'PDF';
+
+  fileTypes = [
+    { type: 'PDF' as const, label: 'PDF Statement', icon: 'pi pi-file-pdf', accept: '.pdf,application/pdf', description: 'Upload a PDF bank or credit card statement' },
+    { type: 'CSV' as const, label: 'CSV File', icon: 'pi pi-file', accept: '.csv,text/csv', description: 'Upload a CSV file with transaction data' },
+    { type: 'TXT' as const, label: 'Text File', icon: 'pi pi-file-edit', accept: '.txt,text/plain', description: 'Upload a plain text file with statement data' }
+  ];
 
   constructor(
     private fb: FormBuilder,
@@ -48,15 +55,21 @@ export class UploadStep implements OnInit {
     });
   }
 
+  onFileTypeSelect(type: 'PDF' | 'CSV' | 'TXT'): void {
+    this.selectedFileType = type;
+    this.selectedFile = null;
+  }
+
+  get currentFileTypeConfig() {
+    return this.fileTypes.find(f => f.type === this.selectedFileType)!;
+  }
+
   onFileSelect(event: any): void {
     const file = event.files?.[0] || event.target?.files?.[0];
     if (file) {
-      if (file.type !== 'application/pdf') {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Only PDF files are accepted.' });
-        return;
-      }
-      if (file.size > 20 * 1024 * 1024) {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'File size exceeds 20MB limit.' });
+      const maxSize = this.selectedFileType === 'PDF' ? 20 * 1024 * 1024 : 5 * 1024 * 1024;
+      if (file.size > maxSize) {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: `File size exceeds ${maxSize / (1024 * 1024)}MB limit.` });
         return;
       }
       this.selectedFile = file;
@@ -76,7 +89,7 @@ export class UploadStep implements OnInit {
     this.statementService.upload(this.selectedFile, accountId, pdfPassword || undefined).subscribe({
       next: (stmt) => {
         this.uploading = false;
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Text extracted from PDF successfully.' });
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Text extracted successfully.' });
         this.router.navigate(['/statements', stmt.id]);
         this.cdr.detectChanges();
       },
@@ -85,7 +98,7 @@ export class UploadStep implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Upload Failed',
-          detail: err.error?.message || 'Failed to process PDF statement.'
+          detail: err.error?.message || 'Failed to process statement.'
         });
         this.cdr.detectChanges();
       }
