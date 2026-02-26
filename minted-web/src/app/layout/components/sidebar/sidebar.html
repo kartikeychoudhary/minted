@@ -1,14 +1,12 @@
 <aside [class]="(mobileMode || isOpen) ? 'w-64' : 'w-20'"
-  class="flex-shrink-0 text-white flex flex-col transition-all duration-300 relative"
-  [class.h-screen]="!mobileMode"
-  [class.h-full]="mobileMode"
-  [style.background-color]="'var(--minted-sidebar-bg)'">
+  class="flex-shrink-0 text-white flex flex-col transition-all duration-300 relative" [class.h-screen]="!mobileMode"
+  [class.h-full]="mobileMode" [style.background-color]="'var(--minted-sidebar-bg)'">
 
   <!-- Logo Area -->
-  <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen"
-    [class.px-4]="!mobileMode && !isOpen">
+  <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="mobileMode || isOpen"
+    [class.justify-center]="!mobileMode && !isOpen" [class.px-4]="!mobileMode && !isOpen">
     <div class="flex items-center gap-2" [class.justify-center]="!mobileMode && !isOpen">
-      <i class="pi pi-wallet text-3xl" [style.color]="'var(--minted-accent)'"></i>
+      <img src="assets/ico/icon.svg" alt="Minted logo" class="w-8 h-8 flex-shrink-0">
       <span *ngIf="mobileMode || isOpen" class="text-xl font-bold tracking-tight">Minted</span>
     </div>
   </div>
@@ -23,7 +21,8 @@
   </button>
 
   <!-- Navigation Links -->
-  <nav class="flex-1 overflow-y-auto py-6 space-y-1" [class.px-3]="mobileMode || isOpen" [class.px-2]="!mobileMode && !isOpen">
+  <nav class="flex-1 overflow-y-auto py-6 space-y-1" [class.px-3]="mobileMode || isOpen"
+    [class.px-2]="!mobileMode && !isOpen">
     <ng-container *ngFor="let item of navigationItems">
       <!-- Section Header -->
       <div *ngIf="item.section && (mobileMode || isOpen)" class="pt-4 pb-2">
@@ -37,9 +36,9 @@
       <a [routerLink]="item.route" routerLinkActive="bg-white/10 text-white shadow-sm border border-white/5"
         [routerLinkActiveOptions]="{ exact: item.route === '/' }"
         class="flex items-center rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors group"
-        [class.px-3]="mobileMode || isOpen" [class.py-2.5]="mobileMode || isOpen" [class.gap-3]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen"
-        [class.p-3]="!mobileMode && !isOpen" [pTooltip]="!mobileMode && !isOpen ? item.label : ''" tooltipPosition="right"
-        (click)="onNavClick()">
+        [class.px-3]="mobileMode || isOpen" [class.py-2.5]="mobileMode || isOpen" [class.gap-3]="mobileMode || isOpen"
+        [class.justify-center]="!mobileMode && !isOpen" [class.p-3]="!mobileMode && !isOpen"
+        [pTooltip]="!mobileMode && !isOpen ? item.label : ''" tooltipPosition="right" (click)="onNavClick()">
         <i [class]="item.icon" class="text-xl transition-colors" [class.text-primary]="isActive(item.route)"
           [class.group-hover:text-primary]="!isActive(item.route)"></i>
         <span *ngIf="mobileMode || isOpen" class="font-medium">{{ item.label }}</span>
@@ -50,14 +49,15 @@
   <!-- User Profile Section -->
   <div class="p-4 border-t border-white/10 relative">
     <div (click)="toggleUserMenu()"
-      class="flex items-center rounded-lg hover:bg-white/5 cursor-pointer transition-colors" [class.gap-3]="mobileMode || isOpen"
-      [class.p-2]="mobileMode || isOpen" [class.justify-center]="!mobileMode && !isOpen" [class.p-3]="!mobileMode && !isOpen"
+      class="flex items-center rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
+      [class.gap-3]="mobileMode || isOpen" [class.p-2]="mobileMode || isOpen"
+      [class.justify-center]="!mobileMode && !isOpen" [class.p-3]="!mobileMode && !isOpen"
       [pTooltip]="!mobileMode && !isOpen ? currentUser?.displayName : ''" tooltipPosition="right">
 
       <!-- Avatar -->
       <div class="rounded-full border-2 border-white/20 flex items-center justify-center font-semibold text-white"
-        [class.w-9]="mobileMode || isOpen" [class.h-9]="mobileMode || isOpen" [class.w-10]="!mobileMode && !isOpen" [class.h-10]="!mobileMode && !isOpen"
-        [style.background-color]="'var(--minted-accent)'">
+        [class.w-9]="mobileMode || isOpen" [class.h-9]="mobileMode || isOpen" [class.w-10]="!mobileMode && !isOpen"
+        [class.h-10]="!mobileMode && !isOpen" [style.background-color]="'var(--minted-accent)'">
         {{ getInitials(currentUser?.displayName || 'U') }}
       </div>
 
