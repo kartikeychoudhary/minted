@@ -1,0 +1,11 @@
+<div class="flex items-center gap-1" *ngIf="user" (click)="$event.stopPropagation()">
+    <button pButton [label]="user.isActive ? 'Disable' : 'Enable'" [severity]="user.isActive ? 'danger' : 'success'"
+        [outlined]="true" size="small" styleClass="small-button" (onClick)="onToggleClick()">
+    </button>
+    <p-button icon="pi pi-key" [rounded]="true" [text]="true" size="small" pTooltip="Reset Password"
+        tooltipPosition="top" (onClick)="onResetClick()">
+    </p-button>
+    <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" size="small" pTooltip="Delete User"
+        tooltipPosition="top" (onClick)="onDeleteClick()">
+    </p-button>
+</div>

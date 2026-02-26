@@ -14,7 +14,8 @@
                 <i class="pi pi-globe text-minted-text-secondary"></i>
                 <div>
                     <h2 class="font-bold text-minted-text-primary">Public Registration</h2>
-                    <p class="text-xs text-minted-text-secondary mt-0.5">Allow new users to register via the signup page</p>
+                    <p class="text-xs text-minted-text-secondary mt-0.5">Allow new users to register via the signup page
+                    </p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
@@ -32,7 +33,8 @@
         <div class="p-5 border-b border-minted-border bg-minted-surface flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <i class="pi pi-users text-minted-text-secondary"></i>
-                <h2 class="font-bold">Users <span class="text-minted-text-muted font-normal text-sm">({{ users.length }})</span></h2>
+                <h2 class="font-bold">Users <span class="text-minted-text-muted font-normal text-sm">({{ users.length
+                        }})</span></h2>
             </div>
             <p-button label="New User" icon="pi pi-plus" size="small" (onClick)="openCreateDialog()"></p-button>
         </div>
@@ -42,8 +44,8 @@
                 <i class="pi pi-spin pi-spinner text-xl" style="color: var(--minted-accent)"></i>
             </div>
             <div *ngIf="!loading">
-                <ag-grid-angular class="w-full" [theme]="mintedTheme" [rowData]="users"
-                    [columnDefs]="colDefs" [gridOptions]="gridOptions">
+                <ag-grid-angular class="w-full" [theme]="mintedTheme" [rowData]="users" [columnDefs]="colDefs"
+                    [gridOptions]="gridOptions">
                 </ag-grid-angular>
             </div>
         </div>
@@ -71,7 +73,8 @@
             </small>
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Display Name</label>
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Display
+                Name</label>
             <input type="text" pInputText formControlName="displayName" placeholder="Enter display name"
                 class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
         </div>
@@ -88,7 +91,8 @@
             <p-select formControlName="role" [options]="roleOptions" optionLabel="label" optionValue="value"
                 styleClass="w-full"></p-select>
         </div>
-        <div class="p-3 rounded-lg text-xs" style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
+        <div class="p-3 rounded-lg text-xs"
+            style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
             <i class="pi pi-info-circle mr-1"></i>
             User will be required to change password on first login.
         </div>
@@ -109,14 +113,17 @@
             Reset password for <strong class="text-minted-text-primary">{{ resetUsername }}</strong>
         </p>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">New Password *</label>
+            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">New Password
+                *</label>
             <p-password formControlName="newPassword" [toggleMask]="true" [feedback]="false"
                 placeholder="Enter new password" inputStyleClass="w-full" styleClass="w-full"></p-password>
-            <small class="p-error" *ngIf="resetForm.get('newPassword')?.invalid && resetForm.get('newPassword')?.touched">
+            <small class="p-error"
+                *ngIf="resetForm.get('newPassword')?.invalid && resetForm.get('newPassword')?.touched">
                 Password must be at least 8 characters
             </small>
         </div>
-        <div class="p-3 rounded-lg text-xs" style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
+        <div class="p-3 rounded-lg text-xs"
+            style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
             <i class="pi pi-info-circle mr-1"></i>
             User will be required to change this password on next login.
         </div>

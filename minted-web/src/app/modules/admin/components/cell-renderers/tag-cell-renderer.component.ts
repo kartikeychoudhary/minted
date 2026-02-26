@@ -12,22 +12,8 @@ export interface TagConfig {
 @Component({
   selector: 'app-tag-cell-renderer',
   standalone: false,
-  template: `
-    <p-tag *ngIf="tagConfig"
-           [value]="tagConfig.value"
-           [severity]="tagConfig.severity"
-           [rounded]="tagConfig.rounded !== false"
-           [icon]="tagConfig.icon || ''">
-    </p-tag>
-  `,
-  styles: [`
-    :host {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-    }
-  `]
+  templateUrl: './tag-cell-renderer.component.html',
+  styleUrls: ['./tag-cell-renderer.component.scss']
 })
 export class TagCellRendererComponent implements ICellRendererAngularComp {
   params!: ICellRendererParams;

@@ -12,45 +12,8 @@ export interface UserActionsCallbacks {
 @Component({
   selector: 'app-user-actions-cell-renderer',
   standalone: false,
-  template: `
-    <div class="flex items-center gap-1" *ngIf="user" (click)="$event.stopPropagation()">
-      <p-button
-        [label]="user.isActive ? 'Disable' : 'Enable'"
-        [severity]="user.isActive ? 'danger' : 'success'"
-        [outlined]="true"
-        size="small"
-        (onClick)="onToggleClick()">
-      </p-button>
-      <p-button
-        icon="pi pi-key"
-        [rounded]="true"
-        [text]="true"
-        size="small"
-        pTooltip="Reset Password"
-        tooltipPosition="top"
-        (onClick)="onResetClick()">
-      </p-button>
-      <p-button
-        icon="pi pi-trash"
-        [rounded]="true"
-        [text]="true"
-        severity="danger"
-        size="small"
-        pTooltip="Delete User"
-        tooltipPosition="top"
-        (onClick)="onDeleteClick()">
-      </p-button>
-    </div>
-  `,
-  styles: [`
-    :host {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-      padding: 8px 0;
-    }
-  `]
+  templateUrl: './user-actions-cell-renderer.component.html',
+  styleUrls: ['./user-actions-cell-renderer.component.scss']
 })
 export class UserActionsCellRendererComponent implements ICellRendererAngularComp {
   params!: ICellRendererParams & { callbacks?: UserActionsCallbacks };
