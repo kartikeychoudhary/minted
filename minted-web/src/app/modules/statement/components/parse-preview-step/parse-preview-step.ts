@@ -154,7 +154,8 @@ export class ParsePreviewStep implements OnInit {
         this.importing = true;
         this.statementService.confirmImport({
           statementId: this.statement.id,
-          skipDuplicates: this.skipDuplicates
+          skipDuplicates: this.skipDuplicates,
+          modifiedRows: this.rows
         }).subscribe({
           next: () => {
             this.importing = false;

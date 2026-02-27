@@ -292,10 +292,14 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
         }
 
         List<ParsedTransactionRow> rows;
-        try {
-            rows = objectMapper.readValue(statement.getLlmResponseJson(), new TypeReference<>() {});
-        } catch (JsonProcessingException e) {
-            throw new BadRequestException("Failed to parse stored transaction data.");
+        if (request.modifiedRows() != null && !request.modifiedRows().isEmpty()) {
+            rows = request.modifiedRows();
+        } else {
+            try {
+                rows = objectMapper.readValue(statement.getLlmResponseJson(), new TypeReference<>() {});
+            } catch (JsonProcessingException e) {
+                throw new BadRequestException("Failed to parse stored transaction data.");
+            }
         }
 
         // Filter duplicates if requested
@@ -404,6 +408,21 @@ public class CreditCardStatementServiceImpl implements CreditCardStatementServic
         } catch (JsonProcessingException e) {
             throw new BadRequestException("Failed to parse stored transaction data.");
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteStatement(Long statementId, Long userId) {
+        CreditCardStatement statement = statementRepository.findByIdAndUserId(statementId, userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Statement not found with id: " + statementId));
+
+        String fileName = statement.getFileName();
+        statementRepository.delete(statement);
+
+        log.info("Statement {} deleted by userId={}", statementId, userId);
+        notificationHelper.notify(userId, NotificationType.INFO,
+                "Statement Deleted",
+                "Statement '" + fileName + "' has been deleted.");
     }
 
     // --- Private helpers ---

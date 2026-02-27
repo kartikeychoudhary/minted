@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { StatementService } from '../../../../core/services/statement.service';
 import { CreditCardStatement } from '../../../../core/models/statement.model';
 
@@ -16,6 +17,8 @@ export class StatementList implements OnInit {
   constructor(
     private statementService: StatementService,
     private router: Router,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -86,6 +89,34 @@ export class StatementList implements OnInit {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  deleteStatement(event: Event, stmt: CreditCardStatement): void {
+    event.stopPropagation();
+    this.confirmationService.confirm({
+      message: `Delete statement "${stmt.fileName}"? This cannot be undone.`,
+      accept: () => {
+        this.statementService.deleteStatement(stmt.id).subscribe({
+          next: () => {
+            this.statements = this.statements.filter(s => s.id !== stmt.id);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Deleted',
+              detail: 'Statement deleted successfully.'
+            });
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to delete statement.'
+            });
+            this.cdr.detectChanges();
+          }
+        });
+      }
+    });
   }
 
   goBack(): void {

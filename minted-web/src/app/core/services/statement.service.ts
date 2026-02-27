@@ -55,4 +55,9 @@ export class StatementService {
     return this.http.get<{ success: boolean; data: CreditCardStatement }>(`${this.apiUrl}/${id}`)
       .pipe(map(r => r.data));
   }
+
+  deleteStatement(id: number): Observable<void> {
+    return this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/${id}`)
+      .pipe(map(() => void 0));
+  }
 }

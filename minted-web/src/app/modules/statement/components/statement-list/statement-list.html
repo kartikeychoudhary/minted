@@ -72,6 +72,12 @@
               </div>
             </div>
             <p-tag [value]="getStatusLabel(stmt.status)" [severity]="getStatusSeverity(stmt.status)"></p-tag>
+            <button (click)="deleteStatement($event, stmt)"
+              class="p-2 rounded-lg transition-colors hover:opacity-80"
+              style="color: var(--minted-error);"
+              title="Delete statement">
+              <i class="pi pi-trash"></i>
+            </button>
             <i class="pi pi-chevron-right" style="color: var(--minted-text-muted);"></i>
           </div>
         </div>
@@ -85,3 +91,4 @@
 </div>
 
 <p-toast position="top-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

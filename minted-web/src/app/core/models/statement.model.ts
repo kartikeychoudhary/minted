@@ -38,4 +38,5 @@ export interface CreditCardStatement {
 export interface ConfirmStatementRequest {
   statementId: number;
   skipDuplicates: boolean;
+  modifiedRows?: ParsedTransactionRow[];
 }

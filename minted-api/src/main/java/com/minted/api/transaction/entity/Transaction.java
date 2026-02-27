@@ -42,7 +42,8 @@ import java.time.LocalDateTime;
     @NamedQuery(
         name = "Transaction.countByUserIdAndDateBetween",
         query = "SELECT COUNT(t) FROM Transaction t WHERE t.user.id = :userId " +
-                "AND t.transactionDate BETWEEN :startDate AND :endDate"
+                "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+                "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL)"
     ),
     @NamedQuery(
         name = "Transaction.sumAmountGroupedByCategory",

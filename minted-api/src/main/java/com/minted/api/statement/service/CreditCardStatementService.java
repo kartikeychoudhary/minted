@@ -20,4 +20,6 @@ public interface CreditCardStatementService {
     StatementResponse getStatementById(Long statementId, Long userId);
 
     List<ParsedTransactionRow> getParsedRows(Long statementId, Long userId);
+
+    void deleteStatement(Long statementId, Long userId);
 }

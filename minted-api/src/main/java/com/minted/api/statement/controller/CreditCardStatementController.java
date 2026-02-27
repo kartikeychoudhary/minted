@@ -81,6 +81,16 @@ public class CreditCardStatementController {
         return ResponseEntity.ok(Map.of("success", true, "data", statements));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, Object>> deleteStatement(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+        Long userId = getUserId(authentication);
+        statementService.deleteStatement(id, userId);
+        return ResponseEntity.ok(Map.of("success", true, "message", "Statement deleted successfully"));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getStatementById(
             @PathVariable Long id,
