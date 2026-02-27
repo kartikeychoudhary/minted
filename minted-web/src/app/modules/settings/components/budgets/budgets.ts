@@ -262,7 +262,7 @@ export class Budgets implements OnInit {
   }
 
   formatCurrency(amount: number): string {
-    return `$${amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return this.currencyService.format(amount);
   }
 
   getBudgetDescription(budget: BudgetResponse): string {

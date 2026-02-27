@@ -37,6 +37,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { StepperModule } from 'primeng/stepper';
 import { DrawerModule } from 'primeng/drawer';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ColorPickerModule } from 'primeng/colorpicker';
 
 const PRIMENG_MODULES = [
   ButtonModule,
@@ -70,7 +71,8 @@ const PRIMENG_MODULES = [
   ProgressBarModule,
   StepperModule,
   DrawerModule,
-  MultiSelectModule
+  MultiSelectModule,
+  ColorPickerModule
 ];
 
 @NgModule({

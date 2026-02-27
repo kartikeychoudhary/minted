@@ -18,6 +18,15 @@ export class NotificationService implements OnDestroy {
   private totalElementsSubject = new BehaviorSubject<number>(0);
   totalElements$ = this.totalElementsSubject.asObservable();
 
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+
+  private markingAllReadSubject = new BehaviorSubject<boolean>(false);
+  markingAllRead$ = this.markingAllReadSubject.asObservable();
+
+  private clearingSubject = new BehaviorSubject<boolean>(false);
+  clearing$ = this.clearingSubject.asObservable();
+
   private destroy$ = new Subject<void>();
   private pollSubscription: Subscription | null = null;
   private currentPage = 0;
@@ -61,6 +70,9 @@ export class NotificationService implements OnDestroy {
   /** Load notifications (paginated). Called when drawer/page opens. */
   loadNotifications(page: number = 0): void {
     this.currentPage = page;
+    if (page === 0) {
+      this.loadingSubject.next(true);
+    }
     const params = new HttpParams()
       .set('page', page.toString())
       .set('size', this.pageSize.toString());
@@ -76,8 +88,11 @@ export class NotificationService implements OnDestroy {
             this.notificationsSubject.next([...current, ...pageData.content]);
           }
           this.totalElementsSubject.next(pageData.totalElements);
+          this.loadingSubject.next(false);
         },
-        error: () => {}
+        error: () => {
+          this.loadingSubject.next(false);
+        }
       });
   }
 
@@ -107,6 +122,7 @@ export class NotificationService implements OnDestroy {
 
   /** Mark all notifications as read. */
   markAllAsRead(): void {
+    this.markingAllReadSubject.next(true);
     this.http.put<{ success: boolean; message: string }>(
       `${this.apiUrl}/read-all`, {}
     ).subscribe({
@@ -114,6 +130,10 @@ export class NotificationService implements OnDestroy {
         const list = this.notificationsSubject.value.map(n => ({ ...n, isRead: true }));
         this.notificationsSubject.next(list);
         this.unreadCountSubject.next(0);
+        this.markingAllReadSubject.next(false);
+      },
+      error: () => {
+        this.markingAllReadSubject.next(false);
       }
     });
   }
@@ -135,14 +155,24 @@ export class NotificationService implements OnDestroy {
 
   /** Dismiss all read notifications. */
   dismissAllRead(): void {
+    this.clearingSubject.next(true);
     this.http.delete<{ success: boolean; message: string }>(`${this.apiUrl}/read`)
       .subscribe({
         next: () => {
           const list = this.notificationsSubject.value.filter(n => !n.isRead);
           this.notificationsSubject.next(list);
           this.totalElementsSubject.next(list.length);
+          this.clearingSubject.next(false);
+        },
+        error: () => {
+          this.clearingSubject.next(false);
         }
       });
+  }
+
+  /** Check if there are unread notifications. */
+  get hasUnread(): boolean {
+    return this.unreadCountSubject.value > 0;
   }
 
   private decrementUnread(): void {

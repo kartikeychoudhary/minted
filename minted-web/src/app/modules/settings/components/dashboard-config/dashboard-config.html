@@ -22,13 +22,64 @@
           appendTo="body" styleClass="w-full" [loading]="loading" display="chip">
         </p-multiselect>
       </div>
+    </div>
+  </div>
 
-      <div class="flex justify-end pt-4 border-t" style="border-color: var(--minted-border);">
-        <button pButton type="button" label="Save Configuration" icon="pi pi-check" (click)="saveConfig()"
-          [loading]="saving" style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+  <!-- Chart Color Palette -->
+  <div class="rounded-xl border shadow-sm p-6"
+    style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">
+          Chart Color Palette
+        </label>
+        <p class="text-xs mb-3" style="color: var(--minted-text-muted);">
+          Choose colors used in dashboard charts. These colors will be assigned to categories in order.
+        </p>
+      </div>
+
+      <!-- Color pickers -->
+      <div class="flex flex-wrap gap-3 items-center">
+        <div *ngFor="let color of chartColors; let i = index" class="flex items-center gap-1">
+          <p-colorPicker [(ngModel)]="chartColors[i]" appendTo="body"></p-colorPicker>
+          <button *ngIf="chartColors.length > 3" pButton icon="pi pi-times"
+            class="p-button-text p-button-sm p-button-danger" (click)="removeColor(i)"
+            style="width: 28px; height: 28px;">
+          </button>
+        </div>
+        <button pButton icon="pi pi-plus" label="Add" class="p-button-text p-button-sm"
+          style="color: var(--minted-accent);" (click)="addColor()">
         </button>
       </div>
+
+      <!-- Quick Presets -->
+      <div>
+        <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Quick presets:</p>
+        <div class="flex flex-wrap gap-2">
+          <button *ngFor="let preset of colorPresets" pButton class="p-button-outlined p-button-sm"
+            [label]="preset.name" (click)="applyPreset(preset.colors)"
+            style="border-color: var(--minted-border); color: var(--minted-text-secondary);">
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div class="mt-2">
+        <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Preview:</p>
+        <div class="flex gap-1">
+          <div *ngFor="let color of chartColors" class="h-6 flex-1 rounded"
+            [style.background-color]="color" [style.min-width.px]="20">
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <!-- Save Button -->
+  <div class="flex justify-end">
+    <button pButton type="button" label="Save Configuration" icon="pi pi-check" (click)="saveConfig()"
+      [loading]="saving" style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+    </button>
   </div>
 
   <!-- Info Card -->

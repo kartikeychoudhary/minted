@@ -7,7 +7,17 @@
         {{ getGreeting() }}, {{ currentUser.displayName || 'User' }}
       </p>
     </div>
-    <div class="header-right">
+    <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
+      <p-select
+        [options]="accountOptions"
+        [(ngModel)]="selectedAccountId"
+        placeholder="All Accounts"
+        [showClear]="true"
+        (onChange)="onAccountFilterChange()"
+        optionLabel="name"
+        optionValue="id"
+        styleClass="w-48">
+      </p-select>
       <p-select
         [options]="periods"
         [(ngModel)]="selectedPeriod"

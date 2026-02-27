@@ -76,6 +76,15 @@ export class NotificationsList implements OnInit, OnDestroy {
   }
 
   clearAll(): void {
+    if (this.notificationService.hasUnread) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Unread Notifications',
+        detail: 'Please mark all notifications as read before clearing.'
+      });
+      return;
+    }
+
     this.confirmationService.confirm({
       key: 'notificationsPage',
       message: 'This will delete all read notifications. Continue?',

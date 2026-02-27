@@ -5,9 +5,13 @@ import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { RecurringTransactionService } from '../../../../core/services/recurring.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { AnalyticsSummary, BudgetSummary, SpendingActivity, TotalBalance } from '../../../../core/models/dashboard.model';
+import { CategoryService } from '../../../../core/services/category.service';
+import { AccountService } from '../../../../core/services/account.service';
+import { AnalyticsSummary, BudgetSummary, SpendingActivity } from '../../../../core/models/dashboard.model';
 import { TransactionResponse } from '../../../../core/models/transaction.model';
 import { RecurringTransaction, RecurringSummary } from '../../../../core/models/recurring.model';
+import { CategoryResponse } from '../../../../core/models/category.model';
+import { AccountResponse } from '../../../../core/models/account.model';
 import { User } from '../../../../core/models/user.model';
 import { CurrencyService } from '../../../../core/services/currency.service';
 
@@ -16,11 +20,6 @@ interface RecurringGroup {
     total: number;
     items: RecurringTransaction[];
     expanded: boolean;
-}
-
-interface SpendingPeriod {
-    label: string;
-    value: string;
 }
 
 @Component({
@@ -36,20 +35,18 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
     currentUser?: User;
 
     // Summary cards data
-    totalBalance: TotalBalance | null = null;
     summary: AnalyticsSummary | null = null;
 
     // Spending activity chart data
     spendingActivity: SpendingActivity[] = [];
-    selectedPeriod: SpendingPeriod = { label: 'This Week', value: 'THIS_WEEK' };
-    spendingPeriods: SpendingPeriod[] = [
-        { label: 'This Week', value: 'THIS_WEEK' },
-        { label: 'Last Week', value: 'LAST_WEEK' },
-        { label: 'This Month', value: 'THIS_MONTH' }
-    ];
-    maxSpendingAmount = 0;
+    spendingChartData: any = {};
+    spendingChartOptions: any = {};
+    selectedBarIndex: number | null = null;
 
-    // Recent transactions
+    // All transactions for the current period (used for filtering)
+    private allPeriodTransactions: TransactionResponse[] = [];
+
+    // Recent transactions (displayed)
     recentTransactions: TransactionResponse[] = [];
 
     // Recurring payments
@@ -59,6 +56,23 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
 
     // Budget summaries
     budgetSummaries: BudgetSummary[] = [];
+
+    // Filters
+    monthOptions: { label: string; value: number }[] = [
+        { label: 'January', value: 0 }, { label: 'February', value: 1 },
+        { label: 'March', value: 2 }, { label: 'April', value: 3 },
+        { label: 'May', value: 4 }, { label: 'June', value: 5 },
+        { label: 'July', value: 6 }, { label: 'August', value: 7 },
+        { label: 'September', value: 8 }, { label: 'October', value: 9 },
+        { label: 'November', value: 10 }, { label: 'December', value: 11 }
+    ];
+    yearOptions: { label: string; value: number }[] = [];
+    selectedMonth: number = new Date().getMonth();
+    selectedYear: number = new Date().getFullYear();
+    categoryOptions: CategoryResponse[] = [];
+    accountOptions: AccountResponse[] = [];
+    selectedCategoryId: number | null = null;
+    selectedAccountId: number | null = null;
 
     // Loading states
     loading = {
@@ -74,12 +88,17 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         private transactionService: TransactionService,
         private recurringService: RecurringTransactionService,
         private authService: AuthService,
+        private categoryService: CategoryService,
+        private accountService: AccountService,
         private cdr: ChangeDetectorRef,
         public currencyService: CurrencyService
     ) {}
 
     ngOnInit(): void {
         this.loadCurrentUser();
+        this.initYearOptions();
+        this.initSpendingChartOptions();
+        this.loadFilterOptions();
         this.loadAllData();
     }
 
@@ -92,8 +111,34 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         this.currentUser = this.authService.currentUserValue || undefined;
     }
 
+    private initYearOptions(): void {
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= currentYear - 3; y--) {
+            this.yearOptions.push({ label: y.toString(), value: y });
+        }
+    }
+
+    private loadFilterOptions(): void {
+        this.categoryService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+            next: (data) => { this.categoryOptions = data; this.cdr.detectChanges(); }
+        });
+        this.accountService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+            next: (data) => { this.accountOptions = data; this.cdr.detectChanges(); }
+        });
+    }
+
+    private getDateRangeForFilters(): { startDate: string; endDate: string } {
+        const start = new Date(this.selectedYear, this.selectedMonth, 1);
+        const end = new Date(this.selectedYear, this.selectedMonth + 1, 0);
+        return { startDate: this.formatDate(start), endDate: this.formatDate(end) };
+    }
+
+    onFilterChange(): void {
+        this.selectedBarIndex = null;
+        this.loadAllData();
+    }
+
     private loadAllData(): void {
-        this.loadTotalBalance();
         this.loadSummary();
         this.loadSpendingActivity();
         this.loadRecentTransactions();
@@ -101,82 +146,164 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         this.loadBudgetSummary();
     }
 
-    private loadTotalBalance(): void {
-        this.loading.summary = true;
-        this.analyticsService.getTotalBalance()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: (data) => {
-                    this.totalBalance = data;
-                    this.loading.summary = false;
-                    this.cdr.detectChanges();
-                },
-                error: (err) => {
-                    console.error('Error loading total balance:', err);
-                    this.loading.summary = false;
-                }
-            });
-    }
-
     private loadSummary(): void {
-        const today = new Date();
-        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-        const startDate = this.formatDate(firstDayOfMonth);
-        const endDate = this.formatDate(lastDayOfMonth);
+        this.loading.summary = true;
+        const { startDate, endDate } = this.getDateRangeForFilters();
 
         this.analyticsService.getSummary(startDate, endDate)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (data) => {
                     this.summary = data;
+                    this.loading.summary = false;
                     this.cdr.detectChanges();
                 },
-                error: (err) => {
-                    console.error('Error loading summary:', err);
+                error: () => {
+                    this.loading.summary = false;
+                    this.cdr.detectChanges();
                 }
             });
     }
 
     private loadSpendingActivity(): void {
         this.loading.spending = true;
-        const { startDate, endDate } = this.getDateRangeForPeriod(this.selectedPeriod.value);
+        const { startDate, endDate } = this.getDateRangeForFilters();
 
         this.analyticsService.getSpendingActivity(startDate, endDate)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (data) => {
                     this.spendingActivity = data;
-                    this.maxSpendingAmount = Math.max(...data.map(d => d.amount), 0);
+                    this.buildSpendingChart();
                     this.loading.spending = false;
                     this.cdr.detectChanges();
                 },
-                error: (err) => {
-                    console.error('Error loading spending activity:', err);
+                error: () => {
                     this.loading.spending = false;
+                    this.cdr.detectChanges();
                 }
             });
     }
 
     private loadRecentTransactions(): void {
         this.loading.transactions = true;
-        const endDate = this.formatDate(new Date());
-        const startDate = this.formatDate(new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)); // Last 30 days
+        const { startDate, endDate } = this.getDateRangeForFilters();
 
         this.transactionService.getByDateRange(startDate, endDate)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (data) => {
-                    this.recentTransactions = data.slice(0, 5); // Show only 5 most recent
+                    this.allPeriodTransactions = data;
+                    this.applyTransactionFilters();
                     this.loading.transactions = false;
                     this.cdr.detectChanges();
                 },
-                error: (err) => {
-                    console.error('Error loading recent transactions:', err);
+                error: () => {
                     this.loading.transactions = false;
+                    this.cdr.detectChanges();
                 }
             });
+    }
+
+    private applyTransactionFilters(): void {
+        let filtered = [...this.allPeriodTransactions];
+
+        if (this.selectedCategoryId) {
+            filtered = filtered.filter(t => t.categoryId === this.selectedCategoryId);
+        }
+        if (this.selectedAccountId) {
+            filtered = filtered.filter(t => t.accountId === this.selectedAccountId);
+        }
+
+        // If a bar is clicked, filter to that specific day
+        if (this.selectedBarIndex !== null && this.spendingActivity[this.selectedBarIndex]) {
+            const selectedDate = this.spendingActivity[this.selectedBarIndex].date;
+            filtered = filtered.filter(t => t.transactionDate === selectedDate);
+        }
+
+        this.recentTransactions = filtered;
+    }
+
+    clearBarSelection(): void {
+        this.selectedBarIndex = null;
+        this.buildSpendingChart();
+        this.applyTransactionFilters();
+        this.cdr.detectChanges();
+    }
+
+    onBarClick(event: any): void {
+        if (!event || event.element === undefined) return;
+
+        const index = event.element.index;
+        if (this.selectedBarIndex === index) {
+            // Deselect
+            this.selectedBarIndex = null;
+        } else {
+            this.selectedBarIndex = index;
+        }
+        this.buildSpendingChart();
+        this.applyTransactionFilters();
+        this.cdr.detectChanges();
+    }
+
+    private buildSpendingChart(): void {
+        const labels = this.spendingActivity.map(s => s.dayLabel);
+        const data = this.spendingActivity.map(s => s.amount);
+        const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--minted-accent').trim() || '#c48821';
+
+        const bgColors = data.map((_, i) => {
+            if (this.selectedBarIndex !== null) {
+                return i === this.selectedBarIndex ? accentColor : (accentColor + '40');
+            }
+            return accentColor;
+        });
+
+        this.spendingChartData = {
+            labels,
+            datasets: [{
+                label: 'Spending',
+                data,
+                backgroundColor: bgColors,
+                borderRadius: 6,
+                barThickness: 28,
+                maxBarThickness: 40
+            }]
+        };
+    }
+
+    private initSpendingChartOptions(): void {
+        const baseFont = { family: "'Inter', sans-serif" };
+        this.spendingChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    titleFont: { ...baseFont, size: 13 },
+                    bodyFont: { ...baseFont, size: 12 },
+                    padding: 12,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: (ctx: any) => this.currencyService.format(ctx.parsed.y || 0)
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { ...baseFont, size: 11 }, color: '#94a3b8' }
+                },
+                y: {
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        font: { ...baseFont, size: 11 },
+                        color: '#94a3b8',
+                        callback: (val: number) => this.currencyService.format(val)
+                    }
+                }
+            }
+        };
     }
 
     private loadRecurringTransactions(): void {
@@ -191,9 +318,9 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
                     this.loading.recurring = false;
                     this.cdr.detectChanges();
                 },
-                error: (err) => {
-                    console.error('Error loading recurring transactions:', err);
+                error: () => {
                     this.loading.recurring = false;
+                    this.cdr.detectChanges();
                 }
             });
 
@@ -203,9 +330,6 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
                 next: (data) => {
                     this.recurringSummary = data;
                     this.cdr.detectChanges();
-                },
-                error: (err) => {
-                    console.error('Error loading recurring summary:', err);
                 }
             });
     }
@@ -225,7 +349,7 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
             category,
             total: items.reduce((sum, item) => sum + item.amount, 0),
             items,
-            expanded: category === 'Subscriptions' // Expand subscriptions by default
+            expanded: category === 'Subscriptions'
         }));
     }
 
@@ -237,22 +361,12 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
             return 'Utilities';
         } else if (lower.includes('loan') || lower.includes('mortgage') || lower.includes('emi')) {
             return 'Loans';
-        } else {
-            return 'Other';
         }
-    }
-
-    onPeriodChange(): void {
-        this.loadSpendingActivity();
+        return 'Other';
     }
 
     toggleRecurringGroup(group: RecurringGroup): void {
         group.expanded = !group.expanded;
-    }
-
-    getBarHeight(amount: number): number {
-        if (this.maxSpendingAmount === 0) return 0;
-        return (amount / this.maxSpendingAmount) * 100;
     }
 
     getTransactionIcon(categoryIcon: string): string {
@@ -265,14 +379,6 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
 
     getStatusBadgeClass(status: string): string {
         return status === 'ACTIVE' ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600';
-    }
-
-    getChangeIcon(percent: number): string {
-        return percent >= 0 ? 'trending_up' : 'trending_down';
-    }
-
-    getChangeClass(percent: number): string {
-        return percent >= 0 ? 'text-green-500' : 'text-red-500';
     }
 
     formatCurrency(amount: number): string {
@@ -292,62 +398,19 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         return date.toLocaleDateString('en-US', options);
     }
 
-    private getDateRangeForPeriod(period: string): { startDate: string; endDate: string } {
-        const today = new Date();
-        let startDate: Date;
-        let endDate: Date = today;
-
-        switch (period) {
-            case 'THIS_WEEK':
-                const dayOfWeek = today.getDay();
-                const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Monday as first day
-                startDate = new Date(today);
-                startDate.setDate(today.getDate() - diff);
-                break;
-            case 'LAST_WEEK':
-                const lastWeekEnd = new Date(today);
-                const lastWeekDayOfWeek = today.getDay();
-                const lastWeekDiff = lastWeekDayOfWeek === 0 ? 6 : lastWeekDayOfWeek - 1;
-                lastWeekEnd.setDate(today.getDate() - lastWeekDiff - 1); // Last Sunday
-                startDate = new Date(lastWeekEnd);
-                startDate.setDate(lastWeekEnd.getDate() - 6);
-                endDate = lastWeekEnd;
-                break;
-            case 'THIS_MONTH':
-                startDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                break;
-            default:
-                startDate = new Date(today);
-                startDate.setDate(today.getDate() - 7);
-        }
-
-        return {
-            startDate: this.formatDate(startDate),
-            endDate: this.formatDate(endDate)
-        };
-    }
-
     pauseRecurring(item: RecurringTransaction): void {
         this.recurringService.toggleStatus(item.id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
-                next: () => {
-                    this.loadRecurringTransactions();
-                },
-                error: (err) => {
-                    console.error('Error toggling recurring transaction:', err);
-                }
+                next: () => { this.loadRecurringTransactions(); }
             });
     }
 
     editRecurring(item: RecurringTransaction): void {
-        // TODO: Open edit dialog
         console.log('Edit recurring transaction:', item);
     }
 
     addRecurring(): void {
-        // TODO: Open add dialog
         console.log('Add recurring transaction');
     }
 
@@ -361,8 +424,7 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
                     this.loading.budgets = false;
                     this.cdr.detectChanges();
                 },
-                error: (err) => {
-                    console.error('Error loading budget summary:', err);
+                error: () => {
                     this.loading.budgets = false;
                     this.cdr.detectChanges();
                 }
@@ -387,11 +449,10 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         return 'On Track';
     }
 
-    getGreeting(): string {
-        const hour = new Date().getHours();
-        if (hour < 12) return 'morning';
-        if (hour < 18) return 'afternoon';
-        return 'evening';
+    getSelectedDateLabel(): string | null {
+        if (this.selectedBarIndex !== null && this.spendingActivity[this.selectedBarIndex]) {
+            return this.formatTransactionDate(this.spendingActivity[this.selectedBarIndex].date);
+        }
+        return null;
     }
 }
-

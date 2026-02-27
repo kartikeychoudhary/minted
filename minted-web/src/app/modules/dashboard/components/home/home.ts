@@ -7,6 +7,9 @@ import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { DashboardService } from '../../../../core/services/dashboard.service';
 import { AnalyticsSummary, CategoryWise, TrendData, DashboardCard } from '../../../../core/models/dashboard.model';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { DashboardConfigService } from '../../../../core/services/dashboard-config.service';
+import { AccountService } from '../../../../core/services/account.service';
+import { AccountResponse } from '../../../../core/models/account.model';
 
 interface PeriodOption {
   label: string;
@@ -37,7 +40,12 @@ export class Home implements OnInit, OnDestroy {
   periods: PeriodOption[] = [];
   selectedPeriod: PeriodOption | null = null;
 
+  // Account filter
+  accountOptions: AccountResponse[] = [];
+  selectedAccountId: number | null = null;
+
   // Chart configurations
+  chartColors: string[] = [];
   barChartData: any = {};
   barChartOptions: any = {};
   doughnutChartData: any = {};
@@ -53,7 +61,9 @@ export class Home implements OnInit, OnDestroy {
     private dashboardService: DashboardService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private currencyService: CurrencyService
+    private currencyService: CurrencyService,
+    private dashboardConfigService: DashboardConfigService,
+    private accountService: AccountService
   ) { }
 
   ngOnInit(): void {
@@ -61,6 +71,10 @@ export class Home implements OnInit, OnDestroy {
       this.currentUser = user;
     });
 
+    this.chartColors = this.dashboardConfigService.getChartColors();
+    this.accountService.getAll().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (accounts) => { this.accountOptions = accounts; this.cdr.detectChanges(); }
+    });
     this.initPeriods();
     this.initChartOptions();
     this.loadDashboardData();
@@ -72,6 +86,10 @@ export class Home implements OnInit, OnDestroy {
   }
 
   onPeriodChange(): void {
+    this.loadDashboardData();
+  }
+
+  onAccountFilterChange(): void {
     this.loadDashboardData();
   }
 
@@ -179,7 +197,7 @@ export class Home implements OnInit, OnDestroy {
         {
           label: 'Expenses',
           data: topCategories.map(c => c.totalAmount),
-          backgroundColor: topCategories.map(c => c.color || '#c48821'),
+          backgroundColor: topCategories.map((c, i) => c.color || this.chartColors[i % this.chartColors.length] || '#c48821'),
           borderRadius: 6,
           barThickness: 28
         }
@@ -194,7 +212,7 @@ export class Home implements OnInit, OnDestroy {
       datasets: [
         {
           data: topCategories.map(c => c.totalAmount),
-          backgroundColor: topCategories.map(c => c.color || '#94a3b8'),
+          backgroundColor: topCategories.map((c, i) => c.color || this.chartColors[i % this.chartColors.length] || '#94a3b8'),
           borderWidth: 2,
           borderColor: '#ffffff',
           hoverOffset: 8

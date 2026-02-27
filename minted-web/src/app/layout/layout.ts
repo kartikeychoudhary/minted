@@ -7,6 +7,7 @@ import { PrivacyService } from '../core/services/privacy.service';
 import { NotificationService } from '../core/services/notification.service';
 import { AuthService } from '../core/services/auth.service';
 import { NotificationType } from '../core/models/notification.model';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-layout',
@@ -29,7 +30,8 @@ export class Layout implements OnInit, OnDestroy {
     public notificationService: NotificationService,
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -81,9 +83,33 @@ export class Layout implements OnInit, OnDestroy {
     }
   }
 
+  clearAllReadFromDrawer(): void {
+    if (this.notificationService.hasUnread) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Unread Notifications',
+        detail: 'Please mark all notifications as read before clearing.'
+      });
+      return;
+    }
+    this.notificationService.dismissAllRead();
+  }
+
   viewAllNotifications(): void {
     this.isNotificationDrawerVisible = false;
-    this.router.navigate(['/notifications']);
+    this.cdr.detectChanges();
+    // Allow drawer animation to start, then navigate and clean up any stuck overlay masks
+    setTimeout(() => {
+      this.router.navigate(['/notifications']);
+      // Remove any orphaned drawer overlay masks left by PrimeNG animation interruption
+      setTimeout(() => {
+        document.querySelectorAll('.p-drawer-mask').forEach(el => el.remove());
+      }, 50);
+    }, 350);
+  }
+
+  onDrawerHidden(): void {
+    // no-op, kept for template binding
   }
 
   getNotificationIcon(type: NotificationType): string {

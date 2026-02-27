@@ -16,7 +16,7 @@ export class AccountTypes implements OnInit {
   accountTypeForm?: FormGroup;
   isEditMode = false;
   selectedAccountTypeId?: number;
-  loading = false;
+  loading = true;
   selectedIcon: any = null;
   duplicateError = '';
 

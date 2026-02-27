@@ -85,9 +85,10 @@ export class Profile implements OnInit {
   }
 
   loadUserInfo(): void {
-    const username = localStorage.getItem('username') || 'User';
-    const email = localStorage.getItem('email') || '';
-    const displayName = localStorage.getItem('displayName') || username;
+    const user = this.authService.currentUserValue;
+    const username = user?.username || 'User';
+    const email = user?.email || '';
+    const displayName = user?.displayName || username;
     const avatarBase64 = localStorage.getItem('avatarBase64') || null;
 
     this.currentUser = {

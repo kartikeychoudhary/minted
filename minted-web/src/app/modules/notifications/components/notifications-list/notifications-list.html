@@ -22,6 +22,7 @@
           class="p-button-outlined p-button-sm"
           [style.border-color]="'var(--minted-border)'"
           [style.color]="'var(--minted-text-secondary)'"
+          [loading]="!!(notificationService.markingAllRead$ | async)"
           (click)="markAllAsRead()">
         </button>
         <button
@@ -29,6 +30,7 @@
           label="Clear all"
           icon="pi pi-trash"
           class="p-button-text p-button-sm p-button-danger"
+          [loading]="!!(notificationService.clearing$ | async)"
           (click)="clearAll()">
         </button>
       </div>
