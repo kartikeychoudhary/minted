@@ -105,18 +105,23 @@
                         <p-progressSpinner></p-progressSpinner>
                     </div>
 
-                    <div *ngIf="!loading.spending" class="h-64 flex items-end justify-between gap-2 sm:gap-4 w-full">
-                        <div *ngFor="let activity of spendingActivity"
-                            class="flex flex-col items-center flex-1 group cursor-pointer"
-                            [pTooltip]="formatCurrency(activity.amount)" tooltipPosition="top">
-                            <div
-                                class="w-full max-w-[40px] bg-amber-100 rounded-t-lg relative h-full flex items-end overflow-hidden group-hover:bg-amber-200 transition-colors">
-                                <div class="w-full bg-amber-600 rounded-t-lg transition-all"
-                                    [style.height.%]="getBarHeight(activity.amount)">
+                    <div *ngIf="!loading.spending" class="h-64 overflow-x-auto">
+                        <div class="h-full flex gap-2 sm:gap-4" [style.min-width.px]="spendingActivity.length * 32">
+                            <div *ngFor="let activity of spendingActivity"
+                                class="flex flex-col items-center flex-1 group cursor-pointer" style="min-width: 24px;">
+                                <div class="flex-1 w-full flex items-end justify-center">
+                                    <div
+                                        class="w-full max-w-[40px] bg-amber-100 rounded-t-lg relative overflow-hidden group-hover:bg-amber-200 transition-colors"
+                                        [style.height.%]="getBarHeight(activity.amount) || 2"
+                                        [pTooltip]="formatCurrency(activity.amount)" tooltipPosition="top">
+                                        <div class="w-full h-full bg-amber-600 rounded-t-lg transition-all">
+                                        </div>
+                                    </div>
                                 </div>
+                                <span class="text-xs mt-3 font-medium whitespace-nowrap" style="color: var(--minted-text-muted);"
+                                    [pTooltip]="activity.date" tooltipPosition="bottom">{{
+                                    activity.dayLabel }}</span>
                             </div>
-                            <span class="text-xs mt-3 font-medium" style="color: var(--minted-text-muted);">{{
-                                activity.dayLabel }}</span>
                         </div>
                     </div>
                 </div>
