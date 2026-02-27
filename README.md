@@ -163,9 +163,52 @@ App: [http://localhost:4200](http://localhost:4200)
 
 ---
 
-### Option B: Run with Docker
+### Option B: Run with Docker Hub Images (Recommended for Production)
 
-The entire stack (MySQL + Backend + Frontend) can be launched with a single command.
+Pull and run the pre-built images from Docker Hub — **no source code or build tools required**.
+
+#### 1. Download the compose file and create `.env`
+
+```bash
+# Download files
+curl -O https://raw.githubusercontent.com/kartikeychoudhary/minted/main/docker-compose.prod.yml
+curl -O https://raw.githubusercontent.com/kartikeychoudhary/minted/main/.env.example
+
+# Create your .env
+cp .env.example .env
+# Edit .env and set MINTED_JWT_SECRET, MINTED_JASYPT_PASSWORD, etc.
+```
+
+#### 2. Start all services
+
+```bash
+# Pull latest images and start
+docker compose -f docker-compose.prod.yml up -d
+
+# Or pin to a specific release
+MINTED_VERSION=v1.0.0 docker compose -f docker-compose.prod.yml up -d
+```
+
+#### 3. Access the app
+
+| Service    | URL                                                                     |
+| ---------- | ----------------------------------------------------------------------- |
+| Frontend   | [http://localhost](http://localhost)                                      |
+| Backend    | [http://localhost:5500](http://localhost:5500)                           |
+| Swagger UI | [http://localhost:5500/swagger-ui](http://localhost:5500/swagger-ui)     |
+
+#### 4. Stop the stack
+
+```bash
+docker compose -f docker-compose.prod.yml down        # preserves data
+docker compose -f docker-compose.prod.yml down -v     # wipes database
+```
+
+---
+
+### Option C: Build from Source with Docker
+
+The entire stack (MySQL + Backend + Frontend) can be built locally and launched with a single command.
 
 #### 1. Create a `.env` file in the project root
 

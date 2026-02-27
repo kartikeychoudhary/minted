@@ -1,0 +1,119 @@
+# ============================================================
+# Minted — Production Docker Compose
+# ============================================================
+# Uses pre-built images from Docker Hub.
+# No local source code required — just this file + .env
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml up -d
+#   docker compose -f docker-compose.prod.yml down
+#   docker compose -f docker-compose.prod.yml pull   # get latest images
+#
+# Requires a .env file in the same directory.
+# Copy .env.example to .env and set your secrets:
+#   cp .env.example .env
+# ============================================================
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: minted-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MINTED_DB_ROOT_PASSWORD:-rootroot}
+      MYSQL_DATABASE: ${MINTED_DB_NAME:-minted_db}
+      MYSQL_USER: ${MINTED_DB_USER:-minted_user}
+      MYSQL_PASSWORD: ${MINTED_DB_PASSWORD:-minted_pass}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "${MINTED_DB_PORT:-3306}:3306"
+    networks:
+      - minted-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MINTED_DB_ROOT_PASSWORD:-rootroot}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  backend:
+    image: kartikey31choudhary/minted-backend:${MINTED_VERSION:-latest}
+    container_name: minted-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      # Database Configuration
+      MINTED_DB_HOST: mysql
+      MINTED_DB_PORT: 3306
+      MINTED_DB_NAME: ${MINTED_DB_NAME:-minted_db}
+      MINTED_DB_USER: ${MINTED_DB_USER:-minted_user}
+      MINTED_DB_PASSWORD: ${MINTED_DB_PASSWORD:-minted_pass}
+
+      # JWT Configuration
+      MINTED_JWT_SECRET: ${MINTED_JWT_SECRET:?MINTED_JWT_SECRET must be set in .env file}
+      MINTED_JWT_EXPIRATION: ${MINTED_JWT_EXPIRATION:-86400000}
+
+      # CORS Configuration
+      MINTED_CORS_ORIGINS: ${MINTED_CORS_ORIGINS:-http://localhost:80,http://localhost:4200}
+
+      # Jasypt Configuration
+      MINTED_JASYPT_PASSWORD: ${MINTED_JASYPT_PASSWORD:-default-jasypt-password}
+
+      # API Key Encryption (for LLM keys stored in DB)
+      MINTED_ENCRYPTION_KEY: ${MINTED_ENCRYPTION_KEY:-${MINTED_JASYPT_PASSWORD:-default-jasypt-password}}
+
+      # Server Configuration
+      SERVER_PORT: ${BACKEND_PORT:-5500}
+
+      # JPA Configuration
+      JPA_SHOW_SQL: ${JPA_SHOW_SQL:-false}
+      JPA_FORMAT_SQL: ${JPA_FORMAT_SQL:-false}
+
+      # Logging
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      SECURITY_LOG_LEVEL: ${SECURITY_LOG_LEVEL:-INFO}
+    ports:
+      - "${BACKEND_PORT:-5500}:${BACKEND_PORT:-5500}"
+    networks:
+      - minted-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${BACKEND_PORT:-5500}/api/v1/auth/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  frontend:
+    image: kartikey31choudhary/minted-frontend:${MINTED_VERSION:-latest}
+    container_name: minted-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      BACKEND_URL: http://backend:${BACKEND_PORT:-5500}
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    networks:
+      - minted-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+networks:
+  minted-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+    # Fixed name ensures data persists regardless of which directory you run from.
+    # Data survives 'docker compose up' and 'docker compose down'.
+    # ONLY 'docker compose down -v' will delete this volume and wipe the database.
+    name: minted_mysql_data
