@@ -105,22 +105,50 @@
                         <p-progressSpinner></p-progressSpinner>
                     </div>
 
-                    <div *ngIf="!loading.spending" class="h-64 overflow-x-auto">
-                        <div class="h-full flex gap-2 sm:gap-4" [style.min-width.px]="spendingActivity.length * 32">
-                            <div *ngFor="let activity of spendingActivity"
-                                class="flex flex-col items-center flex-1 group cursor-pointer" style="min-width: 24px;">
-                                <div class="flex-1 w-full flex items-end justify-center">
-                                    <div
-                                        class="w-full max-w-[40px] bg-amber-100 rounded-t-lg relative overflow-hidden group-hover:bg-amber-200 transition-colors"
-                                        [style.height.%]="getBarHeight(activity.amount) || 2"
-                                        [pTooltip]="formatCurrency(activity.amount)" tooltipPosition="top">
-                                        <div class="w-full h-full bg-amber-600 rounded-t-lg transition-all">
+                    <div *ngIf="!loading.spending" class="h-64 flex pt-4">
+                        <!-- Y-axis -->
+                        <div class="flex flex-col justify-between items-end pb-8 pr-3 text-xs"
+                            style="color: var(--minted-text-muted); min-width: 60px;">
+                            <span>{{ formatCurrency(maxSpendingAmount) }}</span>
+                            <span>{{ formatCurrency(maxSpendingAmount * 0.75) }}</span>
+                            <span>{{ formatCurrency(maxSpendingAmount * 0.5) }}</span>
+                            <span>{{ formatCurrency(maxSpendingAmount * 0.25) }}</span>
+                            <span>{{ formatCurrency(0) }}</span>
+                        </div>
+
+                        <div class="flex-1 overflow-x-auto relative">
+                            <!-- Background grid lines -->
+                            <div class="absolute inset-0 flex flex-col justify-between pb-8 z-0 pointer-events-none">
+                                <div class="w-full border-t border-dashed opacity-20"
+                                    style="border-color: var(--minted-border);"></div>
+                                <div class="w-full border-t border-dashed opacity-20"
+                                    style="border-color: var(--minted-border);"></div>
+                                <div class="w-full border-t border-dashed opacity-20"
+                                    style="border-color: var(--minted-border);"></div>
+                                <div class="w-full border-t border-dashed opacity-20"
+                                    style="border-color: var(--minted-border);"></div>
+                                <div class="w-full border-t border-dashed opacity-20"
+                                    style="border-color: var(--minted-border);"></div>
+                            </div>
+                            <!-- Bar chart -->
+                            <div class="h-full flex gap-2 sm:gap-4 relative z-10"
+                                [style.min-width.px]="spendingActivity.length * 32">
+                                <div *ngFor="let activity of spendingActivity"
+                                    class="flex flex-col items-center flex-1 group cursor-pointer"
+                                    style="min-width: 24px;">
+                                    <div class="flex-1 w-full flex items-end justify-center">
+                                        <div class="w-full max-w-[40px] bg-amber-100 rounded-t-lg relative overflow-hidden group-hover:bg-amber-200 transition-colors"
+                                            [style.height.%]="getBarHeight(activity.amount) || 2"
+                                            [pTooltip]="formatCurrency(activity.amount)" tooltipPosition="top">
+                                            <div class="w-full h-full bg-amber-600 rounded-t-lg transition-all">
+                                            </div>
                                         </div>
                                     </div>
+                                    <span class="text-xs mt-3 font-medium whitespace-nowrap"
+                                        style="color: var(--minted-text-muted);" [pTooltip]="activity.date"
+                                        tooltipPosition="bottom">{{
+                                        activity.dayLabel }}</span>
                                 </div>
-                                <span class="text-xs mt-3 font-medium whitespace-nowrap" style="color: var(--minted-text-muted);"
-                                    [pTooltip]="activity.date" tooltipPosition="bottom">{{
-                                    activity.dayLabel }}</span>
                             </div>
                         </div>
                     </div>
@@ -131,7 +159,8 @@
             <div class="rounded-xl shadow-sm border overflow-hidden"
                 style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
                 <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
-                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recent Transactions</h2>
+                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recent Transactions
+                    </h2>
                     <a routerLink="/transactions" class="text-sm font-medium" style="color: var(--minted-accent);">
                         View All
                     </a>
@@ -176,12 +205,15 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="font-bold minted-sensitive" [ngClass]="transaction.type === 'INCOME' ? 'text-green-700' : ''"
+                                <p class="font-bold minted-sensitive"
+                                    [ngClass]="transaction.type === 'INCOME' ? 'text-green-700' : ''"
                                     [style.color]="transaction.type !== 'INCOME' ? 'var(--minted-text-primary)' : null">
-                                    {{ transaction.type === 'INCOME' ? '+' : '-' }}{{ formatCurrency(transaction.amount)
+                                    {{ transaction.type === 'INCOME' ? '+' : '-' }}{{
+                                    formatCurrency(transaction.amount)
                                     }}
                                 </p>
-                                <p class="text-xs" style="color: var(--minted-text-muted);">{{ transaction.accountName
+                                <p class="text-xs" style="color: var(--minted-text-muted);">{{
+                                    transaction.accountName
                                     }}</p>
                             </div>
                         </div>
@@ -232,7 +264,8 @@
                         <div *ngFor="let budget of budgetSummaries">
                             <div class="flex justify-between items-center mb-2">
                                 <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-semibold truncate" style="color: var(--minted-text-primary);">
+                                    <p class="text-sm font-semibold truncate"
+                                        style="color: var(--minted-text-primary);">
                                         {{ budget.budgetName }}
                                     </p>
                                     <p class="text-[10px]" style="color: var(--minted-text-muted);">
@@ -289,7 +322,8 @@
                                 <div class="flex items-center justify-between w-full pr-4">
                                     <span class="font-semibold text-sm" style="color: var(--minted-text-primary);">{{
                                         group.category }}</span>
-                                    <span class="text-sm font-bold minted-sensitive" style="color: var(--minted-text-primary);">
+                                    <span class="text-sm font-bold minted-sensitive"
+                                        style="color: var(--minted-text-primary);">
                                         {{ formatCurrency(group.total) }}
                                         <span class="text-[10px] ml-1 font-normal"
                                             style="color: var(--minted-text-muted);">/mo</span>
@@ -308,7 +342,8 @@
                                                 </div>
                                                 <div class="flex-1 min-w-0">
                                                     <p class="text-sm font-medium truncate"
-                                                        style="color: var(--minted-text-primary);">{{ item.name }}</p>
+                                                        style="color: var(--minted-text-primary);">{{ item.name }}
+                                                    </p>
                                                     <p class="text-[10px] italic"
                                                         style="color: var(--minted-text-muted);">
                                                         Next: {{ formatTransactionDate(item.nextExecutionDate) }}
@@ -348,7 +383,8 @@
                     <!-- Total Monthly Forecast -->
                     <div *ngIf="recurringSummary" class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
                         <div class="flex justify-between items-center mb-1">
-                            <p class="text-xs font-medium" style="color: var(--minted-text-secondary);">Total Monthly
+                            <p class="text-xs font-medium" style="color: var(--minted-text-secondary);">Total
+                                Monthly
                                 Forecast</p>
                             <i class="pi pi-chart-line text-amber-700 text-sm"></i>
                         </div>

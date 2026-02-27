@@ -6,7 +6,7 @@ import { AuthService } from '../services/auth.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
@@ -19,8 +19,9 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
 
         if (error.status === 403) {
-          // Forbidden - might need to re-login
-          console.error('Forbidden access - check authentication');
+          // Forbidden - token expired or lacking permissions
+          console.error('Forbidden access - redirecting to login');
+          this.authService.logout();
         }
 
         // Extract error message from API response
