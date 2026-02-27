@@ -9,7 +9,7 @@ A modern, full-stack personal finance application built with **Angular 21** and 
 - **Transaction Management** — Add, edit, and delete income, expenses, and transfers
 - **Multi-Account Support** — Track balances across bank accounts, wallets, and credit cards
 - **Custom Categories** — Organize transactions with custom categories and icons
-- **Dashboard Analytics** — Visualize spending patterns with interactive charts
+- **Dashboard Analytics** — Visualize spending patterns with interactive charts, account filtering, and configurable color palettes
 - **Dark / Light Theme** — System-aware dark mode with customizable accent colors
 - **JWT Authentication** — Secure login with token-based auth and auto-refresh
 - **AG Grid Data Tables** — Powerful, sortable, filterable transaction grids
@@ -188,7 +188,7 @@ cp .env.example .env
 docker compose -f docker-compose.prod.yml up -d
 
 # Or pin to a specific release
-MINTED_VERSION=v1.0.0 docker compose -f docker-compose.prod.yml up -d
+MINTED_VERSION=v1.0.2 docker compose -f docker-compose.prod.yml up -d
 ```
 
 #### 3. Access the app

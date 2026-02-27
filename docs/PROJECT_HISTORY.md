@@ -876,7 +876,59 @@ Added `minted-sensitive` CSS class to all financial data elements:
 
 ---
 
+## Release v1.0.2 — Bug Fixes, Improvements & Dashboard Enhancements
+
+**Released:** February 28, 2026
+
+### Bug Fixes (5)
+
+1. **Profile username not populated** — Was reading from nonexistent `localStorage.getItem('username')`. Fixed to use `AuthService.currentUserValue` which reads from the `minted_user` JSON stored in localStorage.
+2. **Budgets currency hardcoded to $** — Replaced hardcoded dollar formatting with `CurrencyService.format()` for locale-aware currency display.
+3. **Notification loading states missing** — Added `loading$`, `markingAllRead$`, `clearing$` BehaviorSubject observables to `NotificationService`. Added spinner/loading indicators to drawer and full notifications page. `clearAllReadFromDrawer()` now checks `hasUnread` before clearing.
+4. **Account types settings tab missing loading animation** — Changed `loading = false` to `loading = true` as initial value so the skeleton shows during first fetch.
+5. **Split transaction dialog overflow** — Added `overflow-y: auto` and `max-height: calc(90vh - 120px)` to `p-dialog` contentStyle. Friends list section got `max-h-[300px] overflow-y-auto`.
+
+### Improvements (3)
+
+#### 1. Analytics Overhaul
+- Removed total balance summary card (only income/expenses remain)
+- Replaced hand-written SVG bar chart with PrimeNG `p-chart` (Chart.js wrapper) for spending activity
+- Added clickable bars — clicking a bar filters the transactions list to show only that day's transactions
+- Added top-level filters: month selector, year selector, category dropdown, account dropdown
+- Filters apply to both spending activity chart and recent transactions list
+- Client-side filtering of transactions by selected category/account
+
+**Files modified:** `analytics-overview.ts`, `analytics-overview.html`
+
+#### 2. Dashboard Chart Color Palette (Settings)
+- New "Chart Color Palette" section in Settings → Dashboard Config tab
+- PrimeNG `p-colorPicker` for adding custom colors
+- 4 preset palettes: Default, Pastel, Vibrant, Earth Tones
+- Colors stored in localStorage via `DashboardConfigService`
+- Dashboard bar chart, doughnut chart, and line chart consume configured colors
+
+**Files modified:** `dashboard-config.ts`, `dashboard-config.html`, `dashboard-config.service.ts`, `shared.module.ts` (added ColorPickerModule)
+
+#### 3. Dashboard Account Filter
+- Added account dropdown filter alongside the existing period selector on the dashboard header
+- Filters all KPI cards and charts by selected account
+- Uses `AccountService` to fetch account options
+
+**Files modified:** `home.ts`, `home.html`
+
+### Notification Drawer Overlay Fix
+- Fixed PrimeNG `p-drawer` overlay mask persisting after navigating to `/notifications` from "See all notifications" link
+- Solution: delayed navigation (350ms) + manual DOM cleanup of `.p-drawer-mask` elements after route change
+- Added `<p-toast>` and `MessageService` to layout for warning toasts
+
+**Files modified:** `layout.ts`, `layout.html`, `layout-module.ts`, `notification.service.ts`, `notifications-list.ts`, `notifications-list.html`
+
+### Docker Images
+- `kartikey31choudhary/minted-backend:v1.0.2`
+- `kartikey31choudhary/minted-frontend:v1.0.2`
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.
-Remaining work: Configurable dashboard cards.

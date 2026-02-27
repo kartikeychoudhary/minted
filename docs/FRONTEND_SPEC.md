@@ -468,7 +468,11 @@ export interface ChartDataset {
   - "Add Card" button at the bottom to add new dashboard cards.
   - Cards are draggable for reordering (use PrimeNG `pDraggable`/`pDroppable` or simple position buttons).
 
-- **Date Range Selector** at the top right corner to control the global dashboard date range.
+- **Filters:** Top-right corner contains:
+  - Account filter (PrimeNG `p-select`) — filters all KPI cards and charts by selected account
+  - Period selector (PrimeNG `p-select`) — controls the global dashboard date range (This Month, Last Month, Last 3 Months, Last 6 Months, This Year)
+
+- **Chart Color Palette:** Charts use configurable colors from `DashboardConfigService`. Colors are managed in Settings → Dashboard Config tab and stored in localStorage. Default palette: 8 colors (amber, teal, rose, blue, emerald, violet, orange, cyan).
 
 ### 4.4 Transactions Page (`/transactions`)
 - **Filter Bar** at the top:
@@ -524,6 +528,14 @@ export interface ChartDataset {
 - Table showing: Category, Budgeted Amount, Spent Amount, Remaining, Progress Bar
 - Add/Edit budget amounts
 - Visual progress indicator (PrimeNG `p-progressBar`)
+
+#### Tab: Dashboard Config
+- **Chart Color Palette:** Manage colors used in dashboard charts (bar, doughnut, line)
+  - Color list with PrimeNG `p-colorPicker` for each color + remove button
+  - "Add Color" button to add new colors
+  - 4 preset palette buttons: Default, Pastel, Vibrant, Earth Tones — click to apply
+  - Color preview bar showing all current colors as horizontal segments
+  - Colors stored in localStorage via `DashboardConfigService.saveChartColors()`
 
 #### Tab: Profile
 - Display name, email, username (read-only)
@@ -944,7 +956,11 @@ Singleton (`providedIn: 'root'`) managing all notification state reactively:
 |----------------------|-------------|
 | `unreadCount$` | `BehaviorSubject<number>` — badge count |
 | `notifications$` | `BehaviorSubject<NotificationResponse[]>` — accumulated list |
+| `loading$` | `BehaviorSubject<boolean>` — true while fetching notifications |
+| `markingAllRead$` | `BehaviorSubject<boolean>` — true while marking all as read |
+| `clearing$` | `BehaviorSubject<boolean>` — true while clearing all read |
 | `hasMore` | `boolean` — whether more pages exist |
+| `hasUnread` | `boolean` (getter) — true if `unreadCountSubject.value > 0` |
 
 | Method | Description |
 |--------|-------------|
@@ -971,16 +987,20 @@ A 3px animated bar (`route-loading-bar`) renders at the top of the content area 
 ### 12.4 Layout Integration (Header Bell + Drawer)
 
 **Header bell icon** (`layout/layout.html`):
-- Material icon `notifications` with unread badge (capped at 99+)
+- PrimeIcon `pi-bell` with unread badge (capped at 99+)
 - Click toggles PrimeNG `<p-drawer>` (right side, 400px width)
 
 **Notification drawer** contents:
-- Custom header: "Notifications" title + "Mark all read" + "Clear all read" buttons
-- Empty state: bell icon + "No notifications yet"
+- Custom header: "Notifications" title + "Mark all read" (with `[loading]` binding to `markingAllRead$`) + "Clear all read" (with `[loading]` binding to `clearing$`) buttons
+- Loading state: `p-progressSpinner` shown while `loading$` is true
+- Empty state: checkmark icon + "All caught up!" message
 - List: notification cards with type icon (colored by type), title, message, relative time, unread accent bar, hover dismiss button
-- Click marks as read + navigates to `actionUrl` if present
-- "See all notifications" link → `/notifications`
+- Click marks as read
+- "See all notifications" link → `/notifications` (with delayed navigation + DOM cleanup of `.p-drawer-mask` to prevent stuck overlay)
 - "Load more" button when `hasMore`
+- "Clear all read" checks `notificationService.hasUnread` before proceeding — shows warning toast if unread notifications exist
+
+**Layout also includes:** `<p-toast>` for notification warnings, `MessageService` provided in `LayoutModule`
 
 ### 12.4 Full Notifications Page (`/notifications`)
 
