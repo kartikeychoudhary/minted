@@ -1,4 +1,10 @@
 // Signup card styling — matches login page
+
+// Gradient background
+.auth-gradient-bg {
+  background: linear-gradient(145deg, #fef9f0 0%, #fcecd5 35%, #f5dbb5 70%, #ebc98e 100%);
+}
+
 .signup-card {
   border-radius: 1rem !important;
   border-color: var(--minted-accent-subtle) !important;

@@ -959,7 +959,15 @@ Singleton (`providedIn: 'root'`) managing all notification state reactively:
 
 **Polling lifecycle:** Managed in `Layout` component via `authService.currentUser$` subscription — starts on login, stops on logout. Avoids circular dependency (AuthService ↔ NotificationService ↔ HttpClient ↔ JwtInterceptor ↔ AuthService).
 
-### 12.3 Layout Integration (Header Bell + Drawer)
+### 12.3 Route Loading Animation
+
+The `Layout` component tracks `isRouteLoading` state by subscribing to Angular Router events:
+- `NavigationStart` → `isRouteLoading = true`
+- `NavigationEnd` / `NavigationCancel` / `NavigationError` → `isRouteLoading = false`
+
+A 3px animated bar (`route-loading-bar`) renders at the top of the content area when loading. Uses `var(--minted-accent)` color with a CSS sliding animation (`route-loading-slide` keyframes in `layout.scss`).
+
+### 12.4 Layout Integration (Header Bell + Drawer)
 
 **Header bell icon** (`layout/layout.html`):
 - Material icon `notifications` with unread badge (capped at 99+)

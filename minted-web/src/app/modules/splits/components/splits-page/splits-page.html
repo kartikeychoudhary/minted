@@ -44,12 +44,14 @@
         <div *ngFor="let friend of friends" class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group"
           (click)="openEditFriendDialog(friend)">
           <div
-            class="w-14 h-14 rounded-full border-2 p-0.5 group-hover:border-green-500 transition-colors flex items-center justify-center overflow-hidden"
+            class="w-14 h-14 rounded-full border-2 p-0.5 group-hover:border-green-500 transition-colors flex items-center justify-center overflow-hidden relative"
             [style.background-color]="friend.avatarColor" [style.border-color]="'var(--minted-border)'">
+            <span *ngIf="!friend.avatarBase64 || !avatarLoaded.has(friend.id)"
+              class="text-white font-bold text-sm">{{ getInitials(friend.name) }}</span>
             <img *ngIf="friend.avatarBase64" [src]="friend.avatarBase64"
-              class="w-full h-full object-cover rounded-full" />
-            <span *ngIf="!friend.avatarBase64" class="text-white font-bold text-sm">{{ getInitials(friend.name)
-              }}</span>
+              class="w-full h-full object-cover rounded-full absolute inset-0 transition-opacity duration-300"
+              [class.opacity-0]="!avatarLoaded.has(friend.id)"
+              (load)="onAvatarLoad(friend.id)" />
           </div>
           <span class="text-xs font-medium truncate w-full text-center" style="color: var(--minted-text-secondary);">{{
             friend.name }}</span>
@@ -108,11 +110,13 @@
         style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
         <div class="flex items-center gap-4 mb-4">
           <div
-            class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden"
+            class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden relative"
             [style.background-color]="fb.avatarColor" [style.border]="'1px solid var(--minted-border-light)'">
+            <span *ngIf="!getFriend(fb.friendId)?.avatarBase64 || !avatarLoaded.has(fb.friendId)">{{ getInitials(fb.friendName) }}</span>
             <img *ngIf="getFriend(fb.friendId)?.avatarBase64" [src]="getFriend(fb.friendId)?.avatarBase64"
-              class="w-full h-full object-cover rounded-full" />
-            <span *ngIf="!getFriend(fb.friendId)?.avatarBase64">{{ getInitials(fb.friendName) }}</span>
+              class="w-full h-full object-cover rounded-full absolute inset-0 transition-opacity duration-300"
+              [class.opacity-0]="!avatarLoaded.has(fb.friendId)"
+              (load)="onAvatarLoad(fb.friendId)" />
           </div>
           <div>
             <h4 class="font-bold" style="color: var(--minted-text-primary);">{{ fb.friendName }}</h4>
@@ -297,12 +301,15 @@
             [style.border-color]="entry.friendId === null ? 'var(--minted-accent)' : 'var(--minted-border)'">
             <!-- Avatar -->
             <div
-              class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white overflow-hidden"
+              class="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm shrink-0 text-white overflow-hidden relative"
               [style.background-color]="entry.avatarColor">
+              <span *ngIf="entry.friendId === null || !getFriend(entry.friendId)?.avatarBase64 || !avatarLoaded.has(entry.friendId!)">{{
+                entry.friendId === null ? 'ME' : getInitials(entry.friendName) }}</span>
               <img *ngIf="entry.friendId !== null && getFriend(entry.friendId)?.avatarBase64"
-                [src]="getFriend(entry.friendId)?.avatarBase64" class="w-full h-full object-cover rounded-full" />
-              <span *ngIf="entry.friendId === null || !getFriend(entry.friendId)?.avatarBase64">{{ entry.friendId ===
-                null ? 'ME' : getInitials(entry.friendName) }}</span>
+                [src]="getFriend(entry.friendId)?.avatarBase64"
+                class="w-full h-full object-cover rounded-full absolute inset-0 transition-opacity duration-300"
+                [class.opacity-0]="!avatarLoaded.has(entry.friendId!)"
+                (load)="onAvatarLoad(entry.friendId!)" />
             </div>
             <!-- Name -->
             <div class="flex-1 min-w-0">
@@ -340,10 +347,13 @@
                 style="background-color: var(--minted-bg-card); border-color: var(--minted-border); color: var(--minted-text-primary);"
                 (click)="addFriendToSplit(f)">
                 <div
-                  class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold overflow-hidden"
+                  class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold overflow-hidden relative"
                   [style.background-color]="f.avatarColor">
-                  <img *ngIf="f.avatarBase64" [src]="f.avatarBase64" class="w-full h-full object-cover rounded-full" />
-                  <span *ngIf="!f.avatarBase64">{{ getInitials(f.name) }}</span>
+                  <span *ngIf="!f.avatarBase64 || !avatarLoaded.has(f.id)">{{ getInitials(f.name) }}</span>
+                  <img *ngIf="f.avatarBase64" [src]="f.avatarBase64"
+                    class="w-full h-full object-cover rounded-full absolute inset-0 transition-opacity duration-300"
+                    [class.opacity-0]="!avatarLoaded.has(f.id)"
+                    (load)="onAvatarLoad(f.id)" />
                 </div>
                 {{ f.name }}
               </button>
@@ -383,11 +393,14 @@
     <!-- Friend Avatar + Amount -->
     <div class="flex flex-col items-center justify-center py-4 text-center">
       <div
-        class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4 shadow-sm overflow-hidden"
+        class="w-20 h-20 rounded-full flex items-center justify-center text-white font-bold text-xl mb-4 shadow-sm overflow-hidden relative"
         [style.background-color]="settleFriend.avatarColor" [style.border]="'4px solid var(--minted-bg-card)'">
+        <span *ngIf="!getFriend(settleFriend.friendId)?.avatarBase64 || !avatarLoaded.has(settleFriend.friendId)">{{ getInitials(settleFriend.friendName) }}</span>
         <img *ngIf="getFriend(settleFriend.friendId)?.avatarBase64"
-          [src]="getFriend(settleFriend.friendId)?.avatarBase64" class="w-full h-full object-cover rounded-full" />
-        <span *ngIf="!getFriend(settleFriend.friendId)?.avatarBase64">{{ getInitials(settleFriend.friendName) }}</span>
+          [src]="getFriend(settleFriend.friendId)?.avatarBase64"
+          class="w-full h-full object-cover rounded-full absolute inset-0 transition-opacity duration-300"
+          [class.opacity-0]="!avatarLoaded.has(settleFriend.friendId)"
+          (load)="onAvatarLoad(settleFriend.friendId)" />
       </div>
       <p class="text-sm font-medium" style="color: var(--minted-text-muted);">
         {{ settleFriend.balance > 0 ? 'Payment from' : 'Payment to' }}

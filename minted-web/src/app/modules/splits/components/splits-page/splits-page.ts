@@ -65,6 +65,9 @@ export class SplitsPage implements OnInit {
   // Avatar color options
   avatarColors = ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ef4444', '#14b8a6'];
 
+  // Track which friend avatars have finished loading
+  avatarLoaded = new Set<number>();
+
   // AG Grid
   mintedTheme = themeQuartz.withParams({
     backgroundColor: 'var(--minted-bg-card)',
@@ -242,10 +245,19 @@ export class SplitsPage implements OnInit {
   }
 
   async loadFriends(): Promise<void> {
-    this.friendService.getAll().subscribe({
+    this.avatarLoaded.clear();
+    // First: fetch friends without avatars (fast, lightweight payload)
+    this.friendService.getAll(false).subscribe({
       next: (data) => {
         this.friends = data;
         this.cdr.detectChanges();
+        // Then: fetch friends with avatar data
+        this.friendService.getAll(true).subscribe({
+          next: (withAvatars) => {
+            this.friends = withAvatars;
+            this.cdr.detectChanges();
+          }
+        });
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to load friends' });
@@ -580,6 +592,10 @@ export class SplitsPage implements OnInit {
 
   getFriend(friendId: number): FriendResponse | undefined {
     return this.friends.find(f => f.id === friendId);
+  }
+
+  onAvatarLoad(friendId: number): void {
+    this.avatarLoaded.add(friendId);
   }
 
   getInitials(name: string): string {

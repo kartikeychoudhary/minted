@@ -17,8 +17,12 @@ public record FriendResponse(
         LocalDateTime updatedAt
 ) {
     public static FriendResponse from(Friend friend) {
+        return from(friend, true);
+    }
+
+    public static FriendResponse from(Friend friend, boolean includeAvatar) {
         String avatarBase64 = null;
-        if (friend.getAvatarData() != null && friend.getAvatarContentType() != null) {
+        if (includeAvatar && friend.getAvatarData() != null && friend.getAvatarContentType() != null) {
             avatarBase64 = "data:" + friend.getAvatarContentType() + ";base64,"
                     + Base64.getEncoder().encodeToString(friend.getAvatarData());
         }

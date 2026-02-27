@@ -1495,6 +1495,12 @@ Managed via existing admin settings endpoints: `GET/PUT /api/v1/admin/settings/{
 
 ### GET `/friends`
 Returns all active friends for the authenticated user.
+
+**Query Parameters:**
+| Param | Type | Default | Description |
+|-------|------|---------|-------------|
+| `includeAvatar` | boolean | `true` | When `false`, `avatarBase64` is always `null` in response (lightweight payload for faster initial load) |
+
 **Response:** `{ success: true, data: FriendResponse[] }`
 
 ### GET `/friends/{id}`

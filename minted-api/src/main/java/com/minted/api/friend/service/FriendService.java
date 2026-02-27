@@ -10,6 +10,8 @@ public interface FriendService {
 
     List<FriendResponse> getAllByUserId(Long userId);
 
+    List<FriendResponse> getAllByUserId(Long userId, boolean includeAvatar);
+
     FriendResponse getById(Long id, Long userId);
 
     FriendResponse create(FriendRequest request, Long userId);

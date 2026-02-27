@@ -31,8 +31,14 @@ public class FriendServiceImpl implements FriendService {
     @Override
     @Transactional(readOnly = true)
     public List<FriendResponse> getAllByUserId(Long userId) {
+        return getAllByUserId(userId, true);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<FriendResponse> getAllByUserId(Long userId, boolean includeAvatar) {
         return friendRepository.findByUserIdAndIsActiveTrue(userId).stream()
-                .map(FriendResponse::from)
+                .map(f -> FriendResponse.from(f, includeAvatar))
                 .collect(Collectors.toList());
     }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../core/services/theme.service';
@@ -17,6 +17,7 @@ export class Layout implements OnInit, OnDestroy {
   isSidebarOpen = true;
   isNotificationDrawerVisible = false;
   isMobileSidebarVisible = false;
+  isRouteLoading = false;
   private mobileQuery!: MediaQueryList;
   private mobileQueryListener!: (e: MediaQueryListEvent) => void;
   private destroy$ = new Subject<void>();
@@ -38,12 +39,16 @@ export class Layout implements OnInit, OnDestroy {
       }
     });
 
-    // Auto-close mobile sidebar on navigation
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.isMobileSidebarVisible = false;
+    // Route loading indicator + auto-close mobile sidebar on navigation
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.isRouteLoading = true;
+        this.cdr.detectChanges();
+      } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        this.isRouteLoading = false;
+        this.isMobileSidebarVisible = false;
+        this.cdr.detectChanges();
+      }
     });
   }
 

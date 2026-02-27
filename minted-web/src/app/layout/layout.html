@@ -42,6 +42,9 @@
       </div>
     </header>
 
+    <!-- Route Loading Bar -->
+    <div *ngIf="isRouteLoading" class="route-loading-bar"></div>
+
     <!-- Page Content -->
     <div class="flex-1 overflow-y-auto">
       <router-outlet></router-outlet>

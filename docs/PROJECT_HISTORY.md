@@ -791,6 +791,43 @@ Added avatar image upload with crop support for both user profiles and friends. 
 
 ---
 
+### UI/UX Improvements & Avatar Loading Optimization (February 27, 2026)
+
+Three UI/UX improvements plus a backend optimization for faster friend list rendering.
+
+#### Improvement 1: Gradient Background on Auth Pages (4 files)
+- **`login.html`** / **`signup.html`**: Replaced flat `background-color: #f8f7f6` with `.auth-gradient-bg` class. Enhanced decorative blur orbs (opacity 0.05 → 0.10-0.12) and added a third orb for depth.
+- **`login.scss`** / **`signup.scss`**: Added `.auth-gradient-bg` rule: `linear-gradient(145deg, #fef9f0 0%, #fcecd5 35%, #f5dbb5 70%, #ebc98e 100%)` — warm golden gradient matching the accent color.
+
+#### Improvement 2: Route Loading Animation (3 files)
+- **`layout.ts`**: Added `isRouteLoading` state. Subscribes to Router events — `NavigationStart` sets `true`, `NavigationEnd`/`NavigationCancel`/`NavigationError` sets `false`. Consolidated with the existing mobile sidebar auto-close logic.
+- **`layout.html`**: Added `<div *ngIf="isRouteLoading" class="route-loading-bar">` above the `<router-outlet>`.
+- **`layout.scss`**: Added `.route-loading-bar` CSS — 3px absolute bar at top with `var(--minted-accent)` sliding animation (`route-loading-slide` keyframes).
+
+#### Improvement 3: Avatar Initials Placeholder While Loading (2 files)
+- **`splits-page.ts`**: Added `avatarLoaded: Set<number>` to track which friend avatars have finished rendering. Added `onAvatarLoad(friendId)` method. Set is cleared on `loadFriends()`.
+- **`splits-page.html`**: Updated all 5 avatar locations (friends list, pending settlements, settle dialog, split dialog entries, add friend buttons) to:
+  - Always show initials when no avatar OR avatar not yet loaded
+  - Render `<img>` with `opacity-0` + `absolute inset-0`, fades in via `transition-opacity duration-300` on `(load)` event
+  - Container gets `relative` class for absolute positioning
+
+#### Optimization: Two-Stage Friend Loading (5 files — backend + frontend)
+Friends API response includes base64-encoded avatar blobs (LONGBLOB), making the payload large and blocking the friends list from rendering. Implemented a two-stage fetch:
+
+**Backend:**
+- **`FriendResponse.java`**: Added `from(Friend, boolean includeAvatar)` overload — skips Base64 encoding when `false`
+- **`FriendService.java`**: Added `getAllByUserId(Long userId, boolean includeAvatar)` interface method
+- **`FriendServiceImpl.java`**: Implemented overload delegating to `FriendResponse.from(f, includeAvatar)`
+- **`FriendController.java`**: `GET /api/v1/friends` now accepts `?includeAvatar=false` query param (defaults to `true` for backward compatibility)
+
+**Frontend:**
+- **`friend.service.ts`**: `getAll()` accepts optional `includeAvatar` boolean, appended as query string
+- **`splits-page.ts`**: `loadFriends()` calls `getAll(false)` first (lightweight, friends render instantly with initials), then `getAll(true)` (full payload, avatars fade in)
+
+**Files modified (12):** login.html, login.scss, signup.html, signup.scss, layout.ts, layout.html, layout.scss, splits-page.ts, splits-page.html, friend.service.ts, FriendResponse.java, FriendService.java, FriendServiceImpl.java, FriendController.java
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

@@ -13,9 +13,10 @@ export class FriendService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<FriendResponse[]> {
-    return this.http.get<{ success: boolean; data: FriendResponse[] }>(this.apiUrl)
-      .pipe(map(response => response.data));
+  getAll(includeAvatar: boolean = true): Observable<FriendResponse[]> {
+    return this.http.get<{ success: boolean; data: FriendResponse[] }>(
+      `${this.apiUrl}?includeAvatar=${includeAvatar}`
+    ).pipe(map(response => response.data));
   }
 
   getById(id: number): Observable<FriendResponse> {

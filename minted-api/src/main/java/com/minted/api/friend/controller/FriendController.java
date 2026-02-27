@@ -27,9 +27,12 @@ public class FriendController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllFriends(Authentication authentication) {
+    public ResponseEntity<Map<String, Object>> getAllFriends(
+            Authentication authentication,
+            @RequestParam(defaultValue = "true") boolean includeAvatar
+    ) {
         Long userId = getUserId(authentication);
-        List<FriendResponse> friends = friendService.getAllByUserId(userId);
+        List<FriendResponse> friends = friendService.getAllByUserId(userId, includeAvatar);
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", friends

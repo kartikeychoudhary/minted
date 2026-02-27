@@ -298,7 +298,9 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 - **Structured logging:** MDC-enriched logs with requestId/userId/method/uri on every line; `MdcFilter` → `JwtAuthFilter` pipeline; `logback-spring.xml` with dev (DEBUG/console), prod (INFO/JSON) profiles; `RequestLoggingInterceptor` for request timing; `@Slf4j` on all service impls for business event logging (see `docs/LOGGING.md`)
 - **Bulk import:** CSV wizard with user-action-driven async processing and step-level tracking (no cron job)
 - **Splits:** Friend management with soft-delete, 3 split types (Equal/Unequal/Share), balance tracking, settlement with notifications, inline split dialog in transactions, `isSplit` flag on transaction responses, CSV export per friend
-- **Avatar upload:** Reusable `AvatarUploadComponent` (shared) with ngx-image-cropper (1:1, 512px JPEG). LONGBLOB storage in DB, base64 data URIs. Integrated in: user profile, friends, sidebar.
+- **Avatar upload:** Reusable `AvatarUploadComponent` (shared) with ngx-image-cropper (1:1, 512px JPEG). LONGBLOB storage in DB, base64 data URIs. Integrated in: user profile, friends, sidebar. Two-stage loading: friends list fetched without avatars first (fast), then with avatars (fade-in).
+- **Route loading:** Animated accent-colored bar at top of content area during lazy module navigation (Router events in Layout component)
+- **Auth pages:** Warm golden gradient background on login/signup screens with enhanced decorative blurs
 - **Mobile responsive:** PrimeNG Drawer sidebar on mobile, hamburger menu, global dialog/grid overrides, responsive auth pages
 
 ---
