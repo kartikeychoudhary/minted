@@ -74,12 +74,14 @@ A modern, full-stack personal finance application built with **Angular 21** and 
 
 ```
 minted/
-├── minted-api/          # Spring Boot backend → see minted-api/README.md
-├── minted-web/          # Angular frontend   → see minted-web/README.md
-├── docs/                # Specs, history, and design references
-├── docker-compose.yml   # Full-stack Docker orchestration
-├── Dockerfile           # Frontend multi-stage build (Node → Nginx)
-└── nginx.conf           # Nginx reverse proxy config
+├── minted-api/              # Spring Boot backend
+├── minted-web/              # Angular frontend
+├── docs/                    # Specs, history, and design references
+├── screenshots/             # Annotated app screenshots
+├── docker-compose.yml       # Build-from-source Docker orchestration
+├── docker-compose.prod.yml  # Production: uses pre-built Docker Hub images
+├── Dockerfile               # Frontend multi-stage build (Node → Nginx)
+└── nginx.conf               # Nginx reverse proxy config
 ```
 
 ---
@@ -272,6 +274,8 @@ docker compose up --build -d
 
 | Document | Description |
 | -------- | ----------- |
+| [DOCKER_README.md](./DOCKER_README.md) | Full Docker deployment guide (build & prod Hub images) |
+| [screenshots/README.md](./screenshots/README.md) | Annotated screenshot gallery for all modules |
 | [minted-web/README.md](./minted-web/README.md) | Frontend setup, architecture, theming |
 | [minted-api/README.md](./minted-api/README.md) | Backend setup, API structure, migrations |
 | [docs/API_SPEC.md](./docs/API_SPEC.md) | REST API specification |
