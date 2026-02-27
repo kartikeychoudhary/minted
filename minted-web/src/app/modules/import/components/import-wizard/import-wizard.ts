@@ -70,6 +70,7 @@ export class ImportWizard implements OnInit {
       headerName: 'Amount',
       field: 'amount',
       width: 130,
+      cellClass: 'minted-sensitive',
       valueFormatter: (params) => {
         const val = parseFloat(params.value);
         return isNaN(val) ? params.value : this.currencyService.format(val);

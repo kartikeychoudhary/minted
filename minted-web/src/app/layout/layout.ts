@@ -3,6 +3,7 @@ import { NavigationStart, NavigationEnd, NavigationCancel, NavigationError, Rout
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { ThemeService } from '../core/services/theme.service';
+import { PrivacyService } from '../core/services/privacy.service';
 import { NotificationService } from '../core/services/notification.service';
 import { AuthService } from '../core/services/auth.service';
 import { NotificationType } from '../core/models/notification.model';
@@ -24,6 +25,7 @@ export class Layout implements OnInit, OnDestroy {
 
   constructor(
     public themeService: ThemeService,
+    public privacyService: PrivacyService,
     public notificationService: NotificationService,
     private authService: AuthService,
     private router: Router,

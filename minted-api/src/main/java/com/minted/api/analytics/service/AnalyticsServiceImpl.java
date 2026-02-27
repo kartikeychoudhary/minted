@@ -3,11 +3,13 @@ package com.minted.api.analytics.service;
 import com.minted.api.analytics.dto.*;
 import com.minted.api.dashboard.dto.ChartDataResponse;
 import com.minted.api.account.entity.Account;
+import com.minted.api.budget.entity.Budget;
 import com.minted.api.dashboard.entity.DashboardCard;
 import com.minted.api.transaction.entity.Transaction;
 import com.minted.api.transaction.enums.TransactionType;
 import com.minted.api.common.exception.ResourceNotFoundException;
 import com.minted.api.account.repository.AccountRepository;
+import com.minted.api.budget.repository.BudgetRepository;
 import com.minted.api.dashboard.repository.DashboardCardRepository;
 import com.minted.api.transaction.repository.TransactionRepository;
 import com.minted.api.analytics.service.AnalyticsService;
@@ -33,6 +35,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     private final TransactionRepository transactionRepository;
     private final DashboardCardRepository dashboardCardRepository;
     private final AccountRepository accountRepository;
+    private final BudgetRepository budgetRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -196,6 +199,70 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         BigDecimal expenseChangePercent = computeChangePercent(currentExpense, prevExpense);
 
         return new TotalBalanceResponse(totalBalance, previousMonthBalance, incomeChangePercent, expenseChangePercent);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BudgetSummaryResponse> getBudgetSummary(Long userId) {
+        LocalDate now = LocalDate.now();
+        int month = now.getMonthValue();
+        int year = now.getYear();
+        LocalDate monthStart = now.withDayOfMonth(1);
+        LocalDate monthEnd = now.withDayOfMonth(now.lengthOfMonth());
+
+        List<Budget> budgets = budgetRepository.findByUserIdAndMonthAndYear(userId, month, year);
+        if (budgets.isEmpty()) {
+            return List.of();
+        }
+
+        // Single query: get all category-wise expense totals for the current month
+        List<Object[]> categorySpend = transactionRepository.sumAmountGroupedByCategory(
+                userId, TransactionType.EXPENSE, monthStart, monthEnd);
+
+        // Build categoryId -> spentAmount map
+        Map<Long, BigDecimal> spendMap = new HashMap<>();
+        BigDecimal totalExpense = BigDecimal.ZERO;
+        for (Object[] row : categorySpend) {
+            Long categoryId = (Long) row[0];
+            BigDecimal amount = (BigDecimal) row[2];
+            spendMap.put(categoryId, amount);
+            totalExpense = totalExpense.add(amount);
+        }
+
+        return budgets.stream().map(budget -> {
+            BigDecimal budgetedAmount = budget.getAmount();
+            BigDecimal spentAmount;
+
+            if (budget.getCategory() != null) {
+                // Budget tied to a specific category
+                spentAmount = spendMap.getOrDefault(budget.getCategory().getId(), BigDecimal.ZERO);
+            } else {
+                // Budget with no category tracks ALL expenses
+                spentAmount = spendMap.values().stream()
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+            }
+
+            BigDecimal remainingAmount = budgetedAmount.subtract(spentAmount);
+            double utilization = budgetedAmount.compareTo(BigDecimal.ZERO) > 0
+                    ? spentAmount.multiply(BigDecimal.valueOf(100))
+                            .divide(budgetedAmount, 1, RoundingMode.HALF_UP)
+                            .doubleValue()
+                    : 0.0;
+
+            String categoryName = budget.getCategory() != null
+                    ? budget.getCategory().getName()
+                    : "All Categories";
+
+            return new BudgetSummaryResponse(
+                    budget.getId(),
+                    budget.getName(),
+                    categoryName,
+                    budgetedAmount,
+                    spentAmount,
+                    remainingAmount,
+                    utilization
+            );
+        }).collect(Collectors.toList());
     }
 
     private BigDecimal computeChangePercent(BigDecimal current, BigDecimal previous) {

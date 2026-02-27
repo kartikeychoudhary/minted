@@ -28,7 +28,7 @@
       <div class="kpi-content">
         <span class="kpi-label">Total Income</span>
         <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value">{{ formatCurrency(summary?.totalIncome || 0) }}</span>
+          <span class="kpi-value minted-sensitive">{{ formatCurrency(summary?.totalIncome || 0) }}</span>
         </ng-container>
       </div>
     </div>
@@ -41,7 +41,7 @@
       <div class="kpi-content">
         <span class="kpi-label">Total Expenses</span>
         <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value">{{ formatCurrency(summary?.totalExpense || 0) }}</span>
+          <span class="kpi-value minted-sensitive">{{ formatCurrency(summary?.totalExpense || 0) }}</span>
         </ng-container>
       </div>
     </div>
@@ -54,7 +54,7 @@
       <div class="kpi-content">
         <span class="kpi-label">Net Balance</span>
         <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value" [class.positive]="(summary?.netBalance || 0) >= 0"
+          <span class="kpi-value minted-sensitive" [class.positive]="(summary?.netBalance || 0) >= 0"
                 [class.negative]="(summary?.netBalance || 0) < 0">
             {{ formatCurrency(summary?.netBalance || 0) }}
           </span>

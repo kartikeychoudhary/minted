@@ -214,7 +214,7 @@ export class TransactionsList implements OnInit {
         field: 'amount',
         width: 150,
         cellClass: (params) => {
-          const baseClass = 'cell-v-center';
+          const baseClass = 'cell-v-center minted-sensitive';
           const colorClass = params.data.type === 'INCOME'
             ? 'text-success font-bold'
             : 'font-bold';

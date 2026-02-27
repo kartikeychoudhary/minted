@@ -1,6 +1,7 @@
 package com.minted.api.analytics.controller;
 
 import com.minted.api.analytics.dto.AnalyticsSummaryResponse;
+import com.minted.api.analytics.dto.BudgetSummaryResponse;
 import com.minted.api.analytics.dto.CategoryWiseResponse;
 import com.minted.api.dashboard.dto.ChartDataResponse;
 import com.minted.api.analytics.dto.SpendingActivityResponse;
@@ -90,6 +91,16 @@ public class AnalyticsController {
     public ResponseEntity<Map<String, Object>> getTotalBalance(Authentication authentication) {
         Long userId = getUserId(authentication);
         TotalBalanceResponse data = analyticsService.getTotalBalance(userId);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "data", data
+        ));
+    }
+
+    @GetMapping("/budget-summary")
+    public ResponseEntity<Map<String, Object>> getBudgetSummary(Authentication authentication) {
+        Long userId = getUserId(authentication);
+        List<BudgetSummaryResponse> data = analyticsService.getBudgetSummary(userId);
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", data

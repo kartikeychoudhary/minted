@@ -631,6 +631,43 @@ Bulk update category for multiple transactions.
 }
 ```
 
+### GET `/analytics/budget-summary`
+
+Returns current-month budget utilization for the authenticated user. Only budgets matching the current month/year are returned. Spending data is calculated from expense transactions grouped by category.
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "budgetId": 1,
+      "budgetName": "Monthly Groceries",
+      "categoryName": "Groceries",
+      "budgetedAmount": 15000.00,
+      "spentAmount": 8500.00,
+      "remainingAmount": 6500.00,
+      "utilizationPercent": 56.7
+    },
+    {
+      "budgetId": 2,
+      "budgetName": "Total Spending",
+      "categoryName": "All Categories",
+      "budgetedAmount": 50000.00,
+      "spentAmount": 42000.00,
+      "remainingAmount": 8000.00,
+      "utilizationPercent": 84.0
+    }
+  ]
+}
+```
+
+**Notes:**
+- Budgets with a linked category track only that category's expenses
+- Budgets without a category (`categoryName: "All Categories"`) track total expenses across all categories
+- Only 2 DB queries regardless of budget count (budgets + category-wise expense totals)
+- Respects `excludeFromAnalysis` flag on transactions
+
 ---
 
 ## 9. Recurring Transactions

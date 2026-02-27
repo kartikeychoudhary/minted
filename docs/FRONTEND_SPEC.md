@@ -166,6 +166,7 @@ AppModule
 │   ├── BudgetService
 │   ├── DashboardService
 │   ├── AnalyticsService
+│   ├── PrivacyService
 │   ├── AuthGuard
 │   ├── ForcePasswordChangeGuard
 │   ├── JwtInterceptor
@@ -204,7 +205,7 @@ AppModule
 │   └── TransactionFilterComponent (filter bar)
 │
 ├── AnalyticsModule (lazy loaded: /analytics)
-│   └── AnalyticsOverviewComponent (dashboard overview with summary cards, spending chart, recent transactions, recurring payments)
+│   └── AnalyticsOverviewComponent (dashboard overview with summary cards, spending chart, recent transactions, recurring payments, budget status card)
 │
 ├── ImportModule (lazy loaded: /import)
 │   ├── ImportWizardComponent (3-step PrimeNG Stepper: account select → upload & preview → confirm)

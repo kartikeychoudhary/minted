@@ -5,7 +5,7 @@ import { AnalyticsService } from '../../../../core/services/analytics.service';
 import { TransactionService } from '../../../../core/services/transaction.service';
 import { RecurringTransactionService } from '../../../../core/services/recurring.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { AnalyticsSummary, SpendingActivity, TotalBalance } from '../../../../core/models/dashboard.model';
+import { AnalyticsSummary, BudgetSummary, SpendingActivity, TotalBalance } from '../../../../core/models/dashboard.model';
 import { TransactionResponse } from '../../../../core/models/transaction.model';
 import { RecurringTransaction, RecurringSummary } from '../../../../core/models/recurring.model';
 import { User } from '../../../../core/models/user.model';
@@ -57,12 +57,16 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
     recurringGroups: RecurringGroup[] = [];
     recurringSummary: RecurringSummary | null = null;
 
+    // Budget summaries
+    budgetSummaries: BudgetSummary[] = [];
+
     // Loading states
     loading = {
         summary: false,
         spending: false,
         transactions: false,
-        recurring: false
+        recurring: false,
+        budgets: false
     };
 
     constructor(
@@ -94,6 +98,7 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         this.loadSpendingActivity();
         this.loadRecentTransactions();
         this.loadRecurringTransactions();
+        this.loadBudgetSummary();
     }
 
     private loadTotalBalance(): void {
@@ -341,6 +346,42 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
     addRecurring(): void {
         // TODO: Open add dialog
         console.log('Add recurring transaction');
+    }
+
+    private loadBudgetSummary(): void {
+        this.loading.budgets = true;
+        this.analyticsService.getBudgetSummary()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+                next: (data) => {
+                    this.budgetSummaries = data;
+                    this.loading.budgets = false;
+                    this.cdr.detectChanges();
+                },
+                error: (err) => {
+                    console.error('Error loading budget summary:', err);
+                    this.loading.budgets = false;
+                    this.cdr.detectChanges();
+                }
+            });
+    }
+
+    getBudgetStatusColor(percent: number): string {
+        if (percent > 90) return 'var(--minted-danger)';
+        if (percent > 70) return 'var(--minted-warning)';
+        return 'var(--minted-success)';
+    }
+
+    getBudgetStatusBg(percent: number): string {
+        if (percent > 90) return 'var(--minted-danger-subtle)';
+        if (percent > 70) return 'var(--minted-warning-subtle)';
+        return 'var(--minted-success-subtle)';
+    }
+
+    getBudgetStatusLabel(percent: number): string {
+        if (percent > 90) return 'Over';
+        if (percent > 70) return 'Warning';
+        return 'On Track';
     }
 
     getGreeting(): string {

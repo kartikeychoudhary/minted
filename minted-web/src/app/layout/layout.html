@@ -29,6 +29,12 @@
           pTooltip="Toggle theme" tooltipPosition="bottom">
           <i [class]="(themeService.isDarkMode$ | async) ? 'pi pi-sun' : 'pi pi-moon'"></i>
         </button>
+        <!-- Privacy Toggle -->
+        <button type="button" (click)="privacyService.togglePrivacyMode()"
+          class="relative p-2 rounded-full transition-colors" [style.color]="'var(--minted-text-muted)'"
+          pTooltip="Toggle privacy mode" tooltipPosition="bottom">
+          <i [class]="(privacyService.isPrivacyMode$ | async) ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+        </button>
         <!-- Notifications Bell -->
         <button type="button" (click)="toggleNotificationDrawer()" class="relative p-2 rounded-full transition-colors"
           [style.color]="'var(--minted-text-muted)'" pTooltip="Notifications" tooltipPosition="bottom">

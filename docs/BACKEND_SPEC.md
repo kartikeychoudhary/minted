@@ -509,6 +509,7 @@ GET /api/v1/dashboard/cards/{id}/data?startDate=2026-01-01&endDate=2026-01-31
 | GET | `/api/v1/analytics/category-wise` | Breakdown by category for period |
 | GET | `/api/v1/analytics/account-wise` | Breakdown by account for period |
 | GET | `/api/v1/analytics/trend` | Monthly trend data |
+| GET | `/api/v1/analytics/budget-summary` | Current-month budget utilization per budget |
 
 ---
 

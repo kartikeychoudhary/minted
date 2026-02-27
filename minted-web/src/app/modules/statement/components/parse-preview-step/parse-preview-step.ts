@@ -52,6 +52,7 @@ export class ParsePreviewStep implements OnInit {
     { field: 'description', headerName: 'Description', flex: 1, editable: true },
     {
       field: 'amount', headerName: 'Amount', width: 120,
+      cellClass: 'minted-sensitive',
       valueFormatter: (p: any) => p.value != null ? '₹' + Number(p.value).toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '',
       cellStyle: (p: any) => ({ color: p.data?.type === 'EXPENSE' ? 'var(--minted-error)' : 'var(--minted-success)' })
     },

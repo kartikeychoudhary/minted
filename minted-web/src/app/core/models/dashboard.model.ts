@@ -49,6 +49,7 @@ export interface TrendData {
 
 export interface BudgetSummary {
   budgetId: number;
+  budgetName: string;
   categoryName: string;
   budgetedAmount: number;
   spentAmount: number;

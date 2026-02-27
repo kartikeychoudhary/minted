@@ -1,6 +1,7 @@
 package com.minted.api.analytics.service;
 
 import com.minted.api.analytics.dto.AnalyticsSummaryResponse;
+import com.minted.api.analytics.dto.BudgetSummaryResponse;
 import com.minted.api.analytics.dto.CategoryWiseResponse;
 import com.minted.api.dashboard.dto.ChartDataResponse;
 import com.minted.api.analytics.dto.SpendingActivityResponse;
@@ -24,4 +25,6 @@ public interface AnalyticsService {
     List<SpendingActivityResponse> getSpendingActivity(Long userId, LocalDate startDate, LocalDate endDate);
 
     TotalBalanceResponse getTotalBalance(Long userId);
+
+    List<BudgetSummaryResponse> getBudgetSummary(Long userId);
 }

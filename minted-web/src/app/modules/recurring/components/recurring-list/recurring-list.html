@@ -141,7 +141,7 @@
                         <span class="category-badge">{{ tx.categoryName }}</span>
                     </td>
                     <td [class.amount-income]="tx.type === 'INCOME'" [class.amount-expense]="tx.type === 'EXPENSE'">
-                        <span class="amount-value">
+                        <span class="amount-value minted-sensitive">
                             {{ tx.type === 'INCOME' ? '+' : '-' }}{{ formatCurrency(tx.amount) }}
                         </span>
                     </td>
@@ -186,7 +186,7 @@
             </div>
             <div>
                 <span class="summary-label">Est. Monthly Expenses</span>
-                <span class="summary-value">{{ formatCurrency(summary.estimatedMonthlyExpenses) }}</span>
+                <span class="summary-value minted-sensitive">{{ formatCurrency(summary.estimatedMonthlyExpenses) }}</span>
             </div>
         </div>
         <div class="summary-card income-card">
@@ -195,7 +195,7 @@
             </div>
             <div>
                 <span class="summary-label">Est. Monthly Income</span>
-                <span class="summary-value">{{ formatCurrency(summary.estimatedMonthlyIncome) }}</span>
+                <span class="summary-value minted-sensitive">{{ formatCurrency(summary.estimatedMonthlyIncome) }}</span>
             </div>
         </div>
         <div class="summary-card flux-card">
@@ -204,7 +204,7 @@
             </div>
             <div>
                 <span class="summary-label">Scheduled Net Flux</span>
-                <span class="summary-value">{{ summary.scheduledNetFlux >= 0 ? '+' : '' }}{{
+                <span class="summary-value minted-sensitive">{{ summary.scheduledNetFlux >= 0 ? '+' : '' }}{{
                     formatCurrency(summary.scheduledNetFlux) }}</span>
             </div>
         </div>

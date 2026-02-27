@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { AnalyticsSummary, CategoryWise, TrendData, SpendingActivity, TotalBalance } from '../models/dashboard.model';
+import { AnalyticsSummary, BudgetSummary, CategoryWise, TrendData, SpendingActivity, TotalBalance } from '../models/dashboard.model';
 
 @Injectable({
     providedIn: 'root'
@@ -50,6 +50,11 @@ export class AnalyticsService {
 
     getTotalBalance(): Observable<TotalBalance> {
         return this.http.get<{ success: boolean; data: TotalBalance }>(`${this.apiUrl}/total-balance`)
+            .pipe(map(response => response.data));
+    }
+
+    getBudgetSummary(): Observable<BudgetSummary[]> {
+        return this.http.get<{ success: boolean; data: BudgetSummary[] }>(`${this.apiUrl}/budget-summary`)
             .pipe(map(response => response.data));
     }
 }

@@ -828,7 +828,55 @@ Friends API response includes base64-encoded avatar blobs (LONGBLOB), making the
 
 ---
 
+### Budget Status Card & Privacy Blur Feature (February 27, 2026)
+
+Two analytics/UX improvements: a functional Budget Status card replacing the decorative Smart Savings card, and a global privacy blur toggle for masking financial data.
+
+#### Improvement 1: Budget Status Card
+
+**Backend (4 files: 1 new, 3 modified)**
+- **`BudgetSummaryResponse.java`** (NEW): Java record DTO — `budgetId`, `budgetName`, `categoryName`, `budgetedAmount`, `spentAmount`, `remainingAmount`, `utilizationPercent`
+- **`AnalyticsService.java`**: Added `List<BudgetSummaryResponse> getBudgetSummary(Long userId)` interface method
+- **`AnalyticsServiceImpl.java`**: Implemented with 2 DB queries — fetches current-month budgets + reuses `sumAmountGroupedByCategory` for spend data. Maps category spend to budget utilization %. Budgets without a category track ALL expenses.
+- **`AnalyticsController.java`**: Added `GET /api/v1/analytics/budget-summary` endpoint (auto-protected by existing security config)
+
+**Frontend (4 files modified)**
+- **`dashboard.model.ts`**: Added `budgetName: string` field to `BudgetSummary` interface
+- **`analytics.service.ts`**: Added `getBudgetSummary(): Observable<BudgetSummary[]>` method
+- **`analytics-overview.ts`**: Added `budgetSummaries`, `loading.budgets`, `loadBudgetSummary()`, and 3 helper methods: `getBudgetStatusColor()` (green <70%, amber 70-90%, red >90%), `getBudgetStatusBg()`, `getBudgetStatusLabel()`
+- **`analytics-overview.html`**: Deleted Smart Savings card (decorative). Inserted Budget Status card at top of right column with: header with "Manage" link to /settings, loading skeleton, empty state with "Create a budget" link, budget list with name + category + utilization badge + color-coded PrimeNG `p-progressBar` + spent/budgeted amounts
+
+#### Improvement 2: Privacy Blur Feature
+
+**Core Infrastructure (4 files: 1 new, 3 modified)**
+- **`privacy.service.ts`** (NEW): Singleton service (`providedIn: 'root'`) mirroring ThemeService pattern. `isPrivacyMode$` BehaviorSubject, `togglePrivacyMode()`, localStorage persistence (`minted-privacy-mode`), adds/removes `privacy-mode` class on `<html>` element
+- **`app.ts`**: Injected `PrivacyService`, calls `init()` in `ngOnInit()`
+- **`styles.scss`**: Added `.privacy-mode .minted-sensitive` rule — `filter: blur(8px)`, `user-select: none`, `pointer-events: none`, `transition: filter 0.3s ease`
+- **`layout.ts` + `layout.html`**: Injected `PrivacyService`. Added eye toggle button between theme toggle and notifications bell — icon switches between `pi-eye` / `pi-eye-slash`
+
+**Template Annotations (~14 files)**
+Added `minted-sensitive` CSS class to all financial data elements:
+- **`analytics-overview.html`**: Total Balance, Monthly Income/Expenses, transaction amounts, recurring group totals, individual recurring amounts, forecast amount, budget spent/budgeted amounts
+- **`home.html`** (dashboard): KPI values — totalIncome, totalExpense, netBalance
+- **`transactions-list.ts`**: AG Grid Amount column `cellClass`
+- **`transactions-list.html`**: Split share amounts (EQUAL type)
+- **`recurring-list.html`**: Transaction amounts, 3 summary values (monthly expenses, monthly income, net flux)
+- **`accounts.html`** (settings): Account balances
+- **`budgets.html`** (settings): Budget description (contains amount)
+- **`splits-page.html`**: You Are Owed, You Owe summaries, friend balance amounts, settlement amount
+- **`splits-page.ts`**: AG Grid Total and Your Share columns
+- **`import-wizard.ts`**: AG Grid Amount column
+- **`parse-preview-step.ts`**: AG Grid Amount column
+- **`import-job-detail.html`**: Account name
+- **`statement-list.html`**: Account name
+- **`statement-detail.html`**: Account name
+
+**Files created (2):** BudgetSummaryResponse.java, privacy.service.ts
+**Files modified (~20):** AnalyticsService.java, AnalyticsServiceImpl.java, AnalyticsController.java, dashboard.model.ts, analytics.service.ts, analytics-overview.ts, analytics-overview.html, app.ts, styles.scss, layout.ts, layout.html, home.html, transactions-list.ts, transactions-list.html, recurring-list.html, accounts.html, budgets.html, splits-page.html, splits-page.ts, import-wizard.ts, parse-preview-step.ts, import-job-detail.html, statement-list.html, statement-detail.html
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.
-Remaining work: Configurable dashboard cards, budget tracking polish.
+Remaining work: Configurable dashboard cards.

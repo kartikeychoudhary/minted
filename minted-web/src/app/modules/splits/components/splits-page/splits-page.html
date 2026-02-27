@@ -74,7 +74,7 @@
       <div>
         <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You are owed</h3>
         <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{
+          <span class="text-3xl font-bold minted-sensitive" style="color: var(--minted-text-primary);">{{
             currencyService.format(balanceSummary.youAreOwed) }}</span>
         </div>
       </div>
@@ -89,7 +89,7 @@
       <div>
         <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You owe</h3>
         <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold" style="color: var(--minted-text-primary);">{{
+          <span class="text-3xl font-bold minted-sensitive" style="color: var(--minted-text-primary);">{{
             currencyService.format(balanceSummary.youOwe) }}</span>
         </div>
       </div>
@@ -126,7 +126,7 @@
           </div>
         </div>
         <div class="flex items-center justify-between">
-          <div class="text-lg font-bold" [ngClass]="fb.balance > 0 ? 'text-emerald-600' : 'text-orange-600'">
+          <div class="text-lg font-bold minted-sensitive" [ngClass]="fb.balance > 0 ? 'text-emerald-600' : 'text-orange-600'">
             {{ fb.balance > 0 ? '+' : '' }}{{ currencyService.format(fb.balance) }}
           </div>
           <div class="flex gap-2">
@@ -407,7 +407,7 @@
         <span class="font-bold" style="color: var(--minted-text-primary);">{{ settleFriend.friendName }}</span>
       </p>
       <div class="mt-2">
-        <span class="text-4xl font-extrabold tracking-tight" style="color: var(--minted-text-primary);">
+        <span class="text-4xl font-extrabold tracking-tight minted-sensitive" style="color: var(--minted-text-primary);">
           {{ currencyService.format(settleFriend.balance > 0 ? settleFriend.balance : -settleFriend.balance) }}
         </span>
       </div>

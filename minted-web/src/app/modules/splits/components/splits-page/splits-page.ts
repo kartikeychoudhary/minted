@@ -183,14 +183,14 @@ export class SplitsPage implements OnInit {
         headerName: 'Total',
         field: 'totalAmount',
         width: 130,
-        cellClass: 'cell-v-center font-bold',
+        cellClass: 'cell-v-center font-bold minted-sensitive',
         valueFormatter: (params) => this.currencyService.format(params.value)
       },
       {
         headerName: 'Your Share',
         field: 'yourShare',
         width: 130,
-        cellClass: 'cell-v-center font-bold',
+        cellClass: 'cell-v-center font-bold minted-sensitive',
         valueFormatter: (params) => this.currencyService.format(params.value)
       },
       {

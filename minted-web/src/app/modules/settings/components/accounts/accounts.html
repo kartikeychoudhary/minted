@@ -55,7 +55,7 @@
             </span>
           </td>
           <td>
-            <div class="text-sm font-semibold" [ngClass]="isNegativeBalance(account.balance) ? 'text-red-600' : ''"
+            <div class="text-sm font-semibold minted-sensitive" [ngClass]="isNegativeBalance(account.balance) ? 'text-red-600' : ''"
               style="color: var(--minted-text-primary);">
               {{ formatCurrency(account.balance, account.currency) }}
             </div>

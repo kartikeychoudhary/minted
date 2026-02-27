@@ -109,6 +109,17 @@ body {
 }
 
 // ============================================================
+//  PRIVACY MODE — Blur sensitive financial data
+// ============================================================
+
+.privacy-mode .minted-sensitive {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+  transition: filter 0.3s ease;
+}
+
+// ============================================================
 //  SEMANTIC UTILITY CLASSES
 // ============================================================
 
