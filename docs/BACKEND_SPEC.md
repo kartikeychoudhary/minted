@@ -511,6 +511,8 @@ GET /api/v1/dashboard/cards/{id}/data?startDate=2026-01-01&endDate=2026-01-31
 | GET | `/api/v1/analytics/trend` | Monthly trend data |
 | GET | `/api/v1/analytics/budget-summary` | Current-month budget utilization per budget |
 
+> **Excluded Category Filtering:** All analytics endpoints automatically exclude transactions belonging to categories marked with `excludeFromAnalysis = true` on the transaction itself, as well as categories listed in the user's `DashboardConfig.excludedCategoryIds`. The service layer (`AnalyticsServiceImpl`) fetches excluded IDs from `DashboardConfigService` and uses dedicated repository queries (`*ExcludingCategories`) when exclusions are configured.
+
 ---
 
 ## 5. Error Handling
@@ -945,7 +947,8 @@ Orchestrates the 4-step workflow:
 1. **`uploadAndExtract`** — Validates PDF, extracts text via PDFBox, saves statement with TEXT_EXTRACTED status
 2. **`triggerLlmParse`** — Resolves LLM config, creates JobExecution, fires async processing after commit
 3. **`processLlmParseAsync`** — Fetches user's active categories via `TransactionCategoryService`, calls GeminiLlmService with category names + merchant mappings, applies merchant mapping pre-pass, runs duplicate detection, saves results
-4. **`confirmImport`** — Creates Transaction entities from parsed rows, updates account balance, sets COMPLETED status
+4. **`confirmImport`** — Creates Transaction entities from parsed rows (uses `modifiedRows` from request when provided, falls back to stored AI-parsed JSON), updates account balance, sets COMPLETED status
+5. **`deleteStatement`** — Validates ownership, deletes statement record, sends notification
 
 **Async pattern:** Uses `TransactionSynchronizationManager.registerSynchronization(afterCommit)` + `CompletableFuture.runAsync()` + `TransactionTemplate` (same proven pattern as BulkImportServiceImpl).
 
@@ -957,7 +960,7 @@ Orchestrates the 4-step workflow:
 
 | Controller | Base Path | Endpoints |
 |------------|-----------|-----------|
-| `CreditCardStatementController` | `/api/v1/statements` | upload, parse, parsed-rows, confirm, list, getById |
+| `CreditCardStatementController` | `/api/v1/statements` | upload, parse, parsed-rows, confirm, list, getById, delete |
 | `LlmConfigController` | `/api/v1/llm-config` | getConfig, saveConfig, getModels, mapping CRUD |
 | `AdminLlmModelController` | `/api/v1/admin/llm-models` | CRUD for LLM models (admin-only) |
 

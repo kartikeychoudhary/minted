@@ -548,6 +548,10 @@ Bulk update category for multiple transactions.
 
 ## 9. Analytics
 
+**Note:** All analytics endpoints automatically exclude:
+1. Transactions with `excludeFromAnalysis = true`
+2. Transactions belonging to categories listed in the user's Dashboard Configuration (`excludedCategoryIds`)
+
 ### GET `/analytics/summary?startDate=2026-02-01&endDate=2026-02-28`
 **Response:**
 ```json
@@ -1256,6 +1260,7 @@ DELETE /api/v1/notifications/read
 | POST | `/statements/confirm` | Confirm and import transactions |
 | GET | `/statements` | List user's statements |
 | GET | `/statements/{id}` | Get statement detail |
+| DELETE | `/statements/{id}` | Delete a statement |
 
 #### Upload Statement (multipart/form-data)
 
@@ -1356,9 +1361,31 @@ If `extractedText` is provided and non-blank, it overwrites the stored extracted
 ```json
 {
   "statementId": 1,
-  "skipDuplicates": true
+  "skipDuplicates": true,
+  "modifiedRows": [
+    {
+      "tempId": "uuid-string",
+      "amount": 450.00,
+      "type": "EXPENSE",
+      "description": "SWIGGY*ORDER",
+      "transactionDate": "2026-01-15",
+      "categoryName": "Food & Dining",
+      "matchedCategoryId": 4,
+      "notes": "Ref: TXN123456",
+      "tags": "",
+      "isDuplicate": false,
+      "duplicateReason": "",
+      "mappedByRule": true
+    }
+  ]
 }
 ```
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `statementId` | Long | Yes | ID of the statement to import |
+| `skipDuplicates` | boolean | No | Skip rows flagged as duplicates (default: false) |
+| `modifiedRows` | ParsedTransactionRow[] | No | User-edited rows from the preview grid. When provided, these are used instead of the stored AI-parsed data. This allows category, description, and other edits made in the preview to be persisted. |
 
 **Response (200):**
 ```json
@@ -1367,6 +1394,23 @@ If `extractedText` is provided and non-blank, it overwrites the stored extracted
   "message": "Transactions imported successfully"
 }
 ```
+
+#### Delete Statement
+
+`DELETE /api/v1/statements/{id}`
+
+Permanently deletes a statement and its associated data. Requires ownership (user must own the statement).
+
+**Response (200):**
+```json
+{
+  "success": true,
+  "message": "Statement deleted successfully"
+}
+```
+
+**Errors:**
+- `404` — Statement not found or not owned by user
 
 #### List Statements
 
