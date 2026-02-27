@@ -20,7 +20,41 @@ A modern, full-stack personal finance application built with **Angular 21** and 
 
 ## 🖥 Screenshots
 
-> _Coming soon_
+> See [screenshots/README.md](./screenshots/README.md) for a full annotated gallery with descriptions of every module.
+
+### Dashboard
+| Dark Mode | Light Mode |
+|-----------|------------|
+| ![Dashboard Dark](./screenshots/Dashboard.png) | ![Dashboard Light](./screenshots/Dashboard_Light.png) |
+
+### Transactions & Recurring
+| Transactions | Recurring |
+|-------------|-----------|
+| ![Transactions](./screenshots/Transactions.png) | ![Recurring](./screenshots/Recurring.png) |
+
+### Analytics & Splits
+| Analytics | Splits |
+|-----------|--------|
+| ![Analytics](./screenshots/Analytics.png) | ![Splits](./screenshots/Splits.png) |
+
+### Import & Statements
+| Bulk Import | Statements | Upload Statement |
+|-------------|-----------|-----------------|
+| ![Import](./screenshots/Import.png) | ![Statements](./screenshots/Statements.png) | ![Upload](./screenshots/Upload_Statement.png) |
+
+### Settings
+| Profile | Accounts | Account Types |
+|---------|---------|--------------|
+| ![Profile](./screenshots/Settings_Profile.png) | ![Accounts](./screenshots/Settings_Accounts.png) | ![Account Types](./screenshots/Settings_Account_Types.png) |
+
+| Categories | Budgets | Dashboard Config | LLM |
+|-----------|---------|-----------------|-----|
+| ![Categories](./screenshots/Settings_Categories.png) | ![Budgets](./screenshots/Settings_Budgets.png) | ![Dashboard](./screenshots/Settings_Dashboard.png) | ![LLM](./screenshots/Settings_LLM_Configuration.png) |
+
+### Admin Panel
+| User Management | Jobs | Server Settings |
+|----------------|------|----------------|
+| ![Users](./screenshots/Admin_User_Management.png) | ![Jobs](./screenshots/Admin_Server_Jobs.png) | ![Settings 1](./screenshots/Admin_Server_Settings_1.png) |
 
 ---
 
