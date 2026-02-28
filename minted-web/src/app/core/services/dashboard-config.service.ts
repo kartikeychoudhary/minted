@@ -29,13 +29,17 @@ export class DashboardConfigService {
   getChartColors(): string[] {
     const stored = localStorage.getItem(CHART_COLORS_KEY);
     if (stored) {
-      try { return JSON.parse(stored); } catch { /* fall through */ }
+      try {
+        const colors: string[] = JSON.parse(stored);
+        return colors.map(c => c.startsWith('#') ? c : `#${c}`);
+      } catch { /* fall through */ }
     }
     return [...DEFAULT_CHART_COLORS];
   }
 
   saveChartColors(colors: string[]): void {
-    localStorage.setItem(CHART_COLORS_KEY, JSON.stringify(colors));
+    const normalized = colors.map(c => c.startsWith('#') ? c : `#${c}`);
+    localStorage.setItem(CHART_COLORS_KEY, JSON.stringify(normalized));
   }
 
   getDefaultChartColors(): string[] {

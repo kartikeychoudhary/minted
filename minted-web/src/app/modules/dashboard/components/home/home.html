@@ -25,6 +25,17 @@
         (onChange)="onPeriodChange()"
         styleClass="period-select">
       </p-select>
+      <div *ngIf="showCustomDateRange" class="flex items-center gap-2">
+        <p-datepicker [(ngModel)]="customStartDate" placeholder="Start Date"
+          dateFormat="yy-mm-dd" [showIcon]="true" [maxDate]="customEndDate!"
+          (onSelect)="onCustomDateApply()" appendTo="body">
+        </p-datepicker>
+        <span style="color: var(--minted-text-muted);">to</span>
+        <p-datepicker [(ngModel)]="customEndDate" placeholder="End Date"
+          dateFormat="yy-mm-dd" [showIcon]="true" [minDate]="customStartDate!"
+          (onSelect)="onCustomDateApply()" appendTo="body">
+        </p-datepicker>
+      </div>
     </div>
   </div>
 

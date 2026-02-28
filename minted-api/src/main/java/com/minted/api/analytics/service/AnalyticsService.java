@@ -14,11 +14,11 @@ import java.util.List;
 
 public interface AnalyticsService {
 
-    AnalyticsSummaryResponse getSummary(Long userId, LocalDate startDate, LocalDate endDate);
+    AnalyticsSummaryResponse getSummary(Long userId, LocalDate startDate, LocalDate endDate, Long accountId);
 
-    List<CategoryWiseResponse> getCategoryWise(Long userId, LocalDate startDate, LocalDate endDate, TransactionType type);
+    List<CategoryWiseResponse> getCategoryWise(Long userId, LocalDate startDate, LocalDate endDate, TransactionType type, Long accountId);
 
-    List<TrendResponse> getTrend(Long userId, int months);
+    List<TrendResponse> getTrend(Long userId, int months, Long accountId);
 
     ChartDataResponse getCardData(Long userId, Long cardId, LocalDate startDate, LocalDate endDate);
 

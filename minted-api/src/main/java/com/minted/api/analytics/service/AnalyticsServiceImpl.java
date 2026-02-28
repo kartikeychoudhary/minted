@@ -41,31 +41,29 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public AnalyticsSummaryResponse getSummary(Long userId, LocalDate startDate, LocalDate endDate) {
-        log.debug("Computing analytics summary: userId={}, range={} to {}", userId, startDate, endDate);
+    public AnalyticsSummaryResponse getSummary(Long userId, LocalDate startDate, LocalDate endDate, Long accountId) {
+        log.debug("Computing analytics summary: userId={}, range={} to {}, accountId={}", userId, startDate, endDate, accountId);
         List<Long> excludedIds = dashboardConfigService.getExcludedCategoryIds(userId);
 
-        BigDecimal totalIncome = sumAmount(userId, TransactionType.INCOME, startDate, endDate, excludedIds);
-        BigDecimal totalExpense = sumAmount(userId, TransactionType.EXPENSE, startDate, endDate, excludedIds);
+        BigDecimal totalIncome = sumAmountFiltered(userId, TransactionType.INCOME, startDate, endDate, excludedIds, accountId);
+        BigDecimal totalExpense = sumAmountFiltered(userId, TransactionType.EXPENSE, startDate, endDate, excludedIds, accountId);
 
         totalIncome = totalIncome != null ? totalIncome : BigDecimal.ZERO;
         totalExpense = totalExpense != null ? totalExpense : BigDecimal.ZERO;
 
         BigDecimal netBalance = totalIncome.subtract(totalExpense);
-        Long transactionCount = excludedIds.isEmpty()
-                ? transactionRepository.countByUserIdAndDateBetween(userId, startDate, endDate)
-                : transactionRepository.countExcludingCategories(userId, startDate, endDate, excludedIds);
+        List<Long> effectiveExcluded = excludedIds.isEmpty() ? List.of(-1L) : excludedIds;
+        Long transactionCount = transactionRepository.countFiltered(userId, startDate, endDate, effectiveExcluded, accountId);
 
         return new AnalyticsSummaryResponse(totalIncome, totalExpense, netBalance, transactionCount);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<CategoryWiseResponse> getCategoryWise(Long userId, LocalDate startDate, LocalDate endDate, TransactionType type) {
+    public List<CategoryWiseResponse> getCategoryWise(Long userId, LocalDate startDate, LocalDate endDate, TransactionType type, Long accountId) {
         List<Long> excludedIds = dashboardConfigService.getExcludedCategoryIds(userId);
-        List<Object[]> results = excludedIds.isEmpty()
-                ? transactionRepository.sumAmountGroupedByCategory(userId, type, startDate, endDate)
-                : transactionRepository.sumAmountGroupedByCategoryExcluding(userId, type, startDate, endDate, excludedIds);
+        List<Long> effectiveExcluded = excludedIds.isEmpty() ? List.of(-1L) : excludedIds;
+        List<Object[]> results = transactionRepository.sumAmountGroupedByCategoryFiltered(userId, type, startDate, endDate, effectiveExcluded, accountId);
 
         BigDecimal total = results.stream()
                 .map(r -> (BigDecimal) r[2])
@@ -93,13 +91,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TrendResponse> getTrend(Long userId, int months) {
+    public List<TrendResponse> getTrend(Long userId, int months, Long accountId) {
         LocalDate endDate = LocalDate.now();
         LocalDate startDate = endDate.minusMonths(months - 1).withDayOfMonth(1);
         List<Long> excludedIds = dashboardConfigService.getExcludedCategoryIds(userId);
 
-        List<Object[]> incomeResults = groupByMonth(userId, TransactionType.INCOME, startDate, endDate, excludedIds);
-        List<Object[]> expenseResults = groupByMonth(userId, TransactionType.EXPENSE, startDate, endDate, excludedIds);
+        List<Object[]> incomeResults = groupByMonthFiltered(userId, TransactionType.INCOME, startDate, endDate, excludedIds, accountId);
+        List<Object[]> expenseResults = groupByMonthFiltered(userId, TransactionType.EXPENSE, startDate, endDate, excludedIds, accountId);
 
         Map<String, BigDecimal> incomeMap = new HashMap<>();
         for (Object[] r : incomeResults) {
@@ -381,9 +379,19 @@ public class AnalyticsServiceImpl implements AnalyticsService {
                 : transactionRepository.sumAmountExcludingCategories(userId, type, startDate, endDate, excludedIds);
     }
 
+    private BigDecimal sumAmountFiltered(Long userId, TransactionType type, LocalDate startDate, LocalDate endDate, List<Long> excludedIds, Long accountId) {
+        List<Long> effectiveExcluded = excludedIds.isEmpty() ? List.of(-1L) : excludedIds;
+        return transactionRepository.sumAmountFiltered(userId, type, startDate, endDate, effectiveExcluded, accountId);
+    }
+
     private List<Object[]> groupByMonth(Long userId, TransactionType type, LocalDate startDate, LocalDate endDate, List<Long> excludedIds) {
         return excludedIds.isEmpty()
                 ? transactionRepository.sumAmountGroupedByMonth(userId, type, startDate, endDate)
                 : transactionRepository.sumAmountGroupedByMonthExcluding(userId, type, startDate, endDate, excludedIds);
+    }
+
+    private List<Object[]> groupByMonthFiltered(Long userId, TransactionType type, LocalDate startDate, LocalDate endDate, List<Long> excludedIds, Long accountId) {
+        List<Long> effectiveExcluded = excludedIds.isEmpty() ? List.of(-1L) : excludedIds;
+        return transactionRepository.sumAmountGroupedByMonthFiltered(userId, type, startDate, endDate, effectiveExcluded, accountId);
     }
 }

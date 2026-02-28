@@ -34,10 +34,11 @@ public class AnalyticsController {
     public ResponseEntity<Map<String, Object>> getSummary(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Long accountId,
             Authentication authentication
     ) {
         Long userId = getUserId(authentication);
-        AnalyticsSummaryResponse summary = analyticsService.getSummary(userId, startDate, endDate);
+        AnalyticsSummaryResponse summary = analyticsService.getSummary(userId, startDate, endDate, accountId);
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", summary
@@ -49,11 +50,12 @@ public class AnalyticsController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) TransactionType type,
+            @RequestParam(required = false) Long accountId,
             Authentication authentication
     ) {
         Long userId = getUserId(authentication);
         TransactionType effectiveType = type != null ? type : TransactionType.EXPENSE;
-        List<CategoryWiseResponse> data = analyticsService.getCategoryWise(userId, startDate, endDate, effectiveType);
+        List<CategoryWiseResponse> data = analyticsService.getCategoryWise(userId, startDate, endDate, effectiveType, accountId);
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", data
@@ -63,10 +65,11 @@ public class AnalyticsController {
     @GetMapping("/trend")
     public ResponseEntity<Map<String, Object>> getTrend(
             @RequestParam(defaultValue = "6") int months,
+            @RequestParam(required = false) Long accountId,
             Authentication authentication
     ) {
         Long userId = getUserId(authentication);
-        List<TrendResponse> data = analyticsService.getTrend(userId, months);
+        List<TrendResponse> data = analyticsService.getTrend(userId, months, accountId);
         return ResponseEntity.ok(Map.of(
                 "success", true,
                 "data", data

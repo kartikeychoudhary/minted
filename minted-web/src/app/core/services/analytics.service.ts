@@ -13,27 +13,30 @@ export class AnalyticsService {
 
     constructor(private http: HttpClient) { }
 
-    getSummary(startDate: string, endDate: string): Observable<AnalyticsSummary> {
-        const params = new HttpParams()
+    getSummary(startDate: string, endDate: string, accountId?: number | null): Observable<AnalyticsSummary> {
+        let params = new HttpParams()
             .set('startDate', startDate)
             .set('endDate', endDate);
+        if (accountId) params = params.set('accountId', accountId.toString());
 
         return this.http.get<{ success: boolean; data: AnalyticsSummary }>(`${this.apiUrl}/summary`, { params })
             .pipe(map(response => response.data));
     }
 
-    getCategoryWise(startDate: string, endDate: string, type: string = 'EXPENSE'): Observable<CategoryWise[]> {
-        const params = new HttpParams()
+    getCategoryWise(startDate: string, endDate: string, type: string = 'EXPENSE', accountId?: number | null): Observable<CategoryWise[]> {
+        let params = new HttpParams()
             .set('startDate', startDate)
             .set('endDate', endDate)
             .set('type', type);
+        if (accountId) params = params.set('accountId', accountId.toString());
 
         return this.http.get<{ success: boolean; data: CategoryWise[] }>(`${this.apiUrl}/category-wise`, { params })
             .pipe(map(response => response.data));
     }
 
-    getTrend(months: number = 6): Observable<TrendData[]> {
-        const params = new HttpParams().set('months', months.toString());
+    getTrend(months: number = 6, accountId?: number | null): Observable<TrendData[]> {
+        let params = new HttpParams().set('months', months.toString());
+        if (accountId) params = params.set('accountId', accountId.toString());
 
         return this.http.get<{ success: boolean; data: TrendData[] }>(`${this.apiUrl}/trend`, { params })
             .pipe(map(response => response.data));

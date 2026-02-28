@@ -44,6 +44,11 @@ export class Home implements OnInit, OnDestroy {
   accountOptions: AccountResponse[] = [];
   selectedAccountId: number | null = null;
 
+  // Custom date range
+  showCustomDateRange = false;
+  customStartDate: Date | null = null;
+  customEndDate: Date | null = null;
+
   // Chart configurations
   chartColors: string[] = [];
   barChartData: any = {};
@@ -86,6 +91,21 @@ export class Home implements OnInit, OnDestroy {
   }
 
   onPeriodChange(): void {
+    if (this.selectedPeriod?.value === 'CUSTOM') {
+      this.showCustomDateRange = true;
+      this.cdr.detectChanges();
+      return;
+    }
+    this.showCustomDateRange = false;
+    this.loadDashboardData();
+  }
+
+  onCustomDateApply(): void {
+    if (!this.customStartDate || !this.customEndDate) return;
+    if (this.selectedPeriod) {
+      this.selectedPeriod.startDate = this.formatDate(this.customStartDate);
+      this.selectedPeriod.endDate = this.formatDate(this.customEndDate);
+    }
     this.loadDashboardData();
   }
 
@@ -120,7 +140,8 @@ export class Home implements OnInit, OnDestroy {
       { label: 'Last Month', value: 'LAST_MONTH', startDate: this.formatDate(lastMonthStart), endDate: this.formatDate(lastMonthEnd) },
       { label: 'Last 3 Months', value: 'LAST_3_MONTHS', startDate: this.formatDate(last3Start), endDate: this.formatDate(thisMonthEnd) },
       { label: 'Last 6 Months', value: 'LAST_6_MONTHS', startDate: this.formatDate(last6Start), endDate: this.formatDate(thisMonthEnd) },
-      { label: 'This Year', value: 'THIS_YEAR', startDate: this.formatDate(thisYearStart), endDate: this.formatDate(thisMonthEnd) }
+      { label: 'This Year', value: 'THIS_YEAR', startDate: this.formatDate(thisYearStart), endDate: this.formatDate(thisMonthEnd) },
+      { label: 'Custom Range', value: 'CUSTOM', startDate: '', endDate: '' }
     ];
 
     this.selectedPeriod = this.periods[0]; // Default: This Month
@@ -133,7 +154,7 @@ export class Home implements OnInit, OnDestroy {
 
     // Load summary
     this.loadingSummary = true;
-    this.analyticsService.getSummary(startDate, endDate)
+    this.analyticsService.getSummary(startDate, endDate, this.selectedAccountId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -150,7 +171,7 @@ export class Home implements OnInit, OnDestroy {
 
     // Load category-wise
     this.loadingCategories = true;
-    this.analyticsService.getCategoryWise(startDate, endDate, 'EXPENSE')
+    this.analyticsService.getCategoryWise(startDate, endDate, 'EXPENSE', this.selectedAccountId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -171,7 +192,7 @@ export class Home implements OnInit, OnDestroy {
 
     // Load trend
     this.loadingTrend = true;
-    this.analyticsService.getTrend(6)
+    this.analyticsService.getTrend(6, this.selectedAccountId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -197,7 +218,7 @@ export class Home implements OnInit, OnDestroy {
         {
           label: 'Expenses',
           data: topCategories.map(c => c.totalAmount),
-          backgroundColor: topCategories.map((c, i) => c.color || this.chartColors[i % this.chartColors.length] || '#c48821'),
+          backgroundColor: topCategories.map((c, i) => this.getColor(i)),
           borderRadius: 6,
           barThickness: 28
         }
@@ -212,7 +233,7 @@ export class Home implements OnInit, OnDestroy {
       datasets: [
         {
           data: topCategories.map(c => c.totalAmount),
-          backgroundColor: topCategories.map((c, i) => c.color || this.chartColors[i % this.chartColors.length] || '#94a3b8'),
+          backgroundColor: topCategories.map((c, i) => this.getColor(i)),
           borderWidth: 2,
           borderColor: '#ffffff',
           hoverOffset: 8
@@ -375,6 +396,16 @@ export class Home implements OnInit, OnDestroy {
     if (hour < 12) return 'Good Morning';
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
+  }
+
+  private normalizeHex(color: string | null | undefined): string {
+    if (!color) return '';
+    return color.startsWith('#') ? color : `#${color}`;
+  }
+
+  private getColor(index: number): string {
+    const c = this.chartColors[index % this.chartColors.length] || '#94a3b8';
+    return this.normalizeHex(c);
   }
 
   private formatDate(date: Date): string {

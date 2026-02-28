@@ -176,4 +176,67 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("endDate") LocalDate endDate,
             @Param("excludedCategoryIds") List<Long> excludedCategoryIds
     );
+
+    // Account-filtered analytics queries (accountId is optional — pass null to skip)
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.user.id = :userId " +
+           "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+           "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
+           "AND (:accountId IS NULL OR t.account.id = :accountId) " +
+           "AND t.category.id NOT IN :excludedCategoryIds")
+    BigDecimal sumAmountFiltered(
+            @Param("userId") Long userId,
+            @Param("type") TransactionType type,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("excludedCategoryIds") List<Long> excludedCategoryIds,
+            @Param("accountId") Long accountId
+    );
+
+    @Query("SELECT COUNT(t) FROM Transaction t WHERE t.user.id = :userId " +
+           "AND t.transactionDate BETWEEN :startDate AND :endDate " +
+           "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
+           "AND (:accountId IS NULL OR t.account.id = :accountId) " +
+           "AND t.category.id NOT IN :excludedCategoryIds")
+    Long countFiltered(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("excludedCategoryIds") List<Long> excludedCategoryIds,
+            @Param("accountId") Long accountId
+    );
+
+    @Query("SELECT t.category.id, t.category.name, SUM(t.amount), COUNT(t), t.category.icon, t.category.color " +
+           "FROM Transaction t WHERE t.user.id = :userId " +
+           "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+           "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
+           "AND (:accountId IS NULL OR t.account.id = :accountId) " +
+           "AND t.category.id NOT IN :excludedCategoryIds " +
+           "GROUP BY t.category.id, t.category.name, t.category.icon, t.category.color " +
+           "ORDER BY SUM(t.amount) DESC")
+    List<Object[]> sumAmountGroupedByCategoryFiltered(
+            @Param("userId") Long userId,
+            @Param("type") TransactionType type,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("excludedCategoryIds") List<Long> excludedCategoryIds,
+            @Param("accountId") Long accountId
+    );
+
+    @Query("SELECT YEAR(t.transactionDate), MONTH(t.transactionDate), SUM(t.amount) " +
+           "FROM Transaction t WHERE t.user.id = :userId " +
+           "AND t.type = :type AND t.transactionDate BETWEEN :startDate AND :endDate " +
+           "AND (t.excludeFromAnalysis = false OR t.excludeFromAnalysis IS NULL) " +
+           "AND (:accountId IS NULL OR t.account.id = :accountId) " +
+           "AND t.category.id NOT IN :excludedCategoryIds " +
+           "GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate) " +
+           "ORDER BY YEAR(t.transactionDate), MONTH(t.transactionDate)")
+    List<Object[]> sumAmountGroupedByMonthFiltered(
+            @Param("userId") Long userId,
+            @Param("type") TransactionType type,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("excludedCategoryIds") List<Long> excludedCategoryIds,
+            @Param("accountId") Long accountId
+    );
 }
