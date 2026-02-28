@@ -929,6 +929,45 @@ Added `minted-sensitive` CSS class to all financial data elements:
 
 ---
 
+## Release v1.0.3 — Dashboard Fixes, Account Filter, Custom Date Range (2026-02-28)
+
+### Bug Fixes
+
+#### 1. Dashboard Chart Colors from Settings
+- **Root Cause:** Two issues: (a) PrimeNG `p-colorPicker` outputs hex values WITHOUT `#` prefix (e.g., `c48821`), so colors saved to localStorage lacked `#`. Chart.js couldn't parse them → rendered black bars. (b) Chart builders used `c.color` (category color from DB) with palette as fallback — since most categories had a color set, the dashboard config palette was never used.
+- **Fix:** Normalized `#` prefix in `DashboardConfigService.getChartColors()` and `saveChartColors()`. Changed chart builders to always use the dashboard config palette via `getColor(i)` instead of category colors.
+
+**Files modified:** `dashboard-config.service.ts`, `home.ts`
+
+#### 2. Dashboard Account Filter
+- **Root Cause:** Frontend had account dropdown and `onAccountFilterChange()` calling `loadDashboardData()`, but `loadDashboardData()` never passed `selectedAccountId` to analytics API calls. Backend analytics endpoints (`/summary`, `/category-wise`, `/trend`) didn't accept an `accountId` parameter at all.
+- **Fix:** Added `@RequestParam(required = false) Long accountId` to 3 backend controller endpoints. Added `Long accountId` to service interface and implementation. Added 4 new `@Query` repository methods with `(:accountId IS NULL OR t.account.id = :accountId)` clause. Frontend `AnalyticsService` now passes optional `accountId` param. Dashboard component passes `this.selectedAccountId` to all 3 API calls.
+
+**Files modified (backend):** `AnalyticsController.java`, `AnalyticsService.java`, `AnalyticsServiceImpl.java`, `TransactionRepository.java`
+**Files modified (frontend):** `analytics.service.ts`, `home.ts`
+
+### New Features
+
+#### 3. Custom Date Range Filter
+- Added "Custom Range" option to dashboard period selector
+- When selected, shows two `p-datepicker` components (start/end) inline with the period dropdown
+- Automatically loads data when both dates are selected
+- Start date constrained by end date and vice versa
+
+**Files modified:** `home.ts`, `home.html`
+
+#### 4. Additional Color Palette Presets
+- Added 6 new chart color presets to Settings → Dashboard Config: Ocean, Sunset, Forest, Berry, Earth, Neon
+- Total presets now: 9 (Minted, Pastel, Vibrant, Ocean, Sunset, Forest, Berry, Earth, Neon)
+
+**Files modified:** `dashboard-config.ts`
+
+### Docker Images
+- `kartikey31choudhary/minted-backend:v1.0.3`
+- `kartikey31choudhary/minted-frontend:v1.0.3`
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.

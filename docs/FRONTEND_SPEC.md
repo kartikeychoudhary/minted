@@ -469,10 +469,11 @@ export interface ChartDataset {
   - Cards are draggable for reordering (use PrimeNG `pDraggable`/`pDroppable` or simple position buttons).
 
 - **Filters:** Top-right corner contains:
-  - Account filter (PrimeNG `p-select`) — filters all KPI cards and charts by selected account
-  - Period selector (PrimeNG `p-select`) — controls the global dashboard date range (This Month, Last Month, Last 3 Months, Last 6 Months, This Year)
+  - Account filter (PrimeNG `p-select`) — filters all KPI cards and charts by selected account. Passes `accountId` to backend analytics APIs (`/summary`, `/category-wise`, `/trend`).
+  - Period selector (PrimeNG `p-select`) — controls the global dashboard date range (This Month, Last Month, Last 3 Months, Last 6 Months, This Year, Custom Range)
+  - Custom date range (two `p-datepicker` components) — shown when "Custom Range" is selected. Start/end dates are mutually constrained. Data loads automatically when both dates are picked.
 
-- **Chart Color Palette:** Charts use configurable colors from `DashboardConfigService`. Colors are managed in Settings → Dashboard Config tab and stored in localStorage. Default palette: 8 colors (amber, teal, rose, blue, emerald, violet, orange, cyan).
+- **Chart Color Palette:** Charts always use the configurable palette from `DashboardConfigService` (category-level colors from the DB are not used in dashboard charts). Colors are managed in Settings → Dashboard Config tab and stored in localStorage. Default palette: 8 colors. 9 presets available: Minted, Pastel, Vibrant, Ocean, Sunset, Forest, Berry, Earth, Neon. Colors are normalized with `#` prefix on read/save to handle PrimeNG ColorPicker hex format.
 
 ### 4.4 Transactions Page (`/transactions`)
 - **Filter Bar** at the top:

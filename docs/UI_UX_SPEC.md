@@ -284,7 +284,7 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 ### 6.2 Dashboard Page
 ```
 ┌──────────────────────────────────────────────────────┐
-│ Financial Overview              [Account▼] [Period▼] │  ← Title + filters
+│ Financial Overview  [Account▼] [Period▼] [Start] to [End] │  ← Title + filters
 │ Good morning, User                                    │
 ├──────────────────────────────────────────────────────┤
 │ ┌───────────┐ ┌───────────┐ ┌───────────┐ ┌───────┐│
@@ -303,9 +303,10 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 │ └────────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────┘
 ```
-- **Account filter:** PrimeNG `p-select` with clearable option — filters KPIs and charts by account
-- **Period selector:** PrimeNG `p-select` — This Month, Last Month, Last 3/6 Months, This Year
-- **Chart colors:** Configurable via Settings → Dashboard Config color palette
+- **Account filter:** PrimeNG `p-select` with clearable option — filters KPIs and charts by account (passes `accountId` to backend analytics APIs)
+- **Period selector:** PrimeNG `p-select` — This Month, Last Month, Last 3/6 Months, This Year, Custom Range
+- **Custom date range:** Two `p-datepicker` components shown inline when "Custom Range" is selected. Start/end dates mutually constrained. Data loads on date selection.
+- **Chart colors:** Always use the configurable palette from Settings → Dashboard Config (category-level colors from DB are not used). 9 presets: Minted, Pastel, Vibrant, Ocean, Sunset, Forest, Berry, Earth, Neon.
 
 ### 6.3 Transactions Page
 ```

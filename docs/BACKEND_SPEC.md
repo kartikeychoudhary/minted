@@ -513,6 +513,8 @@ GET /api/v1/dashboard/cards/{id}/data?startDate=2026-01-01&endDate=2026-01-31
 
 > **Excluded Category Filtering:** All analytics endpoints automatically exclude transactions belonging to categories marked with `excludeFromAnalysis = true` on the transaction itself, as well as categories listed in the user's `DashboardConfig.excludedCategoryIds`. The service layer (`AnalyticsServiceImpl`) fetches excluded IDs from `DashboardConfigService` and uses dedicated repository queries (`*ExcludingCategories`) when exclusions are configured.
 
+> **Account Filtering (v1.0.3):** The `/summary`, `/category-wise`, and `/trend` endpoints accept an optional `accountId` query parameter. When provided, only transactions belonging to that account are included. This is implemented via consolidated `@Query` repository methods (`sumAmountFiltered`, `countFiltered`, `sumAmountGroupedByCategoryFiltered`, `sumAmountGroupedByMonthFiltered`) using the pattern `(:accountId IS NULL OR t.account.id = :accountId)`. A sentinel `List.of(-1L)` is used for the excluded categories list when no exclusions are configured, avoiding empty `NOT IN` clauses.
+
 ---
 
 ## 5. Error Handling

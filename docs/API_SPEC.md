@@ -552,7 +552,13 @@ Bulk update category for multiple transactions.
 1. Transactions with `excludeFromAnalysis = true`
 2. Transactions belonging to categories listed in the user's Dashboard Configuration (`excludedCategoryIds`)
 
-### GET `/analytics/summary?startDate=2026-02-01&endDate=2026-02-28`
+### GET `/analytics/summary?startDate=2026-02-01&endDate=2026-02-28&accountId=1`
+
+| Param | Required | Description |
+|-------|----------|-------------|
+| `startDate` | Yes | Start date (ISO format) |
+| `endDate` | Yes | End date (ISO format) |
+| `accountId` | No | Filter by account ID. Omit for all accounts. |
 **Response:**
 ```json
 {
@@ -566,7 +572,14 @@ Bulk update category for multiple transactions.
 }
 ```
 
-### GET `/analytics/category-wise?startDate=2026-02-01&endDate=2026-02-28&type=EXPENSE`
+### GET `/analytics/category-wise?startDate=2026-02-01&endDate=2026-02-28&type=EXPENSE&accountId=1`
+
+| Param | Required | Description |
+|-------|----------|-------------|
+| `startDate` | Yes | Start date (ISO format) |
+| `endDate` | Yes | End date (ISO format) |
+| `type` | No | `INCOME` or `EXPENSE` (default: `EXPENSE`) |
+| `accountId` | No | Filter by account ID. Omit for all accounts. |
 **Response:**
 ```json
 {
@@ -585,7 +598,12 @@ Bulk update category for multiple transactions.
 }
 ```
 
-### GET `/analytics/trend?months=6`
+### GET `/analytics/trend?months=6&accountId=1`
+
+| Param | Required | Description |
+|-------|----------|-------------|
+| `months` | No | Number of months (default: `6`) |
+| `accountId` | No | Filter by account ID. Omit for all accounts. |
 **Response:**
 ```json
 {
