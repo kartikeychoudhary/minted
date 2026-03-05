@@ -106,6 +106,7 @@ body {
   background-color: var(--minted-bg-page);
   color: var(--minted-text-primary);
   transition: background-color 0.2s ease, color 0.2s ease;
+  overflow-x: hidden;
 }
 
 // ============================================================

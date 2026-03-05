@@ -1,17 +1,17 @@
-<div class="p-8">
+<div class="p-4 sm:p-8">
     <!-- Filter Bar -->
     <div class="flex flex-wrap items-center gap-4 mb-6">
         <p-select [options]="monthOptions" [(ngModel)]="selectedMonth" optionLabel="label" optionValue="value"
-            (onChange)="onFilterChange()" styleClass="w-40">
+            (onChange)="onFilterChange()" styleClass="w-full sm:w-40">
         </p-select>
         <p-select [options]="yearOptions" [(ngModel)]="selectedYear" optionLabel="label" optionValue="value"
-            (onChange)="onFilterChange()" styleClass="w-28">
+            (onChange)="onFilterChange()" styleClass="w-full sm:w-28">
         </p-select>
         <p-select [options]="categoryOptions" [(ngModel)]="selectedCategoryId" placeholder="All Categories"
-            [showClear]="true" (onChange)="onFilterChange()" styleClass="w-48" optionLabel="name" optionValue="id">
+            [showClear]="true" (onChange)="onFilterChange()" styleClass="w-full sm:w-48" optionLabel="name" optionValue="id">
         </p-select>
         <p-select [options]="accountOptions" [(ngModel)]="selectedAccountId" placeholder="All Accounts"
-            [showClear]="true" (onChange)="onFilterChange()" styleClass="w-48" optionLabel="name" optionValue="id">
+            [showClear]="true" (onChange)="onFilterChange()" styleClass="w-full sm:w-48" optionLabel="name" optionValue="id">
         </p-select>
     </div>
 

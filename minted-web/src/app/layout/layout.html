@@ -7,8 +7,9 @@
 
   <!-- Mobile Sidebar Drawer -->
   <p-drawer [(visible)]="isMobileSidebarVisible" position="left" [style]="{ width: '280px' }" [modal]="true"
-    [showCloseIcon]="false" styleClass="mobile-sidebar-drawer" appendTo="body">
-    <app-sidebar [mobileMode]="true" (navigationClicked)="isMobileSidebarVisible = false"></app-sidebar>
+    [dismissible]="true" [showCloseIcon]="false" styleClass="mobile-sidebar-drawer" appendTo="body"
+    (onHide)="closeMobileSidebar()">
+    <app-sidebar [mobileMode]="true" (navigationClicked)="closeMobileSidebar()"></app-sidebar>
   </p-drawer>
 
   <!-- Main Content Area -->

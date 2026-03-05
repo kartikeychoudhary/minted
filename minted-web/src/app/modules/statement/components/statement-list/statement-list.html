@@ -2,7 +2,7 @@
   <!-- Header -->
   <header class="shadow-sm border-b"
     style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center">
         <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
           style="color: var(--minted-text-secondary);">
@@ -45,7 +45,7 @@
         class="rounded-lg border p-5 cursor-pointer transition-all hover:shadow-md"
         style="background-color: var(--minted-bg-card); border-color: var(--minted-border);"
         (click)="viewStatement(stmt)">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center gap-4">
             <div class="flex items-center justify-center w-10 h-10 rounded-lg"
               style="background-color: var(--minted-accent-subtle);">
@@ -53,7 +53,7 @@
             </div>
             <div>
               <h3 class="font-semibold" style="color: var(--minted-text-primary);">{{ stmt.fileName }}</h3>
-              <div class="flex items-center gap-3 mt-1 text-xs" style="color: var(--minted-text-muted);">
+              <div class="flex flex-wrap items-center gap-2 mt-1 text-xs" style="color: var(--minted-text-muted);">
                 <span class="minted-sensitive">{{ stmt.accountName }}</span>
                 <span>&bull;</span>
                 <span>{{ formatFileSize(stmt.fileSize) }}</span>
@@ -62,7 +62,7 @@
               </div>
             </div>
           </div>
-          <div class="flex items-center gap-4">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-4">
             <div class="text-right mr-4">
               <div *ngIf="stmt.parsedCount > 0" class="text-sm font-semibold" style="color: var(--minted-text-primary);">
                 {{ stmt.importedCount > 0 ? stmt.importedCount : stmt.parsedCount }} transactions

@@ -30,7 +30,7 @@
 
 <!-- Crop Dialog -->
 <p-dialog [(visible)]="showDialog" [header]="'Crop ' + label" [modal]="true" [draggable]="false" [resizable]="false"
-    [style]="{ width: '520px' }" styleClass="avatar-crop-dialog" (onHide)="cancelCrop()">
+    [style]="{ width: 'min(520px, 95vw)' }" styleClass="avatar-crop-dialog" (onHide)="cancelCrop()">
 
     <div class="crop-container">
         <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [aspectRatio]="1"

@@ -43,14 +43,13 @@ export class Layout implements OnInit, OnDestroy {
       }
     });
 
-    // Route loading indicator + auto-close mobile sidebar on navigation
+    // Route loading indicator
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
       if (event instanceof NavigationStart) {
         this.isRouteLoading = true;
         this.cdr.detectChanges();
       } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
         this.isRouteLoading = false;
-        this.isMobileSidebarVisible = false;
         this.cdr.detectChanges();
       }
     });
@@ -63,6 +62,15 @@ export class Layout implements OnInit, OnDestroy {
   toggleMobileSidebar(): void {
     this.isMobileSidebarVisible = !this.isMobileSidebarVisible;
     this.cdr.detectChanges();
+  }
+
+  closeMobileSidebar(): void {
+    this.isMobileSidebarVisible = false;
+    this.cdr.detectChanges();
+    // PrimeNG drawer leave animation takes ~300ms — remove any orphaned mask after it completes
+    setTimeout(() => {
+      document.querySelectorAll('.p-drawer-mask').forEach(el => el.remove());
+    }, 400);
   }
 
   onSidebarToggle(isOpen: boolean): void {

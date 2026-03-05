@@ -1,6 +1,6 @@
 ﻿<div class="space-y-6" style="overflow: visible;">
   <!-- Section Header -->
-  <div class="flex items-center justify-between">
+  <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
       <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Configure Budgets</h2>
       <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Set spending targets and manage monthly
@@ -90,7 +90,7 @@
 
 <!-- Add/Edit Dialog -->
 <p-dialog [(visible)]="displayDialog" [header]="isEditMode ? 'Edit Budget' : 'Add Budget'" [modal]="true"
-  [style]="{width: '500px', 'max-height': '90vh'}" [contentStyle]="{'overflow': 'visible'}" [draggable]="false"
+  [style]="{width: 'min(500px, 95vw)', 'max-height': '90vh'}" [contentStyle]="{'overflow': 'visible'}" [draggable]="false"
   [resizable]="false">
 
   <form *ngIf="budgetForm" [formGroup]="budgetForm" (ngSubmit)="saveBudget()">
@@ -190,4 +190,4 @@
 </p-dialog>
 
 <!-- Confirmation Dialog -->
-<p-confirmDialog key="budgets" [style]="{width: '450px'}"></p-confirmDialog>
+<p-confirmDialog key="budgets" [style]="{width: 'min(450px, 95vw)'}"></p-confirmDialog>

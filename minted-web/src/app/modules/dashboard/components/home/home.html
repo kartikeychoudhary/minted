@@ -7,7 +7,7 @@
         {{ getGreeting() }}, {{ currentUser.displayName || 'User' }}
       </p>
     </div>
-    <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
+    <div class="header-right flex flex-wrap items-center gap-3">
       <p-select
         [options]="accountOptions"
         [(ngModel)]="selectedAccountId"
@@ -16,16 +16,16 @@
         (onChange)="onAccountFilterChange()"
         optionLabel="name"
         optionValue="id"
-        styleClass="w-48">
+        styleClass="w-full sm:w-48">
       </p-select>
       <p-select
         [options]="periods"
         [(ngModel)]="selectedPeriod"
         optionLabel="label"
         (onChange)="onPeriodChange()"
-        styleClass="period-select">
+        styleClass="w-full sm:w-auto period-select">
       </p-select>
-      <div *ngIf="showCustomDateRange" class="flex items-center gap-2">
+      <div *ngIf="showCustomDateRange" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
         <p-datepicker [(ngModel)]="customStartDate" placeholder="Start Date"
           dateFormat="yy-mm-dd" [showIcon]="true" [maxDate]="customEndDate!"
           (onSelect)="onCustomDateApply()" appendTo="body">

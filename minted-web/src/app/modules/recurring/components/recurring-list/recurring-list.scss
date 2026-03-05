@@ -532,4 +532,9 @@
     .search-wrapper {
         width: 100%;
     }
+
+    .table-body-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }

@@ -53,7 +53,7 @@
 </div>
 
 <!-- Create User Dialog -->
-<p-dialog header="Create New User" [(visible)]="showCreateDialog" [modal]="true" [style]="{width: '450px'}"
+<p-dialog header="Create New User" [(visible)]="showCreateDialog" [modal]="true" [style]="{width: 'min(450px, 95vw)'}"
     [draggable]="false" [resizable]="false">
     <form [formGroup]="createForm" (ngSubmit)="createUser()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
@@ -106,7 +106,7 @@
 </p-dialog>
 
 <!-- Reset Password Dialog -->
-<p-dialog header="Reset Password" [(visible)]="showResetDialog" [modal]="true" [style]="{width: '400px'}"
+<p-dialog header="Reset Password" [(visible)]="showResetDialog" [modal]="true" [style]="{width: 'min(400px, 95vw)'}"
     [draggable]="false" [resizable]="false">
     <form [formGroup]="resetForm" (ngSubmit)="resetPassword()" class="pt-4 space-y-4">
         <p class="text-sm text-minted-text-secondary">

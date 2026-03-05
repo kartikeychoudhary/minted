@@ -179,3 +179,9 @@
 .hover\:text-primary:hover {
   color: var(--minted-accent);
 }
+
+@media (max-width: 768px) {
+  ag-grid-angular {
+    height: 420px !important;
+  }
+}

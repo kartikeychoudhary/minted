@@ -1,4 +1,4 @@
-<aside [class]="(mobileMode || isOpen) ? 'w-64' : 'w-20'"
+<aside [class]="mobileMode ? 'w-full' : (isOpen ? 'w-64' : 'w-20')"
   class="flex-shrink-0 text-white flex flex-col transition-all duration-300 relative" [class.h-screen]="!mobileMode"
   [class.h-full]="mobileMode" [style.background-color]="'var(--minted-sidebar-bg)'">
 

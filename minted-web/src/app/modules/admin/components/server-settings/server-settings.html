@@ -131,7 +131,7 @@
 </div>
 
 <!-- Modals -->
-<p-dialog header="New Default Category" [(visible)]="showCategoryDialog" [modal]="true" [style]="{width: '400px'}"
+<p-dialog header="New Default Category" [(visible)]="showCategoryDialog" [modal]="true" [style]="{width: 'min(400px, 95vw)'}"
     [draggable]="false" [resizable]="false">
     <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
@@ -162,7 +162,7 @@
 </p-dialog>
 
 <p-dialog header="New Default Account Type" [(visible)]="showAccountTypeDialog" [modal]="true"
-    [style]="{width: '400px'}" [draggable]="false" [resizable]="false">
+    [style]="{width: 'min(400px, 95vw)'}" [draggable]="false" [resizable]="false">
     <form [formGroup]="accountTypeForm" (ngSubmit)="saveAccountType()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
             <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
@@ -179,7 +179,7 @@
 </p-dialog>
 
 <p-dialog [header]="editingModel ? 'Edit Model' : 'Add LLM Model'" [(visible)]="showModelDialog" [modal]="true"
-    [style]="{width: '450px'}" [draggable]="false" [resizable]="false">
+    [style]="{width: 'min(450px, 95vw)'}" [draggable]="false" [resizable]="false">
     <form [formGroup]="modelForm" (ngSubmit)="saveModel()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
             <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>

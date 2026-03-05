@@ -6,7 +6,7 @@
       <p class="text-sm mt-1" style="color: var(--minted-text-muted);">Manage and categorize your financial activity.
       </p>
     </div>
-    <div class="flex gap-3 items-center">
+    <div class="flex flex-wrap gap-2 items-center">
       <!-- Bulk action buttons (visible when rows selected) -->
       <span *ngIf="selectedTransactions.length > 0" class="text-sm font-medium px-2 py-1 rounded-full"
         style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
@@ -144,12 +144,12 @@
 
 <!-- Transaction Dialog -->
 <p-dialog [(visible)]="showDialog" [header]="isEditMode ? 'Edit Transaction' : 'Add Transaction'" [modal]="true"
-  [style]="{width: '600px'}" [draggable]="false" [resizable]="false">
+  [style]="{width: 'min(600px, 95vw)'}" [draggable]="false" [resizable]="false">
 
   <form *ngIf="transactionForm" [formGroup]="transactionForm" (ngSubmit)="saveTransaction()">
-    <div class="space-y-4">
+    <div class="space-y-4" style="overflow-y: auto; max-height: calc(85vh - 180px); padding-right: 4px;">
       <!-- Amount and Type Row -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label for="amount" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Amount</label>
@@ -191,7 +191,7 @@
       </div>
 
       <!-- Date and Category Row -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label for="transactionDate" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Date</label>
@@ -220,7 +220,7 @@
       </div>
 
       <!-- Account and To Account Row -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label for="accountId" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Account</label>
@@ -253,7 +253,7 @@
       </div>
 
       <!-- Tags and Recurring Row -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label for="tags" class="block text-sm font-medium mb-2"
             style="color: var(--minted-text-secondary);">Tags</label>
@@ -302,12 +302,12 @@
   [(visible)]="showSplitDialog"
   header="Split Transaction"
   [modal]="true"
-  [style]="{ width: '640px', maxHeight: '90vh' }"
+  [style]="{ width: 'min(640px, 95vw)' }"
   [closable]="true"
   [draggable]="false"
   (onHide)="onSplitDialogHide()">
   <form *ngIf="splitForm" [formGroup]="splitForm" (ngSubmit)="saveSplit()">
-    <div class="space-y-5">
+    <div class="space-y-5" style="overflow-y: auto; max-height: calc(85vh - 180px); padding-right: 4px;">
       <!-- Description -->
       <div>
         <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Description *</label>
@@ -318,7 +318,7 @@
       </div>
 
       <!-- Category + Amount -->
-      <div class="grid grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Category *</label>
           <input pInputText formControlName="categoryName" class="w-full" placeholder="e.g. Dining" />
@@ -400,22 +400,22 @@
               <p *ngIf="entry.friendId === null" class="text-xs" style="color: var(--minted-text-muted);">Paying full amount</p>
             </div>
             <!-- Amount -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 shrink-0">
               <div *ngIf="selectedSplitType === 'EQUAL'" class="text-right">
                 <p class="text-sm font-bold minted-sensitive" style="color: var(--minted-text-primary);">{{ currencyService.format(entry.shareAmount) }}</p>
               </div>
               <input *ngIf="selectedSplitType === 'UNEQUAL'" type="number" step="0.01" [min]="0"
-                class="w-24 px-2 py-1 rounded text-sm text-right"
+                class="w-20 px-2 py-1 rounded text-sm text-right"
                 style="background-color: var(--minted-bg-input); color: var(--minted-text-primary); border: 1px solid var(--minted-border);"
                 [(ngModel)]="entry.shareAmount" [ngModelOptions]="{ standalone: true }" />
-              <div *ngIf="selectedSplitType === 'SHARE'" class="flex items-center gap-2">
+              <div *ngIf="selectedSplitType === 'SHARE'" class="flex items-center gap-1">
                 <input type="number" step="0.01" [min]="0" [max]="100"
-                  class="w-16 px-2 py-1 rounded text-sm text-right"
+                  class="w-14 px-2 py-1 rounded text-sm text-right"
                   style="background-color: var(--minted-bg-input); color: var(--minted-text-primary); border: 1px solid var(--minted-border);"
                   [(ngModel)]="entry.sharePercentage" [ngModelOptions]="{ standalone: true }"
                   (ngModelChange)="onSharePercentageChange(i)" />
                 <span class="text-xs" style="color: var(--minted-text-muted);">%</span>
-                <span class="text-xs" style="color: var(--minted-text-secondary);">{{ currencyService.format(entry.shareAmount) }}</span>
+                <span class="text-xs hidden sm:inline" style="color: var(--minted-text-secondary);">{{ currencyService.format(entry.shareAmount) }}</span>
               </div>
               <!-- Remove button (not for "Me") -->
               <button *ngIf="entry.friendId !== null" type="button"
@@ -474,7 +474,7 @@
 
 <!-- Bulk Category Dialog -->
 <p-dialog [(visible)]="showBulkCategoryDialog" header="Change Category" [modal]="true"
-  [style]="{width: '400px'}" [draggable]="false" [resizable]="false">
+  [style]="{width: 'min(400px, 95vw)'}" [draggable]="false" [resizable]="false">
   <div class="space-y-4">
     <p class="text-sm" style="color: var(--minted-text-secondary);">
       Select a new category for {{ selectedTransactions.length }} selected transaction(s).

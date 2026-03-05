@@ -1,10 +1,10 @@
 <p-toast></p-toast>
 <p-confirmDialog key="notificationsPage"></p-confirmDialog>
 
-<div class="p-8">
+<div class="p-4 sm:p-8">
   <div class="max-w-4xl mx-auto">
     <!-- Title & Global Actions -->
-    <div class="flex items-end justify-between mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
       <div>
         <h2 class="text-3xl font-black tracking-tight" [style.color]="'var(--minted-text-primary)'">
           Notifications
@@ -13,7 +13,7 @@
           Keep track of your financial movements and alerts.
         </p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2">
         <button
           *ngIf="(notificationService.unreadCount$ | async) as count"
           pButton
