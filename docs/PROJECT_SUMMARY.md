@@ -107,14 +107,19 @@ minted/
 └── docs/
     ├── DEVELOPMENT_PROCESS.md    # Feature dev workflow
     ├── MISTAKES.md              # Error log
-    ├── BACKEND_SPEC.md          # Backend details
-    ├── FRONTEND_SPEC.md         # Frontend details
+    ├── BACKEND_SPEC.md          # Backend details (monolithic)
+    ├── FRONTEND_SPEC.md         # Frontend details (monolithic)
     ├── UI_UX_SPEC.md            # Design system
     ├── API_SPEC.md              # REST API contract
     ├── PROJECT_HISTORY.md       # Phase completion log
     ├── LOGGING.md               # Structured logging & request tracing
     ├── RELEASE_PROCESS.md       # Release steps (version bump, Docker, GitHub)
-    └── PROJECT_SUMMARY.md       # This file
+    ├── PROJECT_SUMMARY.md       # This file
+    └── features/                # Per-feature docs (preferred for focused reference)
+        ├── api/                 # Backend feature docs (auth, accounts, transactions, ...)
+        │   └── README.md        # API feature index + Flyway migration map
+        └── web/                 # Frontend feature docs (auth, dashboard, transactions, ...)
+            └── README.md        # Web feature index + module architecture
 ```
 
 ---
