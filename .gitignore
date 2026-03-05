@@ -13,6 +13,8 @@
 !docs/PROJECT_SUMMARY.md
 !docs/LOGGING.md
 !docs/RELEASE_PROCESS.md
+!docs/features/
+!docs/features/**
 
 # Always include .gitignore files and .dockerignore in subdirectories
 !minted-api/.gitignore
