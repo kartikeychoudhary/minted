@@ -968,6 +968,47 @@ Added `minted-sensitive` CSS class to all financial data elements:
 
 ---
 
+## Release v1.0.4 — Mobile Responsiveness Overhaul (2026-03-05)
+
+### Overview
+Application-wide mobile responsive design pass. All pages and dialogs now work correctly on mobile viewports (375px+). Desktop UI is completely unchanged.
+
+### Mobile Sidebar Drawer Fixes
+- **Click-outside to close**: Added `[dismissible]="true"` to `p-drawer` — was missing, mask click had no effect
+- **Sidebar gap**: `<aside>` was `w-64` (256px) inside a 280px drawer. Fixed by using `w-full` in mobile mode
+- **Orphaned mask on navigation**: `(onHide)` now calls `closeMobileSidebar()` which runs a 400ms deferred DOM cleanup of any leftover `.p-drawer-mask` elements from interrupted leave animations
+
+### Dialog Scroll on Mobile
+- Transaction dialog and both split transaction dialogs (transactions-list + splits-page) now scroll vertically when content exceeds viewport height
+- Approach: inner `<div>` with `overflow-y: auto; max-height: calc(85vh - 180px)` wraps form fields only — footer buttons remain pinned outside the scroll container
+- This is more reliable than PrimeNG `[contentStyle]` which the dialog container can override
+
+### Split Transaction Dialog Input Overflow
+- `grid-cols-2` on Category+Amount row changed to `grid-cols-1 sm:grid-cols-2`
+- Friend entry amount section: `shrink-0`, `gap-2`, `w-20` inputs — prevents overflow in entry rows
+
+### Statement List Cards (Mobile)
+- Card body row: `flex items-center justify-between` → `flex flex-col sm:flex-row` — right side stacks below file info on mobile
+- Metadata row: `flex items-center gap-3` → `flex flex-wrap items-center gap-2`
+- Right-side actions: `flex items-center gap-4` → `flex flex-wrap items-center gap-2 sm:gap-4`
+
+### Other Page Fixes
+- **Settings tabs**: Icon-only on mobile (`hidden sm:inline` on label text), tablist `overflow-x: auto`
+- **Dashboard header**: `flex-wrap` filters, responsive select widths (`w-full sm:w-48`)
+- **Recurring table**: Added `overflow-x: auto` scroll wrapper
+- **All pages**: `p-4 sm:p-8` padding, `flex-wrap` on action button rows, `flex-col sm:flex-row` on headers
+- **Global**: `overflow-x: hidden` on `html, body` to prevent horizontal scroll
+- **All dialogs**: Responsive widths via `min(Xpx, 95vw)` pattern
+
+### Files Modified (26)
+`docs/MISTAKES.md`, `layout.html`, `layout.ts`, `sidebar.html`, `settings.html`, `settings.scss`, `accounts.html`, `categories.html`, `budgets.html`, `account-types.html`, `analytics-overview.html`, `home.html`, `home.scss`, `recurring-list.html`, `recurring-list.scss`, `transactions-list.html`, `transactions-list.scss`, `splits-page.html`, `statement-list.html`, `notifications-list.html`, `import-wizard.html`, `import-jobs.html`, `user-management.html`, `server-settings.html`, `avatar-upload.component.html`, `styles.scss`
+
+### Docker Images
+- `kartikey31choudhary/minted-backend:v1.0.4` (backend unchanged — frontend-only release)
+- `kartikey31choudhary/minted-frontend:v1.0.4`
+
+---
+
 ## Current Status
 
 All core features are implemented. See root `IMPLEMENTATION_STATUS.md` for details.
