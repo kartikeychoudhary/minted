@@ -99,8 +99,8 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 ```
 
 ### Icons
-- **PrimeIcons** (`primeicons/primeicons.css`) — all icons across the app (sidebar, header, grid actions, buttons, cards)
-- **Material Icons** (Google Fonts) — sidebar navigation items only
+- **PrimeIcons** (`primeicons/primeicons.css`) — **only** icon library used across the entire app (sidebar, header, grid actions, buttons, cards, nav items)
+- Material Icons and Font Awesome have been removed (as of v1.0.2 icon standardization)
 
 | Element | Size | Weight | Color |
 |---------|------|--------|-------|
@@ -140,26 +140,30 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 ```
 
 ### 4.2 Sidebar Navigation Items
-| Order | Label | Icon (Material) | Route | Section |
-|-------|-------|-----------------|-------|---------|
-| 1 | Dashboard | `dashboard` | `/` | Main |
-| 2 | Transactions | `receipt_long` | `/transactions` | Main |
-| 3 | Recurring | `sync_alt` | `/recurring` | Main |
-| 4 | Import | `upload_file` | `/import` | Main |
-| 5 | Analytics | `pie_chart` | `/analytics` | Main |
-| 6 | Settings | `settings` | `/settings` | Management |
-| 7 | Server Jobs | `schedule` | `/admin/jobs` | Admin (ADMIN only) |
-| 8 | Server Settings | `dns` | `/admin/settings` | Admin (ADMIN only) |
+| Order | Label | Icon (PrimeNG) | Route | Section |
+|-------|-------|----------------|-------|---------|
+| 1 | Dashboard | `pi pi-th-large` | `/` | Main |
+| 2 | Transactions | `pi pi-list` | `/transactions` | Main |
+| 3 | Recurring | `pi pi-sync` | `/recurring` | Main |
+| 4 | Import | `pi pi-upload` | `/import` | Main |
+| 5 | Financial Statements | `pi pi-file` | `/statements` | Main |
+| 6 | Analytics | `pi pi-chart-pie` | `/analytics` | Main |
+| 7 | Splits | `pi pi-sitemap` | `/splits` | Main |
+| 8 | Notifications | `pi pi-bell` | `/notifications` | Main |
+| 9 | Settings | `pi pi-cog` | `/settings` | Management |
+| 10 | Users | `pi pi-users` | `/admin/users` | Admin (ADMIN only) |
+| 11 | Server Jobs | `pi pi-clock` | `/admin/jobs` | Admin (ADMIN only) |
+| 12 | Server Settings | `pi pi-server` | `/admin/settings` | Admin (ADMIN only) |
 
 ### 4.3 Sidebar Layout
 - **Desktop:** Fixed left sidebar, toggleable between 256px (`w-64`) open and 80px (`w-20`) closed
+- **Mobile:** Hidden (`hidden md:block`); hamburger button in header opens a PrimeNG `p-drawer` (280px, left, modal). `[dismissible]="true"` — clicking outside or any nav link closes it. Sidebar uses `w-full` inside the drawer (not fixed `w-64`).
 - **Background:** `var(--minted-sidebar-bg)` — `#166534` light, `#052e16` dark
-- **Navigation:** Material Icons + labels (open) or icons-only with PrimeNG tooltips (closed)
-- **Sections:** Main (Dashboard, Transactions, Analytics), Management (Settings), Support (Help Center)
+- **Navigation:** PrimeNG `pi pi-*` icons + labels (open) or icons-only with PrimeNG tooltips (closed)
 - **Active state:** `routerLinkActive` applies `bg-white/10` with border
-- **Logo:** `account_balance_wallet` Material Icon + "Minted" text, accent colored
-- **User section:** Avatar (initials, accent bg), name, email, dropdown menu (Profile Settings, Logout)
-- **Toggle button:** Floating circle at `-right-3`, chevron icon, 300ms cubic-bezier transition
+- **Logo:** `assets/ico/icon.svg` + "Minted" text
+- **User section:** Avatar image (from `localStorage`) or initials (accent bg), name, email, dropdown menu (Profile Settings, Logout)
+- **Toggle button:** Floating circle at `-right-3`, `pi-chevron-left/right` icon, 300ms transition
 
 ### 4.3 Header
 - Height: 64px (`h-16`)
@@ -247,7 +251,7 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 │                                      │
 └──────────────────────────────────────┘
 ```
-- Centered icon (FortAwesome, 48px, muted color)
+- Centered icon (PrimeNG `pi pi-*`, 48px, muted color)
 - Message in secondary text color
 - CTA button below
 
@@ -383,25 +387,47 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'He
 
 ## 8. Mobile-Specific Adaptations
 
-### 8.1 Navigation
-- Bottom tab bar with 3 icons: Dashboard, Transactions, Settings (alternative to sidebar)
-- OR: Hamburger menu opening a slide-in sidebar overlay
-- Use PrimeNG `p-sidebar` in overlay mode
+> **Status:** Implemented in v1.0.4. All pages support 375px+ viewports. Desktop UI is unchanged.
 
-### 8.2 Transaction Add (Mobile)
-- Floating Action Button (FAB) at bottom-right corner
-- Opens full-screen form instead of dialog
+### 8.1 Navigation (Mobile Sidebar)
+- Desktop sidebar hidden on mobile (`hidden md:block`)
+- Hamburger button (`pi pi-bars`) visible only on mobile (`md:hidden`) in the header left
+- PrimeNG `p-drawer` (280px, position left, modal) slides in as overlay
+- `[dismissible]="true"` — clicking outside the drawer or the modal mask closes it
+- `(onHide)` runs `closeMobileSidebar()` which defers 400ms cleanup of any orphaned `.p-drawer-mask` DOM elements
+- Clicking any nav link calls `closeMobileSidebar()` via `(navigationClicked)` output
+- Sidebar `<aside>` uses `w-full` (not `w-64`) inside the drawer to fill all 280px
 
-### 8.3 Dashboard (Mobile)
-- Summary cards in a horizontal scrollable row (2 visible, swipe for more)
-- Chart cards stack vertically, all full-width
-- Reduce chart height to 200px on mobile
+### 8.2 Transaction / Split Dialogs (Mobile)
+- All PrimeNG dialogs use `[style]="{ width: 'min(Xpx, 95vw)' }"` for responsive width
+- Form fields in dialogs are wrapped in an inner `<div style="overflow-y: auto; max-height: calc(85vh - 180px);">` for vertical scroll — footer/action buttons remain outside the scroll div and are always visible
+- **Do NOT use `[contentStyle]` for dialog scroll** — PrimeNG dialog container overrides it; use the inner div pattern instead
+- Split dialog Category+Amount row uses `grid-cols-1 sm:grid-cols-2` so fields stack on mobile
+- Friend entry amount inputs: `w-20 shrink-0` to prevent overflow in narrow viewports
 
-### 8.4 AG Grid (Mobile)
-- Hide columns: Notes, Tags, Created Date
-- Show only: Date, Category, Amount
-- Enable horizontal scroll for additional columns
-- OR: Switch to a simple card-based list view for < 640px
+### 8.3 Layout & Padding
+- All pages: `p-4 sm:p-8` padding (mobile compact, desktop spacious)
+- Header rows on pages: `flex-col sm:flex-row` and `flex-wrap` for responsive stacking
+- Action button rows: `flex-wrap` so buttons wrap to next line on mobile
+- Recurring and AG Grid pages: `overflow-x: auto` scroll wrapper for tables
+
+### 8.4 Settings Tabs (Mobile)
+- Tab labels hidden on mobile (`hidden sm:inline`); icons always visible
+- Tab list has `overflow-x: auto` to allow horizontal scrolling of many tabs
+
+### 8.5 Dashboard (Mobile)
+- Filter row uses `flex-wrap` — period and account dropdowns wrap to next line
+- Dropdowns use `w-full sm:w-48`
+- Charts stack vertically at full width (no changes needed — PrimeNG chart already responsive)
+
+### 8.6 Statement List Cards (Mobile)
+- Card body uses `flex-col sm:flex-row` — right-side actions stack below file info
+- Metadata row: `flex-wrap` so badges don't overflow
+- Action buttons: `flex-wrap gap-2 sm:gap-4`
+
+### 8.7 Global
+- `html, body` have `overflow-x: hidden` to prevent horizontal scroll from any overflow
+- `styles.scss` PrimeNG dialog override: `.p-dialog { max-width: 95vw !important; }` on mobile
 
 ---
 

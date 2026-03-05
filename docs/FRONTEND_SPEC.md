@@ -34,14 +34,14 @@ npm install ag-grid-community ag-grid-angular
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 
-# Font Awesome (FortAwesome)
-npm install @fortawesome/fontawesome-free
-# OR for Angular component-based usage:
-npm install @fortawesome/fontawesome-svg-core @fortawesome/free-solid-svg-icons @fortawesome/free-regular-svg-icons @fortawesome/angular-fontawesome
+# Image cropper (for avatar upload)
+npm install ngx-image-cropper
 
 # Chart.js (used by PrimeNG chart component)
 npm install chart.js
 ```
+
+> **Note:** Font Awesome / FortAwesome is NOT installed. All icons use PrimeNG Icons (`pi pi-*`) exclusively.
 
 ### 1.4 Tailwind Configuration (`tailwind.config.js`)
 ```javascript
@@ -98,10 +98,7 @@ The global stylesheet is organized into sections:
 // 2. PrimeNG Icons
 @import 'primeicons/primeicons.css';
 
-// 3. Font Awesome
-@import '@fortawesome/fontawesome-free/css/all.min.css';
-
-// 4. AG Grid — v35 Theming API injects CSS automatically; no manual imports needed
+// 3. AG Grid — v35 Theming API injects CSS automatically; no manual imports needed
 
 // 5. MINTED DESIGN TOKENS — CSS custom properties (:root + .dark-mode)
 //    See docs/UI_UX_SPEC.md Section 2 for full token list

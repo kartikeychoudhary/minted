@@ -1,6 +1,6 @@
 # PROJECT SUMMARY — Minted Quick Reference
 
-> **Generated:** February 16, 2026 | **Updated:** February 27, 2026
+> **Generated:** February 16, 2026 | **Updated:** March 5, 2026
 > **Status:** All core features implemented
 
 ---
@@ -10,12 +10,12 @@
 1. ✅ **CLAUDE.md** - Master instructions, tech stack rules, critical constraints
 2. ✅ **MISTAKES.md** - Error log and prevention rules (read at start of EVERY task)
 3. ✅ **DEVELOPMENT_PROCESS.md** - Step-by-step process for each feature
-4. ✅ **QUICKSTART.md** - Implementation phase order
-5. 📖 **BACKEND_SPEC.md** - When building backend features
-6. 📖 **FRONTEND_SPEC.md** - When building frontend features
-7. 📖 **UI_UX_SPEC.md** - When designing/styling UI components
-8. 📖 **API_SPEC.md** - When integrating frontend with backend
-9. 📖 **STITCH_UI_REFERENCE.md** - When fetching design references
+4. 📖 **BACKEND_SPEC.md** - When building backend features
+5. 📖 **FRONTEND_SPEC.md** - When building frontend features
+6. 📖 **UI_UX_SPEC.md** - When designing/styling UI components
+7. 📖 **API_SPEC.md** - When integrating frontend with backend
+8. 📖 **RELEASE_PROCESS.md** - When preparing a release (version bump, Docker, GitHub)
+9. 📖 **LOGGING.md** - Structured logging patterns and MDC usage
 
 ---
 
@@ -47,7 +47,7 @@ Build **Minted** - a personal budget and expense management web application that
 - **UI Library:** PrimeNG (latest compatible)
 - **Data Grid:** AG Grid Community
 - **CSS:** Tailwind CSS 3.x
-- **Icons:** FortAwesome (Font Awesome)
+- **Icons:** PrimeNG Icons (`pi pi-*`) only — Font Awesome removed in v1.0.2
 - **Charts:** PrimeNG Charts (Chart.js wrapper)
 
 ### ❌ FORBIDDEN
@@ -82,7 +82,7 @@ minted/
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       ├── logback-spring.xml  # MDC-enriched logging (dev/prod profiles)
-│   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_31)
+│   │       └── db/migration/ # Flyway migrations (V0_0_1 through V0_0_39)
 │   └── build.gradle
 │
 ├── minted-web/              # Angular frontend
@@ -96,9 +96,10 @@ minted/
 │   │   │   ├── recurring/   # Recurring transactions
 │   │   │   ├── analytics/   # Analytics overview
 │   │   │   ├── import/      # Bulk CSV importer
+│   │   │   ├── statement/   # Financial statements (PDF/CSV/TXT parser)
 │   │   │   ├── notifications/ # Notifications full page
 │   │   │   ├── splits/       # Bill splitting with friends
-│   │   │   ├── settings/    # Settings tabs (Profile, Accounts, Categories, Budgets)
+│   │   │   ├── settings/    # Settings tabs (Profile, Accounts, Categories, Budgets, Dashboard)
 │   │   │   └── admin/       # User management, jobs, server settings
 │   │   └── layout/          # Sidebar, header, notification drawer
 │   └── package.json
@@ -110,9 +111,9 @@ minted/
     ├── FRONTEND_SPEC.md         # Frontend details
     ├── UI_UX_SPEC.md            # Design system
     ├── API_SPEC.md              # REST API contract
-    ├── STITCH_UI_REFERENCE.md   # Stitch project info
     ├── PROJECT_HISTORY.md       # Phase completion log
     ├── LOGGING.md               # Structured logging & request tracing
+    ├── RELEASE_PROCESS.md       # Release steps (version bump, Docker, GitHub)
     └── PROJECT_SUMMARY.md       # This file
 ```
 
@@ -182,14 +183,18 @@ minted/
 - [x] User Management & Signup (admin CRUD, signup toggle, public registration)
 - [x] Notification System (NotificationHelper, bell badge, drawer, full page)
 
-### Phase 8: Splits & Polish ⏳
+### Phase 8: Splits, Polish & v1.0.x Releases ✅
 - [x] Bill splitting with friends (backend: friends + split transactions + shares + settlement + balance summary)
 - [x] Splits module frontend (dedicated `/splits` page with AG Grid, friend management, split CRUD, settle, CSV export)
 - [x] Transaction ↔ Split integration (`isSplit` flag on TransactionResponse, inline split dialog in transactions list)
-- [x] Mobile responsiveness (hamburger sidebar drawer, responsive dialogs/grids, auth pages)
+- [x] Mobile responsiveness v1 (hamburger sidebar drawer, responsive dialogs/grids, auth pages)
 - [x] Bulk import cron job removed (processing is user-action driven)
-- [x] Import wizard: Credit Card Statement card linked to /statements
+- [x] Import wizard: Financial Statement card linked to /statements
 - [x] Avatar upload: User profile + friends avatar with crop (ngx-image-cropper), LONGBLOB storage, base64 data URI
+- [x] Icon standardization: All icons migrated to PrimeNG Icons (`pi pi-*`); Material Icons + Font Awesome removed
+- [x] **v1.0.2** — Analytics overhaul, dashboard filters, notification UX, chart color palette
+- [x] **v1.0.3** — Dashboard chart color fix, account filter fix, custom date range
+- [x] **v1.0.4** — Mobile responsiveness overhaul: sidebar drawer fixes (dismissible, w-full, mask cleanup), dialog vertical scroll (inner div pattern), split dialog input overflow, statement list cards
 - [ ] Configurable dashboard cards
 - [ ] Budget tracking polish
 
@@ -281,11 +286,12 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 
 ## 🎯 Current Status
 
-**Phases 1–7 complete.** All core features are implemented and working.
+**Phases 1–8 complete.** All core features implemented. Latest release: **v1.0.4**.
 
-- **Backend:** 39 Flyway migrations (V0_0_1 through V0_0_39), 15+ entities, full REST API
-- **Frontend:** 10 feature modules (auth, dashboard, transactions, recurring, analytics, import, notifications, splits, settings, admin), layout with sidebar + notification drawer + mobile responsive
+- **Backend:** 39 Flyway migrations (V0_0_1 through V0_0_39), 18 feature modules, full REST API
+- **Frontend:** 11 feature modules (auth, dashboard, transactions, recurring, analytics, import, statement, notifications, splits, settings, admin), layout with sidebar + notification drawer + fully mobile responsive
 - **Infrastructure:** Docker Compose (Nginx + Spring Boot + MySQL), ports 7800 (web) / 7801 (API)
+- **Docker Hub:** `kartikey31choudhary/minted-backend` + `kartikey31choudhary/minted-frontend` (tags: `latest`, `v1.0.4`)
 - **Remaining:** Configurable dashboard cards, budget tracking polish
 
 ### Key Architectural Highlights
@@ -301,7 +307,7 @@ ng generate component modules/<name>/components/<comp> --module=modules/<name> -
 - **Avatar upload:** Reusable `AvatarUploadComponent` (shared) with ngx-image-cropper (1:1, 512px JPEG). LONGBLOB storage in DB, base64 data URIs. Integrated in: user profile, friends, sidebar. Two-stage loading: friends list fetched without avatars first (fast), then with avatars (fade-in).
 - **Route loading:** Animated accent-colored bar at top of content area during lazy module navigation (Router events in Layout component)
 - **Auth pages:** Warm golden gradient background on login/signup screens with enhanced decorative blurs
-- **Mobile responsive:** PrimeNG Drawer sidebar on mobile, hamburger menu, global dialog/grid overrides, responsive auth pages
+- **Mobile responsive (v1.0.4):** `p-drawer` sidebar (dismissible, `w-full` in mobile mode, 400ms mask cleanup on close), inner-div scroll pattern for all dialogs, `flex-col sm:flex-row` stacking, `min(Xpx, 95vw)` dialog widths, `overflow-x: hidden` global
 
 ---
 
