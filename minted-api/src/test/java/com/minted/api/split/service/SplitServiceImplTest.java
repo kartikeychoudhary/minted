@@ -1,8 +1,10 @@
 package com.minted.api.split.service;
 
+import com.minted.api.common.exception.BadRequestException;
 import com.minted.api.common.exception.ResourceNotFoundException;
 import com.minted.api.friend.entity.Friend;
 import com.minted.api.friend.repository.FriendRepository;
+import com.minted.api.notification.enums.NotificationType;
 import com.minted.api.notification.service.NotificationHelper;
 import com.minted.api.split.dto.*;
 import com.minted.api.split.entity.SplitShare;
@@ -163,5 +165,122 @@ class SplitServiceImplTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).friendName()).isEqualTo("Bob");
+    }
+
+    // ── create ────────────────────────────────────────────────────────────────
+
+    @Test
+    void create_withCustomSplit_returnsResponse() {
+        SplitShareRequest meShare = new SplitShareRequest(null, BigDecimal.valueOf(100), null, true);
+        SplitShareRequest friendShare = new SplitShareRequest(2L, BigDecimal.valueOf(100), null, false);
+        SplitTransactionRequest request = new SplitTransactionRequest(null, "Dinner", "Food",
+                BigDecimal.valueOf(200), SplitType.UNEQUAL, LocalDate.of(2025, 1, 15),
+                List.of(meShare, friendShare));
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(friendRepository.findByIdAndUserId(2L, 1L)).thenReturn(Optional.of(friend));
+        when(splitTransactionRepository.save(any())).thenAnswer(inv -> {
+            SplitTransaction st = inv.getArgument(0);
+            st.setId(20L);
+            return st;
+        });
+
+        SplitTransactionResponse result = splitService.create(request, 1L);
+
+        assertThat(result.description()).isEqualTo("Dinner");
+        assertThat(result.totalAmount()).isEqualByComparingTo(BigDecimal.valueOf(200));
+        verify(splitTransactionRepository).save(any(SplitTransaction.class));
+    }
+
+    @Test
+    void create_withEqualSplit_autoCalculatesShares() {
+        // shares have zero amounts → triggers EQUAL auto-calculation
+        SplitShareRequest meShare = new SplitShareRequest(null, BigDecimal.ZERO, null, true);
+        SplitShareRequest friendShare = new SplitShareRequest(2L, BigDecimal.ZERO, null, false);
+        SplitTransactionRequest request = new SplitTransactionRequest(null, "Lunch", "Food",
+                BigDecimal.valueOf(200), SplitType.EQUAL, LocalDate.of(2025, 2, 1),
+                List.of(meShare, friendShare));
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(friendRepository.findByIdAndUserId(2L, 1L)).thenReturn(Optional.of(friend));
+        when(splitTransactionRepository.save(any())).thenAnswer(inv -> {
+            SplitTransaction st = inv.getArgument(0);
+            st.setId(21L);
+            return st;
+        });
+
+        SplitTransactionResponse result = splitService.create(request, 1L);
+
+        assertThat(result.description()).isEqualTo("Lunch");
+        verify(splitTransactionRepository).save(any(SplitTransaction.class));
+    }
+
+    @Test
+    void create_withMismatchedAmountsAndCustomType_throwsBadRequest() {
+        SplitShareRequest meShare = new SplitShareRequest(null, BigDecimal.valueOf(50), null, true);
+        SplitShareRequest friendShare = new SplitShareRequest(2L, BigDecimal.valueOf(50), null, false);
+        SplitTransactionRequest request = new SplitTransactionRequest(null, "Trip", "Travel",
+                BigDecimal.valueOf(200), SplitType.UNEQUAL, LocalDate.of(2025, 3, 1),
+                List.of(meShare, friendShare));
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> splitService.create(request, 1L))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    // ── update ────────────────────────────────────────────────────────────────
+
+    @Test
+    void update_updatesFieldsAndShares_returnsResponse() {
+        SplitShareRequest meShare = new SplitShareRequest(null, BigDecimal.valueOf(100), null, true);
+        SplitShareRequest friendShare = new SplitShareRequest(2L, BigDecimal.valueOf(100), null, false);
+        SplitTransactionRequest request = new SplitTransactionRequest(null, "Updated Dinner", "Food",
+                BigDecimal.valueOf(200), SplitType.UNEQUAL, LocalDate.of(2025, 2, 1),
+                List.of(meShare, friendShare));
+
+        when(splitTransactionRepository.findByIdAndUserId(10L, 1L)).thenReturn(Optional.of(splitTx));
+        when(friendRepository.findByIdAndUserId(2L, 1L)).thenReturn(Optional.of(friend));
+        when(splitTransactionRepository.save(any())).thenReturn(splitTx);
+
+        SplitTransactionResponse result = splitService.update(10L, request, 1L);
+
+        assertThat(result).isNotNull();
+        verify(splitTransactionRepository).save(splitTx);
+    }
+
+    // ── settleFriend ──────────────────────────────────────────────────────────
+
+    @Test
+    void settleFriend_success_settlesAllSharesAndNotifies() {
+        SplitShare share = splitTx.getShares().get(0);
+        when(friendRepository.findByIdAndUserId(2L, 1L)).thenReturn(Optional.of(friend));
+        when(splitShareRepository.findUnsettledByUserIdAndFriendId(1L, 2L)).thenReturn(List.of(share));
+        when(splitShareRepository.save(share)).thenReturn(share);
+        when(splitTransactionRepository.save(splitTx)).thenReturn(splitTx);
+
+        splitService.settleFriend(new SettleRequest(2L), 1L);
+
+        assertThat(share.getIsSettled()).isTrue();
+        assertThat(share.getSettledAt()).isNotNull();
+        verify(splitTransactionRepository).save(splitTx); // all shares settled → parent also settled
+        verify(notificationHelper).notify(eq(1L), eq(NotificationType.SUCCESS), anyString(), anyString());
+    }
+
+    @Test
+    void settleFriend_noUnsettledShares_throwsBadRequest() {
+        when(friendRepository.findByIdAndUserId(2L, 1L)).thenReturn(Optional.of(friend));
+        when(splitShareRepository.findUnsettledByUserIdAndFriendId(1L, 2L)).thenReturn(List.of());
+
+        assertThatThrownBy(() -> splitService.settleFriend(new SettleRequest(2L), 1L))
+                .isInstanceOf(BadRequestException.class);
+    }
+
+    @Test
+    void settleFriend_friendNotFound_throwsResourceNotFound() {
+        when(friendRepository.findByIdAndUserId(99L, 1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> splitService.settleFriend(new SettleRequest(99L), 1L))
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 }
