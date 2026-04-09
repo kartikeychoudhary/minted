@@ -95,6 +95,7 @@ com.minted.api/
 ├── llm/             # LLM config, models, merchant mappings
 ├── friend/          # Friends list (for splits)
 ├── split/           # Split transactions
+├── integration/     # 3rd party integrations (Splitwise OAuth & logic)
 └── admin/           # Admin users, system settings, default lists
 ```
 
@@ -122,6 +123,7 @@ Internal module structure: `controller/` · `dto/` · `entity/` · `enums/` · `
 | V0_0_35 | exclude_from_analysis on transactions |
 | V0_0_36 | dashboard_configurations |
 | V0_0_38–39 | avatar columns for users and friends |
+| V0_0_40 | user_integrations, friend_splitwise_links, split_splitwise_pushes |
 
 Full migration map with feature links: [docs/features/api/README.md](features/api/README.md)
 
@@ -141,6 +143,7 @@ Full migration map with feature links: [docs/features/api/README.md](features/ap
 | Bulk CSV Import | [features/api/import.md](features/api/import.md) |
 | Credit Card Statement Parser | [features/api/statements.md](features/api/statements.md) |
 | Splits & Friends | [features/api/splits.md](features/api/splits.md) |
+| Integrations (Splitwise) | [features/api/integrations.md](features/api/integrations.md) |
 | Admin (Users, Jobs, Settings) | [features/api/admin.md](features/api/admin.md) |
 | Infrastructure & Cross-Cutting | [features/api/infrastructure.md](features/api/infrastructure.md) |
 

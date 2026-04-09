@@ -5,6 +5,8 @@ import { ICellRendererParams } from 'ag-grid-community';
 export interface SplitActionsCallbacks {
   onEdit: (data: any) => void;
   onDelete: (data: any) => void;
+  onPushToSplitwise?: (data: any) => void;
+  isSplitwiseConnected?: boolean;
 }
 
 @Component({
@@ -12,6 +14,15 @@ export interface SplitActionsCallbacks {
   standalone: false,
   template: `
     <div class="flex items-center justify-end gap-2" (click)="$event.stopPropagation()">
+      <button *ngIf="params.callbacks?.isSplitwiseConnected"
+        pButton
+        type="button"
+        icon="pi pi-link"
+        class="p-button-text p-button-rounded p-button-sm btn-splitwise"
+        (click)="onPushClick()"
+        pTooltip="Push to Splitwise"
+        tooltipPosition="top">
+      </button>
       <button
         pButton
         type="button"
@@ -69,6 +80,14 @@ export interface SplitActionsCallbacks {
       border-color: var(--minted-danger) !important;
       color: var(--minted-danger);
     }
+
+    ::ng-deep .p-button-text.btn-splitwise {
+      color: #18b193;
+    }
+    ::ng-deep .p-button-text.btn-splitwise:hover {
+      background-color: rgba(24, 177, 147, 0.1) !important;
+      border-color: #18b193 !important;
+    }
   `]
 })
 export class SplitActionsCellRendererComponent implements ICellRendererAngularComp {
@@ -92,6 +111,12 @@ export class SplitActionsCellRendererComponent implements ICellRendererAngularCo
   onDeleteClick(): void {
     if (this.params.callbacks?.onDelete) {
       this.params.callbacks.onDelete(this.params.data);
+    }
+  }
+
+  onPushClick(): void {
+    if (this.params.callbacks?.onPushToSplitwise) {
+      this.params.callbacks.onPushToSplitwise(this.params.data);
     }
   }
 }

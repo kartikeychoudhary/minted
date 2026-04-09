@@ -19,6 +19,11 @@
         easily.</p>
     </div>
     <div class="flex flex-wrap items-center gap-2">
+      <button *ngIf="isSplitwiseConnected" pButton class="p-button-outlined" style="color: #18b193; border-color: #18b193;" 
+        (click)="bulkPushToSplitwise()" pTooltip="Push Selected to Splitwise">
+        <i class="pi pi-link text-[18px] mr-2"></i>
+        Push Selected
+      </button>
       <button pButton class="p-button-outlined" (click)="openNewFriendDialog()">
         <i class="pi pi-user-plus text-[18px] mr-2"></i>
         Add Friend

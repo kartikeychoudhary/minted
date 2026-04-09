@@ -112,6 +112,40 @@
         </div>
     </div>
 
+    <!-- Splitwise Configuration -->
+    <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
+        <div class="p-5 border-b border-minted-border bg-minted-surface flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i class="pi pi-link text-minted-text-secondary"></i>
+                <h2 class="font-bold">Splitwise Integration</h2>
+            </div>
+            <p-toggleSwitch [(ngModel)]="splitwiseEnabled" (onChange)="toggleSplitwiseEnabled()"></p-toggleSwitch>
+        </div>
+        <div class="p-5 space-y-4" *ngIf="splitwiseEnabled">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Client ID</label>
+                    <input type="text" pInputText [(ngModel)]="splitwiseClientId" placeholder="Splitwise OAuth2 Client ID"
+                        class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
+                </div>
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Client Secret</label>
+                    <input type="password" pInputText [(ngModel)]="splitwiseClientSecret" placeholder="Splitwise OAuth2 Client Secret"
+                        class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
+                </div>
+                <div class="flex flex-col gap-1 md:col-span-2">
+                    <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Redirect URI</label>
+                    <input type="text" pInputText [(ngModel)]="splitwiseRedirectUri" 
+                        class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
+                    <p class="text-[0.65rem] text-minted-text-muted mt-1">Must exactly match the redirect URI registered in the Splitwise developer portal.</p>
+                </div>
+            </div>
+            <div class="flex justify-end pt-2">
+                <p-button label="Save Splitwise Config" (onClick)="saveSplitwiseSettings()" styleClass="p-button-sm p-button-primary"></p-button>
+            </div>
+        </div>
+    </div>
+
     <!-- LLM Models -->
     <div class="glass-card rounded-xl border border-minted-border overflow-hidden">
         <div class="p-4 border-b border-minted-border bg-minted-surface flex items-center justify-between">

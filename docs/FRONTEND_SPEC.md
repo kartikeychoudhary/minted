@@ -99,8 +99,9 @@ AppModule
     ├── AnalyticsModule     /analytics
     ├── RecurringModule     /recurring
     ├── ImportModule        /import
-    ├── StatementModule     /statements
+    ├── StatementsModule    /statements
     ├── SplitsModule        /splits
+    ├── IntegrationsModule  /integrations
     ├── NotificationsModule /notifications
     ├── SettingsModule      /settings
     └── AdminModule         /admin  (adminGuard)
@@ -205,6 +206,7 @@ Apply with `[theme]="mintedTheme"` on `<ag-grid-angular>`.
 | Bulk CSV Import | [features/web/import.md](features/web/import.md) |
 | Credit Card Statement Parser | [features/web/statements.md](features/web/statements.md) |
 | Splits & Friends | [features/web/splits.md](features/web/splits.md) |
+| 3rd Party Integrations | [features/web/integrations.md](features/web/integrations.md) |
 | Notifications | [features/web/notifications.md](features/web/notifications.md) |
 | Settings | [features/web/settings.md](features/web/settings.md) |
 | Admin Panel | [features/web/admin.md](features/web/admin.md) |

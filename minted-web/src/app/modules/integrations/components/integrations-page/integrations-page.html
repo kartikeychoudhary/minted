@@ -1,0 +1,190 @@
+<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary">Integrations</h1>
+            <p class="text-sm text-minted-text-secondary mt-1">Connect third-party apps and services</p>
+        </div>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div *ngIf="loadingStatus" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div class="glass-card rounded-2xl h-[180px] animate-pulse bg-minted-surface"></div>
+    </div>
+
+    <div *ngIf="!loadingStatus" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <!-- Splitwise Card -->
+        <ng-container *ngIf="splitwiseStatus?.enabled">
+            <!-- Connected State -->
+            <div *ngIf="splitwiseStatus?.connected" 
+                 class="glass-card rounded-2xl border border-minted-border overflow-hidden transition-all hover:border-minted-primary/30 cursor-pointer group"
+                 (click)="openSettings()">
+                <div class="p-5 flex flex-col h-full bg-minted-success-subtle relative">
+                    <div class="absolute top-4 right-4 flex gap-2">
+                        <span class="px-2.5 py-1 rounded-full bg-minted-success/20 text-minted-success text-[0.65rem] font-bold uppercase tracking-wider">
+                            <i class="pi pi-check-circle mr-1"></i> Connected
+                        </span>
+                    </div>
+                    
+                    <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-2 mb-4 shadow-sm border border-minted-border">
+                        <!-- Basic Splitwise logo representation -->
+                        <div class="w-full h-full bg-[#18b193] rounded" style="mask: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M50 0L100 25V75L50 100L0 75V25Z\'/></svg>') center/contain no-repeat; -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M50 0L100 25V75L50 100L0 75V25Z\'/></svg>') center/contain no-repeat;"></div>
+                    </div>
+                    
+                    <h3 class="font-bold text-lg mb-1 group-hover:text-minted-primary transition-colors">Splitwise</h3>
+                    <p class="text-sm text-minted-text-secondary leading-relaxed mb-4 flex-grow">
+                        Connected as <strong>{{ splitwiseStatus?.connectedUserName }}</strong>
+                        <br>
+                        <span class="text-xs opacity-75">{{ splitwiseStatus?.connectedUserEmail }}</span>
+                    </p>
+                    
+                    <div class="flex items-center justify-between border-t border-black/5 dark:border-white/5 pt-4 mt-auto">
+                        <span class="text-sm font-semibold text-minted-primary group-hover:underline">Manage Settings</span>
+                        <button class="w-8 h-8 rounded-full hover:bg-white/50 dark:hover:bg-black/20 flex items-center justify-center transition-colors text-minted-text-muted hover:text-red-500"
+                                (click)="disconnectSplitwise($event)" pTooltip="Disconnect">
+                            <i class="pi pi-sign-out"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disconnected State -->
+            <div *ngIf="!splitwiseStatus?.connected" 
+                 class="glass-card rounded-2xl border border-minted-border overflow-hidden transition-all hover:border-minted-primary/30 group">
+                <div class="p-5 flex flex-col h-full">
+                    <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-2 mb-4 border border-minted-border opacity-70 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all">
+                        <div class="w-full h-full bg-[#18b193] rounded" style="mask: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M50 0L100 25V75L50 100L0 75V25Z\'/></svg>') center/contain no-repeat; -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M50 0L100 25V75L50 100L0 75V25Z\'/></svg>') center/contain no-repeat;"></div>
+                    </div>
+                    
+                    <h3 class="font-bold text-lg mb-1 group-hover:text-minted-primary transition-colors">Splitwise</h3>
+                    <p class="text-sm text-minted-text-secondary leading-relaxed mb-6 flex-grow">
+                        Push your splits directly to Splitwise. Link your accounts and map your friends.
+                    </p>
+                    
+                    <div class="mt-auto">
+                        <p-button label="Connect" icon="pi pi-link" styleClass="w-full p-button-outlined" (onClick)="connectSplitwise()"></p-button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <!-- Dummy Cards for Aesthetic -->
+        <div class="glass-card rounded-2xl border border-minted-border overflow-hidden opacity-50 select-none">
+            <div class="p-5 flex flex-col h-full bg-minted-surface">
+                <div class="absolute top-4 right-4 flex gap-2">
+                    <span class="px-2.5 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[0.65rem] font-bold uppercase tracking-wider">Coming Soon</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-4 border border-minted-border">
+                    <i class="pi pi-paypal text-blue-500 text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-1">PayPal</h3>
+                <p class="text-sm text-minted-text-secondary leading-relaxed mb-6 flex-grow">
+                    Settle up your splits automatically via PayPal payouts.
+                </p>
+            </div>
+        </div>
+
+        <div class="glass-card rounded-2xl border border-minted-border overflow-hidden opacity-50 select-none">
+            <div class="p-5 flex flex-col h-full bg-minted-surface">
+                <div class="absolute top-4 right-4 flex gap-2">
+                    <span class="px-2.5 py-1 rounded-full bg-black/5 dark:bg-white/5 text-[0.65rem] font-bold uppercase tracking-wider">Coming Soon</span>
+                </div>
+                <div class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-4 border border-minted-border">
+                    <i class="pi pi-money-bill text-blue-400 text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-1">Venmo</h3>
+                <p class="text-sm text-minted-text-secondary leading-relaxed mb-6 flex-grow">
+                    Integration with Venmo to directly settle your balances.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Splitwise Settings Modal -->
+<p-dialog header="Splitwise Settings" [(visible)]="showSplitwiseSettings" [modal]="true" [style]="{width: 'min(700px, 95vw)', height: 'min(600px, 90vh)'}"
+    [draggable]="false" [resizable]="false" contentStyleClass="flex flex-col h-full relative" styleClass="p-0">
+    
+    <div class="flex-grow flex flex-col pt-4">
+        <div class="px-4 mb-4">
+            <div class="flex items-center gap-4 p-4 rounded-xl border border-[#18b193]/30 bg-[#18b193]/5">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 border-[#18b193]">
+                    <div class="w-10 h-10 bg-[#18b193] rounded" style="mask: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M50 0L100 25V75L50 100L0 75V25Z\'/></svg>') center/contain no-repeat; -webkit-mask: url('data:image/svg+xml;utf8,<svg viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M50 0L100 25V75L50 100L0 75V25Z\'/></svg>') center/contain no-repeat;"></div>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-minted-text-primary">{{ splitwiseStatus?.connectedUserName }}</h2>
+                    <p class="text-minted-text-secondary">{{ splitwiseStatus?.connectedUserEmail }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 pb-2">
+            <h3 class="font-bold text-lg">Friend Linking</h3>
+            <p class="text-sm text-minted-text-secondary">Map your Minted friends to your Splitwise contacts. Splits pushed to Splitwise will be assigned correctly.</p>
+        </div>
+
+        <div class="flex-grow overflow-y-auto px-4 pb-4">
+            <div *ngIf="loadingFriends" class="py-12 flex justify-center">
+                <i class="pi pi-spin pi-spinner text-3xl text-minted-primary"></i>
+            </div>
+            
+            <p-table *ngIf="!loadingFriends" [value]="mintedFriends" styleClass="p-datatable-sm w-full"
+                [tableStyle]="{'min-width': '100%'}">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Minted Friend</th>
+                        <th>Splitwise Contact</th>
+                        <th style="width: 3rem"></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-friend>
+                    <tr>
+                        <td class="font-semibold">{{ friend.name }}</td>
+                        <td>
+                            <p-select 
+                                *ngIf="!getLinkedSplitwiseInfo(friend.id)"
+                                [options]="availableSplitwiseFriends" 
+                                placeholder="Select contact to link" 
+                                [showClear]="false" 
+                                [filter]="true" 
+                                filterBy="label,email"
+                                appendTo="body"
+                                styleClass="w-full text-sm"
+                                (onChange)="onFriendLinkChange(friend.id, $event)">
+                                <ng-template pTemplate="item" let-item>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold">{{item.label}}</span>
+                                        <span class="text-xs opacity-75">{{item.email}}</span>
+                                    </div>
+                                </ng-template>
+                            </p-select>
+                            
+                            <div *ngIf="getLinkedSplitwiseInfo(friend.id)" class="flex items-center gap-2">
+                                <span class="px-3 py-1.5 bg-[#18b193]/10 text-[#18b193] border border-[#18b193]/20 rounded-lg text-sm font-semibold flex items-center">
+                                    <i class="pi pi-link mr-2 text-xs"></i>
+                                    {{ getLinkedSplitwiseInfo(friend.id)?.splitwiseFriendName }}
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <button *ngIf="getLinkedSplitwiseInfo(friend.id)" 
+                                class="w-8 h-8 rounded-full hover:bg-red-50 text-minted-text-muted hover:text-red-500 transition-colors flex items-center justify-center p-0 border-none bg-transparent"
+                                (click)="unlinkFriend(friend.id)" pTooltip="Unlink">
+                                <i class="pi pi-unlink"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="3" class="text-center py-8 text-minted-text-secondary italic">
+                            No friends found in Minted. Create some in the Friends tab first!
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</p-dialog>
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>

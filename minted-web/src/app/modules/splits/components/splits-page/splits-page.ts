@@ -18,6 +18,7 @@ import {
 } from '../../../../core/models/split.model';
 import { SplitFriendsCellRendererComponent } from '../cell-renderers/split-friends-cell-renderer.component';
 import { SplitActionsCellRendererComponent } from '../cell-renderers/split-actions-cell-renderer.component';
+import { SplitwiseService } from '../../../../core/services/splitwise.service';
 
 interface SplitFriendEntry {
   friendId: number | null;
@@ -40,6 +41,9 @@ export class SplitsPage implements OnInit {
   splits: SplitTransactionResponse[] = [];
   balanceSummary: SplitBalanceSummaryResponse = { youAreOwed: 0, youOwe: 0 };
   friendBalances: FriendBalanceResponse[] = [];
+
+  // Splitwise
+  isSplitwiseConnected = false;
 
   // Friend dialog
   showFriendDialog = false;
@@ -104,6 +108,7 @@ export class SplitsPage implements OnInit {
     paginationPageSizeSelector: [10, 25, 50],
     domLayout: 'normal',
     animateRows: true,
+    rowSelection: 'multiple',
     overlayNoRowsTemplate: '<span class="ag-overlay-no-rows-center">No split transactions yet. Add a split to get started.</span>',
   };
   rowData: any[] = [];
@@ -116,13 +121,15 @@ export class SplitsPage implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    public currencyService: CurrencyService
+    public currencyService: CurrencyService,
+    private splitwiseService: SplitwiseService
   ) {
     this.setupGridColumns();
   }
 
   ngOnInit(): void {
     this.initForms();
+    this.checkSplitwiseStatus();
     this.loadData();
 
     // Check for query params (from transactions split button)
@@ -150,6 +157,8 @@ export class SplitsPage implements OnInit {
         field: 'transactionDate',
         width: 130,
         cellClass: 'cell-v-center',
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
         valueFormatter: (params) => {
           const date = new Date(params.value);
           return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -202,7 +211,9 @@ export class SplitsPage implements OnInit {
         cellRendererParams: {
           callbacks: {
             onEdit: (data: any) => this.openEditSplitDialog(data),
-            onDelete: (data: any) => this.deleteSplit(data)
+            onDelete: (data: any) => this.deleteSplit(data),
+            onPushToSplitwise: (data: any) => this.pushSingleSplit(data),
+            isSplitwiseConnected: this.isSplitwiseConnected
           }
         },
         cellClass: 'ag-cell-actions'
@@ -241,6 +252,16 @@ export class SplitsPage implements OnInit {
     ]).finally(() => {
       this.loading = false;
       this.cdr.detectChanges();
+    });
+  }
+
+  checkSplitwiseStatus(): void {
+    this.splitwiseService.getStatus().subscribe({
+      next: (status) => {
+        this.isSplitwiseConnected = status.enabled && status.connected;
+        // Re-setup columns so the cell renderer gets the updated input
+        this.setupGridColumns();
+      }
     });
   }
 
@@ -642,6 +663,74 @@ export class SplitsPage implements OnInit {
       },
       error: () => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Failed to remove friend avatar.' });
+      }
+    });
+  }
+
+  // ── Splitwise Push ──
+
+  pushSingleSplit(split: SplitTransactionResponse, forcePush = false): void {
+    this.splitwiseService.pushSplit(split.id, forcePush).subscribe({
+      next: (res) => {
+        const result = res.data!;
+        if (result.alreadyPushed && !forcePush) {
+          this.confirmationService.confirm({
+            key: 'splits',
+            message: `This split has already been pushed to Splitwise (Expense ID: ${result.splitwiseExpenseId}). Pushing again will create a duplicate expense on Splitwise. Are you sure?`,
+            header: 'Duplicate Warning',
+            icon: 'pi pi-exclamation-triangle',
+            accept: () => {
+              this.pushSingleSplit(split, true);
+            }
+          });
+        } else if (result.success) {
+          this.messageService.add({ severity: 'success', summary: 'Pushed successfully', detail: `Split was added to Splitwise.` });
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Push Failed', detail: result.errorMessage || 'Failed to push split to Splitwise.' });
+        }
+      },
+      error: (err) => {
+        this.messageService.add({ severity: 'error', summary: 'Push Error', detail: err.error?.message || 'Failed to communicate with Splitwise.' });
+      }
+    });
+  }
+
+  bulkPushToSplitwise(): void {
+    const selectedNodes = this.gridApi.getSelectedNodes();
+    if (!selectedNodes || selectedNodes.length === 0) {
+      this.messageService.add({ severity: 'info', summary: 'No Selection', detail: 'Please select splits to push.' });
+      return;
+    }
+
+    const splitIds = selectedNodes.map(n => n.data.id);
+    
+    this.splitwiseService.bulkPushSplits(splitIds, false).subscribe({
+      next: (res) => {
+        const result = res.data!;
+        if (result.skippedCount > 0) {
+          this.confirmationService.confirm({
+            key: 'splits',
+            message: `${result.successCount} pushed successfully. ${result.failedCount} failed. ${result.skippedCount} were skipped because they were already pushed. Force push the skipped ones?`,
+            header: 'Bulk Push Results',
+            icon: 'pi pi-info-circle',
+            accept: () => {
+              this.splitwiseService.bulkPushSplits(splitIds, true).subscribe({
+                 next: (forceRes) => {
+                    this.messageService.add({ severity: 'success', summary: 'Force Push Complete', detail: `${forceRes.data!.successCount} pushed, ${forceRes.data!.failedCount} failed.` });
+                 }
+              });
+            }
+          });
+        } else {
+           if (result.failedCount === 0) {
+             this.messageService.add({ severity: 'success', summary: 'Bulk Push Complete', detail: `Successfully pushed ${result.successCount} splits.` });
+           } else {
+             this.messageService.add({ severity: 'warn', summary: 'Partial Success', detail: `Pushed ${result.successCount}, Failed ${result.failedCount}.` });
+           }
+        }
+      },
+      error: (err) => {
+         this.messageService.add({ severity: 'error', summary: 'Bulk Push Error', detail: err.error?.message || 'Failed to bulk push to Splitwise.' });
       }
     });
   }

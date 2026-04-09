@@ -9,6 +9,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.minted.api.integration.splitwise.SplitwiseApiException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -102,6 +103,20 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST,
                 "Validation failed",
                 errors,
+                request.getRequestURI()
+        );
+    }
+
+    @ExceptionHandler(SplitwiseApiException.class)
+    public ResponseEntity<Map<String, Object>> handleSplitwiseApiException(
+            SplitwiseApiException ex,
+            HttpServletRequest request
+    ) {
+        log.warn("Splitwise API error at {}: {}", request.getRequestURI(), ex.getMessage());
+        return buildErrorResponse(
+                HttpStatus.BAD_GATEWAY,
+                ex.getMessage(),
+                null,
                 request.getRequestURI()
         );
     }

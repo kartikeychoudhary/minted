@@ -62,6 +62,7 @@ Spring `Page<T>` wrapper: `{ content[], totalElements, totalPages, size, number,
 | **Splits** | `GET/POST/PUT/DELETE /splits`, `GET /summary`, `GET /balances`, `POST /settle`, `GET /friend/{id}/shares` | [docs/features/api/splits.md](features/api/splits.md) |
 | **Admin — Users** | `GET/POST /admin/users`, `GET/PUT/DELETE /admin/users/{id}`, `PUT /toggle`, `PUT /reset-password` | [docs/features/api/admin.md](features/api/admin.md) |
 | **Admin — Settings** | `GET/PUT /admin/settings/{key}` | [docs/features/api/admin.md](features/api/admin.md) |
+| **Integrations** | `GET /integrations/splitwise/status`, `POST /callback`, `POST /push/{splitId}` | [docs/features/api/integrations.md](features/api/integrations.md) |
 | **Admin — Jobs** | `GET /admin/jobs`, `GET /admin/jobs/{id}`, `POST /admin/jobs/{name}/trigger` | [docs/features/api/admin.md](features/api/admin.md) |
 | **Admin — Schedules** | `GET/PUT /admin/schedules` | [docs/features/api/admin.md](features/api/admin.md) |
 | **Admin — Defaults** | `GET/POST/DELETE /admin/defaults/categories`, `/account-types` | [docs/features/api/admin.md](features/api/admin.md) |

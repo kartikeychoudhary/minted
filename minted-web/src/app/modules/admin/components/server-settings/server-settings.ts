@@ -25,7 +25,14 @@ export class ServerSettings implements OnInit {
   // Feature toggles
   parserEnabled = false;
   adminKeyShared = false;
+  
+  // Splitwise Settings
+  splitwiseEnabled = false;
+  splitwiseClientId = '';
+  splitwiseClientSecret = '';
+  splitwiseRedirectUri = 'http://localhost:4200/integrations/splitwise/callback';
   loadingToggles = false;
+
 
   // LLM Models
   llmModels: LlmModel[] = [];
@@ -278,7 +285,23 @@ export class ServerSettings implements OnInit {
       error: () => { this.cdr.detectChanges(); }
     });
     this.adminService.getSetting('ADMIN_LLM_KEY_SHARED').subscribe({
-      next: (s) => { this.adminKeyShared = s.settingValue === 'true'; this.loadingToggles = false; this.cdr.detectChanges(); },
+      next: (s) => { this.adminKeyShared = s.settingValue === 'true'; this.cdr.detectChanges(); },
+      error: () => { this.cdr.detectChanges(); }
+    });
+    this.adminService.getSetting('SPLITWISE_ENABLED').subscribe({
+      next: (s) => { this.splitwiseEnabled = s.settingValue === 'true'; this.cdr.detectChanges(); },
+      error: () => { this.cdr.detectChanges(); }
+    });
+    this.adminService.getSetting('SPLITWISE_CLIENT_ID').subscribe({
+      next: (s) => { this.splitwiseClientId = s.settingValue; this.cdr.detectChanges(); },
+      error: () => { this.cdr.detectChanges(); }
+    });
+    this.adminService.getSetting('SPLITWISE_CLIENT_SECRET').subscribe({
+      next: (s) => { this.splitwiseClientSecret = s.settingValue; this.cdr.detectChanges(); },
+      error: () => { this.cdr.detectChanges(); }
+    });
+    this.adminService.getSetting('SPLITWISE_REDIRECT_URI').subscribe({
+      next: (s) => { this.splitwiseRedirectUri = s.settingValue || 'http://localhost:4200/integrations/splitwise/callback'; this.loadingToggles = false; this.cdr.detectChanges(); },
       error: () => { this.loadingToggles = false; this.cdr.detectChanges(); }
     });
   }
@@ -312,6 +335,30 @@ export class ServerSettings implements OnInit {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to update setting' });
         this.cdr.detectChanges();
       }
+    });
+  }
+
+  toggleSplitwiseEnabled() {
+    const newVal = this.splitwiseEnabled;
+    this.adminService.updateSetting('SPLITWISE_ENABLED', String(newVal)).subscribe({
+      next: () => {
+        this.messageService.add({ severity: 'success', summary: 'Updated', detail: `Splitwise Integration ${newVal ? 'enabled' : 'disabled'}` });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.splitwiseEnabled = !newVal; // revert on failure
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to update setting' });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  saveSplitwiseSettings() {
+    this.adminService.updateSetting('SPLITWISE_CLIENT_ID', this.splitwiseClientId).subscribe();
+    this.adminService.updateSetting('SPLITWISE_CLIENT_SECRET', this.splitwiseClientSecret).subscribe();
+    this.adminService.updateSetting('SPLITWISE_REDIRECT_URI', this.splitwiseRedirectUri).subscribe({
+      next: () => this.messageService.add({ severity: 'success', summary: 'Saved', detail: 'Splitwise credentials saved' }),
+      error: (err) => this.messageService.add({ severity: 'error', summary: 'Error', detail: err.error?.message || 'Failed to save settings' })
     });
   }
 

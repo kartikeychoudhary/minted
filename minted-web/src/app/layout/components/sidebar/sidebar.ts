@@ -36,7 +36,8 @@ export class Sidebar {
     { label: 'Splits', icon: 'pi pi-sitemap', route: '/splits' },
     { label: 'Analytics', icon: 'pi pi-chart-pie', route: '/analytics' },
     { label: 'Notifications', icon: 'pi pi-bell', route: '/notifications' },
-    { label: 'Settings', icon: 'pi pi-cog', route: '/settings', section: 'Management' },
+    { label: 'Integrations', icon: 'pi pi-link', route: '/integrations', section: 'Management' },
+    { label: 'Settings', icon: 'pi pi-cog', route: '/settings' },
   ];
 
   private adminNavigationItems: NavigationItem[] = [
