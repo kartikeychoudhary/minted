@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { SplitwiseService } from '../../../../core/services/splitwise.service';
@@ -39,7 +39,8 @@ export class IntegrationsPage implements OnInit, OnDestroy {
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private splitwiseService: SplitwiseService,
-    private friendService: FriendService
+    private friendService: FriendService,
+    private cdr: ChangeDetectorRef
   ) {
     this.titleService.setTitle('Minted - Integrations');
   }
@@ -64,9 +65,11 @@ export class IntegrationsPage implements OnInit, OnDestroy {
       next: (res) => {
         this.splitwiseStatus = res as IntegrationStatusResponse;
         this.loadingStatus = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.loadingStatus = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -206,6 +209,7 @@ export class IntegrationsPage implements OnInit, OnDestroy {
             detail: res.message || 'Successfully connected to Splitwise!' 
           });
           this.loadStatus();
+          this.cdr.detectChanges();
         },
         error: (err) => {
           this.messageService.add({ 
@@ -213,6 +217,7 @@ export class IntegrationsPage implements OnInit, OnDestroy {
             summary: 'Connection Failed', 
             detail: err?.error?.message || 'Failed to complete Splitwise authorization.' 
           });
+          this.cdr.detectChanges();
         }
       });
     }
