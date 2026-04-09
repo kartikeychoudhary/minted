@@ -25,6 +25,7 @@ export class ServerSettings implements OnInit {
   // Feature toggles
   parserEnabled = false;
   adminKeyShared = false;
+  showSplitwiseInfoDialog = false;
   
   // Splitwise Settings
   splitwiseEnabled = false;
@@ -351,6 +352,10 @@ export class ServerSettings implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  openSplitwiseInfoDialog() {
+    this.showSplitwiseInfoDialog = true;
   }
 
   saveSplitwiseSettings() {

@@ -118,6 +118,10 @@
             <div class="flex items-center gap-3">
                 <i class="pi pi-link text-minted-text-secondary"></i>
                 <h2 class="font-bold">Splitwise Integration</h2>
+                <button pButton type="button" icon="pi pi-info-circle" 
+                    class="p-button-rounded p-button-text p-button-sm ml-2" 
+                    (click)="openSplitwiseInfoDialog()">
+                </button>
             </div>
             <p-toggleSwitch [(ngModel)]="splitwiseEnabled" (onChange)="toggleSplitwiseEnabled()"></p-toggleSwitch>
         </div>
@@ -246,6 +250,63 @@
                 styleClass="p-button-primary"></p-button>
         </div>
     </form>
+</p-dialog>
+
+<!-- Splitwise Setup Info Dialog -->
+<p-dialog header="Splitwise Setup Guide" [(visible)]="showSplitwiseInfoDialog" [modal]="true" [style]="{width: 'min(600px, 95vw)'}"
+    [draggable]="false" [resizable]="false">
+    <div class="space-y-4 text-sm text-minted-text-secondary mt-2">
+        <h3 class="font-bold text-minted-text-primary text-base">How to integrate Minted with Splitwise</h3>
+        
+        <ol class="list-decimal list-outside ml-4 space-y-3">
+            <li>
+                <strong class="text-minted-text-primary">Register your application</strong>
+                <p class="mt-1">
+                    Go to the <a href="https://secure.splitwise.com/oauth_clients" target="_blank" class="text-minted-primary hover:underline">Splitwise Developer Portal</a> 
+                    and log in with your Splitwise account. Click on <strong>"Register your application"</strong>.
+                </p>
+            </li>
+            <li>
+                <strong class="text-minted-text-primary">Fill in the application details</strong>
+                <p class="mt-1">
+                    Give your application a name (e.g. "Minted Home Server") and enter the Homepage URL (e.g. <code>http://localhost:4200</code>).
+                    The most important field is the <strong>"Callback URL" / Redirect URI</strong>.
+                </p>
+                <div class="bg-minted-bg-app border border-minted-border p-3 rounded-md mt-2 flex items-center justify-between">
+                    <code class="text-minted-accent text-xs">{{ splitwiseRedirectUri || 'http://localhost:4200/integrations/splitwise/callback' }}</code>
+                </div>
+            </li>
+            <li>
+                <strong class="text-minted-text-primary">Copy your credentials</strong>
+                <p class="mt-1">
+                    Once the application is created, Splitwise will provide a <strong>Consumer Key (Client ID)</strong> and a 
+                    <strong>Consumer Secret (Client Secret)</strong>. Copy both of these values and paste them into the fields on this settings page.
+                </p>
+            </li>
+            <li>
+                <strong class="text-minted-text-primary">Enable the integration</strong>
+                <p class="mt-1">
+                    Save the Splitwise Configuration settings here by clicking "Save Splitwise Config". Then, any standard user can go to the 
+                    <a routerLink="/integrations" (click)="showSplitwiseInfoDialog = false" class="text-minted-primary hover:underline">Integrations Module</a>
+                    in the sidebar to connect their own personal Splitwise account and link their contacts.
+                </p>
+            </li>
+        </ol>
+
+        <div class="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg mt-4">
+            <div class="flex items-start gap-3">
+                <i class="pi pi-exclamation-triangle text-yellow-600 dark:text-yellow-500 mt-0.5"></i>
+                <p class="text-xs text-yellow-800 dark:text-yellow-200/80">
+                    <strong>Note:</strong> Splitwise has severely locked down their OAuth application approval process. 
+                    Your external app will be created in "sandbox" mode or requires an explicit review from their support team to function perfectly on public instances.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="flex justify-end gap-3 mt-6 pt-4 border-t border-minted-border">
+        <p-button label="Close" icon="pi pi-times" (onClick)="showSplitwiseInfoDialog = false" styleClass="p-button-text p-button-secondary"></p-button>
+    </div>
 </p-dialog>
 
 <p-confirmDialog></p-confirmDialog>
