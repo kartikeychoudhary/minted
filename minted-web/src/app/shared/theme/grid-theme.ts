@@ -1,0 +1,53 @@
+import { themeQuartz } from 'ag-grid-community';
+
+/**
+ * Shared AG Grid theme. All colours reference --minted-* CSS variables so grids
+ * follow light/dark mode and the selected accent without re-rendering.
+ * Components can tweak sizing with `mintedGridTheme.withParams({ rowHeight })`.
+ */
+export const mintedGridTheme = themeQuartz.withParams({
+  backgroundColor: 'var(--minted-bg-card)',
+  foregroundColor: 'var(--minted-text-primary)',
+  textColor: 'var(--minted-text-primary)',
+  subtleTextColor: 'var(--minted-text-muted)',
+  borderColor: 'var(--minted-border)',
+  browserColorScheme: 'inherit',
+  chromeBackgroundColor: 'var(--minted-bg-card)',
+  headerBackgroundColor: 'var(--minted-bg-surface)',
+  headerTextColor: 'var(--minted-text-muted)',
+  headerFontSize: 11,
+  headerFontWeight: 600,
+  oddRowBackgroundColor: 'var(--minted-bg-card)',
+  rowHoverColor: 'var(--minted-bg-hover)',
+  selectedRowBackgroundColor: 'var(--minted-accent-subtle)',
+  accentColor: 'var(--minted-accent)',
+  fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+  fontSize: 14,
+  rowHeight: 56,
+  headerHeight: 44,
+  spacing: 6,
+  wrapperBorder: false,
+  wrapperBorderRadius: 0,
+  cellHorizontalPadding: 16,
+  headerColumnBorder: false,
+  headerColumnResizeHandleColor: 'transparent',
+  columnBorder: false,
+  headerRowBorder: { color: 'var(--minted-border-light)', width: 1, style: 'solid' },
+  rowBorder: { color: 'var(--minted-border-light)', width: 1, style: 'solid' },
+  checkboxBorderRadius: 5,
+  checkboxCheckedBackgroundColor: 'var(--minted-accent)',
+  checkboxCheckedBorderColor: 'var(--minted-accent)',
+  checkboxUncheckedBackgroundColor: 'transparent',
+  checkboxUncheckedBorderColor: 'var(--minted-border-strong)',
+  inputBackgroundColor: 'var(--minted-bg-input)',
+  inputBorder: { color: 'var(--minted-border)', width: 1, style: 'solid' },
+  inputFocusBorder: { color: 'var(--minted-accent)', width: 1, style: 'solid' },
+  inputFocusShadow: '0 0 0 3px var(--minted-accent-ring)',
+  menuBackgroundColor: 'var(--minted-bg-elevated)',
+  menuBorder: { color: 'var(--minted-border)', width: 1, style: 'solid' },
+  menuShadow: 'var(--minted-shadow-lg)',
+  iconButtonHoverBackgroundColor: 'var(--minted-bg-hover)',
+  iconButtonHoverColor: 'var(--minted-accent)',
+  iconButtonBorderRadius: 6,
+  iconSize: 16,
+});

@@ -3,9 +3,10 @@ import { AdminService } from '../../../../core/services/admin.service';
 import { AdminUserResponse } from '../../../../core/models/user.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColDef, GridOptions, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridOptions } from 'ag-grid-community';
 import { TagCellRendererComponent } from '../cell-renderers/tag-cell-renderer.component';
 import { UserActionsCellRendererComponent } from '../cell-renderers/user-actions-cell-renderer.component';
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
 
 @Component({
   selector: 'app-user-management',
@@ -32,19 +33,7 @@ export class UserManagement implements OnInit {
     { label: 'Admin', value: 'ADMIN' }
   ];
 
-  mintedTheme = themeQuartz.withParams({
-    backgroundColor: 'var(--minted-bg-card)',
-    foregroundColor: 'var(--minted-text-primary)',
-    borderColor: 'var(--minted-border)',
-    headerBackgroundColor: 'var(--minted-bg-card)',
-    headerFontSize: 12,
-    headerFontWeight: 600,
-    headerTextColor: 'var(--minted-text-muted)',
-    rowHoverColor: 'var(--minted-surface)',
-    fontFamily: '"Inter", sans-serif',
-    rowHeight: 56,
-    headerHeight: 44,
-  });
+  mintedTheme = mintedGridTheme.withParams({ rowHeight: 56 });
 
   colDefs: ColDef[] = [
     {

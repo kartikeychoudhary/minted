@@ -1,140 +1,116 @@
-﻿<div class="p-4 sm:p-8">
+<div class="page-container">
   <!-- Header & Main Actions -->
-  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+  <div class="page-header">
     <div>
-      <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Transactions</h1>
-      <p class="text-sm mt-1" style="color: var(--minted-text-muted);">Manage and categorize your financial activity.
-      </p>
+      <h1 class="page-title">Transactions</h1>
+      <p class="page-subtitle">Manage and categorize your financial activity.</p>
     </div>
-    <div class="flex flex-wrap gap-2 items-center">
-      <!-- Bulk action buttons (visible when rows selected) -->
-      <span *ngIf="selectedTransactions.length > 0" class="text-sm font-medium px-2 py-1 rounded-full"
-        style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
-        {{ selectedTransactions.length }} selected
-      </span>
-      <button *ngIf="selectedTransactions.length > 0" pButton type="button" label="Delete Selected" icon="pi pi-trash"
-        class="p-button-danger p-button-outlined p-button-sm" (click)="bulkDelete()">
-      </button>
-      <button *ngIf="selectedTransactions.length > 0" pButton type="button" label="Change Category" icon="pi pi-tags"
-        class="p-button-outlined p-button-sm" (click)="openBulkCategoryDialog()">
-      </button>
+    <div class="page-actions">
       <button pButton type="button" label="Export" icon="pi pi-download" class="p-button-outlined"
         (click)="exportTransactions()" [disabled]="filteredTransactions.length === 0">
       </button>
-      <button pButton type="button" label="Add Transaction" icon="pi pi-plus" (click)="openNewDialog()"
-        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+      <button pButton type="button" label="Add Transaction" icon="pi pi-plus" (click)="openNewDialog()">
       </button>
     </div>
   </div>
 
   <!-- Filters & Controls Bar -->
-  <div class="rounded-xl shadow-sm border p-4 mb-6"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <div class="flex flex-col gap-4">
-      <!-- Date Filters Row -->
-      <div class="flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
-        <!-- Quick Date Filters -->
-        <div class="flex flex-wrap gap-2">
-          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.THIS_MONTH"
-            [class.text-primary]="selectedDateFilter === DateFilterOption.THIS_MONTH"
-            [class.border]="selectedDateFilter === DateFilterOption.THIS_MONTH"
-            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.THIS_MONTH"
-            [style.color]="selectedDateFilter !== DateFilterOption.THIS_MONTH ? 'var(--minted-text-secondary)' : null"
-            (click)="onDateFilterChange(DateFilterOption.THIS_MONTH)">
-            This Month
-          </button>
-          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_MONTH"
-            [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_MONTH"
-            [class.border]="selectedDateFilter === DateFilterOption.LAST_MONTH"
-            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_MONTH"
-            [style.color]="selectedDateFilter !== DateFilterOption.LAST_MONTH ? 'var(--minted-text-secondary)' : null"
-            (click)="onDateFilterChange(DateFilterOption.LAST_MONTH)">
-            Last Month
-          </button>
-          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
-            [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
-            [class.border]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
-            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
-            [style.color]="selectedDateFilter !== DateFilterOption.LAST_3_MONTHS ? 'var(--minted-text-secondary)' : null"
-            (click)="onDateFilterChange(DateFilterOption.LAST_3_MONTHS)">
-            Last 3 Months
-          </button>
-          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
-            [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
-            [class.border]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
-            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
-            [style.color]="selectedDateFilter !== DateFilterOption.LAST_6_MONTHS ? 'var(--minted-text-secondary)' : null"
-            (click)="onDateFilterChange(DateFilterOption.LAST_6_MONTHS)">
-            Last 6 Months
-          </button>
-          <button type="button" class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors"
-            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.LAST_YEAR"
-            [class.text-primary]="selectedDateFilter === DateFilterOption.LAST_YEAR"
-            [class.border]="selectedDateFilter === DateFilterOption.LAST_YEAR"
-            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.LAST_YEAR"
-            [style.color]="selectedDateFilter !== DateFilterOption.LAST_YEAR ? 'var(--minted-text-secondary)' : null"
-            (click)="onDateFilterChange(DateFilterOption.LAST_YEAR)">
-            Last Year
-          </button>
-          <button type="button"
-            class="px-3 py-1.5 text-sm font-medium rounded-full transition-colors flex items-center gap-1"
-            [class.bg-primary\/10]="selectedDateFilter === DateFilterOption.CUSTOM"
-            [class.text-primary]="selectedDateFilter === DateFilterOption.CUSTOM"
-            [class.border]="selectedDateFilter === DateFilterOption.CUSTOM"
-            [class.border-primary\/20]="selectedDateFilter === DateFilterOption.CUSTOM"
-            [style.color]="selectedDateFilter !== DateFilterOption.CUSTOM ? 'var(--minted-text-secondary)' : null"
-            (click)="onDateFilterChange(DateFilterOption.CUSTOM)">
-            Custom Range <i class="pi pi-calendar text-sm"></i>
-          </button>
-        </div>
-
-        <!-- Dropdowns & Search -->
-        <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto items-start">
-          <p-select [(ngModel)]="selectedAccountId" [options]="accountOptions" optionLabel="label" optionValue="value"
-            placeholder="All Accounts" (onChange)="onAccountFilterChange()" appendTo="body" styleClass="w-full sm:w-48">
-          </p-select>
-
-          <p-select [(ngModel)]="selectedCategoryId" [options]="categoryOptions" optionLabel="label" optionValue="value"
-            placeholder="All Categories" (onChange)="onCategoryFilterChange()" appendTo="body" styleClass="w-full sm:w-48">
-          </p-select>
-
-          <p-iconfield iconPosition="left" class="w-full sm:w-64">
-            <p-inputicon styleClass="pi pi-search" />
-            <input pInputText type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
-              placeholder="Search transactions..." class="w-full" />
-          </p-iconfield>
-        </div>
+  <div class="filters-card">
+    <div class="filters-row">
+      <!-- Quick Date Filters -->
+      <div class="segmented" role="tablist" aria-label="Date range">
+        <button type="button" class="segmented__item" role="tab"
+          [class.is-active]="selectedDateFilter === DateFilterOption.THIS_MONTH"
+          [attr.aria-selected]="selectedDateFilter === DateFilterOption.THIS_MONTH"
+          (click)="onDateFilterChange(DateFilterOption.THIS_MONTH)">
+          This Month
+        </button>
+        <button type="button" class="segmented__item" role="tab"
+          [class.is-active]="selectedDateFilter === DateFilterOption.LAST_MONTH"
+          [attr.aria-selected]="selectedDateFilter === DateFilterOption.LAST_MONTH"
+          (click)="onDateFilterChange(DateFilterOption.LAST_MONTH)">
+          Last Month
+        </button>
+        <button type="button" class="segmented__item" role="tab"
+          [class.is-active]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
+          [attr.aria-selected]="selectedDateFilter === DateFilterOption.LAST_3_MONTHS"
+          (click)="onDateFilterChange(DateFilterOption.LAST_3_MONTHS)">
+          3 Months
+        </button>
+        <button type="button" class="segmented__item" role="tab"
+          [class.is-active]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
+          [attr.aria-selected]="selectedDateFilter === DateFilterOption.LAST_6_MONTHS"
+          (click)="onDateFilterChange(DateFilterOption.LAST_6_MONTHS)">
+          6 Months
+        </button>
+        <button type="button" class="segmented__item" role="tab"
+          [class.is-active]="selectedDateFilter === DateFilterOption.LAST_YEAR"
+          [attr.aria-selected]="selectedDateFilter === DateFilterOption.LAST_YEAR"
+          (click)="onDateFilterChange(DateFilterOption.LAST_YEAR)">
+          Last Year
+        </button>
+        <button type="button" class="segmented__item" role="tab"
+          [class.is-active]="selectedDateFilter === DateFilterOption.CUSTOM"
+          [attr.aria-selected]="selectedDateFilter === DateFilterOption.CUSTOM"
+          (click)="onDateFilterChange(DateFilterOption.CUSTOM)">
+          <i class="pi pi-calendar text-xs"></i> Custom
+        </button>
       </div>
 
-      <!-- Custom Date Range Pickers (shown when Custom Range is selected) -->
-      <div *ngIf="showCustomDatePickers" class="flex flex-col sm:flex-row gap-4 items-end pt-2 border-t"
-        style="border-color: var(--minted-border);">
-        <div class="flex-1">
-          <label for="startDate" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Start Date</label>
-          <p-datepicker id="startDate" [(ngModel)]="customStartDate" (ngModelChange)="onCustomDateChange()"
-            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select start date" appendTo="body"
-            styleClass="w-full" inputStyleClass="w-full">
-          </p-datepicker>
-        </div>
-        <div class="flex-1">
-          <label for="endDate" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">End
-            Date</label>
-          <p-datepicker id="endDate" [(ngModel)]="customEndDate" (ngModelChange)="onCustomDateChange()"
-            dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select end date" appendTo="body"
-            styleClass="w-full" inputStyleClass="w-full">
-          </p-datepicker>
-        </div>
+      <!-- Dropdowns & Search -->
+      <div class="filters-controls">
+        <p-iconfield iconPosition="left" class="filters-search">
+          <p-inputicon styleClass="pi pi-search" />
+          <input pInputText type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+            placeholder="Search transactions..." class="w-full" />
+        </p-iconfield>
+
+        <p-select [(ngModel)]="selectedAccountId" [options]="accountOptions" optionLabel="label" optionValue="value"
+          placeholder="All Accounts" (onChange)="onAccountFilterChange()" appendTo="body" styleClass="w-full sm:w-44">
+        </p-select>
+
+        <p-select [(ngModel)]="selectedCategoryId" [options]="categoryOptions" optionLabel="label" optionValue="value"
+          placeholder="All Categories" (onChange)="onCategoryFilterChange()" appendTo="body" styleClass="w-full sm:w-44">
+        </p-select>
+      </div>
+    </div>
+
+    <!-- Custom Date Range Pickers (shown when Custom Range is selected) -->
+    <div *ngIf="showCustomDatePickers" class="custom-range-row">
+      <div class="flex-1">
+        <label for="startDate" class="field-label">Start Date</label>
+        <p-datepicker id="startDate" [(ngModel)]="customStartDate" (ngModelChange)="onCustomDateChange()"
+          dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select start date" appendTo="body"
+          styleClass="w-full" inputStyleClass="w-full">
+        </p-datepicker>
+      </div>
+      <div class="flex-1">
+        <label for="endDate" class="field-label">End Date</label>
+        <p-datepicker id="endDate" [(ngModel)]="customEndDate" (ngModelChange)="onCustomDateChange()"
+          dateFormat="mm/dd/yy" [showIcon]="true" placeholder="Select end date" appendTo="body"
+          styleClass="w-full" inputStyleClass="w-full">
+        </p-datepicker>
       </div>
     </div>
   </div>
 
   <!-- AG Grid Table -->
-  <div class="shadow-sm">
+  <div class="grid-card">
+    <!-- Bulk action bar (visible when rows selected) -->
+    <div *ngIf="selectedTransactions.length > 0" class="selection-bar">
+      <span class="selection-bar__count">
+        <i class="pi pi-check-square"></i>
+        {{ selectedTransactions.length }} selected
+      </span>
+      <div class="flex flex-wrap gap-2">
+        <button pButton type="button" label="Change Category" icon="pi pi-tags"
+          class="p-button-outlined p-button-sm" (click)="openBulkCategoryDialog()">
+        </button>
+        <button pButton type="button" label="Delete Selected" icon="pi pi-trash"
+          class="p-button-danger p-button-outlined p-button-sm" (click)="bulkDelete()">
+        </button>
+      </div>
+    </div>
     <ag-grid-angular style="width: 100%; height: 600px;" [rowData]="rowData" [columnDefs]="columnDefs"
       [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [loading]="loading" [theme]="mintedTheme"
       (gridReady)="onGridReady($event)" (selectionChanged)="onSelectionChanged()">
@@ -151,8 +127,7 @@
       <!-- Amount and Type Row -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="amount" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Amount</label>
+          <label for="amount" class="field-label">Amount</label>
           <p-inputNumber id="amount" formControlName="amount" mode="currency"
             [currency]="currencyService.currentCurrency" [locale]="currencyService.currentLocale"
             [minFractionDigits]="2" styleClass="w-full" inputStyleClass="w-full"
@@ -165,8 +140,7 @@
         </div>
 
         <div>
-          <label for="type" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Type</label>
+          <label for="type" class="field-label">Type</label>
           <p-select id="type" formControlName="type" [options]="transactionTypes" optionLabel="label" optionValue="value"
             placeholder="Select type" appendTo="body" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('type')?.invalid && transactionForm.get('type')?.touched">
@@ -180,8 +154,7 @@
 
       <!-- Description -->
       <div>
-        <label for="description" class="block text-sm font-medium mb-2"
-          style="color: var(--minted-text-secondary);">Description</label>
+        <label for="description" class="field-label">Description</label>
         <input pInputText id="description" formControlName="description" placeholder="Enter description" class="w-full"
           [class.p-invalid]="transactionForm.get('description')?.invalid && transactionForm.get('description')?.touched" />
         <small class="p-error block mt-1"
@@ -193,8 +166,7 @@
       <!-- Date and Category Row -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="transactionDate" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Date</label>
+          <label for="transactionDate" class="field-label">Date</label>
           <p-datepicker id="transactionDate" formControlName="transactionDate" dateFormat="mm/dd/yy" [showIcon]="true"
             styleClass="w-full" inputStyleClass="w-full"
             [class.p-invalid]="transactionForm.get('transactionDate')?.invalid && transactionForm.get('transactionDate')?.touched">
@@ -206,8 +178,7 @@
         </div>
 
         <div>
-          <label for="categoryId" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Category</label>
+          <label for="categoryId" class="field-label">Category</label>
           <p-select id="categoryId" formControlName="categoryId" [options]="categories" optionLabel="name"
             optionValue="id" placeholder="Select category" appendTo="body" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched">
@@ -222,8 +193,7 @@
       <!-- Account and To Account Row -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="accountId" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Account</label>
+          <label for="accountId" class="field-label">Account</label>
           <p-select id="accountId" formControlName="accountId" [options]="accounts" optionLabel="name" optionValue="id"
             placeholder="Select account" appendTo="body" styleClass="w-full"
             [class.p-invalid]="transactionForm.get('accountId')?.invalid && transactionForm.get('accountId')?.touched">
@@ -235,8 +205,7 @@
         </div>
 
         <div>
-          <label for="toAccountId" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">To Account (Transfer)</label>
+          <label for="toAccountId" class="field-label">To Account (Transfer)</label>
           <p-select id="toAccountId" formControlName="toAccountId" [options]="toAccountOptions" optionLabel="label"
             optionValue="value" placeholder="Select account" appendTo="body" styleClass="w-full">
           </p-select>
@@ -245,9 +214,8 @@
 
       <!-- Notes -->
       <div>
-        <label for="notes" class="block text-sm font-medium mb-2"
-          style="color: var(--minted-text-secondary);">Notes</label>
-        <textarea pInputTextarea id="notes" formControlName="notes" rows="3" placeholder="Add notes (optional)"
+        <label for="notes" class="field-label">Notes</label>
+        <textarea pTextarea id="notes" formControlName="notes" rows="3" placeholder="Add notes (optional)"
           class="w-full">
         </textarea>
       </div>
@@ -255,8 +223,7 @@
       <!-- Tags and Recurring Row -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label for="tags" class="block text-sm font-medium mb-2"
-            style="color: var(--minted-text-secondary);">Tags</label>
+          <label for="tags" class="field-label">Tags</label>
           <input pInputText id="tags" formControlName="tags" placeholder="Enter tags (comma separated)"
             class="w-full" />
         </div>
@@ -290,8 +257,7 @@
       <button pButton type="button" label="Delete" class="p-button-danger p-button-outlined"
         *ngIf="isEditMode && selectedTransaction" (click)="deleteTransaction(selectedTransaction)">
       </button>
-      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="transactionForm.invalid"
-        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="transactionForm.invalid">
       </button>
     </div>
   </form>
@@ -310,7 +276,7 @@
     <div class="space-y-5" style="overflow-y: auto; max-height: calc(85vh - 180px); padding-right: 4px;">
       <!-- Description -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Description *</label>
+        <label class="field-label">Description *</label>
         <input pInputText formControlName="description" class="w-full" placeholder="What was this for?" />
         <small class="text-red-500" *ngIf="splitForm.get('description')?.invalid && splitForm.get('description')?.touched">
           Description is required
@@ -320,11 +286,11 @@
       <!-- Category + Amount -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Category *</label>
+          <label class="field-label">Category *</label>
           <input pInputText formControlName="categoryName" class="w-full" placeholder="e.g. Dining" />
         </div>
         <div>
-          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Total Amount *</label>
+          <label class="field-label">Total Amount *</label>
           <p-inputNumber formControlName="totalAmount" [minFractionDigits]="2" [maxFractionDigits]="2"
             [min]="0.01" class="w-full" placeholder="0.00"
             (onInput)="onTotalAmountChange()">
@@ -334,7 +300,7 @@
 
       <!-- Date -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Date *</label>
+        <label class="field-label">Date *</label>
         <p-datepicker formControlName="transactionDate" [showIcon]="true" dateFormat="yy-mm-dd"
           styleClass="w-full">
         </p-datepicker>
@@ -344,7 +310,7 @@
 
       <!-- Split Type -->
       <div>
-        <label class="block text-sm font-medium mb-3" style="color: var(--minted-text-secondary);">Split Type</label>
+        <label class="field-label">Split Type</label>
         <div class="grid grid-cols-3 gap-3">
           <div class="cursor-pointer" (click)="onSplitTypeChange('EQUAL')">
             <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"
@@ -480,7 +446,7 @@
       Select a new category for {{ selectedTransactions.length }} selected transaction(s).
     </p>
     <div>
-      <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category</label>
+      <label class="field-label">Category</label>
       <p-select [(ngModel)]="bulkCategoryId" [options]="categories" optionLabel="name" optionValue="id"
         placeholder="Select category" appendTo="body" styleClass="w-full">
       </p-select>
@@ -489,8 +455,7 @@
   <div class="flex justify-end gap-3 mt-6 pt-4 border-t" style="border-color: var(--minted-border);">
     <button pButton type="button" label="Cancel" class="p-button-text" (click)="showBulkCategoryDialog = false">
     </button>
-    <button pButton type="button" label="Update" [disabled]="!bulkCategoryId" (click)="saveBulkCategory()"
-      style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+    <button pButton type="button" label="Update" [disabled]="!bulkCategoryId" (click)="saveBulkCategory()">
     </button>
   </div>
 </p-dialog>

@@ -5,7 +5,8 @@ import { JobScheduleConfig, DefaultCategory, DefaultAccountType } from '../../..
 import { LlmModel, LlmModelRequest } from '../../../../core/models/llm-config.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColDef, GridOptions, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridOptions } from 'ag-grid-community';
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
 
 @Component({
   selector: 'app-server-settings',
@@ -41,19 +42,7 @@ export class ServerSettings implements OnInit {
   categoryForm: FormGroup;
   accountTypeForm: FormGroup;
 
-  mintedTheme = themeQuartz.withParams({
-    backgroundColor: 'var(--minted-bg-card)',
-    foregroundColor: 'var(--minted-text-primary)',
-    borderColor: 'var(--minted-border)',
-    headerBackgroundColor: 'var(--minted-bg-card)',
-    headerFontSize: 12,
-    headerFontWeight: 600,
-    headerTextColor: 'var(--minted-text-muted)',
-    rowHoverColor: 'var(--minted-surface)',
-    fontFamily: '"Inter", sans-serif',
-    rowHeight: 48,
-    headerHeight: 44,
-  });
+  mintedTheme = mintedGridTheme.withParams({ rowHeight: 48 });
 
   categoryColDefs: ColDef[] = [
     { field: 'name', headerName: 'Name', flex: 1 },

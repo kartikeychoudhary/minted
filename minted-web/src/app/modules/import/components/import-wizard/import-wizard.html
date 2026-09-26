@@ -150,8 +150,7 @@
                   style="color: var(--minted-text-secondary);">
                 <button pButton label="Upload & Validate" icon="pi pi-upload"
                   [loading]="uploading" [disabled]="!selectedFile || uploading"
-                  (click)="uploadFile()"
-                  style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+                  (click)="uploadFile()">
                 </button>
               </div>
               <p *ngIf="selectedFile" class="text-xs mt-1" style="color: var(--minted-text-muted)">
@@ -273,8 +272,7 @@
                 </p>
                 <div class="flex items-center justify-center gap-4">
                   <button pButton label="View Import Details" icon="pi pi-eye"
-                    (click)="navigateToJobDetail(importResult.id)"
-                    style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+                    (click)="navigateToJobDetail(importResult.id)">
                   </button>
                   <button pButton label="Import History" icon="pi pi-list"
                     class="p-button-outlined" (click)="navigateToHistory()"

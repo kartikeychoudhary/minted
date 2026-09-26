@@ -11,7 +11,7 @@ export interface SplitActionsCallbacks {
   selector: 'app-split-actions-cell-renderer',
   standalone: false,
   template: `
-    <div class="flex items-center justify-end gap-2" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-end gap-1" (click)="$event.stopPropagation()">
       <button
         pButton
         type="button"
@@ -40,33 +40,26 @@ export interface SplitActionsCallbacks {
       height: 100%;
     }
 
-    ::ng-deep .p-button-sm {
-      width: 2.25rem;
-      height: 2.25rem;
+    :host .p-button.p-button-rounded {
+      width: 2rem;
+      height: 2rem;
       padding: 0;
-      border-radius: 50% !important;
+      border-radius: 8px !important;
+      border: 1px solid transparent !important;
+      background: transparent !important;
+      color: var(--minted-text-muted);
+      box-shadow: none !important;
     }
 
-    ::ng-deep .p-button-text {
-      color: var(--minted-text-secondary);
-      background: var(--minted-bg-surface) !important;
-      border: 1px solid var(--minted-border-light) !important;
+    :host .p-button.p-button-rounded:hover {
+      background: var(--minted-bg-hover) !important;
+      border-color: var(--minted-border) !important;
+      color: var(--minted-text-primary);
     }
 
-    ::ng-deep .p-button-text:hover {
-      background-color: var(--minted-bg-hover) !important;
-      border-color: var(--minted-accent) !important;
-      color: var(--minted-accent);
-    }
-
-    ::ng-deep .p-button-text.p-button-danger {
-      background: var(--minted-bg-surface) !important;
-      border: 1px solid var(--minted-border-light) !important;
-    }
-
-    ::ng-deep .p-button-text.p-button-danger:hover {
-      background-color: var(--minted-danger-subtle) !important;
-      border-color: var(--minted-danger) !important;
+    :host .p-button.p-button-rounded.p-button-danger:hover {
+      background: var(--minted-danger-subtle) !important;
+      border-color: transparent !important;
       color: var(--minted-danger);
     }
   `]

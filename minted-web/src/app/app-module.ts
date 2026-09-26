@@ -2,7 +2,7 @@ import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { providePrimeNG } from 'primeng/config';
-import Aura from '@primeng/themes/aura';
+import { MintedPreset } from './core/theme/minted-preset';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
@@ -24,7 +24,7 @@ import { LayoutModule } from './layout/layout-module';
     provideBrowserGlobalErrorListeners(),
     providePrimeNG({
       theme: {
-        preset: Aura,
+        preset: MintedPreset,
         options: {
           darkModeSelector: '.dark-mode'
         }

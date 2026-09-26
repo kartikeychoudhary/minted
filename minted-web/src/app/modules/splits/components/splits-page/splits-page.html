@@ -171,7 +171,7 @@
       </div>
       <!-- Name -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Name *</label>
+        <label class="field-label">Name *</label>
         <input pInputText formControlName="name" class="w-full" placeholder="Friend's name" />
         <small class="text-red-500" *ngIf="friendForm.get('name')?.invalid && friendForm.get('name')?.touched">
           Name is required
@@ -179,17 +179,17 @@
       </div>
       <!-- Email -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Email</label>
+        <label class="field-label">Email</label>
         <input pInputText formControlName="email" class="w-full" placeholder="friend@email.com" />
       </div>
       <!-- Phone -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Phone</label>
+        <label class="field-label">Phone</label>
         <input pInputText formControlName="phone" class="w-full" placeholder="+1 234 567 890" />
       </div>
       <!-- Avatar Color -->
       <div>
-        <label class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Avatar Color</label>
+        <label class="field-label">Avatar Color</label>
         <div class="flex gap-3">
           <div *ngFor="let color of avatarColors" class="w-8 h-8 rounded-full cursor-pointer border-2 transition-all"
             [style.background-color]="color"
@@ -221,7 +221,7 @@
     <div class="space-y-5" style="overflow-y: auto; max-height: calc(85vh - 180px); padding-right: 4px;">
       <!-- Description -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Description *</label>
+        <label class="field-label">Description *</label>
         <input pInputText formControlName="description" class="w-full" placeholder="What was this for?" />
         <small class="text-red-500"
           *ngIf="splitForm.get('description')?.invalid && splitForm.get('description')?.touched">
@@ -232,11 +232,11 @@
       <!-- Category + Amount -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Category *</label>
+          <label class="field-label">Category *</label>
           <input pInputText formControlName="categoryName" class="w-full" placeholder="e.g. Dining" />
         </div>
         <div>
-          <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Total Amount
+          <label class="field-label">Total Amount
             *</label>
           <p-inputNumber formControlName="totalAmount" [minFractionDigits]="2" [maxFractionDigits]="2" [min]="0.01"
             class="w-full" placeholder="0.00" (onInput)="onTotalAmountChange()">
@@ -246,7 +246,7 @@
 
       <!-- Date -->
       <div>
-        <label class="block text-sm font-medium mb-1" style="color: var(--minted-text-secondary);">Date *</label>
+        <label class="field-label">Date *</label>
         <p-datepicker formControlName="transactionDate" [showIcon]="true" dateFormat="yy-mm-dd" styleClass="w-full">
         </p-datepicker>
       </div>
@@ -255,7 +255,7 @@
 
       <!-- Split Type -->
       <div>
-        <label class="block text-sm font-medium mb-3" style="color: var(--minted-text-secondary);">Split Type</label>
+        <label class="field-label">Split Type</label>
         <div class="grid grid-cols-3 gap-3">
           <div class="cursor-pointer" (click)="onSplitTypeChange('EQUAL')">
             <div class="flex flex-col items-center justify-center p-3 rounded-lg border transition-all"

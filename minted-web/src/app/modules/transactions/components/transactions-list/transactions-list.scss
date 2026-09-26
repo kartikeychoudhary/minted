@@ -1,34 +1,82 @@
-// AG Grid Minted Theme - Custom CSS overrides
-// All base theming is handled by the v35 Theming API (themeQuartz.withParams)
-// These are fine-grained overrides for styling the API doesn't expose
+// Transactions page — filters, selection bar and AG Grid polish.
+// Base grid theming lives in shared/theme/grid-theme.ts.
+
+.filters-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 12px;
+  margin-bottom: 16px;
+  background: var(--minted-bg-card);
+  border: 1px solid var(--minted-border);
+  border-radius: var(--minted-radius-lg);
+  box-shadow: var(--minted-shadow-sm);
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filters-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+
+  @media (max-width: 639px) {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.filters-search {
+  width: 260px;
+
+  @media (max-width: 639px) {
+    width: 100%;
+  }
+}
+
+.custom-range-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 4px 2px;
+  border-top: 1px solid var(--minted-border-light);
+  animation: minted-fade-up 0.2s var(--minted-ease) both;
+}
+
+.selection-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--minted-accent-subtle);
+  border-bottom: 1px solid var(--minted-border-light);
+  animation: minted-fade-up 0.18s var(--minted-ease) both;
+}
+
+.selection-bar__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--minted-accent);
+}
 
 // Use ::ng-deep to pierce Angular's view encapsulation for AG Grid DOM
 :host ::ng-deep {
 
-  // Header text styling
-  .ag-header-cell-text {
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 0.75rem;
-  }
-
-  // Header hover
-  .ag-header-cell:hover {
-    background-color: var(--minted-bg-hover);
-  }
-
-  // Remove column separator & resize handle visibility
-  .ag-header-cell::after {
+  .ag-row.ag-row-focus::before {
     display: none;
-  }
-
-  // Row transitions
-  .ag-row {
-    transition: background-color 0.15s ease;
-
-    &.ag-row-focus::before {
-      display: none;
-    }
   }
 
   // Remove cell focus outline
@@ -47,62 +95,6 @@
     align-content: center !important;
   }
 
-  // Pagination panel
-  .ag-paging-panel {
-    border-top: 1px solid var(--minted-border-light);
-    padding: 0.75rem 1.25rem;
-    font-size: 0.8125rem;
-    min-height: 48px;
-  }
-
-  .ag-paging-row-summary-panel {
-    font-size: 0.8125rem;
-
-    .ag-paging-row-summary-panel-number {
-      font-weight: 600;
-      color: var(--minted-text-primary);
-    }
-  }
-
-  .ag-paging-page-summary-panel {
-    gap: 0.25rem;
-  }
-
-
-
-  // Page description
-  .ag-paging-description {
-    font-size: 0.8125rem;
-  }
-
-  // Page size dropdown
-  .ag-paging-page-size {
-    font-size: 0.8125rem;
-    gap: 0.5rem;
-  }
-
-  // Scrollbar
-  .ag-body-horizontal-scroll-viewport,
-  .ag-body-viewport {
-    &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: var(--minted-bg-surface);
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--minted-scrollbar-thumb);
-      border-radius: 4px;
-
-      &:hover {
-        background-color: var(--minted-scrollbar-hover);
-      }
-    }
-  }
-
   // Sort icons
   .ag-icon-asc,
   .ag-icon-desc {
@@ -114,49 +106,19 @@
     font-size: 0.75rem;
   }
 
-  .ag-header-cell:hover .ag-header-icon {
-    color: var(--minted-text-secondary);
-  }
-
-  // Loading & No Rows overlays
+  // Loading overlay
   .ag-overlay-loading-wrapper {
     background-color: var(--minted-bg-card);
     opacity: 0.9;
   }
 
   .ag-overlay-no-rows-center {
-    color: var(--minted-text-secondary);
-    font-size: 0.875rem;
     padding: 2rem;
   }
 
-  // Selection checkbox margin
   .ag-selection-checkbox {
     margin-right: 0;
   }
-
-  // PrimeNG round icon button overrides within cells
-  .p-button.p-button-rounded {
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-  }
-
-  .p-button.p-button-text {
-    color: var(--minted-text-secondary);
-    background: transparent;
-
-    &:enabled:hover {
-      background-color: var(--minted-bg-hover);
-      color: var(--minted-accent);
-    }
-
-    &.p-button-danger:enabled:hover {
-      background-color: var(--minted-danger-subtle);
-      color: var(--minted-danger);
-    }
-  }
-
 }
 
 // Semantic utility classes (used via cellClass)
@@ -164,20 +126,8 @@
   color: var(--minted-success);
 }
 
-.text-primary {
-  color: var(--minted-accent);
-}
-
-.bg-primary\/10 {
-  background-color: var(--minted-accent-subtle);
-}
-
-.border-primary\/20 {
-  border-color: var(--minted-accent-subtle);
-}
-
-.hover\:text-primary:hover {
-  color: var(--minted-accent);
+:host ::ng-deep .text-success {
+  color: var(--minted-success);
 }
 
 @media (max-width: 768px) {

@@ -7,58 +7,89 @@
 @import 'primeicons/primeicons.css';
 
 // AG Grid — v35 Theming API injects CSS automatically; no manual imports needed
+// PrimeNG — colours come from MintedPreset (core/theme/minted-preset.ts), which
+// maps every token onto the --minted-* variables below.
 
 // ============================================================
 //  MINTED DESIGN TOKENS — Single source of truth
 // ============================================================
 
 :root {
+  color-scheme: light;
+
   // --- Page & Surface ---
-  --minted-bg-page: #f8fafc;
+  --minted-bg-page: #f5f6f8;
   --minted-bg-card: #ffffff;
-  --minted-bg-surface: #f1f5f9;
-  --minted-bg-hover: #f8fafc;
+  --minted-bg-surface: #f3f4f7;
+  --minted-bg-hover: #f4f5f8;
   --minted-bg-input: #ffffff;
+  --minted-bg-elevated: #ffffff;
+  --minted-surface: var(--minted-bg-surface); // legacy alias
 
   // --- Text ---
-  --minted-text-primary: #0f172a;
-  --minted-text-secondary: #475569;
-  --minted-text-muted: #94a3b8;
+  --minted-text-primary: #101828;
+  --minted-text-secondary: #475467;
+  --minted-text-muted: #8a94a6;
 
   // --- Borders ---
-  --minted-border: #e2e8f0;
-  --minted-border-light: #f1f5f9;
+  --minted-border: #e4e7ec;
+  --minted-border-light: #eef0f3;
+  --minted-border-strong: #cfd4dc;
 
   // --- Accent (default amber — switchable via ThemeService) ---
   --minted-accent: #c48821;
   --minted-accent-hover: #a87315;
   --minted-accent-subtle: rgba(196, 136, 33, 0.10);
+  --minted-accent-soft: rgba(196, 136, 33, 0.16);
+  --minted-accent-ring: rgba(196, 136, 33, 0.22);
+  --minted-primary: var(--minted-accent); // legacy alias
 
   // --- Semantic colors ---
   --minted-success: #16a34a;
   --minted-success-subtle: rgba(22, 163, 74, 0.10);
   --minted-danger: #dc2626;
-  --minted-danger-subtle: rgba(220, 38, 38, 0.10);
-  --minted-info: #3b82f6;
-  --minted-info-subtle: rgba(59, 130, 246, 0.10);
-  --minted-warning: #f59e0b;
-  --minted-warning-subtle: rgba(245, 158, 11, 0.10);
+  --minted-danger-subtle: rgba(220, 38, 38, 0.09);
+  --minted-error: var(--minted-danger); // legacy alias
+  --minted-error-subtle: var(--minted-danger-subtle); // legacy alias
+  --minted-info: #2f6fed;
+  --minted-info-subtle: rgba(47, 111, 237, 0.10);
+  --minted-warning: #d97706;
+  --minted-warning-subtle: rgba(217, 119, 6, 0.11);
+  --minted-violet: #7c5cf0;
+  --minted-violet-subtle: rgba(124, 92, 240, 0.11);
 
   // --- Sidebar (brand green) ---
-  --minted-sidebar-bg: #166534;
+  --minted-sidebar-bg: #0f2c23;
+  --minted-sidebar-bg-2: #0b231b;
+  --minted-sidebar-border: rgba(255, 255, 255, 0.07);
+  --minted-sidebar-text: rgba(255, 255, 255, 0.66);
+  --minted-sidebar-text-strong: #ffffff;
+  --minted-sidebar-muted: rgba(255, 255, 255, 0.38);
+  --minted-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --minted-sidebar-active: rgba(255, 255, 255, 0.10);
+
+  // --- Overlay mask ---
+  --minted-mask: rgba(15, 23, 42, 0.45);
 
   // --- Radius ---
-  --minted-radius-sm: 6px;
-  --minted-radius-md: 10px;
-  --minted-radius-lg: 14px;
+  --minted-radius-sm: 8px;
+  --minted-radius-md: 12px;
+  --minted-radius-lg: 16px;
+  --minted-radius-xl: 20px;
 
   // --- Shadows ---
-  --minted-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --minted-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --minted-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --minted-shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.05);
+  --minted-shadow-md: 0 4px 10px -2px rgba(16, 24, 40, 0.07), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
+  --minted-shadow-lg: 0 14px 28px -8px rgba(16, 24, 40, 0.14), 0 4px 8px -4px rgba(16, 24, 40, 0.06);
+  --minted-shadow-xl: 0 24px 48px -12px rgba(16, 24, 40, 0.22);
+
+  // --- Motion ---
+  --minted-ease: cubic-bezier(0.2, 0, 0, 1);
 
   // --- Scrollbar ---
-  --minted-scrollbar-thumb: #cbd5e1;
-  --minted-scrollbar-hover: #94a3b8;
+  --minted-scrollbar-thumb: #d0d5dd;
+  --minted-scrollbar-hover: #98a2b3;
   --minted-scrollbar-track: transparent;
 }
 
@@ -67,26 +98,48 @@
 // ============================================================
 
 .dark-mode {
-  --minted-bg-page: #0f172a;
-  --minted-bg-card: #1e293b;
-  --minted-bg-surface: #162032;
-  --minted-bg-hover: #253348;
-  --minted-bg-input: #1e293b;
+  color-scheme: dark;
 
-  --minted-text-primary: #f1f5f9;
-  --minted-text-secondary: #94a3b8;
-  --minted-text-muted: #64748b;
+  --minted-bg-page: #0b0f17;
+  --minted-bg-card: #121825;
+  --minted-bg-surface: #0f1520;
+  --minted-bg-hover: #1a2231;
+  --minted-bg-input: #0f1520;
+  --minted-bg-elevated: #171f2e;
 
-  --minted-border: #334155;
-  --minted-border-light: #1e293b;
+  --minted-text-primary: #eef1f6;
+  --minted-text-secondary: #a4aec0;
+  --minted-text-muted: #6d788c;
 
-  --minted-sidebar-bg: #052e16;
+  --minted-border: #232c3c;
+  --minted-border-light: #1b2331;
+  --minted-border-strong: #334055;
 
-  --minted-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --minted-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --minted-success: #22c55e;
+  --minted-success-subtle: rgba(34, 197, 94, 0.13);
+  --minted-danger: #f05252;
+  --minted-danger-subtle: rgba(240, 82, 82, 0.13);
+  --minted-info: #5b8def;
+  --minted-info-subtle: rgba(91, 141, 239, 0.14);
+  --minted-warning: #f59e0b;
+  --minted-warning-subtle: rgba(245, 158, 11, 0.13);
+  --minted-violet: #9b82f5;
+  --minted-violet-subtle: rgba(155, 130, 245, 0.14);
 
-  --minted-scrollbar-thumb: #475569;
-  --minted-scrollbar-hover: #64748b;
+  --minted-sidebar-bg: #0c1a16;
+  --minted-sidebar-bg-2: #09130f;
+  --minted-sidebar-border: rgba(255, 255, 255, 0.06);
+
+  --minted-mask: rgba(0, 0, 0, 0.6);
+
+  --minted-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --minted-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --minted-shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.45);
+  --minted-shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.6);
+  --minted-shadow-xl: 0 24px 56px -12px rgba(0, 0, 0, 0.7);
+
+  --minted-scrollbar-thumb: #2c3649;
+  --minted-scrollbar-hover: #465370;
   --minted-scrollbar-track: transparent;
 }
 
@@ -103,21 +156,56 @@
 html,
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-feature-settings: 'cv11', 'ss01', 'cv05';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
   background-color: var(--minted-bg-page);
   color: var(--minted-text-primary);
   transition: background-color 0.2s ease, color 0.2s ease;
   overflow-x: hidden;
 }
 
+::selection {
+  background: var(--minted-accent-soft);
+}
+
+// Keyboard focus — visible ring only for keyboard users
+:where(a, button, [role='button'], [tabindex]):focus-visible {
+  outline: 2px solid var(--minted-accent);
+  outline-offset: 2px;
+  border-radius: var(--minted-radius-sm);
+}
+
+// Money and figures line up in columns
+.minted-sensitive,
+.tabular-nums,
+.kpi-value,
+.ag-cell {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 // ============================================================
 //  PRIVACY MODE — Blur sensitive financial data
 // ============================================================
+
+.minted-sensitive {
+  transition: filter 0.3s ease;
+}
 
 .privacy-mode .minted-sensitive {
   filter: blur(8px);
   user-select: none;
   pointer-events: none;
-  transition: filter 0.3s ease;
 }
 
 // ============================================================
@@ -137,21 +225,360 @@ body {
 }
 
 // ============================================================
-//  GLOBAL PRIMENG OVERRIDES — Theme-aware via CSS vars
+//  LAYOUT PRIMITIVES — shared by every page
+// ============================================================
+
+.page-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 28px 32px 48px;
+  animation: minted-fade-up 0.35s var(--minted-ease) both;
+
+  @media (max-width: 767px) {
+    padding: 20px 16px 40px;
+  }
+}
+
+.page-container--narrow {
+  max-width: 960px;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.page-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--minted-accent);
+  margin-bottom: 6px;
+}
+
+.page-title {
+  font-size: 1.625rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--minted-text-primary);
+
+  @media (max-width: 767px) {
+    font-size: 1.375rem;
+  }
+}
+
+.page-subtitle {
+  margin-top: 4px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--minted-text-secondary);
+}
+
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+// Generic surface card
+.surface-card,
+.glass-card {
+  background: var(--minted-bg-card);
+  border: 1px solid var(--minted-border);
+  border-radius: var(--minted-radius-lg);
+  box-shadow: var(--minted-shadow-sm);
+}
+
+.surface-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--minted-border-light);
+}
+
+.surface-card__title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--minted-text-primary);
+}
+
+.surface-card__body {
+  padding: 20px;
+}
+
+// Small tinted icon tile used in card headers / list rows
+.icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--minted-accent-subtle);
+  color: var(--minted-accent);
+
+  i {
+    font-size: 1rem;
+  }
+
+  &.is-success { background: var(--minted-success-subtle); color: var(--minted-success); }
+  &.is-danger { background: var(--minted-danger-subtle); color: var(--minted-danger); }
+  &.is-info { background: var(--minted-info-subtle); color: var(--minted-info); }
+  &.is-warning { background: var(--minted-warning-subtle); color: var(--minted-warning); }
+  &.is-violet { background: var(--minted-violet-subtle); color: var(--minted-violet); }
+  &.is-neutral { background: var(--minted-bg-surface); color: var(--minted-text-secondary); }
+}
+
+// Segmented control / filter chips
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 12px;
+  background: var(--minted-bg-surface);
+  border: 1px solid var(--minted-border-light);
+}
+
+.segmented__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--minted-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    color: var(--minted-text-primary);
+  }
+
+  &.is-active {
+    background: var(--minted-bg-card);
+    color: var(--minted-text-primary);
+    font-weight: 600;
+    box-shadow: var(--minted-shadow-sm);
+  }
+}
+
+// Form labels
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--minted-text-secondary);
+}
+
+// Status / count pills
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  background: var(--minted-bg-surface);
+  color: var(--minted-text-secondary);
+
+  &.is-accent { background: var(--minted-accent-subtle); color: var(--minted-accent); }
+  &.is-success { background: var(--minted-success-subtle); color: var(--minted-success); }
+  &.is-danger { background: var(--minted-danger-subtle); color: var(--minted-danger); }
+  &.is-info { background: var(--minted-info-subtle); color: var(--minted-info); }
+  &.is-warning { background: var(--minted-warning-subtle); color: var(--minted-warning); }
+}
+
+// Empty states
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  padding: 48px 24px;
+}
+
+.empty-state__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 8px;
+  border-radius: 16px;
+  background: var(--minted-bg-surface);
+  color: var(--minted-text-muted);
+  border: 1px solid var(--minted-border-light);
+
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+.empty-state__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--minted-text-primary);
+}
+
+.empty-state__text {
+  max-width: 360px;
+  font-size: 0.875rem;
+  color: var(--minted-text-secondary);
+}
+
+// Grid wrapper — gives AG Grid a card frame
+.grid-card {
+  background: var(--minted-bg-card);
+  border: 1px solid var(--minted-border);
+  border-radius: var(--minted-radius-lg);
+  box-shadow: var(--minted-shadow-sm);
+  overflow: hidden;
+}
+
+// Callouts (info / warning boxes)
+.callout {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--minted-radius-md);
+  border: 1px solid var(--minted-info-subtle);
+  background: var(--minted-info-subtle);
+  color: var(--minted-text-secondary);
+  font-size: 0.875rem;
+
+  > i {
+    margin-top: 2px;
+    color: var(--minted-info);
+  }
+
+  strong,
+  h4 {
+    color: var(--minted-text-primary);
+    font-weight: 600;
+  }
+}
+
+// Motion helpers
+.animate-fade-in {
+  animation: minted-fade-up 0.35s var(--minted-ease) both;
+}
+
+@keyframes minted-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// ============================================================
+//  PRIMENG REFINEMENTS
+//  (colours come from MintedPreset; these handle shape + legacy)
 // ============================================================
 
 // --- Buttons ---
-.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-danger):not(.p-button-success):not(.p-button-info):not(.p-button-secondary) {
+body .p-button {
+  font-size: 0.875rem;
+
+  &.p-button-sm {
+    font-size: 0.8125rem;
+  }
+}
+
+.p-button {
+  border-radius: 10px;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease,
+    transform 0.1s ease;
+
+  &:not(:disabled):active {
+    transform: translateY(1px);
+  }
+
+  &.p-button-sm {
+    border-radius: 8px;
+  }
+}
+
+// Solid (primary) buttons: subtle depth
+.p-button:not(.p-button-outlined):not(.p-button-text):not(.p-button-link):not(.p-button-danger):not(.p-button-success):not(.p-button-info):not(.p-button-secondary):not(.p-button-help):not(.p-button-warn):not(.p-button-contrast) {
   background-color: var(--minted-accent) !important;
   border-color: var(--minted-accent) !important;
+  color: #fff !important;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.14);
 
   &:enabled:hover {
     background-color: var(--minted-accent-hover) !important;
     border-color: var(--minted-accent-hover) !important;
   }
 
-  &:focus {
-    box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle) !important;
+  &:focus-visible {
+    box-shadow: 0 0 0 3px var(--minted-accent-ring) !important;
+  }
+}
+
+// Outlined buttons: neutral, card-like
+.p-button.p-button-outlined:not(.p-button-danger):not(.p-button-success):not(.p-button-info):not(.p-button-warn):not(.p-button-help) {
+  background: var(--minted-bg-card);
+  border-color: var(--minted-border);
+  color: var(--minted-text-primary);
+  box-shadow: var(--minted-shadow-xs);
+
+  &:enabled:hover {
+    background: var(--minted-bg-hover);
+    border-color: var(--minted-border-strong);
+    color: var(--minted-text-primary);
+  }
+}
+
+.p-button.p-button-text:not(.p-button-danger):not(.p-button-success):not(.p-button-info):not(.p-button-warn) {
+  color: var(--minted-text-secondary);
+
+  &:enabled:hover {
+    background: var(--minted-bg-hover);
+    color: var(--minted-text-primary);
+  }
+}
+
+.p-button.p-button-secondary:not(.p-button-outlined):not(.p-button-text) {
+  background: var(--minted-bg-surface);
+  border-color: var(--minted-border);
+  color: var(--minted-text-primary);
+
+  &:enabled:hover {
+    background: var(--minted-bg-hover);
+    border-color: var(--minted-border-strong);
   }
 }
 
@@ -161,11 +588,13 @@ body {
   color: var(--minted-text-primary) !important;
   border: 1px solid var(--minted-border) !important;
   box-shadow: var(--minted-shadow-sm) !important;
-  border-radius: var(--minted-radius-md) !important;
+  border-radius: var(--minted-radius-lg) !important;
 }
 
 .p-card .p-card-title {
   color: var(--minted-text-primary) !important;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 .p-card .p-card-subtitle {
@@ -173,199 +602,261 @@ body {
 }
 
 // --- Inputs ---
-.p-inputtext,
+body .p-inputtext,
+body .p-select .p-select-label,
+body .p-multiselect .p-multiselect-label,
+body .p-inputnumber .p-inputtext,
+body .p-textarea,
+body .p-datepicker .p-inputtext {
+  font-size: 0.875rem;
+}
+
 .p-select,
-.p-datepicker,
-.p-inputnumber .p-inputtext,
-.p-textarea {
-  background: var(--minted-bg-input) !important;
-  color: var(--minted-text-primary) !important;
-  border-color: var(--minted-border) !important;
-
-  &:hover {
-    border-color: var(--minted-accent) !important;
-  }
-
-  &:focus,
-  &.p-focus {
-    border-color: var(--minted-accent) !important;
-    box-shadow: 0 0 0 0.2rem var(--minted-accent-subtle) !important;
-  }
+.p-multiselect {
+  align-items: center;
 }
 
-.p-select-label {
-  color: var(--minted-text-primary) !important;
-}
-
-// --- Select dropdown overlay ---
 .p-select-overlay,
-.p-select-panel {
-  background: var(--minted-bg-card) !important;
-  border-color: var(--minted-border) !important;
+.p-select-panel,
+.p-multiselect-overlay {
   z-index: 1101 !important;
 }
 
-.p-select-option {
-  color: var(--minted-text-primary) !important;
+.p-select-option,
+.p-multiselect-option {
+  font-size: 0.875rem;
+}
 
-  &:hover,
-  &.p-highlight {
-    background: var(--minted-accent-subtle) !important;
-    color: var(--minted-accent) !important;
-  }
+// Error text
+.p-error {
+  color: var(--minted-danger) !important;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 // --- Dialogs ---
 .p-dialog {
-  background: var(--minted-bg-card) !important;
-  border: 1px solid var(--minted-border) !important;
-  box-shadow: var(--minted-shadow-md) !important;
+  overflow: hidden;
 
   .p-dialog-header {
-    background: var(--minted-bg-card) !important;
-    color: var(--minted-text-primary) !important;
-    border-bottom: 1px solid var(--minted-border) !important;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--minted-border-light);
+  }
+
+  .p-dialog-title {
+    letter-spacing: -0.01em;
   }
 
   .p-dialog-content {
-    background: var(--minted-bg-card) !important;
-    color: var(--minted-text-primary) !important;
+    padding: 20px 24px 24px;
     overflow: visible !important;
   }
 
   .p-dialog-footer {
-    background: var(--minted-bg-card) !important;
-    border-top: 1px solid var(--minted-border) !important;
+    padding: 16px 24px;
+    border-top: 1px solid var(--minted-border-light);
+    background: var(--minted-bg-surface);
+  }
+
+  .p-dialog-close-button,
+  .p-dialog-header-icon {
+    border-radius: 8px;
   }
 }
 
-// Fix dialog field labels
+// Dialog field labels
 .p-dialog label {
-  color: var(--minted-text-secondary) !important;
+  color: var(--minted-text-secondary);
+}
+
+.p-dialog-mask {
+  backdrop-filter: blur(3px);
+}
+
+// Confirm dialog: roomy message area
+.p-confirmdialog {
+  .p-dialog-content {
+    padding-top: 20px;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .p-confirmdialog-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--minted-warning-subtle);
+    color: var(--minted-warning);
+    font-size: 1.125rem;
+  }
+
+  .p-confirmdialog-message {
+    margin-top: 2px;
+    line-height: 1.55;
+    color: var(--minted-text-secondary);
+  }
+
+  .p-dialog-footer {
+    border-top: 1px solid var(--minted-border-light);
+  }
 }
 
 // --- Tables (PrimeNG p-table) ---
-.p-datatable .p-datatable-thead>tr>th {
-  background: var(--minted-bg-surface) !important;
-  color: var(--minted-text-muted) !important;
-  border-color: var(--minted-border) !important;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.p-datatable .p-datatable-tbody>tr {
-  background: var(--minted-bg-card) !important;
-  color: var(--minted-text-primary) !important;
-
-  >td {
+.p-datatable {
+  .p-datatable-thead > tr > th {
+    background: var(--minted-bg-surface) !important;
+    color: var(--minted-text-muted) !important;
     border-color: var(--minted-border-light) !important;
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em !important;
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
 
-  &:hover {
-    background: var(--minted-bg-hover) !important;
+  .p-datatable-tbody > tr {
+    background: var(--minted-bg-card) !important;
+    color: var(--minted-text-primary) !important;
+    transition: background-color 0.12s ease;
+
+    > td {
+      border-color: var(--minted-border-light) !important;
+      font-size: 0.875rem;
+    }
+
+    &:hover {
+      background: var(--minted-bg-hover) !important;
+    }
+  }
+
+  .p-datatable-tbody > tr:last-child > td {
+    border-bottom: none;
   }
 }
 
 .p-paginator {
-  background: var(--minted-bg-surface) !important;
+  background: transparent !important;
   color: var(--minted-text-secondary) !important;
-  border-color: var(--minted-border) !important;
+  border-color: var(--minted-border-light) !important;
+  font-size: 0.8125rem;
+
+  .p-paginator-page,
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    border-radius: 8px;
+    min-width: 2rem;
+    height: 2rem;
+  }
+
+  .p-paginator-page.p-paginator-page-selected {
+    background: var(--minted-accent-subtle);
+    color: var(--minted-accent);
+    font-weight: 600;
+  }
 }
 
 // --- Tabs ---
-.p-tabs {
-  background: var(--minted-bg-card) !important;
-  color: var(--minted-text-primary) !important;
-}
-
-.p-tablist {
-  background: var(--minted-bg-card) !important;
-  border-color: var(--minted-border) !important;
-}
-
 .p-tab {
-  color: var(--minted-text-secondary) !important;
-  background: transparent !important;
-
-  &:hover {
-    color: var(--minted-text-primary) !important;
-  }
-
-  &[data-p-active="true"],
-  &.p-tab-active {
-    color: var(--minted-accent) !important;
-    border-color: var(--minted-accent) !important;
-  }
+  font-size: 0.875rem;
+  transition: color 0.15s ease;
 }
-
-.p-tabpanel,
-.p-tabpanels {
-  background: var(--minted-bg-card) !important;
-  color: var(--minted-text-primary) !important;
-}
-
 
 // --- Accordion ---
-.p-accordion-header-link,
-.p-accordion-header a {
-  background: var(--minted-bg-surface) !important;
-  color: var(--minted-text-primary) !important;
-  border-color: var(--minted-border) !important;
-
-  &:hover {
-    background: var(--minted-bg-hover) !important;
-  }
-}
-
-.p-accordion-content {
-  background: var(--minted-bg-card) !important;
-  color: var(--minted-text-primary) !important;
-  border-color: var(--minted-border) !important;
+.p-accordionpanel {
+  border-color: var(--minted-border-light);
 }
 
 // --- Progress Bar ---
 .p-progressbar {
-  background: var(--minted-border) !important;
+  background: var(--minted-bg-surface) !important;
+  border-radius: 999px;
 
   .p-progressbar-value {
     background: var(--minted-accent) !important;
+    border-radius: 999px;
   }
 }
 
 // --- Skeleton ---
 .p-skeleton {
-  background-color: var(--minted-border) !important;
+  background-color: var(--minted-bg-surface) !important;
+
+  &::after {
+    background: linear-gradient(90deg, transparent, var(--minted-bg-hover), transparent) !important;
+  }
 }
 
 // --- Tooltip ---
 .p-tooltip .p-tooltip-text {
-  background: var(--minted-bg-card) !important;
-  color: var(--minted-text-primary) !important;
-  border: 1px solid var(--minted-border) !important;
+  background: #101828 !important;
+  color: #fff !important;
+  border: none !important;
   box-shadow: var(--minted-shadow-md) !important;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.p-tooltip .p-tooltip-arrow {
+  border-top-color: #101828 !important;
+  border-bottom-color: #101828 !important;
+  border-left-color: #101828 !important;
+  border-right-color: #101828 !important;
+}
+
+.dark-mode .p-tooltip .p-tooltip-text {
+  background: #2a3446 !important;
+}
+
+.dark-mode .p-tooltip .p-tooltip-arrow {
+  border-top-color: #2a3446 !important;
+  border-bottom-color: #2a3446 !important;
+  border-left-color: #2a3446 !important;
+  border-right-color: #2a3446 !important;
 }
 
 // --- Toast ---
-.p-toast .p-toast-message {
-  background: var(--minted-bg-card) !important;
-  border: 1px solid var(--minted-border) !important;
-  color: var(--minted-text-primary) !important;
-}
-
-// --- Confirm Dialog ---
-.p-confirmdialog {
-  .p-dialog-header {
-    background: var(--minted-bg-card) !important;
+.p-toast {
+  .p-toast-message {
+    background: var(--minted-bg-elevated) !important;
+    border: 1px solid var(--minted-border) !important;
+    border-left-width: 4px !important;
+    border-radius: 12px !important;
+    color: var(--minted-text-primary) !important;
+    box-shadow: var(--minted-shadow-lg) !important;
+    backdrop-filter: none;
   }
 
-  .p-dialog-content {
-    background: var(--minted-bg-card) !important;
+  .p-toast-message-success { border-left-color: var(--minted-success) !important; }
+  .p-toast-message-error { border-left-color: var(--minted-danger) !important; }
+  .p-toast-message-info { border-left-color: var(--minted-info) !important; }
+  .p-toast-message-warn { border-left-color: var(--minted-warning) !important; }
+
+  .p-toast-message-success .p-toast-message-icon { color: var(--minted-success) !important; }
+  .p-toast-message-error .p-toast-message-icon { color: var(--minted-danger) !important; }
+  .p-toast-message-info .p-toast-message-icon { color: var(--minted-info) !important; }
+  .p-toast-message-warn .p-toast-message-icon { color: var(--minted-warning) !important; }
+
+  .p-toast-summary {
+    font-weight: 600;
+    color: var(--minted-text-primary) !important;
   }
 
-  .p-dialog-footer {
-    background: var(--minted-bg-card) !important;
+  .p-toast-detail {
+    color: var(--minted-text-secondary) !important;
+    font-size: 0.8125rem;
+  }
+
+  .p-toast-close-button {
+    color: var(--minted-text-muted) !important;
   }
 }
 
@@ -374,19 +865,13 @@ body {
   z-index: 1101 !important;
 }
 
-.p-datepicker-panel {
-  background: var(--minted-bg-card) !important;
-  border-color: var(--minted-border) !important;
-  color: var(--minted-text-primary) !important;
-}
-
-// --- Toggle Switch ---
-.p-toggleswitch.p-toggleswitch-checked .p-toggleswitch-slider {
-  background: var(--minted-accent) !important;
-}
-
 // --- Tag ---
 .p-tag {
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  padding: 2px 10px;
+
   &.p-tag-success {
     background: var(--minted-success-subtle) !important;
     color: var(--minted-success) !important;
@@ -401,20 +886,80 @@ body {
     background: var(--minted-info-subtle) !important;
     color: var(--minted-info) !important;
   }
+
+  &.p-tag-warn {
+    background: var(--minted-warning-subtle) !important;
+    color: var(--minted-warning) !important;
+  }
+
+  &.p-tag-secondary {
+    background: var(--minted-bg-surface) !important;
+    color: var(--minted-text-secondary) !important;
+  }
+}
+
+// --- Stepper ---
+.p-stepper .p-step-number {
+  font-variant-numeric: tabular-nums;
 }
 
 // ============================================================
-//  AG GRID — v35 Theming API uses themeQuartz.withParams() in TS
-//  CSS variable overrides here allow dynamic dark/light switching
+//  AG GRID — shared theme lives in shared/grid-theme.ts
+//  These rules polish details the Theming API doesn't expose
 // ============================================================
+
+.ag-theme-quartz,
+[class*='ag-theme'] {
+  --ag-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+ag-grid-angular {
+  .ag-header-cell-text {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.6875rem;
+  }
+
+  .ag-header-cell::after,
+  .ag-header-cell-resize::after {
+    display: none;
+  }
+
+  .ag-row {
+    transition: background-color 0.12s ease;
+  }
+
+  .ag-paging-panel {
+    border-top: 1px solid var(--minted-border-light);
+    padding: 0 16px;
+    font-size: 0.8125rem;
+    color: var(--minted-text-secondary);
+  }
+
+  .ag-paging-row-summary-panel-number,
+  .ag-paging-number {
+    font-weight: 600;
+    color: var(--minted-text-primary);
+  }
+
+  .ag-overlay-no-rows-center {
+    color: var(--minted-text-muted);
+    font-size: 0.875rem;
+  }
+}
 
 // ============================================================
 //  GLOBAL SCROLLBAR
 // ============================================================
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--minted-scrollbar-thumb) var(--minted-scrollbar-track);
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -424,6 +969,8 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: var(--minted-scrollbar-thumb);
   border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 
   &:hover {
     background-color: var(--minted-scrollbar-hover);
@@ -435,10 +982,10 @@ body {
 // ============================================================
 
 @media (max-width: 767px) {
-  // Cap all PrimeNG dialogs at 90vw on mobile
+  // Cap all PrimeNG dialogs on mobile
   .p-dialog {
-    max-width: 90vw !important;
-    width: 90vw !important;
+    max-width: 94vw !important;
+    width: 94vw !important;
   }
 
   // AG Grid: viewport-relative height on mobile
@@ -449,23 +996,76 @@ body {
 }
 
 // ============================================================
-//  PRIMENG DRAWER — Notification Panel
+//  PRIMENG DRAWER
 // ============================================================
 
 .p-drawer {
   background: var(--minted-bg-card) !important;
   border-color: var(--minted-border) !important;
+  box-shadow: var(--minted-shadow-xl) !important;
 
   .p-drawer-header {
     background: var(--minted-bg-card) !important;
     color: var(--minted-text-primary) !important;
-    border-bottom: 1px solid var(--minted-border) !important;
-    padding: 1rem 1.25rem !important;
+    border-bottom: 1px solid var(--minted-border-light) !important;
+    padding: 16px 20px !important;
   }
 
   .p-drawer-content {
     background: var(--minted-bg-card) !important;
     color: var(--minted-text-primary) !important;
     padding: 0 !important;
+  }
+}
+
+// ============================================================
+//  DARK MODE — soften light Tailwind tints used for badges/icons
+// ============================================================
+
+$tint-colors: (
+  red: 248 113 113,
+  orange: 251 146 60,
+  amber: 251 191 36,
+  yellow: 250 204 21,
+  green: 74 222 128,
+  emerald: 52 211 153,
+  teal: 45 212 191,
+  cyan: 34 211 238,
+  blue: 96 165 250,
+  indigo: 129 140 248,
+  purple: 192 132 252,
+  violet: 167 139 250,
+  pink: 244 114 182,
+  rose: 251 113 133,
+  gray: 156 163 175,
+  slate: 148 163 184,
+);
+
+@each $name, $rgb in $tint-colors {
+  $r: nth($rgb, 1);
+  $g: nth($rgb, 2);
+  $b: nth($rgb, 3);
+
+  .dark-mode {
+    .bg-#{$name}-50,
+    .bg-#{$name}-100 {
+      background-color: rgba($r, $g, $b, 0.12) !important;
+    }
+
+    .bg-#{$name}-200 {
+      background-color: rgba($r, $g, $b, 0.2) !important;
+    }
+
+    .border-#{$name}-100,
+    .border-#{$name}-200 {
+      border-color: rgba($r, $g, $b, 0.25) !important;
+    }
+
+    .text-#{$name}-600,
+    .text-#{$name}-700,
+    .text-#{$name}-800,
+    .text-#{$name}-900 {
+      color: rgb($r, $g, $b) !important;
+    }
   }
 }

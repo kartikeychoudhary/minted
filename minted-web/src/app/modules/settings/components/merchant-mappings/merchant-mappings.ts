@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { ColDef, GridOptions, GridApi, GridReadyEvent, CellValueChangedEvent, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridOptions, GridApi, GridReadyEvent, CellValueChangedEvent } from 'ag-grid-community';
 import { LlmConfigService } from '../../../../core/services/llm-config.service';
 import { CategoryService } from '../../../../core/services/category.service';
 import { MerchantMapping } from '../../../../core/models/llm-config.model';
 import { CategoryResponse } from '../../../../core/models/category.model';
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
 
 @Component({
   selector: 'app-merchant-mappings',
@@ -18,19 +19,7 @@ export class MerchantMappingsComponent implements OnInit {
   loading = true;
   private gridApi!: GridApi;
 
-  mintedTheme = themeQuartz.withParams({
-    backgroundColor: 'var(--minted-bg-card)',
-    foregroundColor: 'var(--minted-text-primary)',
-    borderColor: 'var(--minted-border)',
-    headerBackgroundColor: 'var(--minted-bg-card)',
-    headerFontSize: 12,
-    headerFontWeight: 600,
-    headerTextColor: 'var(--minted-text-muted)',
-    rowHoverColor: 'var(--minted-surface)',
-    fontFamily: '"Inter", sans-serif',
-    rowHeight: 48,
-    headerHeight: 44,
-  });
+  mintedTheme = mintedGridTheme.withParams({ rowHeight: 48 });
 
   colDefs: ColDef[] = [
     {

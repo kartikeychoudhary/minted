@@ -1,7 +1,7 @@
 <p-toast></p-toast>
-<div class="h-screen flex overflow-hidden" [style.background-color]="'var(--minted-bg-page)'">
+<div class="app-shell">
   <!-- Sidebar (desktop only) -->
-  <div class="hidden md:block">
+  <div class="hidden md:block h-full">
     <app-sidebar (sidebarToggle)="onSidebarToggle($event)"></app-sidebar>
   </div>
 
@@ -13,159 +13,155 @@
   </p-drawer>
 
   <!-- Main Content Area -->
-  <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+  <main class="app-main">
     <!-- Top Header -->
-    <header class="h-16 flex items-center justify-between px-4 md:px-8 flex-shrink-0 border-b"
-      [style.background-color]="'var(--minted-bg-card)'" [style.border-color]="'var(--minted-border)'">
-      <div>
+    <header class="app-header">
+      <div class="app-header__left">
         <!-- Hamburger menu (mobile only) -->
-        <button type="button" (click)="toggleMobileSidebar()" class="md:hidden p-2 rounded-full transition-colors"
-          [style.color]="'var(--minted-text-secondary)'" pTooltip="Menu" tooltipPosition="bottom">
+        <button type="button" (click)="toggleMobileSidebar()" class="header-btn header-btn--mobile" aria-label="Open menu">
           <i class="pi pi-bars"></i>
         </button>
+        <img src="assets/ico/icon.svg" alt="" class="w-7 h-7 md:hidden">
+
+        <!-- Breadcrumb -->
+        <nav class="app-breadcrumb" aria-label="Breadcrumb">
+          <span class="app-breadcrumb__root hidden md:inline">{{ pageSection }}</span>
+          <i class="pi pi-angle-right app-breadcrumb__sep hidden md:inline"></i>
+          <span class="app-breadcrumb__current">{{ pageTitle }}</span>
+        </nav>
       </div>
-      <div class="flex items-center gap-4">
+
+      <div class="app-header__actions">
         <!-- Theme Toggle -->
-        <button type="button" (click)="themeService.toggleDarkMode()"
-          class="relative p-2 rounded-full transition-colors" [style.color]="'var(--minted-text-muted)'"
-          pTooltip="Toggle theme" tooltipPosition="bottom">
+        <button type="button" (click)="themeService.toggleDarkMode()" class="header-btn"
+          [pTooltip]="(themeService.isDarkMode$ | async) ? 'Switch to light mode' : 'Switch to dark mode'"
+          tooltipPosition="bottom" aria-label="Toggle theme">
           <i [class]="(themeService.isDarkMode$ | async) ? 'pi pi-sun' : 'pi pi-moon'"></i>
         </button>
         <!-- Privacy Toggle -->
-        <button type="button" (click)="privacyService.togglePrivacyMode()"
-          class="relative p-2 rounded-full transition-colors" [style.color]="'var(--minted-text-muted)'"
-          pTooltip="Toggle privacy mode" tooltipPosition="bottom">
+        <button type="button" (click)="privacyService.togglePrivacyMode()" class="header-btn"
+          [class.is-active]="privacyService.isPrivacyMode$ | async"
+          [pTooltip]="(privacyService.isPrivacyMode$ | async) ? 'Show amounts' : 'Hide amounts'"
+          tooltipPosition="bottom" aria-label="Toggle privacy mode">
           <i [class]="(privacyService.isPrivacyMode$ | async) ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
         </button>
+        <span class="app-header__divider"></span>
         <!-- Notifications Bell -->
-        <button type="button" (click)="toggleNotificationDrawer()" class="relative p-2 rounded-full transition-colors"
-          [style.color]="'var(--minted-text-muted)'" pTooltip="Notifications" tooltipPosition="bottom">
+        <button type="button" (click)="toggleNotificationDrawer()" class="header-btn" pTooltip="Notifications"
+          tooltipPosition="bottom" aria-label="Notifications">
           <i class="pi pi-bell"></i>
-          <span *ngIf="(notificationService.unreadCount$ | async) as unreadCount"
-            class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-white text-[10px] font-bold leading-none px-1"
-            [style.background-color]="'var(--minted-danger)'">
+          <span *ngIf="(notificationService.unreadCount$ | async) as unreadCount" class="header-btn__badge">
             {{ unreadCount > 99 ? '99+' : unreadCount }}
           </span>
         </button>
       </div>
+
+      <!-- Route Loading Bar -->
+      <div *ngIf="isRouteLoading" class="route-loading-bar"></div>
     </header>
 
-    <!-- Route Loading Bar -->
-    <div *ngIf="isRouteLoading" class="route-loading-bar"></div>
-
     <!-- Page Content -->
-    <div class="flex-1 overflow-y-auto">
+    <div class="app-content">
       <router-outlet></router-outlet>
     </div>
   </main>
 </div>
 
 <!-- Notification Drawer -->
-<p-drawer [(visible)]="isNotificationDrawerVisible" position="right" [style]="{ width: 'min(400px, 100vw)' }"
+<p-drawer [(visible)]="isNotificationDrawerVisible" position="right" [style]="{ width: 'min(420px, 100vw)' }"
   [modal]="true" [dismissible]="true" [closeOnEscape]="true" [showCloseIcon]="true" appendTo="body"
-  (onHide)="onDrawerHidden()">
+  styleClass="notification-drawer" (onHide)="onDrawerHidden()">
 
   <ng-template #header>
-    <div class="flex items-center justify-between w-full pr-2">
-      <span class="text-lg font-bold" [style.color]="'var(--minted-text-primary)'">
-        Notifications
-      </span>
-      <div class="flex items-center gap-2">
+    <div class="flex items-center justify-between w-full pr-2 gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-base font-semibold" [style.color]="'var(--minted-text-primary)'">Notifications</span>
+        <span *ngIf="(notificationService.unreadCount$ | async) as count" class="pill is-accent">{{ count }} new</span>
+      </div>
+      <div class="flex items-center gap-1">
         <button *ngIf="(notificationService.unreadCount$ | async) as count" pButton label="Mark all read"
-          class="p-button-text p-button-sm" [style.color]="'var(--minted-accent)'"
-          [loading]="!!(notificationService.markingAllRead$ | async)"
+          class="p-button-text p-button-sm" [loading]="!!(notificationService.markingAllRead$ | async)"
           (click)="notificationService.markAllAsRead()">
         </button>
         <button pButton icon="pi pi-trash" class="p-button-text p-button-sm p-button-danger" pTooltip="Clear all read"
-          tooltipPosition="bottom"
-          [loading]="!!(notificationService.clearing$ | async)"
+          tooltipPosition="bottom" [loading]="!!(notificationService.clearing$ | async)"
           (click)="clearAllReadFromDrawer()">
         </button>
       </div>
     </div>
   </ng-template>
 
-  <div class="flex flex-col">
+  <div class="flex flex-col min-h-full">
     <!-- Loading state -->
-    <div *ngIf="notificationService.loading$ | async" class="flex flex-col items-center justify-center py-16 gap-3">
-      <p-progressSpinner [style]="{width: '40px', height: '40px'}" strokeWidth="4"></p-progressSpinner>
-      <p class="text-sm" [style.color]="'var(--minted-text-muted)'">Loading notifications...</p>
+    <div *ngIf="notificationService.loading$ | async" class="flex flex-col gap-3 p-4">
+      <div *ngFor="let i of [1,2,3,4]" class="flex gap-3 items-start">
+        <p-skeleton shape="circle" size="2.5rem"></p-skeleton>
+        <div class="flex-1 flex flex-col gap-2">
+          <p-skeleton width="60%" height="0.875rem"></p-skeleton>
+          <p-skeleton width="90%" height="0.75rem"></p-skeleton>
+        </div>
+      </div>
     </div>
 
     <!-- Empty state -->
     <div *ngIf="!(notificationService.loading$ | async) && (notificationService.notifications$ | async)?.length === 0"
-      class="flex flex-col items-center justify-center py-20 text-center gap-4">
-      <div class="w-24 h-24 rounded-full flex items-center justify-center"
-        [style.background-color]="'var(--minted-accent-subtle)'">
-        <i class="pi pi-check text-5xl" [style.color]="'var(--minted-accent)'"></i>
+      class="empty-state flex-1 py-20">
+      <div class="empty-state__icon" style="background: var(--minted-success-subtle); color: var(--minted-success);">
+        <i class="pi pi-check"></i>
       </div>
-      <h3 class="text-xl font-bold" [style.color]="'var(--minted-text-primary)'">All caught up!</h3>
-      <p class="text-sm max-w-[240px]" [style.color]="'var(--minted-text-muted)'">
+      <h3 class="empty-state__title">All caught up!</h3>
+      <p class="empty-state__text">
         You've seen all your notifications. Enjoy your organized financial life!
       </p>
     </div>
 
     <!-- Notification list -->
     <div *ngFor="let n of (!(notificationService.loading$ | async) ? (notificationService.notifications$ | async) : [])"
-      class="group flex items-start gap-4 p-4 border-b cursor-pointer transition-all"
-      [style.border-color]="'var(--minted-border-light)'"
-      [style.background-color]="n.isRead ? 'transparent' : 'var(--minted-accent-subtle)'"
-      (click)="onNotificationClick(n)">
-
-      <!-- Unread accent bar -->
-      <div *ngIf="!n.isRead" class="absolute left-0 w-1 h-8 rounded-r-full self-center"
-        [style.background-color]="'var(--minted-accent)'">
-      </div>
+      class="notif-item group" [class.is-unread]="!n.isRead" (click)="onNotificationClick(n)">
 
       <!-- Type icon -->
-      <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
         [style.background-color]="getNotificationBg(n.type)">
-        <i [class]="getNotificationIcon(n.type)" [style.color]="getNotificationColor(n.type)"></i>
+        <i [class]="getNotificationIcon(n.type)" class="text-sm" [style.color]="getNotificationColor(n.type)"></i>
       </div>
 
       <!-- Content -->
       <div class="flex-1 min-w-0">
-        <div class="flex justify-between items-start">
-          <span class="text-sm font-semibold truncate" [style.color]="'var(--minted-text-primary)'"
-            [class.font-bold]="!n.isRead">
+        <div class="flex justify-between items-start gap-2">
+          <span class="text-sm truncate" [style.color]="'var(--minted-text-primary)'"
+            [class.font-semibold]="!n.isRead" [class.font-medium]="n.isRead">
             {{ n.title }}
           </span>
-          <span class="text-[10px] font-medium flex-shrink-0 ml-2" [style.color]="'var(--minted-text-muted)'">
+          <span class="text-[11px] font-medium flex-shrink-0 mt-0.5" [style.color]="'var(--minted-text-muted)'">
             {{ getRelativeTime(n.createdAt) }}
           </span>
         </div>
-        <p class="text-xs mt-0.5 line-clamp-2" [style.color]="'var(--minted-text-secondary)'">
+        <p class="text-[13px] mt-0.5 line-clamp-2 leading-snug" [style.color]="'var(--minted-text-secondary)'">
           {{ n.message }}
         </p>
       </div>
 
       <!-- Unread dot -->
-      <div *ngIf="!n.isRead" class="w-2 h-2 rounded-full flex-shrink-0 mt-2"
-        [style.background-color]="'var(--minted-accent)'">
-      </div>
+      <span *ngIf="!n.isRead" class="notif-item__dot"></span>
 
       <!-- Dismiss button -->
-      <button class="flex-shrink-0 p-1.5 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-        [style.color]="'var(--minted-text-muted)'" (click)="$event.stopPropagation(); notificationService.dismiss(n.id)"
-        pTooltip="Dismiss" tooltipPosition="left">
-        <i class="pi pi-times text-lg"></i>
+      <button class="notif-item__dismiss" (click)="$event.stopPropagation(); notificationService.dismiss(n.id)"
+        pTooltip="Dismiss" tooltipPosition="left" aria-label="Dismiss notification">
+        <i class="pi pi-times text-xs"></i>
       </button>
     </div>
 
     <!-- Load more -->
     <div *ngIf="notificationService.hasMore" class="p-4 text-center">
-      <button pButton label="Load more" class="p-button-text p-button-sm" [style.color]="'var(--minted-accent)'"
-        (click)="notificationService.loadMore()">
+      <button pButton label="Load more" class="p-button-text p-button-sm" (click)="notificationService.loadMore()">
       </button>
     </div>
 
     <!-- See all link -->
-    <div *ngIf="(notificationService.notifications$ | async)?.length"
-      class="p-3 text-center border-t cursor-pointer transition-colors" [style.border-color]="'var(--minted-border)'"
-      [style.background-color]="'var(--minted-accent-subtle)'" (click)="viewAllNotifications()">
-      <span class="text-sm font-medium" [style.color]="'var(--minted-accent)'">
-        See all notifications
-      </span>
+    <div *ngIf="(notificationService.notifications$ | async)?.length" class="notif-footer">
+      <button type="button" class="notif-footer__btn" (click)="viewAllNotifications()">
+        See all notifications <i class="pi pi-arrow-right text-xs"></i>
+      </button>
     </div>
   </div>
 </p-drawer>
