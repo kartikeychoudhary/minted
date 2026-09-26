@@ -1,7 +1,7 @@
 <p-toast></p-toast>
 <p-confirmDialog key="recurring"></p-confirmDialog>
 
-<div class="recurring-container">
+<div class="page-container recurring-container">
     <!-- Page Header -->
     <div class="page-header">
         <div class="header-left">
@@ -10,11 +10,44 @@
         </div>
     </div>
 
+    <!-- Summary Cards -->
+    <div class="summary-grid" *ngIf="summary">
+        <div class="summary-card expense-card">
+            <div class="summary-icon-wrapper expense-icon-bg">
+                <i class="pi pi-arrow-down"></i>
+            </div>
+            <div>
+                <span class="summary-label">Est. Monthly Expenses</span>
+                <span class="summary-value minted-sensitive">{{ formatCurrency(summary.estimatedMonthlyExpenses) }}</span>
+            </div>
+        </div>
+        <div class="summary-card income-card">
+            <div class="summary-icon-wrapper income-icon-bg">
+                <i class="pi pi-arrow-up"></i>
+            </div>
+            <div>
+                <span class="summary-label">Est. Monthly Income</span>
+                <span class="summary-value minted-sensitive">{{ formatCurrency(summary.estimatedMonthlyIncome) }}</span>
+            </div>
+        </div>
+        <div class="summary-card flux-card">
+            <div class="summary-icon-wrapper flux-icon-bg">
+                <i class="pi pi-wallet"></i>
+            </div>
+            <div>
+                <span class="summary-label">Scheduled Net Flux</span>
+                <span class="summary-value minted-sensitive">{{ summary.scheduledNetFlux >= 0 ? '+' : '' }}{{
+                    formatCurrency(summary.scheduledNetFlux) }}</span>
+            </div>
+        </div>
+    </div>
+
+
     <!-- New Recurring Transaction Form -->
     <section class="form-card">
         <div class="form-card-header">
             <h3 class="form-card-title">
-                <i class="pi pi-plus-circle form-icon"></i>
+                <span class="icon-tile"><i [class]="editing ? 'pi pi-pencil' : 'pi pi-plus'"></i></span>
                 {{ editing ? 'Edit Recurring Transaction' : 'New Recurring Transaction' }}
             </h3>
             <span class="step-badge">{{ editing ? 'Editing' : 'Step 1: Basic Info' }}</span>
@@ -96,7 +129,10 @@
     <!-- Active Schedules Table -->
     <section class="table-card">
         <div class="table-header">
-            <h3 class="table-title">Active Schedules</h3>
+            <div>
+                <h3 class="table-title">Active Schedules</h3>
+                <p class="table-subtitle">Upcoming automatic transactions</p>
+            </div>
             <div class="search-wrapper">
                 <i class="pi pi-search search-icon"></i>
                 <input class="search-input" placeholder="Filter transactions..." [(ngModel)]="searchQuery"
@@ -125,9 +161,8 @@
                 <tr [class.paused-row]="tx.status === 'PAUSED'">
                     <td>
                         <div class="tx-name-cell">
-                            <div class="tx-icon" [style.background]="tx.type === 'INCOME' ? '#dcfce7' : '#fee2e2'">
-                                <i [class]="tx.type === 'INCOME' ? 'pi pi-money-bill' : 'pi pi-list'"
-                                    [style.color]="tx.type === 'INCOME' ? '#16a34a' : '#dc2626'"></i>
+                            <div class="tx-icon" [class.is-income]="tx.type === 'INCOME'">
+                                <i [class]="tx.type === 'INCOME' ? 'pi pi-money-bill' : 'pi pi-list'"></i>
                             </div>
                             <div>
                                 <span class="tx-name">
@@ -171,8 +206,11 @@
             <ng-template pTemplate="emptymessage">
                 <tr>
                     <td colspan="5" class="empty-message">
-                        <i class="pi pi-times-circle empty-icon"></i>
-                        <p>No recurring transactions found</p>
+                        <div class="empty-state">
+                            <div class="empty-state__icon"><i class="pi pi-sync"></i></div>
+                            <p class="empty-state__title">No recurring transactions found</p>
+                            <p class="empty-state__text">Create a schedule above to automate rent, subscriptions or salary.</p>
+                        </div>
                     </td>
                 </tr>
             </ng-template>
@@ -180,35 +218,4 @@
         </div><!-- end table-body-scroll -->
     </section>
 
-    <!-- Summary Cards -->
-    <div class="summary-grid" *ngIf="summary">
-        <div class="summary-card expense-card">
-            <div class="summary-icon-wrapper expense-icon-bg">
-                <i class="pi pi-arrow-down"></i>
-            </div>
-            <div>
-                <span class="summary-label">Est. Monthly Expenses</span>
-                <span class="summary-value minted-sensitive">{{ formatCurrency(summary.estimatedMonthlyExpenses) }}</span>
-            </div>
-        </div>
-        <div class="summary-card income-card">
-            <div class="summary-icon-wrapper income-icon-bg">
-                <i class="pi pi-arrow-up"></i>
-            </div>
-            <div>
-                <span class="summary-label">Est. Monthly Income</span>
-                <span class="summary-value minted-sensitive">{{ formatCurrency(summary.estimatedMonthlyIncome) }}</span>
-            </div>
-        </div>
-        <div class="summary-card flux-card">
-            <div class="summary-icon-wrapper flux-icon-bg">
-                <i class="pi pi-wallet"></i>
-            </div>
-            <div>
-                <span class="summary-label">Scheduled Net Flux</span>
-                <span class="summary-value minted-sensitive">{{ summary.scheduledNetFlux >= 0 ? '+' : '' }}{{
-                    formatCurrency(summary.scheduledNetFlux) }}</span>
-            </div>
-        </div>
-    </div>
 </div>

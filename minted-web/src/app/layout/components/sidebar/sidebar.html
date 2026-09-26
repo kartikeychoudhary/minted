@@ -1,94 +1,72 @@
-<aside [class]="mobileMode ? 'w-full' : (isOpen ? 'w-64' : 'w-20')"
-  class="flex-shrink-0 text-white flex flex-col transition-all duration-300 relative" [class.h-screen]="!mobileMode"
-  [class.h-full]="mobileMode" [style.background-color]="'var(--minted-sidebar-bg)'">
+<aside class="sidebar" [class.is-collapsed]="!mobileMode && !isOpen" [class.is-mobile]="mobileMode">
 
-  <!-- Logo Area -->
-  <div class="h-16 flex items-center border-b border-white/10" [class.px-6]="mobileMode || isOpen"
-    [class.justify-center]="!mobileMode && !isOpen" [class.px-4]="!mobileMode && !isOpen">
-    <div class="flex items-center gap-2" [class.justify-center]="!mobileMode && !isOpen">
-      <img src="assets/ico/icon.svg" alt="Minted logo" class="w-8 h-8 flex-shrink-0">
-      <span *ngIf="mobileMode || isOpen" class="text-xl font-bold tracking-tight">Minted</span>
-    </div>
+  <!-- Brand -->
+  <div class="sidebar__brand">
+    <a routerLink="/" class="sidebar__logo" (click)="onNavClick()" aria-label="Minted home">
+      <span class="sidebar__logo-mark">
+        <img src="assets/ico/icon.svg" alt="" class="w-6 h-6">
+      </span>
+      <span *ngIf="expanded" class="sidebar__logo-text">Minted</span>
+    </a>
+    <button *ngIf="!mobileMode" type="button" class="sidebar__collapse" (click)="toggleSidebar()"
+      [attr.aria-label]="isOpen ? 'Collapse sidebar' : 'Expand sidebar'"
+      [pTooltip]="isOpen ? 'Collapse sidebar' : 'Expand sidebar'" tooltipPosition="right">
+      <i [class]="isOpen ? 'pi pi-angle-double-left' : 'pi pi-angle-double-right'"></i>
+    </button>
   </div>
 
-  <!-- Toggle Button (hidden in mobile drawer) -->
-  <button *ngIf="!mobileMode" type="button" (click)="toggleSidebar()"
-    class="absolute -right-3 top-20 rounded-full p-1.5 shadow-lg transition-colors z-10 border"
-    [style.background-color]="'var(--minted-bg-card)'" [style.color]="'var(--minted-text-secondary)'"
-    [style.border-color]="'var(--minted-border)'" [attr.aria-label]="isOpen ? 'Collapse sidebar' : 'Expand sidebar'"
-    pTooltip="{{ isOpen ? 'Collapse' : 'Expand' }}" tooltipPosition="right">
-    <i [class]="isOpen ? 'pi pi-chevron-left' : 'pi pi-chevron-right'" class="text-sm"></i>
-  </button>
-
-  <!-- Navigation Links -->
-  <nav class="flex-1 overflow-y-auto py-6 space-y-1" [class.px-3]="mobileMode || isOpen"
-    [class.px-2]="!mobileMode && !isOpen">
+  <!-- Navigation -->
+  <nav class="sidebar__nav" aria-label="Main navigation">
     <ng-container *ngFor="let item of navigationItems">
-      <!-- Section Header -->
-      <div *ngIf="item.section && (mobileMode || isOpen)" class="pt-4 pb-2">
-        <p class="px-3 text-xs font-semibold text-white/40 uppercase tracking-wider">{{ item.section }}</p>
-      </div>
+      <!-- Section header -->
+      <p *ngIf="item.section && expanded" class="sidebar__section">{{ item.section }}</p>
+      <div *ngIf="item.section && !expanded" class="sidebar__divider"></div>
 
-      <!-- Separator for section in collapsed mode -->
-      <div *ngIf="item.section && !mobileMode && !isOpen" class="h-px bg-white/10 my-2 mx-2"></div>
-
-      <!-- Navigation Link -->
-      <a [routerLink]="item.route" routerLinkActive="bg-white/10 text-white shadow-sm border border-white/5"
-        [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-        class="flex items-center rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors group"
-        [class.px-3]="mobileMode || isOpen" [class.py-2.5]="mobileMode || isOpen" [class.gap-3]="mobileMode || isOpen"
-        [class.justify-center]="!mobileMode && !isOpen" [class.p-3]="!mobileMode && !isOpen"
-        [pTooltip]="!mobileMode && !isOpen ? item.label : ''" tooltipPosition="right" (click)="onNavClick()">
-        <i [class]="item.icon" class="text-xl transition-colors" [class.text-primary]="isActive(item.route)"
-          [class.group-hover:text-primary]="!isActive(item.route)"></i>
-        <span *ngIf="mobileMode || isOpen" class="font-medium">{{ item.label }}</span>
+      <a [routerLink]="item.route" routerLinkActive="is-active" [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+        class="sidebar__link" [pTooltip]="!expanded ? item.label : ''" tooltipPosition="right" (click)="onNavClick()"
+        [attr.aria-label]="item.label">
+        <i [class]="item.icon" class="sidebar__link-icon"></i>
+        <span *ngIf="expanded" class="sidebar__link-label">{{ item.label }}</span>
+        <ng-container *ngIf="item.route === '/notifications'">
+          <span *ngIf="(notificationService.unreadCount$ | async) as unread" class="sidebar__badge"
+            [class.is-dot]="!expanded">
+            <ng-container *ngIf="expanded">{{ unread > 99 ? '99+' : unread }}</ng-container>
+          </span>
+        </ng-container>
       </a>
     </ng-container>
   </nav>
 
-  <!-- User Profile Section -->
-  <div class="p-4 border-t border-white/10 relative">
-    <div (click)="toggleUserMenu()"
-      class="flex items-center rounded-lg hover:bg-white/5 cursor-pointer transition-colors"
-      [class.gap-3]="mobileMode || isOpen" [class.p-2]="mobileMode || isOpen"
-      [class.justify-center]="!mobileMode && !isOpen" [class.p-3]="!mobileMode && !isOpen"
-      [pTooltip]="!mobileMode && !isOpen ? currentUser?.displayName : ''" tooltipPosition="right">
-
-      <!-- Avatar -->
-      <div
-        class="rounded-full border-2 border-white/20 flex items-center justify-center font-semibold text-white overflow-hidden shrink-0"
-        [class.w-9]="mobileMode || isOpen" [class.h-9]="mobileMode || isOpen" [class.w-10]="!mobileMode && !isOpen"
-        [class.h-10]="!mobileMode && !isOpen" [style.background-color]="'var(--minted-accent)'">
-        <img *ngIf="userAvatar" [src]="userAvatar" class="w-full h-full object-cover">
-        <span *ngIf="!userAvatar">{{ getInitials(currentUser?.displayName || 'U') }}</span>
+  <!-- User -->
+  <div class="sidebar__footer">
+    <!-- User menu -->
+    <div *ngIf="showUserMenu" class="sidebar__menu" [class.is-floating]="!expanded" role="menu">
+      <div class="sidebar__menu-head">
+        <p class="sidebar__menu-name">{{ currentUser?.displayName }}</p>
+        <p class="sidebar__menu-email">{{ currentUser?.email }}</p>
       </div>
-
-      <!-- User Info (shown when open) -->
-      <div *ngIf="mobileMode || isOpen" class="flex-1 min-w-0">
-        <p class="text-sm font-medium text-white truncate">{{ currentUser?.displayName }}</p>
-        <p class="text-xs text-white/50 truncate">{{ currentUser?.email }}</p>
-      </div>
-
-      <!-- Dropdown Icon (shown when open) -->
-      <i *ngIf="mobileMode || isOpen" class="pi pi-chevron-down text-white/40 text-lg"></i>
-    </div>
-
-    <!-- User Menu Dropdown -->
-    <div *ngIf="showUserMenu && (mobileMode || isOpen)"
-      class="absolute bottom-full left-4 right-4 mb-2 rounded-lg shadow-lg border overflow-hidden"
-      [style.background-color]="'var(--minted-bg-card)'" [style.border-color]="'var(--minted-border)'">
-      <button type="button" (click)="navigateToProfile()"
-        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-gray-50 transition-colors"
-        [style.color]="'var(--minted-text-primary)'">
-        <i class="pi pi-user text-lg" [style.color]="'var(--minted-text-secondary)'"></i>
+      <button type="button" role="menuitem" class="sidebar__menu-item" (click)="navigateToProfile()">
+        <i class="pi pi-user"></i>
         <span>Profile Settings</span>
       </button>
-      <button type="button" (click)="logout()"
-        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors border-t"
-        [style.border-color]="'var(--minted-border)'">
-        <i class="pi pi-sign-out text-red-600 text-lg"></i>
+      <button type="button" role="menuitem" class="sidebar__menu-item is-danger" (click)="logout()">
+        <i class="pi pi-sign-out"></i>
         <span>Logout</span>
       </button>
     </div>
+
+    <button type="button" class="sidebar__user" (click)="toggleUserMenu()" [class.is-open]="showUserMenu"
+      [pTooltip]="!expanded ? currentUser?.displayName : ''" tooltipPosition="right" aria-haspopup="menu"
+      [attr.aria-expanded]="showUserMenu">
+      <span class="sidebar__avatar">
+        <img *ngIf="userAvatar" [src]="userAvatar" alt="" class="w-full h-full object-cover">
+        <span *ngIf="!userAvatar">{{ getInitials(currentUser?.displayName || 'U') }}</span>
+      </span>
+      <span *ngIf="expanded" class="sidebar__user-info">
+        <span class="sidebar__user-name">{{ currentUser?.displayName }}</span>
+        <span class="sidebar__user-email">{{ currentUser?.email }}</span>
+      </span>
+      <i *ngIf="expanded" class="pi pi-chevron-up sidebar__user-chevron"></i>
+    </button>
   </div>
 </aside>

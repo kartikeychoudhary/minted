@@ -46,44 +46,41 @@ Container for authenticated app:
 
 ## SidebarComponent
 
-Navigation sidebar with all app routes.
+Deep-green navigation rail (gradient using `--minted-sidebar-*` tokens), 256px expanded / 76px collapsed.
 
-**Navigation structure (built by `buildNavigation(role)`):**
+**Navigation structure (grouped by section header):**
 
-| Label | Icon | Route |
-|-------|------|-------|
-| Dashboard | `pi pi-home` | `/dashboard` |
-| Transactions | `pi pi-list` | `/transactions` |
-| Recurring | `pi pi-refresh` | `/recurring` |
-| Import | `pi pi-upload` | `/import` |
-| Analytics | `pi pi-chart-bar` | `/analytics` |
-| Statements | `pi pi-file-pdf` | `/statements` |
-| Splits | `pi pi-users` | `/splits` |
-| Notifications | `pi pi-bell` | `/notifications` |
-| Settings | `pi pi-cog` | `/settings` |
+| Section | Label | Icon | Route |
+|---------|-------|------|-------|
+| Overview | Dashboard | `pi pi-th-large` | `/` |
+| | Analytics | `pi pi-chart-pie` | `/analytics` |
+| | Notifications | `pi pi-bell` (+ unread badge) | `/notifications` |
+| Money | Transactions | `pi pi-list` | `/transactions` |
+| | Recurring | `pi pi-sync` | `/recurring` |
+| | Splits | `pi pi-sitemap` | `/splits` |
+| Data | Import | `pi pi-upload` | `/import` |
+| | Statements | `pi pi-file` | `/statements` |
+| Management | Settings | `pi pi-cog` | `/settings` |
+| Admin (role=ADMIN) | Users / Server Jobs / Server Settings | `pi pi-users` / `pi pi-clock` / `pi pi-server` | `/admin/*` |
 
-**Admin section (role=ADMIN only):**
-
-| Label | Icon | Route |
-|-------|------|-------|
-| Users | `pi pi-user` | `/admin/users` |
-| Server Jobs | `pi pi-clock` | `/admin/jobs` |
-| Server Settings | `pi pi-server` | `/admin/settings` |
+- Active item: tinted background, accent icon and a 3px accent indicator bar.
+- Collapse toggle (`pi pi-angle-double-left/right`) persists state in `localStorage` key `minted-sidebar-collapsed`.
+- User menu (Profile Settings / Logout) closes on outside click or Escape.
 
 **Avatar:** Shows `<img>` when `userAvatar` getter finds base64 in localStorage, initials fallback otherwise.
 
-**Mobile:** Sidebar hidden via `hidden md:block`. Hamburger button visible only on mobile (`md:hidden`). Auto-closes on navigation.
+**Mobile:** Sidebar hidden via `hidden md:block`; rendered inside a left `p-drawer` opened from the header hamburger. Auto-closes on navigation.
 
 ---
 
-## HeaderComponent
+## Header (in `layout.html`)
 
-- App name / branding (shown on desktop)
-- Dark mode toggle button
-- Notification bell with unread badge → toggles `p-drawer`
-- User menu or profile link
+- Hamburger + logo (mobile only)
+- Breadcrumb (`section › page`) derived from the current URL (`pageContexts` in `layout.ts`)
+- Theme toggle, privacy toggle (highlighted when active), notification bell with unread badge → toggles `p-drawer`
+- Translucent background with backdrop blur; route loading bar sits on its bottom edge
 
-**Notification drawer** (`p-drawer`, right side, 400px / `min(400px, 100vw)` on mobile):
+**Notification drawer** (`p-drawer`, right side, `min(420px, 100vw)`):
 - See [notifications.md](notifications.md) for full drawer spec
 
 ---
@@ -94,10 +91,10 @@ Navigation sidebar with all app routes.
 |---------|-----------------|
 | Sidebar | `hidden md:block` — hidden on < 768px |
 | Mobile nav | Hamburger (`pi pi-bars`) + PrimeNG `<p-drawer>` from left with full sidebar content |
-| Dialogs | `max-width: 90vw` via global `@media (max-width: 767px)` in `styles.scss` |
+| Dialogs | `max-width: 94vw` via global `@media (max-width: 767px)` in `styles.scss` |
 | AG Grid | `height: 60vh !important; min-height: 300px` globally on mobile |
-| Notification drawer | `min(400px, 100vw)` |
-| Header | `px-4 md:px-8` padding |
+| Notification drawer | `min(420px, 100vw)` |
+| Header | 12px side padding on mobile, 32px on desktop |
 
 ---
 

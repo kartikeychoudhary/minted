@@ -1,6 +1,11 @@
-<div class="p-4 sm:p-8">
-    <!-- Filter Bar -->
-    <div class="flex flex-wrap items-center gap-4 mb-6">
+<div class="page-container">
+    <!-- Header & Filters -->
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Analytics</h1>
+            <p class="page-subtitle">Dig into your spending, budgets and recurring payments.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
         <p-select [options]="monthOptions" [(ngModel)]="selectedMonth" optionLabel="label" optionValue="value"
             (onChange)="onFilterChange()" styleClass="w-full sm:w-40">
         </p-select>
@@ -13,65 +18,55 @@
         <p-select [options]="accountOptions" [(ngModel)]="selectedAccountId" placeholder="All Accounts"
             [showClear]="true" (onChange)="onFilterChange()" styleClass="w-full sm:w-48" optionLabel="name" optionValue="id">
         </p-select>
+        </div>
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <!-- Monthly Income Card -->
-        <div class="rounded-xl shadow-sm border p-6 border-l-4 border-l-green-600 hover:shadow-md transition-shadow"
-            style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Monthly Income</p>
-                    <h3 class="text-3xl font-bold mt-2 minted-sensitive" style="color: var(--minted-text-primary);">
-                        <ng-container *ngIf="!loading.summary && summary">
-                            {{ formatCurrency(summary.totalIncome) }}
-                        </ng-container>
-                        <p-skeleton *ngIf="loading.summary" width="10rem" height="2.5rem"></p-skeleton>
-                    </h3>
-                </div>
-                <div class="p-3 bg-green-100 rounded-lg text-green-700">
-                    <i class="pi pi-arrow-up text-2xl"></i>
-                </div>
+        <div class="surface-card stat-card p-5">
+            <div class="flex justify-between items-center mb-3">
+                <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Monthly Income</p>
+                <span class="icon-tile is-success"><i class="pi pi-arrow-down-left"></i></span>
             </div>
+            <h3 class="text-[1.75rem] leading-tight font-bold tracking-tight minted-sensitive" style="color: var(--minted-success);">
+                <ng-container *ngIf="!loading.summary && summary">
+                    {{ formatCurrency(summary.totalIncome) }}
+                </ng-container>
+                <p-skeleton *ngIf="loading.summary" width="10rem" height="2.25rem"></p-skeleton>
+            </h3>
         </div>
 
         <!-- Monthly Expenses Card -->
-        <div class="rounded-xl shadow-sm border p-6 border-l-4 border-l-red-600 hover:shadow-md transition-shadow"
-            style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-            <div class="flex justify-between items-start mb-4">
-                <div>
-                    <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Monthly Expenses</p>
-                    <h3 class="text-3xl font-bold mt-2 minted-sensitive" style="color: var(--minted-text-primary);">
-                        <ng-container *ngIf="!loading.summary && summary">
-                            {{ formatCurrency(summary.totalExpense) }}
-                        </ng-container>
-                        <p-skeleton *ngIf="loading.summary" width="10rem" height="2.5rem"></p-skeleton>
-                    </h3>
-                </div>
-                <div class="p-3 bg-red-100 rounded-lg text-red-700">
-                    <i class="pi pi-arrow-down text-2xl"></i>
-                </div>
+        <div class="surface-card stat-card p-5">
+            <div class="flex justify-between items-center mb-3">
+                <p class="text-sm font-medium" style="color: var(--minted-text-secondary);">Monthly Expenses</p>
+                <span class="icon-tile is-danger"><i class="pi pi-arrow-up-right"></i></span>
             </div>
+            <h3 class="text-[1.75rem] leading-tight font-bold tracking-tight minted-sensitive" style="color: var(--minted-text-primary);">
+                <ng-container *ngIf="!loading.summary && summary">
+                    {{ formatCurrency(summary.totalExpense) }}
+                </ng-container>
+                <p-skeleton *ngIf="loading.summary" width="10rem" height="2.25rem"></p-skeleton>
+            </h3>
         </div>
     </div>
 
     <!-- Main Content Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <!-- Left Column (2/3 width) -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-4">
             <!-- Spending Activity Chart -->
-            <div class="rounded-xl shadow-sm border overflow-hidden"
-                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
-                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Spending Activity</h2>
+            <div class="surface-card overflow-hidden">
+                <div class="surface-card__header">
+                    <h2 class="surface-card__title">Spending Activity</h2>
                     <span *ngIf="getSelectedDateLabel()" class="text-sm px-3 py-1 rounded-full"
                         style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
                         {{ getSelectedDateLabel() }}
                         <i class="pi pi-times ml-1 cursor-pointer text-xs" (click)="clearBarSelection()"></i>
                     </span>
                 </div>
-                <div class="p-6">
+                <div class="p-5">
                     <div *ngIf="loading.spending" class="h-64 flex items-center justify-center">
                         <p-progressSpinner [style]="{width: '40px', height: '40px'}" strokeWidth="4"></p-progressSpinner>
                     </div>
@@ -80,29 +75,25 @@
                             [options]="spendingChartOptions" height="250px"
                             (onDataSelect)="onBarClick($event)">
                         </p-chart>
-                        <div *ngIf="spendingActivity.length === 0" class="flex items-center justify-center h-full"
-                            style="color: var(--minted-text-muted);">
-                            <div class="text-center">
-                                <i class="pi pi-chart-bar text-4xl mb-2"></i>
-                                <p>No spending data for this period</p>
-                            </div>
+                        <div *ngIf="spendingActivity.length === 0" class="empty-state h-full">
+                            <div class="empty-state__icon"><i class="pi pi-chart-bar"></i></div>
+                            <p class="empty-state__title">No spending data for this period</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Recent Transactions -->
-            <div class="rounded-xl shadow-sm border overflow-hidden"
-                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
-                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">
+            <div class="surface-card overflow-hidden">
+                <div class="surface-card__header">
+                    <h2 class="surface-card__title">
                         {{ getSelectedDateLabel() ? 'Transactions on ' + getSelectedDateLabel() : 'Transactions' }}
                     </h2>
-                    <a routerLink="/transactions" class="text-sm font-medium" style="color: var(--minted-accent);">
-                        View All
+                    <a routerLink="/transactions" class="card-link">
+                        View all <i class="pi pi-arrow-right text-[10px]"></i>
                     </a>
                 </div>
-                <div class="p-6">
+                <div class="p-5">
                     <div *ngIf="loading.transactions" class="space-y-4">
                         <div *ngFor="let i of [1,2,3]" class="flex items-center gap-4 p-3">
                             <p-skeleton shape="circle" size="3rem"></p-skeleton>
@@ -114,23 +105,20 @@
                         </div>
                     </div>
 
-                    <div *ngIf="!loading.transactions && recentTransactions.length === 0" class="text-center py-8"
-                        style="color: var(--minted-text-muted);">
-                        <i class="pi pi-inbox text-4xl mb-2"></i>
-                        <p>No transactions found</p>
+                    <div *ngIf="!loading.transactions && recentTransactions.length === 0" class="empty-state">
+                        <div class="empty-state__icon"><i class="pi pi-inbox"></i></div>
+                        <p class="empty-state__title">No transactions found</p>
                     </div>
 
                     <div *ngIf="!loading.transactions && recentTransactions.length > 0" class="space-y-2 max-h-[400px] overflow-y-auto">
                         <div *ngFor="let transaction of recentTransactions"
-                            class="flex items-center justify-between p-3 rounded-lg transition-colors cursor-pointer hover:opacity-80"
-                            style="background-color: var(--minted-bg-surface);">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-full flex items-center justify-center"
-                                    [ngClass]="transaction.type === 'INCOME' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                                    <i [class]="'pi pi-' + getTransactionIcon(transaction.categoryIcon) + ' text-lg'"></i>
+                            class="txn-row">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="icon-tile" [ngClass]="transaction.type === 'INCOME' ? 'is-success' : 'is-danger'">
+                                    <i [class]="'pi pi-' + getTransactionIcon(transaction.categoryIcon)"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-semibold" style="color: var(--minted-text-primary);">{{
+                                    <h4 class="text-sm font-semibold truncate" style="color: var(--minted-text-primary);">{{
                                         transaction.description }}</h4>
                                     <p class="text-xs" style="color: var(--minted-text-muted);">
                                         {{ transaction.categoryName }} &bull;
@@ -139,8 +127,8 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="font-bold minted-sensitive"
-                                    [ngClass]="transaction.type === 'INCOME' ? 'text-green-700' : ''"
+                                <p class="text-sm font-semibold whitespace-nowrap minted-sensitive"
+                                    [ngClass]="transaction.type === 'INCOME' ? 'text-income' : ''"
                                     [style.color]="transaction.type !== 'INCOME' ? 'var(--minted-text-primary)' : null">
                                     {{ transaction.type === 'INCOME' ? '+' : '-' }}{{
                                     formatCurrency(transaction.amount)
@@ -157,17 +145,16 @@
         </div>
 
         <!-- Right Column (1/3 width) -->
-        <div class="lg:col-span-1 space-y-6">
+        <div class="lg:col-span-1 space-y-4">
             <!-- Budget Status Card -->
-            <div class="rounded-xl shadow-sm border overflow-hidden"
-                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
-                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Budget Status</h2>
-                    <a routerLink="/settings" class="text-sm font-medium" style="color: var(--minted-accent);">
-                        Manage
+            <div class="surface-card overflow-hidden">
+                <div class="surface-card__header">
+                    <h2 class="surface-card__title">Budget Status</h2>
+                    <a routerLink="/settings" class="card-link">
+                        Manage <i class="pi pi-arrow-right text-[10px]"></i>
                     </a>
                 </div>
-                <div class="p-6">
+                <div class="p-5">
                     <div *ngIf="loading.budgets" class="space-y-4">
                         <div *ngFor="let i of [1,2,3]" class="space-y-2">
                             <div class="flex justify-between">
@@ -182,10 +169,9 @@
                         </div>
                     </div>
 
-                    <div *ngIf="!loading.budgets && budgetSummaries.length === 0" class="text-center py-8"
-                        style="color: var(--minted-text-muted);">
-                        <i class="pi pi-chart-bar text-4xl mb-2"></i>
-                        <p class="mb-3">No budgets for this month</p>
+                    <div *ngIf="!loading.budgets && budgetSummaries.length === 0" class="empty-state py-8">
+                        <div class="empty-state__icon"><i class="pi pi-chart-pie"></i></div>
+                        <p class="empty-state__title">No budgets for this month</p>
                         <a routerLink="/settings" class="text-sm font-medium" style="color: var(--minted-accent);">
                             Create a budget
                         </a>
@@ -227,23 +213,21 @@
             </div>
 
             <!-- Recurring Payments -->
-            <div class="rounded-xl shadow-sm border overflow-hidden"
-                style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-                <div class="flex justify-between items-center p-6 border-b" style="border-color: var(--minted-border);">
-                    <h2 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recurring Payments</h2>
+            <div class="surface-card overflow-hidden">
+                <div class="surface-card__header">
+                    <h2 class="surface-card__title">Recurring Payments</h2>
                     <button pButton icon="pi pi-plus" class="p-button-rounded p-button-text p-button-sm"
                         (click)="addRecurring()" pTooltip="Add Recurring Payment" style="color: var(--minted-accent);">
                     </button>
                 </div>
-                <div class="p-6">
+                <div class="p-5">
                     <div *ngIf="loading.recurring" class="space-y-4">
                         <p-skeleton width="100%" height="3rem" *ngFor="let i of [1,2,3]"></p-skeleton>
                     </div>
 
-                    <div *ngIf="!loading.recurring && recurringGroups.length === 0" class="text-center py-8"
-                        style="color: var(--minted-text-muted);">
-                        <i class="pi pi-calendar text-4xl mb-2"></i>
-                        <p>No recurring payments</p>
+                    <div *ngIf="!loading.recurring && recurringGroups.length === 0" class="empty-state py-8">
+                        <div class="empty-state__icon"><i class="pi pi-calendar"></i></div>
+                        <p class="empty-state__title">No recurring payments</p>
                     </div>
 
                     <p-accordion *ngIf="!loading.recurring && recurringGroups.length > 0" [multiple]="true"
@@ -286,7 +270,7 @@
                                                     style="color: var(--minted-text-primary);">{{
                                                     formatCurrency(item.amount) }}</p>
                                                 <span
-                                                    [class]="'px-2 py-0.5 rounded text-[10px] font-medium ' + (item.status === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700')">
+                                                    [class]="'pill ' + (item.status === 'ACTIVE' ? 'is-success' : 'is-warning')">
                                                     {{ item.status }}
                                                 </span>
                                             </div>
@@ -312,12 +296,12 @@
                     </p-accordion>
 
                     <!-- Total Monthly Forecast -->
-                    <div *ngIf="recurringSummary" class="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
+                    <div *ngIf="recurringSummary" class="forecast-box">
                         <div class="flex justify-between items-center mb-1">
                             <p class="text-xs font-medium" style="color: var(--minted-text-secondary);">Total
                                 Monthly
                                 Forecast</p>
-                            <i class="pi pi-chart-line text-amber-700 text-sm"></i>
+                            <i class="pi pi-chart-line text-sm" style="color: var(--minted-accent);"></i>
                         </div>
                         <p class="text-2xl font-bold mb-3 minted-sensitive" style="color: var(--minted-text-primary);">
                             {{ formatCurrency(recurringSummary.estimatedMonthlyExpenses) }}

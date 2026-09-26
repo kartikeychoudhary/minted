@@ -1,27 +1,21 @@
 <p-toast></p-toast>
 <p-confirmDialog key="notificationsPage"></p-confirmDialog>
 
-<div class="p-4 sm:p-8">
-  <div class="max-w-4xl mx-auto">
+<div class="page-container page-container--narrow">
+  <div>
     <!-- Title & Global Actions -->
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+    <div class="page-header">
       <div>
-        <h2 class="text-3xl font-black tracking-tight" [style.color]="'var(--minted-text-primary)'">
-          Notifications
-        </h2>
-        <p class="mt-1" [style.color]="'var(--minted-text-muted)'">
-          Keep track of your financial movements and alerts.
-        </p>
+        <h1 class="page-title">Notifications</h1>
+        <p class="page-subtitle">Keep track of your financial movements and alerts.</p>
       </div>
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="page-actions">
         <button
           *ngIf="(notificationService.unreadCount$ | async) as count"
           pButton
           label="Mark all as read"
           icon="pi pi-check-circle"
           class="p-button-outlined p-button-sm"
-          [style.border-color]="'var(--minted-border)'"
-          [style.color]="'var(--minted-text-secondary)'"
           [loading]="!!(notificationService.markingAllRead$ | async)"
           (click)="markAllAsRead()">
         </button>
@@ -46,52 +40,44 @@
     <!-- Empty State -->
     <div
       *ngIf="!loading && groups.length === 0"
-      class="flex flex-col items-center justify-center py-20 text-center">
-      <div class="w-24 h-24 rounded-full flex items-center justify-center mb-6"
-           [style.background-color]="'var(--minted-accent-subtle)'">
-        <i class="pi pi-check text-5xl" [style.color]="'var(--minted-accent)'"></i>
+      class="surface-card empty-state py-20">
+      <div class="empty-state__icon" style="background: var(--minted-success-subtle); color: var(--minted-success);">
+        <i class="pi pi-check"></i>
       </div>
-      <h3 class="text-xl font-bold" [style.color]="'var(--minted-text-primary)'">All caught up!</h3>
-      <p class="mt-2 max-w-xs mx-auto" [style.color]="'var(--minted-text-muted)'">
+      <h3 class="empty-state__title">All caught up!</h3>
+      <p class="empty-state__text">
         You've seen all your notifications. Enjoy your organized financial life!
       </p>
-      <button pButton label="Back to Dashboard" class="mt-8"
-              [style.background-color]="'var(--minted-accent)'"
-              [style.border-color]="'var(--minted-accent)'"
+      <button pButton label="Back to Dashboard" icon="pi pi-arrow-left" class="mt-4 p-button-outlined"
               routerLink="/">
       </button>
     </div>
 
     <!-- Notification Groups -->
-    <div *ngIf="!loading && groups.length > 0" class="space-y-10">
+    <div *ngIf="!loading && groups.length > 0" class="space-y-8">
       <section *ngFor="let group of groups">
         <!-- Section Header -->
-        <div class="flex items-center gap-4 mb-4">
-          <h3 class="text-sm font-bold uppercase tracking-widest flex-shrink-0"
+        <div class="flex items-center gap-3 mb-3">
+          <h3 class="text-xs font-semibold uppercase tracking-wider flex-shrink-0"
               [style.color]="'var(--minted-text-muted)'">
             {{ group.label }}
           </h3>
-          <div class="h-px w-full" [style.background-color]="'var(--minted-border)'"></div>
+          <div class="h-px w-full" [style.background-color]="'var(--minted-border-light)'"></div>
         </div>
 
         <!-- Cards -->
-        <div class="space-y-3">
+        <div class="surface-card overflow-hidden">
           <div
             *ngFor="let n of group.notifications"
-            class="group relative rounded-xl border p-4 flex items-start gap-4 transition-all cursor-pointer"
-            [style.background-color]="'var(--minted-bg-card)'"
-            [style.border-color]="'var(--minted-border-light)'"
-            [class.shadow-sm]="true"
+            class="notif-card group"
+            [class.is-unread]="!n.isRead"
             (click)="onNotificationClick(n)">
 
             <!-- Unread accent bar -->
-            <div *ngIf="!n.isRead"
-                 class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full"
-                 [style.background-color]="'var(--minted-accent)'">
-            </div>
+            <span *ngIf="!n.isRead" class="notif-card__bar"></span>
 
             <!-- Type icon -->
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                  [style.background-color]="getNotificationBg(n.type)">
               <i [class]="getNotificationIcon(n.type)" [style.color]="getNotificationColor(n.type)"></i>
             </div>
@@ -99,9 +85,9 @@
             <!-- Content -->
             <div class="flex-1 min-w-0">
               <div class="flex justify-between items-start">
-                <h4 class="text-base truncate"
+                <h4 class="text-[15px] truncate"
                     [style.color]="'var(--minted-text-primary)'"
-                    [class.font-bold]="!n.isRead"
+                    [class.font-semibold]="!n.isRead"
                     [class.font-medium]="n.isRead">
                   {{ n.title }}
                 </h4>
@@ -117,12 +103,12 @@
 
             <!-- Dismiss button (visible on hover) -->
             <button
-              class="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg transition-all flex-shrink-0"
-              [style.color]="'var(--minted-text-muted)'"
+              class="notif-card__dismiss"
+              aria-label="Dismiss notification"
               pTooltip="Dismiss"
               tooltipPosition="left"
               (click)="dismiss($event, n.id)">
-              <i class="pi pi-times text-lg"></i>
+              <i class="pi pi-times text-xs"></i>
             </button>
           </div>
         </div>
@@ -132,8 +118,6 @@
       <div *ngIf="notificationService.hasMore" class="text-center pt-4">
         <button pButton label="Load more notifications"
                 class="p-button-outlined p-button-sm"
-                [style.border-color]="'var(--minted-border)'"
-                [style.color]="'var(--minted-text-secondary)'"
                 (click)="loadMore()">
         </button>
       </div>

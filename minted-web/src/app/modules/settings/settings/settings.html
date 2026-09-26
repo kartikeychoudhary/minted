@@ -1,28 +1,19 @@
-<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
+<div class="page-container">
   <!-- Header -->
-  <header class="shadow-sm border-b"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-      <div class="flex items-center">
-        <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
-          style="color: var(--minted-text-secondary);">
-          <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
-        </button>
-        <div class="flex items-center">
-          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
-            style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
-            <i class="pi pi-cog" style="font-size: 1.5rem;"></i>
-          </div>
-          <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Settings</h1>
-        </div>
+  <div class="page-header page-header--center">
+    <div class="flex items-center gap-3">
+      <button (click)="goBack()" class="back-btn" aria-label="Go back" pTooltip="Back" tooltipPosition="bottom">
+        <i class="pi pi-arrow-left"></i>
+      </button>
+      <div>
+        <h1 class="page-title">Settings</h1>
+        <p class="page-subtitle">Manage accounts, categories, budgets and your preferences.</p>
       </div>
     </div>
-  </header>
+  </div>
 
   <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" style="overflow: visible;">
-    <div class="rounded-lg shadow-sm border"
-      style="background-color: var(--minted-bg-card); border-color: var(--minted-border); overflow: visible;">
+  <div class="settings-shell">
       <p-tabs value="0" (valueChange)="onTabChange($event)" [style]="{'overflow': 'visible'}">
         <p-tablist [style]="{'overflow': 'visible'}">
           <p-tab value="0" pTooltip="Account Types" tooltipPosition="bottom">
@@ -78,8 +69,7 @@
           </p-tabpanel>
         </p-tabpanels>
       </p-tabs>
-    </div>
-  </main>
+  </div>
 </div>
 
 <!-- Toast for notifications -->

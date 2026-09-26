@@ -3,22 +3,57 @@
   min-height: 100%;
 }
 
-::ng-deep {
-  .p-stepper .p-step-header .p-step-number {
-    background-color: var(--minted-bg-surface);
-    color: var(--minted-text-secondary);
-    border: 2px solid var(--minted-border);
+.import-option {
+  position: relative;
+  padding: 20px;
+  border-radius: var(--minted-radius-lg);
+  border: 1px solid var(--minted-border);
+  background: var(--minted-bg-card);
+  box-shadow: var(--minted-shadow-sm);
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    border-color: var(--minted-border-strong);
+    box-shadow: var(--minted-shadow-md);
   }
 
-  .p-stepper .p-step-active .p-step-number {
-    background-color: var(--minted-accent);
-    color: white;
+  &.is-active {
+    cursor: default;
     border-color: var(--minted-accent);
+    box-shadow: 0 0 0 3px var(--minted-accent-subtle), var(--minted-shadow-sm);
   }
+}
 
-  .p-stepper .p-step-complete .p-step-number {
-    background-color: var(--minted-success);
-    color: white;
-    border-color: var(--minted-success);
+.import-option__check {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--minted-accent);
+  color: #fff;
+
+  i {
+    font-size: 0.6875rem;
+  }
+}
+
+.import-option__arrow {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  font-size: 0.875rem;
+  color: var(--minted-text-muted);
+  transition: transform 0.2s ease, color 0.2s ease;
+
+  .import-option:hover & {
+    color: var(--minted-accent);
+    transform: translate(3px, -50%);
   }
 }

@@ -20,10 +20,11 @@ import {
   SplitType
 } from '../../../../core/models/split.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColDef, GridApi, GridReadyEvent, GridOptions, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { CategoryCellRendererComponent } from '../cell-renderers/category-cell-renderer.component';
 import { ActionsCellRendererComponent } from '../cell-renderers/actions-cell-renderer.component';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
 
 interface SplitFriendEntry {
   friendId: number | null;
@@ -53,40 +54,7 @@ export class TransactionsList implements OnInit {
   searchTerm = '';
 
   // AG Grid v35 Theming API
-  mintedTheme = themeQuartz.withParams({
-    backgroundColor: 'var(--minted-bg-card)',
-    foregroundColor: 'var(--minted-text-primary)',
-    borderColor: 'var(--minted-border)',
-    browserColorScheme: 'inherit',
-    headerBackgroundColor: 'var(--minted-bg-card)',
-    headerFontSize: 12,
-    headerFontWeight: 600,
-    headerTextColor: 'var(--minted-text-muted)',
-    oddRowBackgroundColor: 'var(--minted-bg-card)',
-    rowHoverColor: 'var(--minted-bg-hover)',
-    selectedRowBackgroundColor: 'var(--minted-accent-subtle)',
-    accentColor: 'var(--minted-accent)',
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    fontSize: 14,
-    rowHeight: 60,
-    headerHeight: 48,
-    spacing: 6,
-    wrapperBorderRadius: 8,
-    cellHorizontalPadding: 16,
-    headerColumnBorder: false,
-    headerColumnResizeHandleColor: 'transparent',
-    columnBorder: false,
-    rowBorder: { color: 'var(--minted-border-light)', width: 1, style: 'solid' },
-    checkboxCheckedBackgroundColor: 'var(--minted-accent)',
-    checkboxCheckedBorderColor: 'var(--minted-accent)',
-    checkboxUncheckedBackgroundColor: 'transparent',
-    checkboxUncheckedBorderColor: 'var(--minted-border)',
-    // Pagination button styling via AG Grid theming API
-    iconButtonHoverBackgroundColor: 'var(--minted-bg-hover)',
-    iconButtonHoverColor: 'var(--minted-accent)',
-    iconButtonBorderRadius: 4,
-    iconSize: 16,
-  });
+  mintedTheme = mintedGridTheme.withParams({ rowHeight: 60 });
 
   private gridApi!: GridApi;
   columnDefs: ColDef[] = [];
@@ -199,8 +167,8 @@ export class TransactionsList implements OnInit {
       {
         headerName: 'Description',
         field: 'description',
-        width: 220,
-        minWidth: 120,
+        flex: 1,
+        minWidth: 200,
         cellClass: 'cell-v-center'
       },
       {
@@ -212,12 +180,13 @@ export class TransactionsList implements OnInit {
       {
         headerName: 'Amount',
         field: 'amount',
-        width: 150,
+        width: 160,
+        headerClass: 'ag-right-aligned-header',
         cellClass: (params) => {
-          const baseClass = 'cell-v-center minted-sensitive';
+          const baseClass = 'cell-v-center minted-sensitive ag-right-aligned-cell';
           const colorClass = params.data.type === 'INCOME'
-            ? 'text-success font-bold'
-            : 'font-bold';
+            ? 'text-success font-semibold'
+            : 'font-semibold';
           return `${baseClass} ${colorClass}`;
         },
         valueFormatter: (params) => {
@@ -228,9 +197,9 @@ export class TransactionsList implements OnInit {
       {
         headerName: '',
         field: 'actions',
-        width: 160,
-        minWidth: 160,
-        maxWidth: 160,
+        width: 150,
+        minWidth: 150,
+        maxWidth: 150,
         sortable: false,
         cellRenderer: ActionsCellRendererComponent,
         cellRendererParams: {

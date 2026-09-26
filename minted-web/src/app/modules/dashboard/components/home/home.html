@@ -1,13 +1,15 @@
-<div class="dashboard-container">
+<div class="page-container">
   <!-- Dashboard Header -->
-  <div class="dashboard-header">
-    <div class="header-left">
-      <h1 class="page-title">Financial Overview</h1>
-      <p class="page-subtitle" *ngIf="currentUser">
+  <div class="page-header">
+    <div>
+      <p class="page-eyebrow" *ngIf="currentUser">
+        <i class="pi pi-sun text-xs"></i>
         {{ getGreeting() }}, {{ currentUser.displayName || 'User' }}
       </p>
+      <h1 class="page-title">Financial Overview</h1>
+      <p class="page-subtitle">Here's how your money moved {{ selectedPeriod?.value === 'CUSTOM' ? 'in the selected range' : (selectedPeriod?.label || '') | lowercase }}.</p>
     </div>
-    <div class="header-right flex flex-wrap items-center gap-3">
+    <div class="dashboard-filters">
       <p-select
         [options]="accountOptions"
         [(ngModel)]="selectedAccountId"
@@ -16,7 +18,7 @@
         (onChange)="onAccountFilterChange()"
         optionLabel="name"
         optionValue="id"
-        styleClass="w-full sm:w-48">
+        styleClass="w-full sm:w-52">
       </p-select>
       <p-select
         [options]="periods"
@@ -25,12 +27,12 @@
         (onChange)="onPeriodChange()"
         styleClass="w-full sm:w-auto period-select">
       </p-select>
-      <div *ngIf="showCustomDateRange" class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+      <div *ngIf="showCustomDateRange" class="custom-range">
         <p-datepicker [(ngModel)]="customStartDate" placeholder="Start Date"
           dateFormat="yy-mm-dd" [showIcon]="true" [maxDate]="customEndDate!"
           (onSelect)="onCustomDateApply()" appendTo="body">
         </p-datepicker>
-        <span style="color: var(--minted-text-muted);">to</span>
+        <span class="custom-range__sep">to</span>
         <p-datepicker [(ngModel)]="customEndDate" placeholder="End Date"
           dateFormat="yy-mm-dd" [showIcon]="true" [minDate]="customStartDate!"
           (onSelect)="onCustomDateApply()" appendTo="body">
@@ -42,58 +44,60 @@
   <!-- KPI Summary Cards -->
   <div class="kpi-grid">
     <!-- Total Income -->
-    <div class="kpi-card kpi-income">
-      <div class="kpi-icon-wrapper income-bg">
-        <i class="pi pi-arrow-up"></i>
-      </div>
-      <div class="kpi-content">
+    <div class="kpi-card">
+      <div class="kpi-top">
         <span class="kpi-label">Total Income</span>
-        <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value minted-sensitive">{{ formatCurrency(summary?.totalIncome || 0) }}</span>
-        </ng-container>
+        <span class="icon-tile is-success"><i class="pi pi-arrow-down-left"></i></span>
       </div>
+      <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
+        <span class="kpi-value minted-sensitive">{{ formatCurrency(summary?.totalIncome || 0) }}</span>
+      </ng-container>
+      <span class="kpi-caption">Money in</span>
     </div>
 
     <!-- Total Expenses -->
-    <div class="kpi-card kpi-expense">
-      <div class="kpi-icon-wrapper expense-bg">
-        <i class="pi pi-arrow-down"></i>
-      </div>
-      <div class="kpi-content">
+    <div class="kpi-card">
+      <div class="kpi-top">
         <span class="kpi-label">Total Expenses</span>
-        <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value minted-sensitive">{{ formatCurrency(summary?.totalExpense || 0) }}</span>
-        </ng-container>
+        <span class="icon-tile is-danger"><i class="pi pi-arrow-up-right"></i></span>
       </div>
+      <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
+        <span class="kpi-value minted-sensitive">{{ formatCurrency(summary?.totalExpense || 0) }}</span>
+      </ng-container>
+      <span class="kpi-caption">Money out</span>
     </div>
 
     <!-- Net Balance -->
-    <div class="kpi-card kpi-balance">
-      <div class="kpi-icon-wrapper balance-bg">
-        <i class="pi pi-wallet"></i>
-      </div>
-      <div class="kpi-content">
+    <div class="kpi-card kpi-card--highlight">
+      <div class="kpi-top">
         <span class="kpi-label">Net Balance</span>
-        <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value minted-sensitive" [class.positive]="(summary?.netBalance || 0) >= 0"
-                [class.negative]="(summary?.netBalance || 0) < 0">
-            {{ formatCurrency(summary?.netBalance || 0) }}
-          </span>
-        </ng-container>
+        <span class="icon-tile is-info"><i class="pi pi-wallet"></i></span>
       </div>
+      <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
+        <span class="kpi-value minted-sensitive" [class.positive]="(summary?.netBalance || 0) >= 0"
+              [class.negative]="(summary?.netBalance || 0) < 0">
+          {{ formatCurrency(summary?.netBalance || 0) }}
+        </span>
+      </ng-container>
+      <span class="kpi-caption">
+        <span class="kpi-trend" [class.is-down]="(summary?.netBalance || 0) < 0">
+          <i [class]="(summary?.netBalance || 0) >= 0 ? 'pi pi-arrow-up' : 'pi pi-arrow-down'"></i>
+          {{ (summary?.netBalance || 0) >= 0 ? 'Saving' : 'Overspending' }}
+        </span>
+        income minus expenses
+      </span>
     </div>
 
     <!-- Transactions -->
-    <div class="kpi-card kpi-count">
-      <div class="kpi-icon-wrapper count-bg">
-        <i class="pi pi-list"></i>
-      </div>
-      <div class="kpi-content">
+    <div class="kpi-card">
+      <div class="kpi-top">
         <span class="kpi-label">Transactions</span>
-        <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
-          <span class="kpi-value">{{ summary?.transactionCount || 0 }}</span>
-        </ng-container>
+        <span class="icon-tile is-violet"><i class="pi pi-list"></i></span>
       </div>
+      <ng-container *ngIf="!loadingSummary; else kpiSkeleton">
+        <span class="kpi-value">{{ summary?.transactionCount || 0 }}</span>
+      </ng-container>
+      <span class="kpi-caption">Recorded this period</span>
     </div>
   </div>
 
@@ -102,7 +106,10 @@
     <!-- Monthly Expenses Bar Chart -->
     <div class="chart-card">
       <div class="chart-header">
-        <h3 class="chart-title">Monthly Expenses</h3>
+        <div>
+          <h3 class="chart-title">Monthly Expenses</h3>
+          <p class="chart-subtitle">Top spending categories</p>
+        </div>
         <span class="chart-badge">By Category</span>
       </div>
       <div class="chart-body">
@@ -121,7 +128,10 @@
     <!-- Category Split Doughnut -->
     <div class="chart-card">
       <div class="chart-header">
-        <h3 class="chart-title">Category Split</h3>
+        <div>
+          <h3 class="chart-title">Category Split</h3>
+          <p class="chart-subtitle">Share of total expenses</p>
+        </div>
         <span class="chart-badge">Expense Breakdown</span>
       </div>
       <div class="chart-body">
@@ -141,7 +151,10 @@
   <!-- Full-width Trend Line Chart -->
   <div class="trend-card chart-card">
     <div class="chart-header">
-      <h3 class="chart-title">Income vs Expense Trend</h3>
+      <div>
+        <h3 class="chart-title">Income vs Expense Trend</h3>
+        <p class="chart-subtitle">How your cash flow is evolving</p>
+      </div>
       <span class="chart-badge">Last 6 Months</span>
     </div>
     <div class="chart-body chart-body-lg">
@@ -160,18 +173,19 @@
 
 <!-- Templates -->
 <ng-template #kpiSkeleton>
-  <p-skeleton width="120px" height="28px" styleClass="mt-2"></p-skeleton>
+  <p-skeleton width="140px" height="32px" styleClass="my-1"></p-skeleton>
 </ng-template>
 
 <ng-template #chartSkeleton>
   <div class="skeleton-chart">
-    <p-skeleton width="100%" height="260px" borderRadius="8px"></p-skeleton>
+    <p-skeleton width="100%" height="260px" borderRadius="12px"></p-skeleton>
   </div>
 </ng-template>
 
 <ng-template #emptyChart>
-  <div class="empty-chart">
-    <i class="pi pi-chart-bar empty-icon"></i>
-    <p class="empty-text">No data available for this period</p>
+  <div class="empty-state">
+    <div class="empty-state__icon"><i class="pi pi-chart-bar"></i></div>
+    <p class="empty-state__title">No data for this period</p>
+    <p class="empty-state__text">Add or import transactions to see your spending patterns here.</p>
   </div>
 </ng-template>

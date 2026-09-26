@@ -20,6 +20,8 @@ export class Layout implements OnInit, OnDestroy {
   isNotificationDrawerVisible = false;
   isMobileSidebarVisible = false;
   isRouteLoading = false;
+  pageTitle = 'Dashboard';
+  pageSection = 'Overview';
   private mobileQuery!: MediaQueryList;
   private mobileQueryListener!: (e: MediaQueryListEvent) => void;
   private destroy$ = new Subject<void>();
@@ -43,6 +45,8 @@ export class Layout implements OnInit, OnDestroy {
       }
     });
 
+    this.updatePageContext(this.router.url);
+
     // Route loading indicator
     this.router.events.pipe(takeUntil(this.destroy$)).subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -50,9 +54,33 @@ export class Layout implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       } else if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
         this.isRouteLoading = false;
+        this.updatePageContext(this.router.url);
         this.cdr.detectChanges();
       }
     });
+  }
+
+  /** Breadcrumb labels shown in the header, derived from the current URL. */
+  private readonly pageContexts: { prefix: string; section: string; title: string }[] = [
+    { prefix: '/transactions', section: 'Money', title: 'Transactions' },
+    { prefix: '/recurring', section: 'Money', title: 'Recurring' },
+    { prefix: '/splits', section: 'Money', title: 'Splits' },
+    { prefix: '/import/jobs', section: 'Data', title: 'Import History' },
+    { prefix: '/import', section: 'Data', title: 'Import' },
+    { prefix: '/statements', section: 'Data', title: 'Statements' },
+    { prefix: '/analytics', section: 'Overview', title: 'Analytics' },
+    { prefix: '/notifications', section: 'Overview', title: 'Notifications' },
+    { prefix: '/settings', section: 'Management', title: 'Settings' },
+    { prefix: '/admin/users', section: 'Admin', title: 'Users' },
+    { prefix: '/admin/jobs', section: 'Admin', title: 'Server Jobs' },
+    { prefix: '/admin/settings', section: 'Admin', title: 'Server Settings' },
+  ];
+
+  private updatePageContext(url: string): void {
+    const path = url.split(/[?#]/)[0];
+    const match = this.pageContexts.find(c => path.startsWith(c.prefix));
+    this.pageSection = match?.section ?? 'Overview';
+    this.pageTitle = match?.title ?? 'Dashboard';
   }
 
   get isMobile(): boolean {

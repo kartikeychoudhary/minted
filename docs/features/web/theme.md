@@ -24,13 +24,32 @@ All colors use `--minted-*` CSS variables defined in `:root` (light mode) and ov
 
 | Category | Variables |
 |----------|-----------|
-| Backgrounds | `--minted-bg-page`, `--minted-bg-card`, `--minted-bg-surface`, `--minted-bg-hover`, `--minted-bg-input` |
+| Backgrounds | `--minted-bg-page`, `--minted-bg-card`, `--minted-bg-surface`, `--minted-bg-hover`, `--minted-bg-input`, `--minted-bg-elevated` (menus/overlays) |
 | Text | `--minted-text-primary`, `--minted-text-secondary`, `--minted-text-muted` |
-| Borders | `--minted-border`, `--minted-border-light` |
-| Accent | `--minted-accent`, `--minted-accent-hover`, `--minted-accent-subtle` |
-| Semantic | `--minted-success`, `--minted-danger`, `--minted-info`, `--minted-warning` + subtle variants |
-| Sidebar | `--minted-sidebar-bg` |
-| Misc | 3 radius tokens, 2 shadow tokens, 3 scrollbar tokens |
+| Borders | `--minted-border`, `--minted-border-light`, `--minted-border-strong` (hover) |
+| Accent | `--minted-accent`, `--minted-accent-hover`, `--minted-accent-subtle` (10%), `--minted-accent-soft` (16%), `--minted-accent-ring` (22%, focus rings) |
+| Semantic | `--minted-success`, `--minted-danger`, `--minted-info`, `--minted-warning`, `--minted-violet` + `-subtle` variants |
+| Sidebar | `--minted-sidebar-bg`, `--minted-sidebar-bg-2` (gradient end), `--minted-sidebar-text`, `--minted-sidebar-muted`, `--minted-sidebar-hover`, `--minted-sidebar-active`, `--minted-sidebar-border` |
+| Misc | radius `sm/md/lg/xl` (8/12/16/20px), shadows `xs/sm/md/lg/xl`, `--minted-mask`, `--minted-ease`, scrollbar tokens |
+| Legacy aliases | `--minted-surface`, `--minted-primary`, `--minted-error`, `--minted-error-subtle` |
+
+Tailwind also exposes these tokens (`tailwind.config.js`): `text-primary` / `bg-primary/10` follow the accent, and
+`text-minted-text-primary`, `border-minted-border`, `bg-minted-surface`, `bg-minted-card` etc. follow light/dark mode.
+
+### Layout primitives (`styles.scss`)
+
+| Class | Use |
+|-------|-----|
+| `.page-container` (+ `--narrow`) | Page wrapper: max width, padding, fade-in |
+| `.page-header`, `.page-title`, `.page-subtitle`, `.page-eyebrow`, `.page-actions` | Consistent page headings |
+| `.surface-card` (+ `__header`, `__title`, `__body`), `.grid-card` | Card surfaces; `.grid-card` frames AG Grid |
+| `.icon-tile` (`is-success/danger/info/warning/violet/neutral`) | Tinted icon squares |
+| `.segmented` / `.segmented__item.is-active` | Segmented control (date range filters) |
+| `.pill` (`is-accent/success/danger/info/warning`) | Status / count badges |
+| `.empty-state` (+ `__icon`, `__title`, `__text`) | Empty states |
+| `.callout`, `.field-label`, `.back-btn` | Info boxes, form labels, detail-page back button |
+
+In dark mode, light Tailwind tints (`bg-red-100`, `text-green-700`, …) are automatically softened.
 
 **Rule:** Always use `var(--minted-text-primary)` — NOT `text-slate-900`. Always use `var(--minted-bg-card)` — NOT `bg-white`. Hardcoded Tailwind color classes break dark mode.
 
@@ -54,25 +73,26 @@ Singleton (`providedIn: 'root'`). Called via `themeService.init()` in `AppCompon
 | Rose | `#f43f5e` |
 | Teal | `#14b8a6` |
 
-Sets `--minted-accent`, `--minted-accent-hover`, `--minted-accent-subtle` CSS vars AND updates PrimeNG Aura primary palette via `updatePreset()` from `@primeng/themes`.
+Sets `--minted-accent`, `--minted-accent-hover`, `--minted-accent-subtle`, `--minted-accent-soft`, `--minted-accent-ring` CSS vars AND updates PrimeNG Aura primary palette via `updatePreset()` from `@primeng/themes`.
 
 ---
 
 ## PrimeNG Setup
 
 ```typescript
-// app.module.ts
+// app-module.ts
 providePrimeNG({
   theme: {
-    preset: Aura,
+    preset: MintedPreset,          // core/theme/minted-preset.ts
     options: { darkModeSelector: '.dark-mode' }
   }
 })
 ```
 
-All PrimeNG components overridden in `styles.scss` to use `--minted-*` vars:
-- Buttons, cards, inputs, selects, dialogs, tables, tabs, accordions
-- Progress bars, skeletons, tooltips, toasts, confirm dialogs, tags, toggle switches
+`MintedPreset` extends Aura and maps every colour-scheme token (primary, highlight, form fields, content,
+overlays, lists, navigation) to `--minted-*` variables — the same map is used for light and dark, since the
+variables themselves switch. It also sets radii, form-field padding and the accent focus ring.
+`styles.scss` adds shape refinements (buttons, dialogs, tables, toasts, tooltips, tags, stepper) on top.
 
 ---
 
@@ -80,25 +100,15 @@ All PrimeNG components overridden in `styles.scss` to use `--minted-*` vars:
 
 AG Grid v35+ uses TypeScript theming API — no CSS class themes.
 
-```typescript
-import { themeQuartz } from 'ag-grid-community';
+All grids share one theme from `shared/theme/grid-theme.ts` (colours are `--minted-*` vars):
 
-mintedTheme = themeQuartz.withParams({
-  backgroundColor: 'var(--minted-bg-card)',
-  foregroundColor: 'var(--minted-text-primary)',
-  borderColor: 'var(--minted-border)',
-  headerBackgroundColor: 'var(--minted-bg-card)',
-  headerTextColor: 'var(--minted-text-muted)',
-  rowHoverColor: 'var(--minted-bg-hover)',
-  selectedRowBackgroundColor: 'var(--minted-accent-subtle)',
-  accentColor: 'var(--minted-accent)',
-  fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-  fontSize: 14,
-  rowHeight: 60,
-  headerHeight: 48,
-  wrapperBorderRadius: 8,
-});
+```typescript
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
+
+mintedTheme = mintedGridTheme.withParams({ rowHeight: 60 }); // per-grid sizing only
 ```
+
+Wrap grids in `.grid-card` for the card frame.
 
 Applied via `[theme]="mintedTheme"` on `<ag-grid-angular>`.
 
@@ -131,9 +141,9 @@ Singleton (`providedIn: 'root'`). Inject in ALL components that display monetary
 ## Global Responsive Overrides (`styles.scss`)
 
 ```scss
-// Mobile: all dialogs max 90vw
+// Mobile: all dialogs max 94vw
 @media (max-width: 767px) {
-  .p-dialog { max-width: 90vw !important; }
+  .p-dialog { max-width: 94vw !important; }
   ag-grid-angular { height: 60vh !important; min-height: 300px; }
 }
 ```

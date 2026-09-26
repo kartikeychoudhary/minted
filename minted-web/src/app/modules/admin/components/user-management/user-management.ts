@@ -3,9 +3,10 @@ import { AdminService } from '../../../../core/services/admin.service';
 import { AdminUserResponse } from '../../../../core/models/user.model';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColDef, GridOptions, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridOptions } from 'ag-grid-community';
 import { TagCellRendererComponent } from '../cell-renderers/tag-cell-renderer.component';
 import { UserActionsCellRendererComponent } from '../cell-renderers/user-actions-cell-renderer.component';
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
 
 @Component({
   selector: 'app-user-management',
@@ -32,34 +33,22 @@ export class UserManagement implements OnInit {
     { label: 'Admin', value: 'ADMIN' }
   ];
 
-  mintedTheme = themeQuartz.withParams({
-    backgroundColor: 'var(--minted-bg-card)',
-    foregroundColor: 'var(--minted-text-primary)',
-    borderColor: 'var(--minted-border)',
-    headerBackgroundColor: 'var(--minted-bg-card)',
-    headerFontSize: 12,
-    headerFontWeight: 600,
-    headerTextColor: 'var(--minted-text-muted)',
-    rowHoverColor: 'var(--minted-surface)',
-    fontFamily: '"Inter", sans-serif',
-    rowHeight: 56,
-    headerHeight: 44,
-  });
+  mintedTheme = mintedGridTheme.withParams({ rowHeight: 56 });
 
   colDefs: ColDef[] = [
     {
       field: 'username',
       headerName: 'Username',
-      width: 160,
+      width: 140,
       cellRenderer: (params: any) =>
         `<span class="font-semibold">${params.value || ''}</span>`
     },
-    { field: 'displayName', headerName: 'Display Name', width: 180 },
-    { field: 'email', headerName: 'Email', flex: 1, minWidth: 180 },
+    { field: 'displayName', headerName: 'Display Name', flex: 1, minWidth: 150 },
+    { field: 'email', headerName: 'Email', flex: 1.2, minWidth: 180 },
     {
       field: 'role',
       headerName: 'Role',
-      width: 110,
+      width: 100,
       cellRenderer: TagCellRendererComponent,
       cellRendererParams: {
         getTagConfig: (params: any) => ({
@@ -72,7 +61,7 @@ export class UserManagement implements OnInit {
     {
       field: 'isActive',
       headerName: 'Status',
-      width: 120,
+      width: 110,
       cellRenderer: TagCellRendererComponent,
       cellRendererParams: {
         getTagConfig: (params: any) => ({
@@ -85,7 +74,7 @@ export class UserManagement implements OnInit {
     {
       field: 'forcePasswordChange',
       headerName: 'Password',
-      width: 140,
+      width: 130,
       cellRenderer: TagCellRendererComponent,
       cellRendererParams: {
         getTagConfig: (params: any) => params.value
@@ -96,7 +85,7 @@ export class UserManagement implements OnInit {
     {
       field: 'createdAt',
       headerName: 'Created',
-      width: 160,
+      width: 130,
       cellRenderer: (params: any) => {
         if (!params.value) return '';
         const d = new Date(params.value);
@@ -105,7 +94,7 @@ export class UserManagement implements OnInit {
     },
     {
       headerName: 'Actions',
-      width: 230,
+      width: 210,
       sortable: false,
       filter: false,
       cellRenderer: UserActionsCellRendererComponent,

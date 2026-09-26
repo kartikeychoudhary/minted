@@ -1,3 +1,42 @@
 :host {
   display: block;
 }
+
+.statement-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--minted-border-strong);
+    box-shadow: var(--minted-shadow-md);
+
+    .statement-chevron {
+      color: var(--minted-accent);
+      transform: translateX(2px);
+    }
+  }
+}
+
+.statement-chevron {
+  font-size: 0.8125rem;
+  color: var(--minted-text-muted);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.statement-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--minted-text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--minted-danger-subtle);
+    color: var(--minted-danger);
+  }
+}

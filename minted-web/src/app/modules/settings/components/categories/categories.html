@@ -1,18 +1,18 @@
-﻿<div class="space-y-6" style="overflow: visible;">
+<div class="space-y-6" style="overflow: visible;">
   <!-- Section Header -->
   <div class="flex flex-wrap items-center justify-between gap-3">
     <div>
-      <h2 class="text-lg font-medium leading-6" style="color: var(--minted-text-primary);">Spending Categories</h2>
+      <h2 class="text-base font-semibold" style="color: var(--minted-text-primary);">Spending Categories</h2>
       <p class="mt-1 text-sm" style="color: var(--minted-text-secondary);">Manage and organize your custom transaction
         categories.</p>
     </div>
     <button pButton type="button" label="Add Category" icon="pi pi-plus" class="p-button-raised"
-      (click)="showAddDialog()" style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+      (click)="showAddDialog()">
     </button>
   </div>
 
   <!-- Table Card -->
-  <div class="rounded-xl border shadow-sm"
+  <div class="rounded-xl border"
     style="border-color: var(--minted-border); background-color: var(--minted-bg-card); overflow: visible;">
     <p-table [value]="categories" [loading]="loading" [paginator]="true" [rows]="10" [showCurrentPageReport]="true"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} results"
@@ -90,11 +90,11 @@
   </div>
 
   <!-- Info Card -->
-  <div class="border rounded-lg p-4 flex gap-3" style="background-color: #eff6ff; border-color: #bfdbfe;">
-    <i class="pi pi-info-circle" style="color: #2563eb; font-size: 1.25rem;"></i>
+  <div class="callout">
+    <i class="pi pi-info-circle"></i>
     <div>
-      <h4 class="text-sm font-medium" style="color: #1e3a8a;">Custom Categories</h4>
-      <p class="text-sm mt-1" style="color: #1e40af;">You can create up to 50 custom categories to better track your
+      <h4 class="text-sm">Custom Categories</h4>
+      <p class="text-sm mt-1">You can create up to 50 custom categories to better track your
         spending. Sub-categories can be managed within each main category's edit view.</p>
     </div>
   </div>
@@ -109,7 +109,7 @@
     <div class="space-y-4">
       <!-- Name Field -->
       <div>
-        <label for="name" class="block text-sm font-medium mb-2" style="color: var(--minted-text-secondary);">Category
+        <label for="name" class="field-label">Category
           Name</label>
         <input pInputText id="name" formControlName="name" placeholder="e.g., Dining, Shopping, Transportation"
           class="w-full" [class.p-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched" />
@@ -121,8 +121,7 @@
 
       <!-- Transaction Type Field -->
       <div>
-        <label for="type" class="block text-sm font-medium mb-2"
-          style="color: var(--minted-text-secondary);">Transaction Type</label>
+        <label for="type" class="field-label">Transaction Type</label>
         <p-select formControlName="type" [options]="transactionTypes" optionLabel="label" optionValue="value"
           placeholder="Select transaction type" appendTo="body" styleClass="w-full"
           [class.p-invalid]="categoryForm.get('type')?.invalid && categoryForm.get('type')?.touched">
@@ -146,8 +145,7 @@
 
       <!-- Icon Field -->
       <div>
-        <label for="icon" class="block text-sm font-medium mb-2"
-          style="color: var(--minted-text-secondary);">Icon</label>
+        <label for="icon" class="field-label">Icon</label>
         <p-select formControlName="icon" [options]="iconOptions" optionLabel="label" optionValue="value"
           placeholder="Select an icon" appendTo="body" styleClass="w-full" (onChange)="onIconChange($event)">
           <ng-template let-option pTemplate="item">
@@ -172,8 +170,7 @@
 
       <!-- Color Field -->
       <div>
-        <label for="color" class="block text-sm font-medium mb-2"
-          style="color: var(--minted-text-secondary);">Color</label>
+        <label for="color" class="field-label">Color</label>
         <p-select formControlName="color" [options]="colorOptions" optionLabel="label" optionValue="value"
           placeholder="Select a color" appendTo="body" styleClass="w-full">
           <ng-template let-option pTemplate="item">
@@ -195,8 +192,7 @@
     <div class="flex justify-end gap-2 mt-6">
       <button pButton type="button" label="Cancel" class="p-button-text" (click)="displayDialog = false">
       </button>
-      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="categoryForm.invalid"
-        style="background-color: var(--minted-accent); border-color: var(--minted-accent);">
+      <button pButton type="submit" [label]="isEditMode ? 'Update' : 'Create'" [disabled]="categoryForm.invalid">
       </button>
     </div>
   </form>

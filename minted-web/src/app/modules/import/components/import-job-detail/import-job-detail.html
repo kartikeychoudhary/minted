@@ -1,16 +1,12 @@
-<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in max-w-5xl mx-auto w-full">
+<div class="page-container flex flex-col space-y-5" style="max-width: 1100px;">
 
   <!-- Header -->
-  <div class="flex items-center gap-4">
-    <button (click)="goBack()"
-      class="p-2 rounded-full transition-colors flex items-center justify-center"
-      style="color: var(--minted-text-secondary);"
-      onmouseover="this.style.backgroundColor='var(--minted-bg-hover)'"
-      onmouseout="this.style.backgroundColor='transparent'">
+  <div class="flex items-center gap-3">
+    <button (click)="goBack()" class="back-btn" aria-label="Go back">
       <i class="pi pi-arrow-left"></i>
     </button>
     <div>
-      <h1 class="text-2xl font-bold tracking-tight flex items-center gap-3" style="color: var(--minted-text-primary)">
+      <h1 class="page-title flex flex-wrap items-center gap-3">
         Import #{{ importData?.id }}
         <span *ngIf="importData" class="px-2.5 py-1 text-xs font-semibold rounded-full"
           [ngStyle]="getStatusStyle(importData.status)">

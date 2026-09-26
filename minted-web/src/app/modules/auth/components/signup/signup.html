@@ -1,121 +1,128 @@
-<!-- Background with decorative elements -->
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden auth-gradient-bg">
-  <!-- Decorative Background Blurs -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-3xl"
-      style="background-color: rgba(196, 136, 33, 0.12);"></div>
-    <div class="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full blur-3xl"
-      style="background-color: rgba(196, 136, 33, 0.10);"></div>
-    <div class="absolute bottom-[-10%] left-[30%] w-[40%] h-[40%] rounded-full blur-3xl"
-      style="background-color: rgba(196, 136, 33, 0.08);"></div>
-  </div>
-
-  <!-- Main Signup Card -->
-  <main class="relative z-10 w-full max-w-md shadow-lg border overflow-hidden signup-card"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <!-- Header Section with Logo -->
-    <div class="pt-10 pb-6 px-4 sm:px-8 text-center">
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 shadow-sm logo-icon">
-        <i class="pi pi-dollar" style="font-size: 1.875rem;"></i>
-      </div>
-      <h1 class="text-xl sm:text-2xl font-bold tracking-tight" style="color: #1e293b;">Minted</h1>
-      <p class="mt-2 text-sm" style="color: #857f79;">Create your free account</p>
+<div class="auth-shell">
+  <!-- Brand panel (desktop) -->
+  <aside class="auth-brand">
+    <div class="auth-brand__logo">
+      <span class="auth-brand__mark"><img src="assets/ico/icon.svg" alt="" class="w-7 h-7"></span>
+      Minted
     </div>
 
-    <!-- Disabled Warning -->
-    <div *ngIf="!checkingSignup && !signupEnabled" class="mx-4 sm:mx-8 mb-4 p-3 rounded-lg border"
-      style="background-color: var(--minted-warning-subtle, #fef3c7); border-color: var(--minted-warning, #d97706); color: var(--minted-warning, #d97706);">
-      <div class="flex items-center gap-2 text-sm font-semibold">
-        <i class="pi pi-exclamation-triangle"></i>
-        Registration is currently disabled
+    <div>
+      <h2 class="auth-brand__headline">Your money, <span>beautifully</span> organized.</h2>
+      <p class="auth-brand__lead">Track spending, plan budgets, automate recurring payments and settle up with friends — all in one calm place.</p>
+      <div class="auth-features">
+        <div class="auth-feature"><i class="pi pi-chart-pie"></i> Clear analytics for every rupee and dollar</div>
+        <div class="auth-feature"><i class="pi pi-sync"></i> Recurring transactions on autopilot</div>
+        <div class="auth-feature"><i class="pi pi-sitemap"></i> Split expenses and settle with friends</div>
+        <div class="auth-feature"><i class="pi pi-file-import"></i> Import CSVs and bank statements</div>
       </div>
-      <p class="text-xs mt-1 opacity-80">Contact your administrator for access.</p>
     </div>
 
-    <!-- Form Section -->
-    <form *ngIf="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="px-4 sm:px-8 pb-10 space-y-5">
-      <!-- Display Name -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-user" />
-          <input pInputText type="text" formControlName="displayName" placeholder="Display Name (optional)"
-            class="w-full" />
-        </p-iconfield>
+    <p class="auth-brand__footer">© 2026 Minted Financial Services. Protected by 256-bit encryption.</p>
+  </aside>
+
+  <!-- Form panel -->
+  <main class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-mobile-logo">
+        <img src="assets/ico/icon.svg" alt="" class="w-8 h-8">
+        Minted
       </div>
 
-      <!-- Email -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-envelope" />
-          <input pInputText type="email" formControlName="email" placeholder="Email (optional)"
-            class="w-full" [class.p-invalid]="f['email']?.invalid && f['email']?.touched" />
-        </p-iconfield>
-        <small class="p-error block mt-1" *ngIf="f['email']?.errors?.['email'] && f['email']?.touched">
-          Invalid email format
-        </small>
+      <h1 class="auth-title">Create your account</h1>
+      <p class="auth-subtitle">Create your free account and start organizing your finances.</p>
+
+      <!-- Disabled Warning -->
+      <div *ngIf="!checkingSignup && !signupEnabled" class="auth-alert">
+        <i class="pi pi-exclamation-triangle mt-0.5"></i>
+        <div>
+          <strong>Registration is currently disabled</strong>
+          <p>Contact your administrator for access.</p>
+        </div>
       </div>
 
-      <!-- Username -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-at" />
-          <input pInputText type="text" formControlName="username" placeholder="Username"
-            class="w-full" [class.p-invalid]="f['username']?.invalid && f['username']?.touched" />
-        </p-iconfield>
-        <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
-          Username is required (3-50 characters)
-        </small>
-      </div>
+      <!-- Form Section -->
+      <form *ngIf="signupForm" [formGroup]="signupForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Display Name -->
+          <div>
+            <label class="auth-label">Display name</label>
+            <p-iconfield styleClass="w-full">
+              <p-inputicon styleClass="pi pi-user" />
+              <input pInputText type="text" formControlName="displayName" placeholder="Display Name (optional)"
+                class="w-full" />
+            </p-iconfield>
+          </div>
 
-      <!-- Password -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-lock" />
-          <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Password"
-            inputStyleClass="w-full" styleClass="w-full" />
-        </p-iconfield>
-        <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
-          Min 8 characters, 1 uppercase, 1 number
-        </small>
-      </div>
+          <!-- Username -->
+          <div>
+            <label class="auth-label">Username</label>
+            <p-iconfield styleClass="w-full">
+              <p-inputicon styleClass="pi pi-at" />
+              <input pInputText type="text" formControlName="username" placeholder="Username" autocomplete="username"
+                class="w-full" [class.p-invalid]="f['username']?.invalid && f['username']?.touched" />
+            </p-iconfield>
+            <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
+              Username is required (3-50 characters)
+            </small>
+          </div>
+        </div>
 
-      <!-- Confirm Password -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-lock" />
-          <p-password formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
-            placeholder="Confirm Password" inputStyleClass="w-full" styleClass="w-full" />
-        </p-iconfield>
-        <small class="p-error block mt-1"
-          *ngIf="f['confirmPassword']?.errors?.['passwordMismatch'] && f['confirmPassword']?.touched">
-          Passwords do not match
-        </small>
-      </div>
+        <!-- Email -->
+        <div>
+          <label class="auth-label">Email</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-envelope" />
+            <input pInputText type="email" formControlName="email" placeholder="Email (optional)" autocomplete="email"
+              class="w-full" [class.p-invalid]="f['email']?.invalid && f['email']?.touched" />
+          </p-iconfield>
+          <small class="p-error block mt-1" *ngIf="f['email']?.errors?.['email'] && f['email']?.touched">
+            Invalid email format
+          </small>
+        </div>
 
-      <!-- Submit Button -->
-      <p-button type="submit" label="Create Account" icon="pi pi-user-plus" [loading]="loading"
-        [disabled]="!signupForm || signupForm.invalid || loading || !signupEnabled"
-        [pTooltip]="!signupEnabled ? 'Registration is disabled' : ''"
-        styleClass="w-full"></p-button>
-    </form>
+        <!-- Password -->
+        <div>
+          <label class="auth-label">Password</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-lock" />
+            <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Password"
+              inputStyleClass="w-full" styleClass="w-full" />
+          </p-iconfield>
+          <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
+            Min 8 characters, 1 uppercase, 1 number
+          </small>
+        </div>
 
-    <!-- Footer Area -->
-    <div class="py-4 px-4 sm:px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;">
-      <p class="text-xs" style="color: #857f79;">
+        <!-- Confirm Password -->
+        <div>
+          <label class="auth-label">Confirm password</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-lock" />
+            <p-password formControlName="confirmPassword" [toggleMask]="true" [feedback]="false"
+              placeholder="Confirm Password" inputStyleClass="w-full" styleClass="w-full" />
+          </p-iconfield>
+          <small class="p-error block mt-1"
+            *ngIf="f['confirmPassword']?.errors?.['passwordMismatch'] && f['confirmPassword']?.touched">
+            Passwords do not match
+          </small>
+        </div>
+
+        <!-- Submit Button -->
+        <p-button type="submit" label="Create Account" icon="pi pi-user-plus" [loading]="loading"
+          [disabled]="!signupForm || signupForm.invalid || loading || !signupEnabled"
+          [pTooltip]="!signupEnabled ? 'Registration is disabled' : ''"
+          styleClass="w-full mt-2"></p-button>
+      </form>
+
+      <!-- Footer Area -->
+      <div class="auth-switch">
         Already have an account?
-        <a routerLink="/login" class="font-semibold ml-1 signin-link">
-          Sign In
-        </a>
-      </p>
+        <a routerLink="/login" class="auth-link ml-1">Sign In</a>
+      </div>
+
+      <p class="auth-legal">&copy; 2026 Minted Financial Services. Protected by 256-bit encryption.</p>
     </div>
   </main>
-
-  <!-- Footer Copyright -->
-  <footer class="fixed bottom-4 text-center w-full pointer-events-none">
-    <p class="text-[10px]" style="color: rgba(133, 127, 121, 0.5);">
-      &copy; 2026 Minted Financial Services. Protected by 256-bit encryption.
-    </p>
-  </footer>
 
   <!-- Toast for error messages -->
   <p-toast position="top-right"></p-toast>

@@ -10,6 +10,7 @@ import { CurrencyService } from '../../../../core/services/currency.service';
 import { DashboardConfigService } from '../../../../core/services/dashboard-config.service';
 import { AccountService } from '../../../../core/services/account.service';
 import { AccountResponse } from '../../../../core/models/account.model';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 interface PeriodOption {
   label: string;
@@ -68,7 +69,8 @@ export class Home implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private currencyService: CurrencyService,
     private dashboardConfigService: DashboardConfigService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private themeService: ThemeService
   ) { }
 
   ngOnInit(): void {
@@ -83,6 +85,10 @@ export class Home implements OnInit, OnDestroy {
     this.initPeriods();
     this.initChartOptions();
     this.loadDashboardData();
+
+    // Re-theme charts when light/dark mode or accent changes
+    this.themeService.isDarkMode$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refreshChartTheme());
+    this.themeService.accentColor$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refreshChartTheme());
   }
 
   ngOnDestroy(): void {
@@ -210,6 +216,24 @@ export class Home implements OnInit, OnDestroy {
       });
   }
 
+  /** Read a --minted-* design token so charts match the active theme. */
+  private token(name: string, fallback: string): string {
+    const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return value || fallback;
+  }
+
+  private refreshChartTheme(): void {
+    this.initChartOptions();
+    if (this.categoryData.length) {
+      this.buildBarChart();
+      this.buildDoughnutChart();
+    }
+    if (this.trendData.length) {
+      this.buildLineChart();
+    }
+    this.cdr.detectChanges();
+  }
+
   private buildBarChart(): void {
     const topCategories = this.categoryData.slice(0, 8);
     this.barChartData = {
@@ -219,8 +243,9 @@ export class Home implements OnInit, OnDestroy {
           label: 'Expenses',
           data: topCategories.map(c => c.totalAmount),
           backgroundColor: topCategories.map((c, i) => this.getColor(i)),
-          borderRadius: 6,
-          barThickness: 28
+          borderRadius: 8,
+          borderSkipped: false,
+          maxBarThickness: 32
         }
       ]
     };
@@ -234,15 +259,18 @@ export class Home implements OnInit, OnDestroy {
         {
           data: topCategories.map(c => c.totalAmount),
           backgroundColor: topCategories.map((c, i) => this.getColor(i)),
-          borderWidth: 2,
-          borderColor: '#ffffff',
-          hoverOffset: 8
+          borderWidth: 3,
+          borderColor: this.token('--minted-bg-card', '#ffffff'),
+          hoverOffset: 6
         }
       ]
     };
   }
 
   private buildLineChart(): void {
+    const incomeColor = this.token('--minted-success', '#16a34a');
+    const expenseColor = this.token('--minted-accent', '#c48821');
+
     const monthLabels = this.trendData.map(t => {
       const [year, month] = t.month.split('-');
       const date = new Date(parseInt(year), parseInt(month) - 1);
@@ -255,33 +283,48 @@ export class Home implements OnInit, OnDestroy {
         {
           label: 'Income',
           data: this.trendData.map(t => t.income),
-          borderColor: '#22c55e',
-          backgroundColor: 'rgba(34, 197, 94, 0.08)',
+          borderColor: incomeColor,
+          backgroundColor: this.withAlpha(incomeColor, 0.08),
           fill: true,
           tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 7,
-          pointBackgroundColor: '#22c55e',
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          pointBackgroundColor: incomeColor,
+          pointBorderColor: this.token('--minted-bg-card', '#ffffff'),
+          pointBorderWidth: 2,
           borderWidth: 2.5
         },
         {
           label: 'Expenses',
           data: this.trendData.map(t => t.expense),
-          borderColor: '#c48821',
-          backgroundColor: 'rgba(196, 136, 33, 0.08)',
+          borderColor: expenseColor,
+          backgroundColor: this.withAlpha(expenseColor, 0.08),
           fill: true,
           tension: 0.4,
-          pointRadius: 4,
-          pointHoverRadius: 7,
-          pointBackgroundColor: '#c48821',
+          pointRadius: 3,
+          pointHoverRadius: 6,
+          pointBackgroundColor: expenseColor,
+          pointBorderColor: this.token('--minted-bg-card', '#ffffff'),
+          pointBorderWidth: 2,
           borderWidth: 2.5
         }
       ]
     };
   }
 
+  /** Apply alpha to a #rrggbb colour (other formats are returned unchanged). */
+  private withAlpha(color: string, alpha: number): string {
+    const hex = color.replace('#', '');
+    if (!/^[0-9a-f]{6}$/i.test(hex)) return color;
+    const num = parseInt(hex, 16);
+    return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+  }
+
   private initChartOptions(): void {
     const baseFont = { family: "'Inter', sans-serif" };
+    const tickColor = this.token('--minted-text-muted', '#94a3b8');
+    const legendColor = this.token('--minted-text-secondary', '#64748b');
+    const gridColor = this.token('--minted-border-light', '#f1f5f9');
 
     this.barChartOptions = {
       responsive: true,
@@ -289,7 +332,7 @@ export class Home implements OnInit, OnDestroy {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#1e293b',
+          backgroundColor: '#101828',
           titleFont: { ...baseFont, size: 13 },
           bodyFont: { ...baseFont, size: 12 },
           padding: 12,
@@ -302,13 +345,13 @@ export class Home implements OnInit, OnDestroy {
       scales: {
         x: {
           grid: { display: false },
-          ticks: { font: { ...baseFont, size: 11 }, color: '#94a3b8' }
+          ticks: { font: { ...baseFont, size: 11 }, color: tickColor }
         },
         y: {
-          grid: { color: '#f1f5f9' },
+          grid: { color: gridColor }, border: { display: false },
           ticks: {
             font: { ...baseFont, size: 11 },
-            color: '#94a3b8',
+            color: tickColor,
             callback: (val: number) => this.currencyService.format(val)
           }
         }
@@ -324,14 +367,14 @@ export class Home implements OnInit, OnDestroy {
           position: 'bottom',
           labels: {
             font: { ...baseFont, size: 11 },
-            color: '#64748b',
+            color: legendColor,
             padding: 12,
             usePointStyle: true,
             pointStyleWidth: 10
           }
         },
         tooltip: {
-          backgroundColor: '#1e293b',
+          backgroundColor: '#101828',
           titleFont: { ...baseFont, size: 13 },
           bodyFont: { ...baseFont, size: 12 },
           padding: 12,
@@ -353,14 +396,14 @@ export class Home implements OnInit, OnDestroy {
           align: 'end',
           labels: {
             font: { ...baseFont, size: 12 },
-            color: '#64748b',
+            color: legendColor,
             padding: 20,
             usePointStyle: true,
             pointStyleWidth: 10
           }
         },
         tooltip: {
-          backgroundColor: '#1e293b',
+          backgroundColor: '#101828',
           titleFont: { ...baseFont, size: 13 },
           bodyFont: { ...baseFont, size: 12 },
           padding: 12,
@@ -373,13 +416,13 @@ export class Home implements OnInit, OnDestroy {
       scales: {
         x: {
           grid: { display: false },
-          ticks: { font: { ...baseFont, size: 11 }, color: '#94a3b8' }
+          ticks: { font: { ...baseFont, size: 11 }, color: tickColor }
         },
         y: {
-          grid: { color: '#f1f5f9' },
+          grid: { color: gridColor }, border: { display: false },
           ticks: {
             font: { ...baseFont, size: 11 },
-            color: '#94a3b8',
+            color: tickColor,
             callback: (val: number) => this.currencyService.format(val)
           }
         }

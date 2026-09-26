@@ -72,6 +72,8 @@ export class ThemeService {
     root.style.setProperty('--minted-accent', color);
     root.style.setProperty('--minted-accent-hover', hoverColor);
     root.style.setProperty('--minted-accent-subtle', this.hexToRgba(color, 0.10));
+    root.style.setProperty('--minted-accent-soft', this.hexToRgba(color, 0.16));
+    root.style.setProperty('--minted-accent-ring', this.hexToRgba(color, 0.22));
 
     this.accentColorSubject.next(color);
 

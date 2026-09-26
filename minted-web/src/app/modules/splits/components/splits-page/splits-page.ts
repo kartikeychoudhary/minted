@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ColDef, GridApi, GridReadyEvent, GridOptions, themeQuartz } from 'ag-grid-community';
+import { ColDef, GridApi, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { FriendService } from '../../../../core/services/friend.service';
 import { SplitService } from '../../../../core/services/split.service';
 import { CurrencyService } from '../../../../core/services/currency.service';
@@ -18,6 +18,7 @@ import {
 } from '../../../../core/models/split.model';
 import { SplitFriendsCellRendererComponent } from '../cell-renderers/split-friends-cell-renderer.component';
 import { SplitActionsCellRendererComponent } from '../cell-renderers/split-actions-cell-renderer.component';
+import { mintedGridTheme } from '../../../../shared/theme/grid-theme';
 
 interface SplitFriendEntry {
   friendId: number | null;
@@ -69,31 +70,7 @@ export class SplitsPage implements OnInit {
   avatarLoaded = new Set<number>();
 
   // AG Grid
-  mintedTheme = themeQuartz.withParams({
-    backgroundColor: 'var(--minted-bg-card)',
-    foregroundColor: 'var(--minted-text-primary)',
-    borderColor: 'var(--minted-border)',
-    browserColorScheme: 'inherit',
-    headerBackgroundColor: 'var(--minted-bg-card)',
-    headerFontSize: 12,
-    headerFontWeight: 600,
-    headerTextColor: 'var(--minted-text-muted)',
-    oddRowBackgroundColor: 'var(--minted-bg-card)',
-    rowHoverColor: 'var(--minted-bg-hover)',
-    selectedRowBackgroundColor: 'var(--minted-accent-subtle)',
-    accentColor: 'var(--minted-accent)',
-    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    fontSize: 14,
-    rowHeight: 60,
-    headerHeight: 48,
-    spacing: 6,
-    wrapperBorderRadius: 8,
-    cellHorizontalPadding: 16,
-    headerColumnBorder: false,
-    headerColumnResizeHandleColor: 'transparent',
-    columnBorder: false,
-    rowBorder: { color: 'var(--minted-border-light)', width: 1, style: 'solid' },
-  });
+  mintedTheme = mintedGridTheme.withParams({ rowHeight: 60 });
 
   private gridApi!: GridApi;
   columnDefs: ColDef[] = [];

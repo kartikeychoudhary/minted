@@ -1,38 +1,32 @@
-<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
+<div class="page-container" style="max-width: 820px;">
   <!-- Header -->
-  <header class="shadow-sm border-b"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center">
-      <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
-        style="color: var(--minted-text-secondary);">
-        <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
+  <div class="page-header" style="justify-content: flex-start; flex-wrap: nowrap;">
+      <button (click)="goBack()" class="back-btn" aria-label="Go back">
+          <i class="pi pi-arrow-left"></i>
       </button>
       <div class="flex items-center">
-        <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
-          style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
-          <i class="pi pi-upload" style="font-size: 1.5rem;"></i>
-        </div>
+        <span class="icon-tile mr-3 hidden sm:inline-flex" style="width: 40px; height: 40px;"><i class="pi pi-upload"></i></span>
         <div>
-          <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Parse New Statement</h1>
-          <p class="text-sm" style="color: var(--minted-text-muted);">Upload a financial statement to extract transactions</p>
+          <h1 class="page-title">Parse New Statement</h1>
+          <p class="page-subtitle">Upload a financial statement to extract transactions</p>
         </div>
       </div>
     </div>
-  </header>
+  
 
   <!-- Main Content -->
-  <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="page-body">
     <form [formGroup]="uploadForm" (ngSubmit)="onUpload()">
       <div class="space-y-6">
         <!-- File Type Selection -->
-        <div class="rounded-lg border p-6"
-          style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+        <div class="surface-card p-6">
           <label class="block text-sm font-semibold mb-3" style="color: var(--minted-text-primary);">
             Select File Type
           </label>
           <div class="grid grid-cols-3 gap-3">
             <div *ngFor="let ft of fileTypes"
-              class="rounded-lg border-2 p-4 cursor-pointer text-center transition-all hover:shadow-md"
+              class="filetype-option rounded-xl border p-4 cursor-pointer text-center transition-all"
+              [class.is-active]="selectedFileType === ft.type"
               [style.border-color]="selectedFileType === ft.type ? 'var(--minted-accent)' : 'var(--minted-border)'"
               [style.background-color]="selectedFileType === ft.type ? 'var(--minted-accent-subtle)' : 'var(--minted-bg-card)'"
               (click)="onFileTypeSelect(ft.type)">
@@ -45,16 +39,14 @@
         </div>
 
         <!-- File Upload -->
-        <div class="rounded-lg border p-6"
-          style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+        <div class="surface-card p-6">
           <label class="block text-sm font-semibold mb-3" style="color: var(--minted-text-primary);">
             {{ currentFileTypeConfig.label }} File
           </label>
 
-          <div *ngIf="!selectedFile" class="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors"
-            style="border-color: var(--minted-border);"
+          <div *ngIf="!selectedFile" class="dropzone"
             (click)="fileInput.click()">
-            <i [class]="currentFileTypeConfig.icon" class="text-3xl mb-3" style="color: var(--minted-text-muted);"></i>
+            <span class="dropzone__icon"><i [class]="currentFileTypeConfig.icon"></i></span>
             <p class="font-medium" style="color: var(--minted-text-primary);">Click to select a {{ selectedFileType }} file</p>
             <p class="text-sm mt-1" style="color: var(--minted-text-muted);">Maximum file size: {{ selectedFileType === 'PDF' ? '20MB' : '5MB' }}</p>
             <input #fileInput type="file" [accept]="currentFileTypeConfig.accept" class="hidden" (change)="onFileSelect($event)">
@@ -69,16 +61,14 @@
                 <p class="text-xs" style="color: var(--minted-text-muted);">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</p>
               </div>
             </div>
-            <button type="button" (click)="removeFile()" class="p-2 rounded-lg transition-colors"
-              style="color: var(--minted-error);">
+            <button type="button" (click)="removeFile()" class="statement-remove" aria-label="Remove file">
               <i class="pi pi-times"></i>
             </button>
           </div>
         </div>
 
         <!-- Account Selection -->
-        <div class="rounded-lg border p-6"
-          style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+        <div class="surface-card p-6">
           <label class="block text-sm font-semibold mb-3" style="color: var(--minted-text-primary);">
             Target Account
           </label>
@@ -88,8 +78,7 @@
         </div>
 
         <!-- Password (Optional - PDF only) -->
-        <div *ngIf="selectedFileType === 'PDF'" class="rounded-lg border p-6"
-          style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+        <div *ngIf="selectedFileType === 'PDF'" class="surface-card p-6">
           <div class="flex items-center gap-2 mb-3">
             <p-checkbox [(ngModel)]="showPassword" [ngModelOptions]="{standalone: true}" [binary]="true"
               inputId="showPwd"></p-checkbox>
@@ -114,7 +103,7 @@
         </div>
       </div>
     </form>
-  </main>
+  </div>
 </div>
 
 <p-toast position="top-right"></p-toast>

@@ -8,9 +8,9 @@ import { ICellRendererParams } from 'ag-grid-community';
   template: `
     <div class="flex items-center gap-3">
       <div
-        class="flex-shrink-0 h-9 w-9 rounded-full flex items-center justify-center"
+        class="flex-shrink-0 h-8 w-8 rounded-lg flex items-center justify-center"
         [ngClass]="getCategoryColorClass()">
-        <i [class]="getIconClass()" class="text-base"></i>
+        <i [class]="getIconClass()" class="text-sm"></i>
       </div>
       <div>
       <div class="text-sm font-medium" style="color: var(--minted-text-primary);">{{ params.data.categoryName }}</div>

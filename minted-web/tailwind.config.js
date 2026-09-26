@@ -1,4 +1,11 @@
 /** @type {import('tailwindcss').Config} */
+
+// Theme-aware colour helper: lets `bg-primary/10` etc. work with a CSS variable.
+const cssVar = (name) => ({ opacityValue }) =>
+  opacityValue === undefined || opacityValue === '1'
+    ? `var(${name})`
+    : `color-mix(in srgb, var(${name}) calc(${opacityValue} * 100%), transparent)`;
+
 module.exports = {
   content: [
     "./src/**/*.{html,ts}",
@@ -6,8 +13,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary': '#c48821',
-        'primary-dark': '#9d6d1a',
+        'primary': cssVar('--minted-accent'),
+        'primary-dark': cssVar('--minted-accent-hover'),
         'minted-green': '#0f3d32',
         'minted-green-light': '#1a5446',
         'background-light': '#f8f7f6',
@@ -23,6 +30,15 @@ module.exports = {
           700: '#15803d',
           800: '#166534',
           900: '#14532d',
+          // Theme tokens (follow light/dark mode + accent)
+          'primary': cssVar('--minted-accent'),
+          'text-primary': cssVar('--minted-text-primary'),
+          'text-secondary': cssVar('--minted-text-secondary'),
+          'text-muted': cssVar('--minted-text-muted'),
+          'border': cssVar('--minted-border'),
+          'surface': cssVar('--minted-bg-surface'),
+          'bg-app': cssVar('--minted-bg-page'),
+          'card': cssVar('--minted-bg-card'),
         }
       },
       fontFamily: {

@@ -21,3 +21,29 @@
     justify-content: flex-end;
   }
 }
+
+.friend-avatar {
+  box-shadow: 0 0 0 0 transparent;
+
+  .group:hover & {
+    border-color: var(--minted-accent) !important;
+    box-shadow: 0 0 0 3px var(--minted-accent-subtle);
+  }
+}
+
+.friend-add {
+  .group:hover & {
+    color: var(--minted-accent) !important;
+    border-color: var(--minted-accent) !important;
+    background: var(--minted-accent-subtle);
+  }
+}
+
+.settle-card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    border-color: var(--minted-border-strong);
+    box-shadow: var(--minted-shadow-md);
+  }
+}

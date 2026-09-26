@@ -1,8 +1,8 @@
-<div class="min-h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full">
+<div class="page-container flex flex-col space-y-5">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize">Server Settings</h1>
-            <p class="text-sm text-minted-text-secondary mt-1">Manage scheduled background jobs and global default
+            <h1 class="page-title">Server Settings</h1>
+            <p class="page-subtitle">Manage scheduled background jobs and global default
                 reference data</p>
         </div>
     </div>
@@ -135,12 +135,12 @@
     [draggable]="false" [resizable]="false">
     <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
+            <label class="field-label" style="margin-bottom: 0;">Name</label>
             <input type="text" pInputText formControlName="name"
                 class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Type</label>
+            <label class="field-label" style="margin-bottom: 0;">Type</label>
             <select formControlName="type"
                 class="w-full p-2.5 bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary outline-none focus:border-minted-primary border">
                 <option value="EXPENSE">Expense</option>
@@ -148,7 +148,7 @@
             </select>
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Icon Class</label>
+            <label class="field-label" style="margin-bottom: 0;">Icon Class</label>
             <input type="text" pInputText formControlName="icon"
                 class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
         </div>
@@ -165,7 +165,7 @@
     [style]="{width: 'min(400px, 95vw)'}" [draggable]="false" [resizable]="false">
     <form [formGroup]="accountTypeForm" (ngSubmit)="saveAccountType()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
+            <label class="field-label" style="margin-bottom: 0;">Name</label>
             <input type="text" pInputText formControlName="name"
                 class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg focus:ring-minted-primary">
         </div>
@@ -182,24 +182,24 @@
     [style]="{width: 'min(450px, 95vw)'}" [draggable]="false" [resizable]="false">
     <form [formGroup]="modelForm" (ngSubmit)="saveModel()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Name</label>
+            <label class="field-label" style="margin-bottom: 0;">Name</label>
             <input type="text" pInputText formControlName="name" placeholder="e.g. Gemini 2.0 Flash"
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Provider</label>
+            <label class="field-label" style="margin-bottom: 0;">Provider</label>
             <input type="text" pInputText formControlName="provider" placeholder="GEMINI" readonly
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Model Key</label>
+            <label class="field-label" style="margin-bottom: 0;">Model Key</label>
             <input type="text" pInputText formControlName="modelKey" placeholder="e.g. gemini-2.0-flash"
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Description</label>
+            <label class="field-label" style="margin-bottom: 0;">Description</label>
             <input type="text" pInputText formControlName="description" placeholder="Brief description"
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
         </div>
         <div class="flex items-center gap-2">
             <p-checkbox formControlName="isDefault" [binary]="true" inputId="isDefaultModel"></p-checkbox>

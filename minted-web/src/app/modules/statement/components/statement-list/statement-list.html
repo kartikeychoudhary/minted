@@ -1,56 +1,47 @@
-<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
+<div class="page-container">
   <!-- Header -->
-  <header class="shadow-sm border-b"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-3">
+  <div class="page-header page-header--center">
       <div class="flex items-center">
-        <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
-          style="color: var(--minted-text-secondary);">
-          <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
+        <button (click)="goBack()" class="back-btn mr-3" aria-label="Go back">
+          <i class="pi pi-arrow-left"></i>
         </button>
         <div class="flex items-center">
-          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
-            style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
-            <i class="pi pi-file-pdf" style="font-size: 1.5rem;"></i>
+          <span class="icon-tile mr-3 hidden sm:inline-flex" style="width: 40px; height: 40px;"><i class="pi pi-file-pdf"></i></span>
+          <div>
+            <h1 class="page-title">Financial Statements</h1>
+            <p class="page-subtitle">Parse bank and credit card statements into transactions.</p>
           </div>
-          <h1 class="text-2xl font-bold" style="color: var(--minted-text-primary);">Financial Statements</h1>
         </div>
       </div>
       <p-button icon="pi pi-plus" label="Parse New Statement" (onClick)="newStatement()"
         styleClass="p-button-primary"></p-button>
     </div>
-  </header>
+  
 
   <!-- Main Content -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="page-body">
     <!-- Loading -->
-    <div *ngIf="loading" class="flex justify-center py-12">
-      <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
+    <div *ngIf="loading" class="space-y-3">
+      <p-skeleton *ngFor="let i of [1,2,3]" width="100%" height="84px" borderRadius="16px"></p-skeleton>
     </div>
 
     <!-- Empty State -->
-    <div *ngIf="!loading && statements.length === 0"
-      class="text-center py-16 rounded-lg border"
-      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-      <i class="pi pi-file-pdf text-4xl mb-4" style="color: var(--minted-text-muted);"></i>
-      <h3 class="text-lg font-semibold mb-2" style="color: var(--minted-text-primary);">No statements yet</h3>
-      <p class="mb-6" style="color: var(--minted-text-secondary);">Upload a financial statement to get started.</p>
+    <div *ngIf="!loading && statements.length === 0" class="surface-card empty-state py-16">
+      <div class="empty-state__icon"><i class="pi pi-file-pdf"></i></div>
+      <h3 class="empty-state__title">No statements yet</h3>
+      <p class="empty-state__text mb-4">Upload a financial statement to get started.</p>
       <p-button icon="pi pi-plus" label="Parse New Statement" (onClick)="newStatement()"
         styleClass="p-button-primary"></p-button>
     </div>
 
     <!-- Statement Cards -->
-    <div *ngIf="!loading && statements.length > 0" class="space-y-4">
+    <div *ngIf="!loading && statements.length > 0" class="space-y-3">
       <div *ngFor="let stmt of statements"
-        class="rounded-lg border p-5 cursor-pointer transition-all hover:shadow-md"
-        style="background-color: var(--minted-bg-card); border-color: var(--minted-border);"
+        class="surface-card statement-card p-4 sm:p-5 cursor-pointer"
         (click)="viewStatement(stmt)">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center gap-4">
-            <div class="flex items-center justify-center w-10 h-10 rounded-lg"
-              style="background-color: var(--minted-accent-subtle);">
-              <i class="pi pi-file-pdf" style="color: var(--minted-accent); font-size: 1.25rem;"></i>
-            </div>
+            <span class="icon-tile" style="width: 42px; height: 42px;"><i class="pi pi-file-pdf"></i></span>
             <div>
               <h3 class="font-semibold" style="color: var(--minted-text-primary);">{{ stmt.fileName }}</h3>
               <div class="flex flex-wrap items-center gap-2 mt-1 text-xs" style="color: var(--minted-text-muted);">
@@ -73,12 +64,11 @@
             </div>
             <p-tag [value]="getStatusLabel(stmt.status)" [severity]="getStatusSeverity(stmt.status)"></p-tag>
             <button (click)="deleteStatement($event, stmt)"
-              class="p-2 rounded-lg transition-colors hover:opacity-80"
-              style="color: var(--minted-error);"
-              title="Delete statement">
+              class="statement-delete"
+              pTooltip="Delete statement" tooltipPosition="top" aria-label="Delete statement">
               <i class="pi pi-trash"></i>
             </button>
-            <i class="pi pi-chevron-right" style="color: var(--minted-text-muted);"></i>
+            <i class="pi pi-chevron-right statement-chevron"></i>
           </div>
         </div>
         <div *ngIf="stmt.errorMessage" class="mt-3 text-xs p-2 rounded"
@@ -87,7 +77,7 @@
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
 
 <p-toast position="top-right"></p-toast>

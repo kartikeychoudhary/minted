@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { ThemeService } from '../../../core/services/theme.service';
+import { NotificationService } from '../../../core/services/notification.service';
 
 interface NavigationItem {
   label: string;
@@ -27,15 +28,17 @@ export class Sidebar {
 
   navigationItems: NavigationItem[] = [];
 
+  private readonly COLLAPSED_KEY = 'minted-sidebar-collapsed';
+
   private baseNavigationItems: NavigationItem[] = [
-    { label: 'Dashboard', icon: 'pi pi-th-large', route: '/' },
-    { label: 'Transactions', icon: 'pi pi-list', route: '/transactions' },
-    { label: 'Recurring', icon: 'pi pi-sync', route: '/recurring' },
-    { label: 'Import', icon: 'pi pi-upload', route: '/import' },
-    { label: 'Statements', icon: 'pi pi-file', route: '/statements' },
-    { label: 'Splits', icon: 'pi pi-sitemap', route: '/splits' },
+    { label: 'Dashboard', icon: 'pi pi-th-large', route: '/', section: 'Overview' },
     { label: 'Analytics', icon: 'pi pi-chart-pie', route: '/analytics' },
     { label: 'Notifications', icon: 'pi pi-bell', route: '/notifications' },
+    { label: 'Transactions', icon: 'pi pi-list', route: '/transactions', section: 'Money' },
+    { label: 'Recurring', icon: 'pi pi-sync', route: '/recurring' },
+    { label: 'Splits', icon: 'pi pi-sitemap', route: '/splits' },
+    { label: 'Import', icon: 'pi pi-upload', route: '/import', section: 'Data' },
+    { label: 'Statements', icon: 'pi pi-file', route: '/statements' },
     { label: 'Settings', icon: 'pi pi-cog', route: '/settings', section: 'Management' },
   ];
 
@@ -48,10 +51,34 @@ export class Sidebar {
   constructor(
     public router: Router,
     private authService: AuthService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    public notificationService: NotificationService,
+    private elementRef: ElementRef
   ) { }
 
+  /** Labels are visible when the sidebar is expanded or rendered inside the mobile drawer. */
+  get expanded(): boolean {
+    return this.mobileMode || this.isOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (this.showUserMenu && !this.elementRef.nativeElement.contains(event.target)) {
+      this.showUserMenu = false;
+    }
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.showUserMenu = false;
+  }
+
   ngOnInit(): void {
+    if (!this.mobileMode && localStorage.getItem(this.COLLAPSED_KEY) === 'true') {
+      this.isOpen = false;
+      this.sidebarToggle.emit(this.isOpen);
+    }
+
     this.authService.currentUser$.subscribe(user => {
       if (user) {
         this.currentUser = {
@@ -74,6 +101,8 @@ export class Sidebar {
 
   toggleSidebar(): void {
     this.isOpen = !this.isOpen;
+    this.showUserMenu = false;
+    localStorage.setItem(this.COLLAPSED_KEY, String(!this.isOpen));
     this.sidebarToggle.emit(this.isOpen);
   }
 

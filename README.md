@@ -21,6 +21,10 @@ A modern, full-stack personal finance application built with **Angular 21** and 
 ## 🖥 Screenshots
 
 > See [screenshots/README.md](./screenshots/README.md) for a full annotated gallery with descriptions of every module.
+> Screenshots are generated automatically with demo data — see [minted-web/scripts/screenshots](./minted-web/scripts/screenshots/README.md).
+
+### Sign In
+![Login](./screenshots/Login.png)
 
 ### Dashboard
 | Dark Mode | Light Mode |
@@ -32,10 +36,10 @@ A modern, full-stack personal finance application built with **Angular 21** and 
 |-------------|-----------|
 | ![Transactions](./screenshots/Transactions.png) | ![Recurring](./screenshots/Recurring.png) |
 
-### Analytics & Splits
-| Analytics | Splits |
-|-----------|--------|
-| ![Analytics](./screenshots/Analytics.png) | ![Splits](./screenshots/Splits.png) |
+### Analytics, Splits & Notifications
+| Analytics | Splits | Notifications |
+|-----------|--------|---------------|
+| ![Analytics](./screenshots/Analytics.png) | ![Splits](./screenshots/Splits.png) | ![Notifications](./screenshots/Notifications.png) |
 
 ### Import & Statements
 | Bulk Import | Statements | Upload Statement |

@@ -1,20 +1,19 @@
-<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in max-w-5xl mx-auto w-full">
+<div class="page-container flex flex-col space-y-5" style="max-width: 1100px;">
 
     <!-- Header -->
-    <div class="flex items-center gap-4">
-        <button (click)="goBack()"
-            class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors group flex items-center justify-center">
-            <i class="pi pi-arrow-left text-minted-text-secondary group-hover:text-minted-primary transition-colors"></i>
+    <div class="flex items-center gap-3">
+        <button (click)="goBack()" class="back-btn" aria-label="Go back">
+            <i class="pi pi-arrow-left"></i>
         </button>
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize flex items-center gap-3">
+            <h1 class="page-title flex flex-wrap items-center gap-3">
                 Job Execution #{{ job?.id }}
                 <span *ngIf="job" class="px-2.5 py-1 text-xs font-semibold rounded-full"
                     [ngStyle]="getStatusStyle(job.status)">
                     {{ job.status }}
                 </span>
             </h1>
-            <p class="text-sm text-minted-text-secondary mt-1">
+            <p class="page-subtitle">
                 {{ job?.jobName || 'Loading details...' }}
                 <span *ngIf="job" class="ml-2 px-2 py-0.5 text-[0.65rem] font-bold tracking-wider rounded uppercase"
                     [ngStyle]="getTriggerStyle(job.triggerType)">
@@ -26,7 +25,7 @@
 
     <!-- Loading State -->
     <div *ngIf="loading"
-        class="flex-1 rounded-xl glass-card flex items-center justify-center p-8 border border-minted-border shadow-sm">
+        class="surface-card flex items-center justify-center p-8">
         <div class="text-center">
             <i class="pi pi-spin pi-spinner text-4xl text-minted-primary mb-4"></i>
             <p class="text-minted-text-secondary">Loading execution details...</p>
