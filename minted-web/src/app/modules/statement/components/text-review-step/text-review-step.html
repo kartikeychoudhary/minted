@@ -1,7 +1,6 @@
 <div class="space-y-6">
   <!-- Extracted Text -->
-  <div class="rounded-lg border"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+  <div class="surface-card">
     <div class="p-4 border-b flex items-center justify-between"
       style="border-color: var(--minted-border);">
       <div class="flex items-center gap-2">
@@ -29,8 +28,7 @@
   </div>
 
   <!-- Parsing Status -->
-  <div *ngIf="parsing" class="rounded-lg border p-6 text-center"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+  <div *ngIf="parsing" class="surface-card p-6 text-center">
     <p-progressSpinner [style]="{width: '40px', height: '40px'}"></p-progressSpinner>
     <p class="mt-4 font-medium" style="color: var(--minted-text-primary);">
       AI is parsing your statement...

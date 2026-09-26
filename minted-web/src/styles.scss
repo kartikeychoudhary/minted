@@ -1,3 +1,5 @@
+@use "sass:list";
+
 // Tailwind CSS
 @tailwind base;
 @tailwind components;
@@ -1042,28 +1044,28 @@ ag-grid-angular {
 // ============================================================
 
 $tint-colors: (
-  red: 248 113 113,
-  orange: 251 146 60,
-  amber: 251 191 36,
-  yellow: 250 204 21,
-  green: 74 222 128,
-  emerald: 52 211 153,
-  teal: 45 212 191,
-  cyan: 34 211 238,
-  blue: 96 165 250,
-  indigo: 129 140 248,
-  purple: 192 132 252,
-  violet: 167 139 250,
-  pink: 244 114 182,
-  rose: 251 113 133,
-  gray: 156 163 175,
-  slate: 148 163 184,
+  'red': 248 113 113,
+  'orange': 251 146 60,
+  'amber': 251 191 36,
+  'yellow': 250 204 21,
+  'green': 74 222 128,
+  'emerald': 52 211 153,
+  'teal': 45 212 191,
+  'cyan': 34 211 238,
+  'blue': 96 165 250,
+  'indigo': 129 140 248,
+  'purple': 192 132 252,
+  'violet': 167 139 250,
+  'pink': 244 114 182,
+  'rose': 251 113 133,
+  'gray': 156 163 175,
+  'slate': 148 163 184,
 );
 
 @each $name, $rgb in $tint-colors {
-  $r: nth($rgb, 1);
-  $g: nth($rgb, 2);
-  $b: nth($rgb, 3);
+  $r: list.nth($rgb, 1);
+  $g: list.nth($rgb, 2);
+  $b: list.nth($rgb, 3);
 
   .dark-mode {
     .bg-#{$name}-50,
@@ -1073,6 +1075,11 @@ $tint-colors: (
 
     .bg-#{$name}-200 {
       background-color: rgba($r, $g, $b, 0.2) !important;
+    }
+
+    .hover\:bg-#{$name}-50:hover,
+    .hover\:bg-#{$name}-100:hover {
+      background-color: rgba($r, $g, $b, 0.16) !important;
     }
 
     .border-#{$name}-100,

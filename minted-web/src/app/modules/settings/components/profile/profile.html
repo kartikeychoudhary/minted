@@ -2,12 +2,12 @@
   <!-- Personal Information Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Personal Information</h2>
+      <h2 class="text-base font-semibold" style="color: var(--minted-text-primary);">Personal Information</h2>
       <p class="text-sm" style="color: var(--minted-text-secondary);">Update your basic profile information and how we
         contact you.</p>
     </div>
 
-    <div class="rounded-xl border shadow-sm overflow-hidden"
+    <div class="rounded-xl border overflow-hidden"
       style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
       <form *ngIf="profileForm" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
         <div class="p-6 space-y-6">
@@ -73,11 +73,11 @@
   <!-- Security Settings Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Security Settings</h2>
+      <h2 class="text-base font-semibold" style="color: var(--minted-text-primary);">Security Settings</h2>
       <p class="text-sm" style="color: var(--minted-text-secondary);">Manage your password and security preferences.</p>
     </div>
 
-    <div class="rounded-xl border shadow-sm overflow-hidden"
+    <div class="rounded-xl border overflow-hidden"
       style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
       <form *ngIf="passwordForm" [formGroup]="passwordForm" (ngSubmit)="updatePassword()">
         <div class="p-6 space-y-6">
@@ -149,11 +149,11 @@
   <!-- Appearance Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Appearance</h2>
+      <h2 class="text-base font-semibold" style="color: var(--minted-text-primary);">Appearance</h2>
       <p class="text-sm" style="color: var(--minted-text-secondary);">Customize the look and feel of Minted.</p>
     </div>
 
-    <div class="rounded-xl border shadow-sm overflow-hidden"
+    <div class="rounded-xl border overflow-hidden"
       style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
       <!-- Dark / Light Mode Toggle -->
       <div class="p-6 flex items-center justify-between border-b" style="border-color: var(--minted-border);">
@@ -211,12 +211,12 @@
   <!-- Notification Preferences Section -->
   <section>
     <div class="mb-6">
-      <h2 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Notification Preferences</h2>
+      <h2 class="text-base font-semibold" style="color: var(--minted-text-primary);">Notification Preferences</h2>
       <p class="text-sm" style="color: var(--minted-text-secondary);">Control how and when you receive alerts from
         Minted.</p>
     </div>
 
-    <div class="rounded-xl border shadow-sm overflow-hidden"
+    <div class="rounded-xl border overflow-hidden"
       style="border-color: var(--minted-border); background-color: var(--minted-bg-card);">
       <!-- Transaction Alerts -->
       <div class="p-6 flex items-center justify-between border-b" style="border-color: var(--minted-border);">
