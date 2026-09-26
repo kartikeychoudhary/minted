@@ -2,10 +2,15 @@
 
 This document provides an annotated walkthrough of every screen and module in **Minted**, a full-stack personal budget and expense management application.
 
+> All images are generated with realistic demo data by the Playwright scripts in
+> [`minted-web/scripts/screenshots`](../minted-web/scripts/screenshots/README.md) — run
+> `npm run screenshots:seed && npm run screenshots` from `minted-web` to refresh them.
+
 ---
 
 ## 📋 Table of Contents
 
+1. [Sign In](#-sign-in)
 1. [Dashboard](#-dashboard)
 2. [Transactions](#-transactions)
 3. [Recurring Transactions](#-recurring-transactions)
@@ -14,8 +19,18 @@ This document provides an annotated walkthrough of every screen and module in **
 6. [Import (Bulk CSV)](#-import-bulk-csv)
 7. [Statements](#-statements)
 8. [Settings](#-settings)
-9. [Admin Panel](#-admin-panel)
-10. [Layout](#-layout)
+9. [Notifications](#-notifications)
+10. [Admin Panel](#-admin-panel)
+11. [Layout](#-layout)
+
+---
+
+## 🔐 Sign In
+
+Split-screen sign-in with a brand panel on desktop (form-only on mobile). Sign-up and forced
+password change share the same layout.
+
+![Login](./Login.png)
 
 ---
 
@@ -24,12 +39,11 @@ This document provides an annotated walkthrough of every screen and module in **
 The Dashboard is the home screen of Minted. It provides an at-a-glance summary of your financial health with interactive charts and summary cards.
 
 **Features shown:**
-- Income vs. Expense summary cards with totals for the selected period
-- Net balance and account balance overview
-- Spending trend bar chart (by day/week/month)
-- Category breakdown donut/pie chart
-- Top merchants list
-- Date range selector for all widgets
+- Summary cards: total income, total expenses, net balance (with saving / overspending indicator) and transaction count
+- Monthly expenses bar chart by category
+- Category split donut chart
+- Income vs. expense trend for the last 6 months
+- Account filter and period selector (this month, last month, 3/6 months, this year, custom range)
 
 ### Dark Mode
 ![Dashboard Dark Mode](./Dashboard.png)
@@ -37,7 +51,7 @@ The Dashboard is the home screen of Minted. It provides an at-a-glance summary o
 ### Light Mode
 ![Dashboard Light Mode](./Dashboard_Light.png)
 
-> Minted supports **6 accent color presets** (Amber, Emerald, Blue, Violet, Rose, Teal) plus a full dark/light theme toggle accessible from the sidebar.
+> Minted supports **6 accent color presets** (Amber, Emerald, Blue, Violet, Rose, Teal) plus a full dark/light theme toggle and a privacy mode (blurs amounts) in the top header.
 
 ---
 
@@ -50,8 +64,8 @@ The Transactions page is the core ledger of Minted. All your income, expenses, a
 - Transaction type badges: **Income** (green), **Expense** (red), **Transfer** (blue)
 - Inline **Create / Edit / Delete** dialogs
 - Split indicator — transactions linked to a bill split show a split badge
-- Date range filter, category filter, account filter, and transaction type filter
-- Bulk actions and CSV export
+- Quick date-range segmented control (this month … last year, custom), search, account and category filters
+- Bulk actions bar (change category, delete) that appears when rows are selected, plus CSV export
 
 ![Transactions](./Transactions.png)
 
@@ -62,8 +76,9 @@ The Transactions page is the core ledger of Minted. All your income, expenses, a
 The Recurring Transactions page lets you define repeating income or expense rules that the system automatically creates on schedule.
 
 **Features shown:**
-- AG Grid listing all recurring rules (name, amount, category, account, frequency, next due date)
-- Frequency options: Daily, Weekly, Monthly, Yearly
+- Summary cards: estimated monthly expenses, income and scheduled net flux
+- Schedule form (name, amount, type, category, account, day of month, start/end date)
+- Active schedules table with next run date and paused state
 - Create / Edit / Delete dialogs
 - Active / Paused status toggle per rule
 - Integration with the job scheduler — cron jobs execute recurring transaction creation automatically
@@ -191,7 +206,7 @@ Manage **transaction categories** with custom names and icons (e.g., Food, Rent,
 
 **Features shown:**
 - AG Grid of categories with name, icon, and type (Income / Expense / Both)
-- Font Awesome icon picker
+- PrimeIcons-based category icons
 - Default categories seeded on first run
 
 ![Settings Categories](./Settings_Categories.png)
@@ -230,6 +245,15 @@ Configure the **Large Language Model** integration used for credit card statemen
 - Merchant mapping rules (raw merchant string → normalized category)
 
 ![Settings LLM Configuration](./Settings_LLM_Configuration.png)
+
+---
+
+## 🔔 Notifications
+
+Notifications grouped by day, with unread indicators, mark-all-as-read and clear actions. A quick-view
+drawer is also available from the bell icon in the header.
+
+![Notifications](./Notifications.png)
 
 ---
 
@@ -284,18 +308,15 @@ Additional server configuration options.
 ## 🗂 Layout
 
 ### Sidebar (Closed)
-The sidebar collapses to icon-only mode to maximize screen space. The active route is highlighted with the accent color.
+The sidebar collapses to icon-only mode to maximize screen space (the choice is remembered). The active
+route is highlighted with the accent color, and the header shows a breadcrumb for the current page.
 
-**Sidebar navigation items:**
-- Dashboard
-- Transactions
-- Recurring
-- Analytics
-- Splits
-- Import
-- Notifications
-- Settings
-- Admin _(admin role only)_
+**Sidebar navigation (grouped):**
+- **Overview** — Dashboard, Analytics, Notifications
+- **Money** — Transactions, Recurring, Splits
+- **Data** — Import, Statements
+- **Management** — Settings
+- **Admin** _(admin role only)_ — Users, Server Jobs, Server Settings
 
 ![Sidebar Closed](./Sidebar_closed.png)
 
