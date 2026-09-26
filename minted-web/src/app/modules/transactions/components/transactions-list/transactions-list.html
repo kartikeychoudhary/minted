@@ -400,7 +400,7 @@
             <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Add a friend:</p>
             <div class="flex flex-wrap gap-2">
               <button *ngFor="let f of availableFriendsForSplit" type="button"
-                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border hover:border-green-400 hover:bg-green-50 transition-colors"
+                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border add-friend-chip transition-colors"
                 style="background-color: var(--minted-bg-card); border-color: var(--minted-border); color: var(--minted-text-primary);"
                 (click)="addFriendToSplit(f)">
                 <div class="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"

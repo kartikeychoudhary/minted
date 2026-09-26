@@ -1,84 +1,82 @@
-<!-- Background with decorative elements -->
-<div class="min-h-screen flex items-center justify-center p-4 relative overflow-hidden auth-gradient-bg">
-  <!-- Decorative Background Blurs -->
-  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full blur-3xl"
-      style="background-color: rgba(196, 136, 33, 0.12);"></div>
-    <div class="absolute top-[40%] -right-[10%] w-[50%] h-[50%] rounded-full blur-3xl"
-      style="background-color: rgba(196, 136, 33, 0.10);"></div>
-    <div class="absolute bottom-[-10%] left-[30%] w-[40%] h-[40%] rounded-full blur-3xl"
-      style="background-color: rgba(196, 136, 33, 0.08);"></div>
-  </div>
-
-  <!-- Main Login Card -->
-  <main class="relative z-10 w-full max-w-md shadow-lg border overflow-hidden login-card"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <!-- Header Section with Logo -->
-    <div class="pt-10 pb-6 px-4 sm:px-8 text-center">
-      <!-- Gold Coin Icon -->
-      <div class="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 shadow-sm logo-icon">
-        <i class="pi pi-dollar" style="font-size: 1.875rem;"></i>
-      </div>
-      <h1 class="text-xl sm:text-2xl font-bold tracking-tight" style="color: #1e293b;">Minted</h1>
-      <p class="mt-2 text-sm" style="color: #857f79;">Secure access to your wealth portfolio</p>
+<div class="auth-shell">
+  <!-- Brand panel (desktop) -->
+  <aside class="auth-brand">
+    <div class="auth-brand__logo">
+      <span class="auth-brand__mark"><img src="assets/ico/icon.svg" alt="" class="w-7 h-7"></span>
+      Minted
     </div>
 
-    <!-- Form Section -->
-    <form *ngIf="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="px-4 sm:px-8 pb-10 space-y-6">
-      <!-- Username Input with Icon -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-user" />
-          <input pInputText id="username" type="text" formControlName="username" placeholder="Username or Email"
-            class="w-full" [class.p-invalid]="f['username']?.invalid && f['username']?.touched" />
-        </p-iconfield>
-        <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
-          Username is required
-        </small>
+    <div>
+      <h2 class="auth-brand__headline">Your money, <span>beautifully</span> organized.</h2>
+      <p class="auth-brand__lead">Track spending, plan budgets, automate recurring payments and settle up with friends — all in one calm place.</p>
+      <div class="auth-features">
+        <div class="auth-feature"><i class="pi pi-chart-pie"></i> Clear analytics for every rupee and dollar</div>
+        <div class="auth-feature"><i class="pi pi-sync"></i> Recurring transactions on autopilot</div>
+        <div class="auth-feature"><i class="pi pi-sitemap"></i> Split expenses and settle with friends</div>
+        <div class="auth-feature"><i class="pi pi-file-import"></i> Import CSVs and bank statements</div>
+      </div>
+    </div>
+
+    <p class="auth-brand__footer">© 2026 Minted Financial Services. Protected by 256-bit encryption.</p>
+  </aside>
+
+  <!-- Form panel -->
+  <main class="auth-panel">
+    <div class="auth-card">
+      <div class="auth-mobile-logo">
+        <img src="assets/ico/icon.svg" alt="" class="w-8 h-8">
+        Minted
       </div>
 
-      <!-- Password Input with Icon and Toggle -->
-      <div>
-        <p-iconfield styleClass="w-full">
-          <p-inputicon styleClass="pi pi-lock" />
-          <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Password"
-            inputStyleClass="w-full" styleClass="w-full" />
-        </p-iconfield>
-        <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
-          Password is required
-        </small>
-      </div>
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Secure access to your wealth portfolio</p>
 
-      <!-- Forgot Password Link -->
-      <div class="flex items-center justify-end">
-        <a href="#" class="text-sm font-medium forgot-link">
-          Forgot Password?
-        </a>
-      </div>
+      <!-- Form Section -->
+      <form *ngIf="loginForm" [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="auth-form">
+        <!-- Username Input with Icon -->
+        <div>
+          <label for="username" class="auth-label">Username or email</label>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-user" />
+            <input pInputText id="username" type="text" formControlName="username" placeholder="Username or Email"
+              autocomplete="username" class="w-full" [class.p-invalid]="f['username']?.invalid && f['username']?.touched" />
+          </p-iconfield>
+          <small class="p-error block mt-1" *ngIf="f['username']?.invalid && f['username']?.touched">
+            Username is required
+          </small>
+        </div>
 
-      <!-- Submit Button -->
-      <p-button type="submit" label="Secure Login" icon="pi pi-lock" [loading]="loading"
-        [disabled]="!loginForm || loginForm.invalid || loading" styleClass="w-full"></p-button>
-    </form>
+        <!-- Password Input with Icon and Toggle -->
+        <div>
+          <div class="flex items-center justify-between">
+            <label class="auth-label">Password</label>
+            <!-- Forgot Password Link -->
+            <a href="#" class="auth-link text-xs mb-1.5">Forgot Password?</a>
+          </div>
+          <p-iconfield styleClass="w-full">
+            <p-inputicon styleClass="pi pi-lock" />
+            <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Password"
+              inputStyleClass="w-full" styleClass="w-full" />
+          </p-iconfield>
+          <small class="p-error block mt-1" *ngIf="f['password']?.invalid && f['password']?.touched">
+            Password is required
+          </small>
+        </div>
 
-    <!-- Footer Area -->
-    <div class="py-4 px-4 sm:px-8 text-center border-t" style="background-color: #f9fafb; border-color: #f3f4f6;"
-      *ngIf="signupEnabled">
-      <p class="text-xs" style="color: #857f79;">
+        <!-- Submit Button -->
+        <p-button type="submit" label="Secure Login" icon="pi pi-lock" [loading]="loading"
+          [disabled]="!loginForm || loginForm.invalid || loading" styleClass="w-full mt-2"></p-button>
+      </form>
+
+      <!-- Footer Area -->
+      <div class="auth-switch" *ngIf="signupEnabled">
         Don't have an account?
-        <a routerLink="/signup" class="font-semibold ml-1 create-link">
-          Create Account
-        </a>
-      </p>
+        <a routerLink="/signup" class="auth-link ml-1">Create Account</a>
+      </div>
+
+      <p class="auth-legal">© 2026 Minted Financial Services. Protected by 256-bit encryption.</p>
     </div>
   </main>
-
-  <!-- Footer Copyright -->
-  <footer class="fixed bottom-4 text-center w-full pointer-events-none">
-    <p class="text-[10px]" style="color: rgba(133, 127, 121, 0.5);">
-      © 2026 Minted Financial Services. Protected by 256-bit encryption.
-    </p>
-  </footer>
 
   <!-- Toast for error messages -->
   <p-toast position="top-right"></p-toast>

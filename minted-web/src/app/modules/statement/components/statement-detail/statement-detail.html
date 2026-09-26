@@ -1,23 +1,17 @@
-<div class="min-h-screen" style="background-color: var(--minted-bg-page);">
+<div class="page-container" style="max-width: 1100px;">
   <!-- Header -->
-  <header class="shadow-sm border-b"
-    style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+  <div class="page-header page-header--center">
       <div class="flex items-center">
-        <button (click)="goBack()" class="mr-4 p-2 rounded-lg transition-colors"
-          style="color: var(--minted-text-secondary);">
-          <i class="pi pi-arrow-left" style="font-size: 1.25rem;"></i>
+        <button (click)="goBack()" class="back-btn mr-3" aria-label="Go back">
+          <i class="pi pi-arrow-left"></i>
         </button>
         <div class="flex items-center">
-          <div class="inline-flex items-center justify-center w-10 h-10 rounded-full mr-3"
-            style="background-color: var(--minted-accent-subtle); color: var(--minted-accent);">
-            <i class="pi pi-file-pdf" style="font-size: 1.5rem;"></i>
-          </div>
+          <span class="icon-tile mr-3 hidden sm:inline-flex" style="width: 40px; height: 40px;"><i class="pi pi-file-pdf"></i></span>
           <div>
-            <h1 class="text-xl font-bold" style="color: var(--minted-text-primary);">
+            <h1 class="page-title">
               {{ statement?.fileName || 'Statement' }}
             </h1>
-            <p class="text-sm minted-sensitive" style="color: var(--minted-text-muted);">
+            <p class="page-subtitle minted-sensitive">
               {{ statement?.accountName }}
             </p>
           </div>
@@ -25,7 +19,7 @@
       </div>
       <p-tag *ngIf="statement" [value]="statement.status" [severity]="statement.status === 'COMPLETED' ? 'success' : statement.status === 'FAILED' ? 'danger' : 'info'"></p-tag>
     </div>
-  </header>
+  
 
   <!-- Loading -->
   <div *ngIf="loading" class="flex justify-center py-12">
@@ -33,10 +27,9 @@
   </div>
 
   <!-- Content -->
-  <main *ngIf="!loading && statement" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div *ngIf="!loading && statement" class="page-body">
     <!-- Step Indicator -->
-    <div class="rounded-lg border p-6 mb-6"
-      style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
+    <div class="surface-card p-6 mb-6">
       <div class="flex items-center justify-between">
         <div *ngFor="let step of steps; let i = index" class="flex items-center" [class.flex-1]="i < steps.length - 1">
           <div class="flex items-center gap-2">
@@ -59,8 +52,8 @@
     </div>
 
     <!-- Error Banner -->
-    <div *ngIf="statement.status === 'FAILED'" class="rounded-lg border p-4 mb-6"
-      style="background-color: var(--minted-error-subtle); border-color: var(--minted-error);">
+    <div *ngIf="statement.status === 'FAILED'" class="rounded-xl border p-4 mb-6"
+      style="background-color: var(--minted-error-subtle); border-color: var(--minted-danger-subtle);">
       <div class="flex items-center gap-2">
         <i class="pi pi-exclamation-triangle" style="color: var(--minted-error);"></i>
         <span class="font-semibold" style="color: var(--minted-error);">Processing Failed</span>
@@ -90,17 +83,16 @@
 
       <!-- Default: completed or other -->
       <div *ngSwitchDefault>
-        <div *ngIf="statement.status === 'COMPLETED'" class="text-center py-8 rounded-lg border"
-          style="background-color: var(--minted-bg-card); border-color: var(--minted-border);">
-          <i class="pi pi-check-circle text-4xl mb-3" style="color: var(--minted-success);"></i>
-          <h3 class="text-lg font-semibold" style="color: var(--minted-text-primary);">Import Complete</h3>
-          <p class="mt-2" style="color: var(--minted-text-secondary);">
+        <div *ngIf="statement.status === 'COMPLETED'" class="surface-card empty-state py-12">
+          <div class="empty-state__icon" style="background: var(--minted-success-subtle); color: var(--minted-success);"><i class="pi pi-check"></i></div>
+          <h3 class="empty-state__title">Import Complete</h3>
+          <p class="empty-state__text">
             {{ statement.importedCount }} transactions imported successfully.
           </p>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
 
 <p-toast position="top-right"></p-toast>

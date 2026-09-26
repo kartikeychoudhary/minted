@@ -253,6 +253,10 @@ body {
   margin-bottom: 24px;
 }
 
+.page-header--center {
+  align-items: center;
+}
+
 .page-eyebrow {
   display: inline-flex;
   align-items: center;
@@ -356,6 +360,17 @@ body {
   border-radius: 12px;
   background: var(--minted-bg-surface);
   border: 1px solid var(--minted-border-light);
+
+  @media (max-width: 767px) {
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
 
 .segmented__item {
@@ -773,13 +788,12 @@ body .p-datepicker .p-inputtext {
   border-color: var(--minted-border-light);
 }
 
-// --- Progress Bar ---
+// --- Progress Bar --- (value colour comes from the preset / per-bar CSS var)
 .p-progressbar {
   background: var(--minted-bg-surface) !important;
   border-radius: 999px;
 
   .p-progressbar-value {
-    background: var(--minted-accent) !important;
     border-radius: 999px;
   }
 }
@@ -895,6 +909,11 @@ body .p-datepicker .p-inputtext {
   &.p-tag-secondary {
     background: var(--minted-bg-surface) !important;
     color: var(--minted-text-secondary) !important;
+  }
+
+  &.p-tag-contrast {
+    background: var(--minted-accent-subtle) !important;
+    color: var(--minted-accent) !important;
   }
 }
 
@@ -1067,5 +1086,109 @@ $tint-colors: (
     .text-#{$name}-900 {
       color: rgb($r, $g, $b) !important;
     }
+  }
+}
+
+// Friend chips in split dialogs
+.add-friend-chip:hover {
+  border-color: var(--minted-accent) !important;
+  background-color: var(--minted-accent-subtle) !important;
+}
+
+// ============================================================
+//  STEPPER + FILE INPUT
+// ============================================================
+
+.p-stepper {
+  .p-steplist {
+    padding: 6px;
+    border-radius: var(--minted-radius-lg);
+    background: var(--minted-bg-card);
+    border: 1px solid var(--minted-border);
+    box-shadow: var(--minted-shadow-sm);
+  }
+
+  .p-step-header {
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+
+  .p-step-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .p-step-number {
+    background-color: var(--minted-bg-surface) !important;
+    color: var(--minted-text-secondary) !important;
+    border: 1px solid var(--minted-border) !important;
+    box-shadow: none !important;
+    font-size: 0.8125rem;
+  }
+
+  .p-step-active .p-step-number {
+    background-color: var(--minted-accent) !important;
+    color: #fff !important;
+    border-color: var(--minted-accent) !important;
+    box-shadow: 0 0 0 4px var(--minted-accent-subtle) !important;
+  }
+
+  .p-step-active .p-step-title {
+    color: var(--minted-text-primary);
+  }
+
+  .p-steppanels {
+    background: transparent;
+    padding: 0;
+  }
+
+  .p-steppanel {
+    background: transparent;
+  }
+}
+
+.minted-file-input {
+  font-size: 0.875rem;
+  color: var(--minted-text-secondary);
+
+  &::file-selector-button {
+    margin-right: 12px;
+    padding: 9px 14px;
+    border: 1px solid var(--minted-border);
+    border-radius: 10px;
+    background: var(--minted-bg-surface);
+    color: var(--minted-text-primary);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  &:hover::file-selector-button {
+    background: var(--minted-bg-hover);
+    border-color: var(--minted-border-strong);
+  }
+}
+
+// Round "back" button used in detail page headers
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  border: 1px solid var(--minted-border);
+  background: var(--minted-bg-card);
+  color: var(--minted-text-secondary);
+  box-shadow: var(--minted-shadow-xs);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: var(--minted-bg-hover);
+    border-color: var(--minted-border-strong);
+    color: var(--minted-text-primary);
   }
 }

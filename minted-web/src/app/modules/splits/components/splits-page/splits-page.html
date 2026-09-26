@@ -1,5 +1,5 @@
 <!-- Loading Skeleton -->
-<div *ngIf="loading" class="p-4 sm:p-8">
+<div *ngIf="loading" class="page-container">
   <p-skeleton width="200px" height="40px" styleClass="mb-4"></p-skeleton>
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
     <p-skeleton width="100%" height="120px" styleClass="lg:col-span-6"></p-skeleton>
@@ -10,41 +10,42 @@
 </div>
 
 <!-- Main Content -->
-<div *ngIf="!loading" class="p-4 sm:p-8">
+<div *ngIf="!loading" class="page-container">
   <!-- Page Header -->
-  <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+  <div class="page-header">
     <div>
-      <h1 class="text-3xl tracking-tight mb-2 font-bold" style="color: var(--minted-text-primary);">Splits</h1>
-      <p class="text-lg" style="color: var(--minted-text-muted);">Manage shared expenses and settle up with friends
-        easily.</p>
+      <h1 class="page-title">Splits</h1>
+      <p class="page-subtitle">Manage shared expenses and settle up with friends easily.</p>
     </div>
-    <div class="flex flex-wrap items-center gap-2">
+    <div class="page-actions">
       <button pButton class="p-button-outlined" (click)="openNewFriendDialog()">
-        <i class="pi pi-user-plus text-[18px] mr-2"></i>
+        <i class="pi pi-user-plus mr-2"></i>
         Add Friend
       </button>
       <button pButton (click)="openNewSplitDialog()">
-        <i class="pi pi-sitemap text-[18px] mr-2"></i>
+        <i class="pi pi-sitemap mr-2"></i>
         Add Split
       </button>
     </div>
   </div>
 
   <!-- Summary Cards Grid -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-10">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-8">
     <!-- Friends Quick List -->
-    <div class="lg:col-span-6 rounded-xl p-6 shadow-sm"
-      style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+    <div class="lg:col-span-6 surface-card p-5">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-base font-semibold" style="color: var(--minted-text-primary);">Friends</h3>
-        <span class="text-sm" style="color: var(--minted-text-muted);">{{ friends.length }} total</span>
+        <h3 class="text-[15px] font-semibold flex items-center gap-2" style="color: var(--minted-text-primary);">
+          <span class="icon-tile is-neutral" style="width: 30px; height: 30px;"><i class="pi pi-users text-sm"></i></span>
+          Friends
+        </h3>
+        <span class="pill">{{ friends.length }} total</span>
       </div>
       <div class="flex gap-4 overflow-x-auto pb-2" style="scrollbar-width: thin;">
         <!-- Friend Items -->
         <div *ngFor="let friend of friends" class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group"
           (click)="openEditFriendDialog(friend)">
           <div
-            class="w-14 h-14 rounded-full border-2 p-0.5 group-hover:border-green-500 transition-colors flex items-center justify-center overflow-hidden relative"
+            class="friend-avatar w-14 h-14 rounded-full border-2 p-0.5 transition-all flex items-center justify-center overflow-hidden relative"
             [style.background-color]="friend.avatarColor" [style.border-color]="'var(--minted-border)'">
             <span *ngIf="!friend.avatarBase64 || !avatarLoaded.has(friend.id)"
               class="text-white font-bold text-sm">{{ getInitials(friend.name) }}</span>
@@ -59,7 +60,7 @@
         <!-- Add New Button -->
         <div class="flex flex-col items-center gap-2 min-w-[72px] cursor-pointer group" (click)="openNewFriendDialog()">
           <div
-            class="w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center group-hover:text-green-500 group-hover:border-green-500 transition-colors"
+            class="friend-add w-14 h-14 rounded-full border-2 border-dashed flex items-center justify-center transition-colors"
             style="border-color: var(--minted-border); color: var(--minted-text-muted);">
             <i class="pi pi-plus"></i>
           </div>
@@ -69,12 +70,14 @@
     </div>
 
     <!-- You Are Owed -->
-    <div class="lg:col-span-3 rounded-xl p-6 shadow-sm flex flex-col justify-between"
-      style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+    <div class="lg:col-span-3 surface-card p-5 flex flex-col justify-between">
       <div>
-        <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You are owed</h3>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-medium" style="color: var(--minted-text-secondary);">You are owed</h3>
+          <span class="icon-tile is-success"><i class="pi pi-arrow-down-left"></i></span>
+        </div>
         <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold minted-sensitive" style="color: var(--minted-text-primary);">{{
+          <span class="text-[1.625rem] font-bold tracking-tight minted-sensitive" style="color: var(--minted-success);">{{
             currencyService.format(balanceSummary.youAreOwed) }}</span>
         </div>
       </div>
@@ -84,12 +87,14 @@
     </div>
 
     <!-- You Owe -->
-    <div class="lg:col-span-3 rounded-xl p-6 shadow-sm flex flex-col justify-between"
-      style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+    <div class="lg:col-span-3 surface-card p-5 flex flex-col justify-between">
       <div>
-        <h3 class="text-sm font-medium mb-1" style="color: var(--minted-text-muted);">You owe</h3>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-medium" style="color: var(--minted-text-secondary);">You owe</h3>
+          <span class="icon-tile is-danger"><i class="pi pi-arrow-up-right"></i></span>
+        </div>
         <div class="flex items-baseline gap-2">
-          <span class="text-3xl font-bold minted-sensitive" style="color: var(--minted-text-primary);">{{
+          <span class="text-[1.625rem] font-bold tracking-tight minted-sensitive" style="color: var(--minted-text-primary);">{{
             currencyService.format(balanceSummary.youOwe) }}</span>
         </div>
       </div>
@@ -100,14 +105,14 @@
   </div>
 
   <!-- Pending Settlements -->
-  <div class="mb-10" *ngIf="friendBalances.length > 0">
-    <h2 class="text-xl font-bold mb-5 flex items-center gap-2" style="color: var(--minted-text-primary);">
+  <div class="mb-8" *ngIf="friendBalances.length > 0">
+    <h2 class="text-base font-semibold mb-4 flex items-center gap-2" style="color: var(--minted-text-primary);">
       <i class="pi pi-clock" style="color: var(--minted-accent);"></i>
       Pending Settlements
+      <span class="pill is-accent">{{ friendBalances.length }}</span>
     </h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-      <div *ngFor="let fb of friendBalances" class="rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow"
-        style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div *ngFor="let fb of friendBalances" class="surface-card settle-card p-5">
         <div class="flex items-center gap-4 mb-4">
           <div
             class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden relative"
@@ -119,24 +124,24 @@
               (load)="onAvatarLoad(fb.friendId)" />
           </div>
           <div>
-            <h4 class="font-bold" style="color: var(--minted-text-primary);">{{ fb.friendName }}</h4>
+            <h4 class="font-semibold" style="color: var(--minted-text-primary);">{{ fb.friendName }}</h4>
             <p class="text-xs" style="color: var(--minted-text-muted);">
               {{ fb.balance > 0 ? 'Owes you' : 'You owe' }}
             </p>
           </div>
         </div>
-        <div class="flex items-center justify-between">
-          <div class="text-lg font-bold minted-sensitive" [ngClass]="fb.balance > 0 ? 'text-emerald-600' : 'text-orange-600'">
+        <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--minted-border-light);">
+          <div class="text-lg font-bold tracking-tight minted-sensitive" [ngClass]="fb.balance > 0 ? 'text-emerald-600' : 'text-orange-600'">
             {{ fb.balance > 0 ? '+' : '' }}{{ currencyService.format(fb.balance) }}
           </div>
           <div class="flex gap-2">
-            <button pButton class="p-button-sm p-button-text" pTooltip="Export CSV" tooltipPosition="top"
+            <button pButton class="p-button-sm p-button-outlined" pTooltip="Export CSV" tooltipPosition="top"
               (click)="exportFriendCSV(fb)">
-              <i class="pi pi-download text-[16px]"></i>
+              <i class="pi pi-download"></i>
             </button>
-            <button pButton sclass="p-button-sm p-button-text" pTooltip="Settle" tooltipPosition="top"
+            <button pButton class="p-button-sm" pTooltip="Settle" tooltipPosition="top"
               (click)="openSettleDialog(fb)">
-              <i class="pi pi-check text-[16px]"></i>
+              <i class="pi pi-check mr-1.5"></i> Settle
             </button>
           </div>
         </div>
@@ -145,10 +150,12 @@
   </div>
 
   <!-- AG Grid — Recent Activity -->
-  <div class="rounded-xl shadow-sm overflow-hidden"
-    style="background-color: var(--minted-bg-card); border: 1px solid var(--minted-border);">
-    <div class="px-6 py-5" style="border-bottom: 1px solid var(--minted-border);">
-      <h3 class="text-lg font-bold" style="color: var(--minted-text-primary);">Recent Activity</h3>
+  <div class="grid-card">
+    <div class="surface-card__header">
+      <h3 class="surface-card__title">
+        <span class="icon-tile" style="width: 30px; height: 30px;"><i class="pi pi-history text-sm"></i></span>
+        Recent Activity
+      </h3>
     </div>
     <ag-grid-angular style="height: 500px; width: 100%;" [theme]="mintedTheme" [columnDefs]="columnDefs"
       [defaultColDef]="defaultColDef" [gridOptions]="gridOptions" [rowData]="rowData" (gridReady)="onGridReady($event)">
@@ -343,7 +350,7 @@
             <p class="text-xs mb-2" style="color: var(--minted-text-muted);">Add a friend:</p>
             <div class="flex flex-wrap gap-2">
               <button *ngFor="let f of availableFriendsForSplit" type="button"
-                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border hover:border-green-400 hover:bg-green-50 transition-colors"
+                class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border add-friend-chip transition-colors"
                 style="background-color: var(--minted-bg-card); border-color: var(--minted-border); color: var(--minted-text-primary);"
                 (click)="addFriendToSplit(f)">
                 <div
@@ -379,7 +386,7 @@
     <div class="flex justify-end gap-3 mt-6">
       <button pButton type="button" class="p-button-text" (click)="showSplitDialog = false">Cancel</button>
       <button pButton type="submit">
-        <i class="pi pi-sitemap text-[18px] mr-2"></i>
+        <i class="pi pi-sitemap mr-2"></i>
         {{ isEditSplit ? 'Update Split' : 'Add to Splits' }}
       </button>
     </div>

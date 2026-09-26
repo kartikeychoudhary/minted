@@ -14,6 +14,7 @@ import { CategoryResponse } from '../../../../core/models/category.model';
 import { AccountResponse } from '../../../../core/models/account.model';
 import { User } from '../../../../core/models/user.model';
 import { CurrencyService } from '../../../../core/services/currency.service';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 interface RecurringGroup {
     category: string;
@@ -91,7 +92,8 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         private categoryService: CategoryService,
         private accountService: AccountService,
         private cdr: ChangeDetectorRef,
-        public currencyService: CurrencyService
+        public currencyService: CurrencyService,
+        private themeService: ThemeService
     ) {}
 
     ngOnInit(): void {
@@ -100,6 +102,22 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
         this.initSpendingChartOptions();
         this.loadFilterOptions();
         this.loadAllData();
+
+        // Keep chart colours in sync with light/dark mode and accent
+        this.themeService.isDarkMode$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refreshChartTheme());
+        this.themeService.accentColor$.pipe(takeUntil(this.destroy$)).subscribe(() => this.refreshChartTheme());
+    }
+
+    private refreshChartTheme(): void {
+        this.initSpendingChartOptions();
+        if (this.spendingActivity?.length) {
+            this.buildSpendingChart();
+        }
+        this.cdr.detectChanges();
+    }
+
+    private token(name: string, fallback: string): string {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
     }
 
     ngOnDestroy(): void {
@@ -264,22 +282,24 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
                 label: 'Spending',
                 data,
                 backgroundColor: bgColors,
-                borderRadius: 6,
-                barThickness: 28,
-                maxBarThickness: 40
+                borderRadius: 8,
+                borderSkipped: false,
+                maxBarThickness: 36
             }]
         };
     }
 
     private initSpendingChartOptions(): void {
         const baseFont = { family: "'Inter', sans-serif" };
+        const tickColor = this.token('--minted-text-muted', '#94a3b8');
+        const gridColor = this.token('--minted-border-light', '#f1f5f9');
         this.spendingChartOptions = {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#1e293b',
+                    backgroundColor: '#101828',
                     titleFont: { ...baseFont, size: 13 },
                     bodyFont: { ...baseFont, size: 12 },
                     padding: 12,
@@ -292,13 +312,14 @@ export class AnalyticsOverview implements OnInit, OnDestroy {
             scales: {
                 x: {
                     grid: { display: false },
-                    ticks: { font: { ...baseFont, size: 11 }, color: '#94a3b8' }
+                    ticks: { font: { ...baseFont, size: 11 }, color: tickColor }
                 },
                 y: {
-                    grid: { color: '#f1f5f9' },
+                    grid: { color: gridColor },
+                    border: { display: false },
                     ticks: {
                         font: { ...baseFont, size: 11 },
-                        color: '#94a3b8',
+                        color: tickColor,
                         callback: (val: number) => this.currencyService.format(val)
                     }
                 }

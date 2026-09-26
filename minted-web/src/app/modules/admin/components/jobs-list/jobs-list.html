@@ -1,10 +1,10 @@
-<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full overflow-hidden">
+<div class="page-container flex flex-col space-y-5">
 
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary capitalize">Server Jobs</h1>
-            <p class="text-sm text-minted-text-secondary mt-1">Monitor background job executions and system processes
+            <h1 class="page-title">Server Jobs</h1>
+            <p class="page-subtitle">Monitor background job executions and system processes
             </p>
         </div>
 
@@ -18,7 +18,7 @@
 
     <!-- Loading State -->
     <div *ngIf="loading && jobs.length === 0"
-        class="flex-1 rounded-xl glass-card flex items-center justify-center p-8 border border-minted-border shadow-sm w-full">
+        class="surface-card flex items-center justify-center p-8 w-full">
         <div class="text-center">
             <i class="pi pi-spin pi-spinner text-4xl text-minted-primary mb-4"></i>
             <p class="text-minted-text-secondary">Loading job executions...</p>
@@ -27,9 +27,9 @@
 
     <!-- Content (AG Grid) -->
     <div *ngIf="!loading || jobs.length > 0"
-        class="flex-1 rounded-xl overflow-hidden glass-card border border-minted-border shadow-sm w-full relative">
+        class="grid-card w-full relative">
         <ag-grid-angular class="w-full h-full" [theme]="mintedTheme" [rowData]="jobs" [columnDefs]="columnDefs"
-            [gridOptions]="gridOptions" style="min-height: 400px; width: 100%;">
+            [gridOptions]="gridOptions" style="height: max(420px, calc(100vh - 260px)); width: 100%;">
         </ag-grid-angular>
     </div>
 </div>

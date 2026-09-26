@@ -1,63 +1,78 @@
 // Analytics Overview Component Styles
 
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--minted-accent);
+    text-decoration: none;
+    transition: gap 0.15s ease, color 0.15s ease;
+
+    &:hover {
+        gap: 8px;
+        color: var(--minted-accent-hover);
+    }
+}
+
+.stat-card {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        border-color: var(--minted-border-strong);
+        box-shadow: var(--minted-shadow-md);
+    }
+}
+
+.txn-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+
+    &:hover {
+        background: var(--minted-bg-hover);
+    }
+}
+
+.forecast-box {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: var(--minted-radius-md);
+    border: 1px solid var(--minted-accent-soft);
+    background:
+        radial-gradient(120% 120% at 100% 0%, var(--minted-accent-subtle), transparent 70%),
+        var(--minted-bg-surface);
+}
+
 :host ::ng-deep {
+    // Compact text buttons inside recurring items
+    .p-button-sm.p-button-text {
+        color: var(--minted-text-secondary);
 
-    // Summary cards with accent border
-    .border-l-4 {
-        &.border-l-amber-600 {
-            border-left-color: var(--minted-accent);
-        }
-
-        &.border-l-green-600 {
-            border-left-color: var(--minted-success);
-        }
-
-        &.border-l-red-600 {
-            border-left-color: var(--minted-danger);
+        &:hover {
+            background: var(--minted-bg-hover);
+            color: var(--minted-accent);
         }
     }
 
-    // Select dropdown
-    .p-select {
-        .p-select-label {
-            padding: 0.5rem 0.75rem;
-            color: var(--minted-text-secondary);
-        }
+    .p-accordionpanel {
+        border-color: var(--minted-border-light);
     }
 
-    // Button styling
-    .p-button-sm {
-        font-size: 0.75rem;
-        padding: 0.375rem 0.75rem;
-
-        &.p-button-text {
-            color: var(--minted-text-secondary);
-
-            &:hover {
-                background: var(--minted-bg-hover);
-                color: var(--minted-accent);
-            }
-        }
+    .p-accordionheader {
+        padding: 12px 4px;
+        background: transparent;
     }
 
-    // Spending activity bars
-    .bg-amber-100 {
-        background-color: var(--minted-accent-subtle);
-    }
-
-    .bg-amber-200 {
-        background-color: var(--minted-accent-subtle);
-    }
-
-    .bg-amber-600 {
-        background-color: var(--minted-accent);
-    }
-
-    // Responsive adjustments
-    @media (max-width: 768px) {
-        .grid {
-            gap: 1rem;
-        }
+    .p-accordioncontent-content {
+        padding: 4px 0 12px;
+        background: transparent;
     }
 }
 
@@ -65,21 +80,4 @@
 .p-accordion {
     max-height: 600px;
     overflow-y: auto;
-
-    &::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background: var(--minted-scrollbar-thumb);
-        border-radius: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-        background: var(--minted-scrollbar-hover);
-    }
 }

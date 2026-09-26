@@ -1,9 +1,9 @@
-<div class="h-full flex flex-col p-6 space-y-6 animate-fade-in relative z-10 w-full overflow-y-auto">
+<div class="page-container flex flex-col space-y-5">
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-minted-text-primary">User Management</h1>
-            <p class="text-sm text-minted-text-secondary mt-1">Manage users, roles, and registration settings</p>
+            <h1 class="page-title">User Management</h1>
+            <p class="page-subtitle">Manage users, roles, and registration settings</p>
         </div>
     </div>
 
@@ -57,15 +57,15 @@
     [draggable]="false" [resizable]="false">
     <form [formGroup]="createForm" (ngSubmit)="createUser()" class="pt-4 space-y-4">
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Username *</label>
+            <label class="field-label" style="margin-bottom: 0;">Username *</label>
             <input type="text" pInputText formControlName="username" placeholder="Enter username"
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
             <small class="p-error" *ngIf="createForm.get('username')?.invalid && createForm.get('username')?.touched">
                 Username is required (3-50 characters)
             </small>
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Password *</label>
+            <label class="field-label" style="margin-bottom: 0;">Password *</label>
             <p-password formControlName="password" [toggleMask]="true" [feedback]="false" placeholder="Enter password"
                 inputStyleClass="w-full" styleClass="w-full"></p-password>
             <small class="p-error" *ngIf="createForm.get('password')?.invalid && createForm.get('password')?.touched">
@@ -73,26 +73,26 @@
             </small>
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Display
+            <label class="field-label" style="margin-bottom: 0;">Display
                 Name</label>
             <input type="text" pInputText formControlName="displayName" placeholder="Enter display name"
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Email</label>
+            <label class="field-label" style="margin-bottom: 0;">Email</label>
             <input type="email" pInputText formControlName="email" placeholder="Enter email"
-                class="w-full bg-minted-bg-app border-minted-border text-minted-text-primary rounded-lg">
+                class="w-full">
             <small class="p-error" *ngIf="createForm.get('email')?.invalid && createForm.get('email')?.touched">
                 Invalid email format
             </small>
         </div>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">Role</label>
+            <label class="field-label" style="margin-bottom: 0;">Role</label>
             <p-select formControlName="role" [options]="roleOptions" optionLabel="label" optionValue="value"
                 styleClass="w-full"></p-select>
         </div>
         <div class="p-3 rounded-lg text-xs"
-            style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
+            style="background: var(--minted-warning-subtle); color: var(--minted-warning)">
             <i class="pi pi-info-circle mr-1"></i>
             User will be required to change password on first login.
         </div>
@@ -113,7 +113,7 @@
             Reset password for <strong class="text-minted-text-primary">{{ resetUsername }}</strong>
         </p>
         <div class="flex flex-col gap-1">
-            <label class="text-xs font-semibold uppercase text-minted-text-secondary tracking-wider">New Password
+            <label class="field-label" style="margin-bottom: 0;">New Password
                 *</label>
             <p-password formControlName="newPassword" [toggleMask]="true" [feedback]="false"
                 placeholder="Enter new password" inputStyleClass="w-full" styleClass="w-full"></p-password>
@@ -123,7 +123,7 @@
             </small>
         </div>
         <div class="p-3 rounded-lg text-xs"
-            style="background: var(--minted-warning-subtle, #fef3c7); color: var(--minted-warning, #d97706)">
+            style="background: var(--minted-warning-subtle); color: var(--minted-warning)">
             <i class="pi pi-info-circle mr-1"></i>
             User will be required to change this password on next login.
         </div>
