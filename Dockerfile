@@ -34,9 +34,10 @@ COPY --from=build /app/dist/minted-web/browser /usr/share/nginx/html
 # Expose port
 EXPOSE 80
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1
+# Health check — use 127.0.0.1, not "localhost": on IPv6-enabled hosts "localhost"
+# can resolve to ::1, where nginx isn't listening, and the check fails spuriously.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD wget -q --tries=1 --spider http://127.0.0.1:80/healthz || exit 1
 
 # Use custom entrypoint
 ENTRYPOINT ["/docker-entrypoint.sh"]

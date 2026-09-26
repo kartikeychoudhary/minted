@@ -100,9 +100,9 @@ services:
     networks:
       - minted-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      test: ["CMD", "wget", "-q", "--tries=1", "--spider", "http://127.0.0.1:80/healthz"]
       interval: 30s
-      timeout: 3s
+      timeout: 5s
       retries: 3
       start_period: 10s
 

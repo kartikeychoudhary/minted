@@ -331,6 +331,18 @@ docker compose -f docker-compose.prod.yml ps
 
 All services should show `healthy`.
 
+The frontend healthcheck calls `http://127.0.0.1:80/healthz` inside the container (a static
+`ok` served by nginx). It deliberately avoids `localhost`, which can resolve to IPv6 `::1`
+on IPv6-enabled hosts where nginx only listens on IPv4. To inspect recent check results:
+
+```bash
+docker inspect minted-frontend --format '{{json .State.Health.Log}}'
+```
+
+The frontend re-resolves the backend hostname every 10s (`resolver` in `nginx.conf`), so
+restarting the backend container no longer leaves `/api` returning 502. The resolver
+defaults to the container's nameserver; override it with the `NGINX_RESOLVER` env var if needed.
+
 ### Database Connection Issues
 
 ```bash
